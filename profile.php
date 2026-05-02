@@ -1,0 +1,157 @@
+<?php
+declare(strict_types=1);
+require_once __DIR__ . '/lib/bootstrap.php';
+
+$user = require_login_page();
+$db = app_db();
+$message = '';
+$error = '';
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    require_same_origin_post();
+    $action = (string)($_POST['action'] ?? '');
+
+    if ($action === 'identity') {
+        $username = sanitize_username((string)($_POST['username'] ?? ''));
+        $email = trim((string)($_POST['email'] ?? ''));
+
+        if ($username === '' || $email === '') {
+            $error = 'Nom d’utilisateur et email requis.';
+        } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            $error = 'Adresse email invalide.';
+        } else {
+            try {
+                $stmt = $db->prepare("UPDATE users SET username = ?, email = ? WHERE id = ?");
+                $stmt->execute([$username, $email, (int)$user['id']]);
+                $_SESSION['user']['username'] = $username;
+                $_SESSION['user']['email'] = $email;
+                $message = 'Informations mises a jour.';
+            } catch (PDOException $e) {
+                $error = 'Nom d’utilisateur ou email deja utilise.';
+            }
+        }
+    } elseif ($action === 'password') {
+        $current = (string)($_POST['current_password'] ?? '');
+        $next = (string)($_POST['new_password'] ?? '');
+        $confirm = (string)($_POST['confirm_password'] ?? '');
+
+        if ($current === '' || $next === '' || $confirm === '') {
+            $error = 'Tous les champs mot de passe sont requis.';
+        } elseif (strlen($next) < 8) {
+            $error = 'Le nouveau mot de passe doit contenir au moins 8 caracteres.';
+        } elseif ($next !== $confirm) {
+            $error = 'La confirmation ne correspond pas.';
+        } else {
+            $stmt = $db->prepare("SELECT password_hash FROM users WHERE id = ? LIMIT 1");
+            $stmt->execute([(int)$user['id']]);
+            $row = $stmt->fetch();
+            if (!$row || !password_verify($current, (string)$row['password_hash'])) {
+                $error = 'Mot de passe actuel incorrect.';
+            } else {
+                $upd = $db->prepare("UPDATE users SET password_hash = ? WHERE id = ?");
+                $upd->execute([password_hash($next, PASSWORD_DEFAULT), (int)$user['id']]);
+                $message = 'Mot de passe mis a jour.';
+            }
+        }
+    } elseif ($action === 'delete_account') {
+        $password = (string)($_POST['delete_current_password'] ?? '');
+
+        if ($password === '') {
+            $error = 'Veuillez confirmer avec votre mot de passe.';
+        } else {
+            $stmt = $db->prepare("SELECT password_hash, role FROM users WHERE id = ? LIMIT 1");
+            $stmt->execute([(int)$user['id']]);
+            $row = $stmt->fetch();
+            if (!$row || !password_verify($password, (string)$row['password_hash'])) {
+                $error = 'Mot de passe incorrect.';
+            } elseif ((string)$row['role'] === 'admin') {
+                $countStmt = $db->prepare("SELECT COUNT(*) FROM users WHERE role = 'admin' AND status = 'active' AND id <> ?");
+                $countStmt->execute([(int)$user['id']]);
+                if ((int)$countStmt->fetchColumn() === 0) {
+                    $error = 'Impossible de supprimer le dernier compte administrateur.';
+                }
+            }
+
+            if ($error === '') {
+                $del = $db->prepare("DELETE FROM users WHERE id = ?");
+                $del->execute([(int)$user['id']]);
+                $_SESSION = [];
+                session_destroy();
+                header('Location: login.php');
+                exit;
+            }
+        }
+    }
+}
+
+$stmt = $db->prepare("SELECT username, email, role FROM users WHERE id = ? LIMIT 1");
+$stmt->execute([(int)$user['id']]);
+$me = $stmt->fetch() ?: ['username' => '', 'email' => '', 'role' => 'designer'];
+
+$countStmt = $db->prepare("SELECT COUNT(*) FROM learning_designs WHERE owner_user_id = ?");
+$countStmt->execute([(int)$user['id']]);
+$designCount = (int)$countStmt->fetchColumn();
+?>
+<!doctype html>
+<html lang="fr">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Mon profil | Learning Designer</title>
+    <link rel="stylesheet" href="account-pages.css">
+</head>
+<body>
+<main class="account-shell profile-shell">
+    <section class="account-card wide">
+        <div class="account-topbar">
+            <div>
+                <p class="account-kicker">Compte</p>
+                <h1>Mon profil</h1>
+            </div>
+            <a class="subtle-link" href="interface.html">Retour a l’interface</a>
+        </div>
+        <p class="account-copy">Role: <?= htmlspecialchars((string)$me['role'], ENT_QUOTES, 'UTF-8') ?>. Productions sauvegardees: <?= $designCount ?>.</p>
+
+        <?php if ($message !== ''): ?>
+            <p class="account-message success"><?= htmlspecialchars($message, ENT_QUOTES, 'UTF-8') ?></p>
+        <?php endif; ?>
+        <?php if ($error !== ''): ?>
+            <p class="account-message error"><?= htmlspecialchars($error, ENT_QUOTES, 'UTF-8') ?></p>
+        <?php endif; ?>
+
+        <div class="account-grid">
+            <form method="post" class="account-form panel">
+                <input type="hidden" name="action" value="identity">
+                <h2>Informations</h2>
+                <label for="username">Nom d’utilisateur</label>
+                <input id="username" name="username" type="text" value="<?= htmlspecialchars((string)$me['username'], ENT_QUOTES, 'UTF-8') ?>" required>
+                <label for="email">Email</label>
+                <input id="email" name="email" type="email" value="<?= htmlspecialchars((string)$me['email'], ENT_QUOTES, 'UTF-8') ?>" required>
+                <button type="submit">Enregistrer</button>
+            </form>
+
+            <form method="post" class="account-form panel">
+                <input type="hidden" name="action" value="password">
+                <h2>Mot de passe</h2>
+                <label for="current_password">Mot de passe actuel</label>
+                <input id="current_password" name="current_password" type="password" required>
+                <label for="new_password">Nouveau mot de passe</label>
+                <input id="new_password" name="new_password" type="password" minlength="8" required>
+                <label for="confirm_password">Confirmation</label>
+                <input id="confirm_password" name="confirm_password" type="password" minlength="8" required>
+                <button type="submit">Mettre a jour</button>
+            </form>
+        </div>
+
+        <form method="post" class="account-form panel danger-panel" onsubmit="return window.confirm('Supprimer definitivement votre compte ?');">
+            <input type="hidden" name="action" value="delete_account">
+            <h2>Supprimer mon compte</h2>
+            <p class="account-copy">Toutes vos productions seront supprimees avec votre compte.</p>
+            <label for="delete_current_password">Mot de passe actuel</label>
+            <input id="delete_current_password" name="delete_current_password" type="password" required>
+            <button type="submit" class="danger-button">Supprimer mon compte</button>
+        </form>
+    </section>
+</main>
+</body>
+</html>

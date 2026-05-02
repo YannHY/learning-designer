@@ -1,0 +1,123 @@
+.account-toolbar-cluster {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.account-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.92);
+  color: var(--text-subtle);
+  font-size: 13px;
+  line-height: 1;
+  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.05);
+}
+
+.account-pill strong {
+  color: var(--text-strong);
+}
+
+.account-menu {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  z-index: 50;
+  min-width: 220px;
+  padding: 8px;
+  border-radius: 16px;
+  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.98);
+  box-shadow: 0 20px 48px rgba(19, 39, 68, 0.16);
+}
+
+.account-menu.hidden {
+  display: none;
+}
+
+.account-menu-wrap {
+  position: relative;
+}
+
+.account-menu-link {
+  display: block;
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 10px;
+  color: var(--text-strong);
+  text-decoration: none;
+}
+
+.account-menu-link:hover,
+.account-menu-link:focus-visible {
+  background: var(--hover-bg);
+}
+
+.saved-designs-empty {
+  margin: 0;
+  color: var(--muted);
+}
+
+.saved-designs-list {
+  display: grid;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.saved-design-item {
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 14px;
+  background: var(--panel-2);
+}
+
+.saved-design-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  align-items: start;
+}
+
+.saved-design-title {
+  margin: 0 0 4px;
+  font-size: 16px;
+  color: var(--text-strong);
+}
+
+.saved-design-meta {
+  margin: 0;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.saved-design-actions {
+  display: inline-flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.saved-design-actions .btn {
+  white-space: nowrap;
+}
+
+.saved-design-status {
+  margin-top: 14px;
+  color: var(--muted);
+  font-size: 14px;
+}
+
+@media (max-width: 960px) {
+  .account-toolbar-cluster {
+    width: 100%;
+    justify-content: flex-start;
+  }
+  .saved-design-head {
+    flex-direction: column;
+  }
+}

@@ -1,0 +1,427 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Learning Designer - Prototype</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="account-ui.css" />
+    <link rel="stylesheet" href="interface.css" />
+  </head>
+  <body>
+    <a id="skip-link" class="skip-link" href="#board">Aller au contenu principal</a>
+    <p id="sr-status" class="sr-only" role="status" aria-live="polite" aria-atomic="true"></p>
+    <header class="site-nav" role="navigation" aria-label="Navigation principale">
+      <div class="site-nav-brand">
+        <span class="site-nav-brand-mark" aria-hidden="true"><i class="fa-solid fa-diagram-project"></i></span>
+        <div class="site-nav-brand-copy">
+          <p class="site-nav-title">Learning Designer</p>
+        </div>
+      </div>
+      <div id="site-nav-actions" class="site-nav-actions"></div>
+    </header>
+    <section id="top-panel" class="top-panel" role="region" aria-labelledby="app-title">
+      <div class="top-brand">
+        <div class="brand-left">
+          <h1 id="app-title" class="brand-title">Interface de conception d’apprentissage</h1>
+        </div>
+        <div class="top-brand-actions">
+          <div class="top-tabs" role="tablist" aria-label="Vues du panneau supérieur">
+            <button id="top-tab-settings" class="top-tab" type="button" role="tab" aria-selected="false" aria-controls="timeline-view">Paramètres</button>
+            <button id="top-tab-analysis" class="top-tab active" type="button" role="tab" aria-selected="true" aria-controls="analysis-view">Analyse</button>
+            <button id="top-tab-chronology" class="top-tab" type="button" role="tab" aria-selected="false" aria-controls="chronology-view">Chronologie</button>
+          </div>
+          <button id="top-panel-toggle-btn" class="top-panel-toggle" type="button" aria-expanded="true" aria-controls="top-panel-body" aria-label="Replier le panneau" title="Replier le panneau">
+            <svg class="chevron" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M7.41 8.59 12 13.17l4.59-4.58L18 10l-6 6-6-6z"/></svg>
+          </button>
+        </div>
+      </div>
+      <div id="top-panel-body" class="top-panel-body">
+        <div id="timeline-view" class="panel-grid" role="tabpanel" aria-labelledby="top-tab-settings">
+          <div class="panel-column panel-column-left">
+            <div class="form-row">
+              <label id="label-meta-name" for="meta-name">Titre</label>
+              <input id="meta-name" class="panel-input" type="text" />
+            </div>
+            <div class="form-row">
+              <label id="label-meta-learning">Temps d'apprentissage</label>
+              <div class="time-inline">
+                <input id="meta-learning-days" class="panel-input" type="number" min="0" />
+                <span id="unit-learning-days" class="time-unit">jours</span>
+                <input id="meta-learning-hours" class="panel-input" type="number" min="0" />
+                <span id="unit-learning-hours" class="time-unit">heures</span>
+                <input id="meta-learning-minutes" class="panel-input" type="number" min="0" max="59" />
+                <span id="unit-learning-minutes" class="time-unit">minutes</span>
+              </div>
+            </div>
+            <div class="form-row">
+              <label id="label-meta-designed">Temps conçu</label>
+              <div class="time-inline">
+                <input id="meta-designed-days" class="panel-input" type="number" readonly />
+                <span id="unit-designed-days" class="time-unit">jours</span>
+                <input id="meta-designed-hours" class="panel-input" type="number" readonly />
+                <span id="unit-designed-hours" class="time-unit">heures</span>
+                <input id="meta-designed-minutes" class="panel-input" type="number" readonly />
+                <span id="unit-designed-minutes" class="time-unit">minutes</span>
+              </div>
+            </div>
+            <div class="form-row">
+              <label id="label-meta-day-hours" for="meta-day-hours">1 jour =</label>
+              <div class="time-inline">
+                <input id="meta-day-hours" class="panel-input" type="number" min="1" />
+                <span id="unit-day-hours" class="time-unit">heures</span>
+              </div>
+            </div>
+            <div class="form-row">
+              <label id="label-meta-description" for="meta-description">Description</label>
+              <div class="expandable-field">
+                <textarea id="meta-description" class="panel-textarea"></textarea>
+                <button class="expand-btn" type="button" aria-label="Plein écran">⤢</button>
+              </div>
+            </div>
+            <div class="form-row">
+              <label id="label-meta-command" for="meta-command">Commande institutionnelle</label>
+              <div class="expandable-field">
+                <textarea id="meta-command" class="panel-textarea" placeholder="Collez ici la commande institutionnelle déjà définie..."></textarea>
+                <button class="expand-btn" type="button" aria-label="Plein écran">⤢</button>
+              </div>
+            </div>
+          </div>
+          <div class="panel-column panel-column-right">
+            <div class="form-row">
+              <label id="label-meta-delivery" for="meta-delivery">Mode</label>
+              <select id="meta-delivery" class="panel-select">
+                <option id="opt-meta-delivery-empty" value=""></option>
+                <option id="opt-meta-delivery-onsite" value="onsite">Présentiel</option>
+                <option id="opt-meta-delivery-online" value="online">Distanciel</option>
+                <option id="opt-meta-delivery-hybrid" value="hybrid">Hybride</option>
+              </select>
+            </div>
+            <div class="form-row">
+              <label id="label-meta-size-class" for="meta-size-class">Taille du groupe</label>
+              <input id="meta-size-class" class="panel-input" type="number" min="1" />
+            </div>
+            <div class="form-row">
+              <label id="label-meta-designers" for="meta-designers">Concepteur(s)</label>
+              <input id="meta-designers" class="panel-input" type="text" />
+            </div>
+            <div class="form-row">
+              <label id="label-meta-trainers" for="meta-trainers">Formateur(s)</label>
+              <input id="meta-trainers" class="panel-input" type="text" />
+            </div>
+            <div class="form-row">
+              <label id="label-meta-personas" for="meta-personas">Personas (profils)</label>
+              <div class="expandable-field">
+                <textarea id="meta-personas" class="panel-textarea" placeholder="Collez ici les personas (profils) déjà définis..."></textarea>
+                <button class="expand-btn" type="button" aria-label="Plein écran">⤢</button>
+              </div>
+            </div>
+            <div class="form-row">
+              <label id="label-meta-sliders" for="meta-sliders">Curseurs de la formation</label>
+              <div class="expandable-field">
+                <textarea id="meta-sliders" class="panel-textarea" placeholder="Collez ici les curseurs déjà définis..."></textarea>
+                <button class="expand-btn" type="button" aria-label="Plein écran">⤢</button>
+              </div>
+            </div>
+          </div>
+          <div class="analysis-wrap">
+            <div id="top-pie-wrap" class="pie-with-labels">
+              <div id="top-pie" class="top-pie" aria-label="Répartition des types d'apprentissage"></div>
+              <div id="top-pie-labels" class="pie-outer-labels" aria-hidden="true"></div>
+              <div id="top-pie-tooltip" class="pie-tooltip hidden" role="tooltip" aria-hidden="true"></div>
+            </div>
+            <div id="top-legend" class="top-legend"></div>
+          </div>
+        </div>
+        <div id="analysis-view" class="analysis-view hidden" role="tabpanel" aria-labelledby="top-tab-analysis">
+          <h2 id="analysis-title" class="analysis-title">Expérience d’apprentissage</h2>
+          <div id="analysis-alerts" class="analysis-alerts hidden" role="status" aria-live="polite" aria-atomic="false"></div>
+          <div class="analysis-main-grid">
+            <div class="analysis-block analysis-learning-block">
+              <div id="analysis-learning-pie-wrap" class="pie-with-labels pie-large">
+                <div id="analysis-learning-pie" class="analysis-big-pie"></div>
+                <div id="analysis-learning-labels" class="pie-outer-labels" aria-hidden="true"></div>
+                <div id="analysis-learning-tooltip" class="pie-tooltip hidden" role="tooltip" aria-hidden="true"></div>
+              </div>
+              <div id="analysis-learning-legend" class="analysis-legend"></div>
+            </div>
+            <div class="analysis-block">
+              <div id="analysis-delivery-pie" class="analysis-small-pie"></div>
+              <div id="analysis-delivery-legend" class="analysis-legend"></div>
+            </div>
+            <div class="analysis-block">
+              <div id="analysis-teacher-pie" class="analysis-small-pie"></div>
+              <div id="analysis-teacher-legend" class="analysis-legend"></div>
+            </div>
+            <div class="analysis-block">
+              <div id="analysis-sync-pie" class="analysis-small-pie"></div>
+              <div id="analysis-sync-legend" class="analysis-legend"></div>
+            </div>
+            <div class="analysis-block">
+              <div id="analysis-eval-pie" class="analysis-small-pie"></div>
+              <div id="analysis-eval-legend" class="analysis-legend"></div>
+            </div>
+          </div>
+          <div class="analysis-group-section">
+            <div id="analysis-group-bar" class="analysis-group-bar"></div>
+            <div id="analysis-group-legend" class="analysis-legend"></div>
+          </div>
+        </div>
+        <div id="chronology-view" class="analysis-view hidden" role="tabpanel" aria-labelledby="top-tab-chronology">
+          <h2 id="chronology-title" class="analysis-title">Chronologie des activités</h2>
+          <div id="chronology-container">
+            <!-- Partition sessions will be rendered here -->
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <header class="toolbar" role="region" aria-label="Actions du design">
+      <div class="toolbar-left">
+        <div class="toolbar-cluster">
+          <button id="add-session-btn" class="btn btn-primary"><span class="btn-label"><i class="fa-solid fa-plus btn-icon-inline" aria-hidden="true"></i>Ajouter un moment</span></button>
+        </div>
+        <span class="toolbar-sep" aria-hidden="true"></span>
+        <div class="toolbar-cluster">
+          <button id="toggle-intentions-btn" class="btn btn-light" type="button"><span class="btn-label"><i class="fa-solid fa-bullseye btn-icon-inline" aria-hidden="true"></i>Intentions</span></button>
+          <button id="expand-notes-btn" class="btn btn-light"><span class="btn-label"><i class="fa-regular fa-note-sticky btn-icon-inline" aria-hidden="true"></i>Notes</span></button>
+          <div id="board-layout-toggle" class="layout-toggle" role="group" aria-label="Mode d'affichage des séances">
+          <button
+            id="board-layout-list-btn"
+            class="layout-toggle-btn"
+            type="button"
+            aria-pressed="false"
+            title="Liste"
+            aria-label="Liste"
+          >
+            <svg class="material-icon-svg" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M4 10.5c.83 0 1.5-.67 1.5-1.5S4.83 7.5 4 7.5 2.5 8.17 2.5 9 3.17 10.5 4 10.5zm0 6c.83 0 1.5-.67 1.5-1.5S4.83 13.5 4 13.5 2.5 14.17 2.5 15 3.17 16.5 4 16.5zM7 16h14v-2H7v2zm0-6h14V8H7v2z"></path>
+            </svg>
+            <span id="board-layout-list-text" class="sr-only">Liste</span>
+          </button>
+          <button
+            id="board-layout-columns-btn"
+            class="layout-toggle-btn"
+            type="button"
+            aria-pressed="true"
+            title="Colonnes"
+            aria-label="Colonnes"
+          >
+            <svg class="material-icon-svg" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M3 3h8v8H3V3zm10 0h8v8h-8V3zM3 13h8v8H3v-8zm10 8v-8h8v8h-8z"></path>
+            </svg>
+            <span id="board-layout-columns-text" class="sr-only">Colonnes</span>
+          </button>
+          <button
+            id="board-layout-grid-btn"
+            class="layout-toggle-btn"
+            type="button"
+            aria-pressed="false"
+            title="Grille"
+            aria-label="Grille"
+          >
+            <svg class="material-icon-svg" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M20 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h15c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 2v3H5V5h15zm-8 14H5v-4h7v4zm0-6H5v-4h7v4zm8 6h-6v-4h6v4zm0-6h-6v-4h6v4z"/>
+            </svg>
+            <span id="board-layout-grid-text" class="sr-only">Grille</span>
+          </button>
+          </div>
+        </div>
+      </div>
+      <div class="toolbar-right">
+        <div class="toolbar-cluster">
+          <button id="new-design-btn" class="btn"><span class="btn-label"><i class="fa-regular fa-file btn-icon-inline" aria-hidden="true"></i>Nouveau</span></button>
+          <button id="import-design-btn" class="btn"><span class="btn-label"><i class="fa-solid fa-file-arrow-up btn-icon-inline" aria-hidden="true"></i>Importer</span></button>
+        </div>
+        <span class="toolbar-sep" aria-hidden="true"></span>
+        <div class="toolbar-cluster">
+          <div id="save-status" class="save-status" role="status" aria-live="polite" aria-atomic="true" data-state="saved">
+            <span id="save-status-label" class="save-status-label">Autosauvegarde locale</span>
+            <span id="save-status-value" class="save-status-value">Modifications enregistrées automatiquement</span>
+          </div>
+          <button id="save-btn" class="btn btn-light"><span class="btn-label"><i class="fa-regular fa-floppy-disk btn-icon-inline" aria-hidden="true"></i>Enregistrer</span></button>
+          <button id="export-design-btn" class="btn btn-primary"><span class="btn-label"><i class="fa-solid fa-file-export btn-icon-inline" aria-hidden="true"></i>Exporter</span></button>
+        </div>
+        <span class="toolbar-sep" aria-hidden="true"></span>
+        <div class="toolbar-cluster">
+          <button id="info-btn" class="btn btn-icon" type="button" title="Information" aria-label="Information">
+            <svg viewBox="0 0 24 24" aria-hidden="true" class="toolbar-icon-svg">
+              <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/>
+            </svg>
+          </button>
+          <label for="lang-select" class="sr-only">Langue de l’interface</label>
+          <select id="lang-select" class="panel-select toolbar-lang-select">
+            <option value="fr">Français</option>
+            <option value="en">English</option>
+          </select>
+        </div>
+      </div>
+      <input id="import-file-input" type="file" accept=".json,.csv,application/json,text/csv" hidden />
+    </header>
+
+    <main id="main-content">
+      <section id="board" class="board" aria-label="Séquences de séances"></section>
+    </main>
+
+
+    <template id="session-template">
+      <article class="session-card">
+        <header class="session-header">
+          <div class="session-strip"></div>
+          <button class="icon-btn delete-btn delete-session-btn" title="Supprimer la séance" aria-label="Supprimer la séance">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M6 6l12 12"></path>
+              <path d="M18 6l-12 12"></path>
+            </svg>
+          </button>
+        </header>
+        <div class="session-title-wrap">
+          <textarea class="session-title" rows="2"></textarea>
+          <div class="expandable-field">
+            <textarea class="session-objectives" rows="2" placeholder="Objectifs du moment..."></textarea>
+            <button class="expand-btn" type="button" aria-label="Plein écran">⤢</button>
+          </div>
+          <div class="expandable-field">
+            <textarea class="session-intentions" rows="2" placeholder="Choix pédagogiques (ex. : pourquoi cet ordre d'activités ? quelle alternance de modalités ? quel rythme ?)"></textarea>
+            <button class="expand-btn" type="button" aria-label="Plein écran">⤢</button>
+          </div>
+        </div>
+        <div class="activities"></div>
+        <footer class="session-footer">
+          <button class="btn btn-light add-activity-btn" type="button">+ Activité</button>
+          <div class="session-metas">
+            <span class="duration-pill"><span class="total-duration">0</span> <span class="duration-unit">min</span></span>
+            <button class="btn btn-light toggle-session-notes-btn">Notes</button>
+          </div>
+        </footer>
+        <div class="session-notes hidden">
+          <div class="expandable-field">
+            <textarea class="session-notes-input" rows="3" placeholder="Notes de la séance..."></textarea>
+            <button class="expand-btn" type="button" aria-label="Plein écran">⤢</button>
+          </div>
+        </div>
+      </article>
+    </template>
+
+    <template id="activity-template">
+      <div class="activity-card">
+        <div class="activity-toolbar">
+          <button class="choice-btn activity-type-btn" type="button"></button>
+          <span class="mini-label">
+            <span class="sr-only">Durée en minutes</span>
+            <span class="duration-symbol" aria-hidden="true">⏱</span>
+            <input class="activity-duration" type="number" min="1" aria-label="Durée en minutes" />
+          </span>
+          <button class="choice-btn activity-group-mode-btn" type="button"></button>
+          <button class="choice-btn activity-trainer-mode-btn" type="button"></button>
+          <button class="choice-btn activity-sync-mode-btn" type="button"></button>
+          <button class="choice-btn activity-location-mode-btn" type="button"></button>
+          <button class="choice-btn activity-evaluation-mode-btn" type="button"></button>
+          <div class="activity-actions">
+            <button class="icon-btn select-tools-btn" type="button" aria-haspopup="dialog" aria-expanded="false">
+              <svg viewBox="0 0 24 24" aria-hidden="true" width="16" height="16">
+                <path d="M22.7 19l-9.1-9.1c.9-2.3.4-5-1.5-6.9-2-2-5-2.4-7.4-1.3L9 6 6 9 1.6 4.7C.4 7.1.9 10.1 2.9 12.1c1.9 1.9 4.6 2.4 6.9 1.5l9.1 9.1c.4.4 1 .4 1.4 0l2.3-2.3c.5-.4.5-1.1.1-1.4z"/>
+              </svg>
+            </button>
+            <button class="icon-btn delete-btn delete-activity-btn" title="Supprimer" aria-label="Supprimer">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M6 6l12 12"></path>
+                <path d="M18 6l-12 12"></path>
+              </svg>
+            </button>
+          </div>
+        </div>
+        <div class="activity-tools hidden" role="list"></div>
+        <div class="expandable-field">
+          <textarea class="activity-description" rows="3"></textarea>
+          <button class="expand-btn" type="button" aria-label="Plein écran">⤢</button>
+        </div>
+        <div class="activity-notes hidden">
+          <div class="expandable-field">
+            <textarea class="activity-notes-input" rows="2" placeholder="Notes de l'activité..."></textarea>
+            <button class="expand-btn" type="button" aria-label="Plein écran">⤢</button>
+          </div>
+        </div>
+      </div>
+    </template>
+
+    <div id="info-modal-backdrop" class="modal-backdrop hidden" role="dialog" aria-modal="true" aria-hidden="true" aria-labelledby="info-modal-title">
+      <div class="modal">
+        <h2 id="info-modal-title" class="modal-title">À propos</h2>
+        <p id="info-modal-p1">Cette application web monopage s’inspire de l’UCL Learning Designer :</p>
+        <p><a href="https://www.ucl.ac.uk/learning-designer/" target="_blank" rel="noopener noreferrer">https://www.ucl.ac.uk/learning-designer/</a></p>
+        <p id="info-modal-p2">(UCL Knowledge Lab, UCL Institute of Education, 2013-2026).</p>
+        <p id="info-modal-p3">Traitement local : toutes les données restent dans votre navigateur ; aucune donnée n’est transmise en ligne.</p>
+        <p id="info-modal-p4">François Jourde (2026) • CC BY-SA<br />Code source : <a href="https://github.com/jourde" target="_blank" rel="noopener noreferrer">https://github.com/jourde</a></p>
+        <p id="info-modal-p5"></p>
+        <div class="modal-actions">
+          <button id="info-modal-close-btn" class="btn btn-primary" type="button">Fermer</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="export-modal-backdrop" class="modal-backdrop hidden" role="dialog" aria-modal="true" aria-hidden="true" aria-labelledby="export-modal-title">
+      <div class="modal">
+        <h2 id="export-modal-title" class="modal-title">Exporter le design</h2>
+        <label for="export-format-select">Format</label>
+        <select id="export-format-select" class="panel-select">
+          <option value="json">JSON</option>
+          <option value="markdown">Markdown</option>
+          <option value="word">Word</option>
+          <option value="html">HTML</option>
+          <option value="excel">Excel</option>
+        </select>
+        <div class="modal-actions">
+          <button id="export-modal-cancel-btn" class="btn btn-light" type="button">Annuler</button>
+          <button id="export-modal-confirm-btn" class="btn btn-primary" type="button">Exporter</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="import-modal-backdrop" class="modal-backdrop hidden" role="dialog" aria-modal="true" aria-hidden="true" aria-labelledby="import-modal-title">
+      <div class="modal">
+        <h2 id="import-modal-title" class="modal-title">Importer le design</h2>
+        <label for="import-format-select">Format</label>
+        <select id="import-format-select" class="panel-select">
+          <option value="json">JSON</option>
+          <option value="csv">CSV</option>
+          <option value="xlsx">Excel (.xlsx)</option>
+        </select>
+        <div class="modal-actions">
+          <button id="import-modal-cancel-btn" class="btn btn-light" type="button">Annuler</button>
+          <button id="import-modal-confirm-btn" class="btn btn-primary" type="button">Importer</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Partition config modal -->
+    <div id="partition-config-modal-backdrop" class="modal-backdrop hidden"
+         role="dialog" aria-modal="true" aria-hidden="true"
+         aria-labelledby="partition-config-modal-title">
+      <div class="modal partition-config-modal">
+        <h2 id="partition-config-modal-title" class="modal-title">Configurer les lignes</h2>
+        <p id="partition-config-modal-desc" class="partition-config-modal-desc">
+          Choisissez les lignes à afficher et leur ordre dans la partition.
+        </p>
+        <div id="partition-config-list" class="partition-config-list"></div>
+        <div class="partition-add-section">
+          <p id="partition-add-section-label" class="partition-add-section-label">
+            Ajouter une ligne
+          </p>
+          <div class="partition-add-controls">
+            <select id="partition-add-type" class="panel-select partition-add-select"></select>
+            <select id="partition-add-value" class="panel-select partition-add-select"></select>
+            <button id="partition-add-line-btn" class="btn btn-light partition-add-button" type="button">+ Ajouter</button>
+          </div>
+        </div>
+        <div class="modal-actions">
+          <button id="partition-config-cancel-btn" class="btn btn-light" type="button">Annuler</button>
+          <button id="partition-config-save-btn" class="btn btn-primary" type="button">Valider</button>
+        </div>
+      </div>
+    </div>
+    <script src="interface.js"></script>
+    <script src="account-ui.js"></script>
+  </body>
+</html>

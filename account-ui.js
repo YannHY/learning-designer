@@ -6,6 +6,10 @@
     user: null,
     loading: false
   };
+  let requestedRemoteDesignHandled = false;
+  let autoSaveTimer = null;
+  let lastLoadTime = 0;
+  let autoSaveHideTimer = null;
 
   function tr(fr, en) {
     return app()?.getCurrentLang?.() === "en" ? en : fr;
@@ -71,18 +75,102 @@
     } finally {
       authState.loading = false;
       renderAccountArea();
+      syncSaveUi();
+      await maybeLoadRequestedDesign();
     }
   }
 
-  function updateSaveStatus(message) {
-    const label = $("save-status-label");
-    const value = $("save-status-value");
-    const wrap = $("save-status");
-    if (!label || !value || !wrap) return;
-    label.textContent = tr("Compte", "Account");
-    value.textContent = message;
-    wrap.dataset.state = "saved";
-    wrap.title = message;
+  function setSaveButtonText(label) {
+    const button = $("save-btn");
+    if (!button) return;
+    const labelNode = button.querySelector(".btn-label");
+    if (labelNode) {
+      labelNode.innerHTML = `<i class="fa-regular fa-floppy-disk btn-icon-inline" aria-hidden="true"></i>${escapeHtml(label)}`;
+    } else {
+      button.textContent = label;
+    }
+    button.setAttribute("aria-label", label);
+    button.title = label;
+  }
+
+  function syncSaveUi() {
+    const button = $("save-btn");
+    if (!button) return;
+
+    if (authState.user) {
+      button.hidden = false;
+      setSaveButtonText(tr("Enregistrer", "Save"));
+      return;
+    }
+
+    button.hidden = true;
+  }
+
+  function openSavedDesignsOrLogin() {
+    if (!authState.user) {
+      window.location.href = "login.php";
+      return;
+    }
+    window.location.href = "my-designs.php";
+  }
+
+  function saveToAccountOrLogin(event) {
+    if (event) {
+      event.preventDefault?.();
+      event.stopImmediatePropagation?.();
+    }
+    if (!authState.user) {
+      window.location.href = "login.php";
+      return;
+    }
+    saveRemoteDesign();
+  }
+
+  function setAutoSaveStatus(kind, text) {
+    const el = $("autosave-status");
+    if (!el) return;
+    clearTimeout(autoSaveHideTimer);
+    el.textContent = text;
+    el.className = `autosave-status as-visible as-${kind}`;
+    if (kind !== "saving") {
+      autoSaveHideTimer = setTimeout(() => {
+        el.classList.remove("as-visible");
+        setTimeout(() => { el.textContent = ""; el.className = "autosave-status"; }, 400);
+      }, 4000);
+    }
+  }
+
+  function scheduleAutoSave() {
+    if (!authState.user) return;
+    clearTimeout(autoSaveTimer);
+    autoSaveTimer = setTimeout(() => {
+      if (!authState.user) return;
+      if (Date.now() - lastLoadTime < 3000) return;
+      autoSaveRemote();
+    }, 45000);
+  }
+
+  async function autoSaveRemote() {
+    const state = app()?.getState?.();
+    if (!state) return;
+    setAutoSaveStatus("saving", tr("Sauvegarde…", "Saving…"));
+    try {
+      const data = await fetchJson("save_design.php", {
+        method: "POST",
+        body: JSON.stringify({
+          design_id: currentDesignId(),
+          title: currentDesignTitle(),
+          document: state
+        })
+      });
+      app()?.updateMeta?.({
+        remoteDesignId: data.design.id,
+        remoteUpdatedAt: data.design.updatedAt
+      });
+      setAutoSaveStatus("success", tr("Sauvegarde auto ✓", "Auto-saved ✓"));
+    } catch (_) {
+      setAutoSaveStatus("error", tr("Échec sauvegarde auto", "Auto-save failed"));
+    }
   }
 
   async function saveRemoteDesign() {
@@ -94,7 +182,6 @@
     if (!state) return;
 
     try {
-      updateSaveStatus(tr("Sauvegarde du compte en cours...", "Saving to account..."));
       const data = await fetchJson("save_design.php", {
         method: "POST",
         body: JSON.stringify({
@@ -108,21 +195,17 @@
         remoteDesignId: data.design.id,
         remoteUpdatedAt: data.design.updatedAt
       });
-      updateSaveStatus(
-        tr("Sauvegarde compte: ", "Account save: ") + formatDate(data.design.updatedAt)
+      const message = tr(
+        "Production sauvegardee sur votre compte. Ouvrez Sauvegardes pour la retrouver.",
+        "Design saved to your account. Open Saves to find it again."
       );
-      app()?.announce?.(tr("Production sauvegardee sur votre compte.", "Design saved to your account."));
-      await maybeRefreshSavedDesigns();
+      app()?.showNotice?.(message, "success");
+      app()?.announce?.(message);
     } catch (error) {
-      updateSaveStatus(tr("Echec de la sauvegarde compte.", "Account save failed."));
-      app()?.announce?.(error.message || tr("Sauvegarde distante impossible.", "Remote save failed."));
+      const message = error.message || tr("Sauvegarde distante impossible.", "Remote save failed.");
+      app()?.showNotice?.(message, "error");
+      app()?.announce?.(message);
     }
-  }
-
-  async function maybeRefreshSavedDesigns() {
-    const list = $("saved-designs-list");
-    if (!list || $("saved-designs-modal-backdrop")?.classList.contains("hidden")) return;
-    await loadSavedDesigns();
   }
 
   function ensureSiteNavUi() {
@@ -134,12 +217,10 @@
     cluster.className = "account-toolbar-cluster";
     cluster.id = "account-toolbar-cluster";
     cluster.innerHTML = `
-      <a id="nav-help-link" class="nav-icon-btn" href="https://github.com/jourde/learning-designer-revised" target="_blank" rel="noopener noreferrer" title="${tr("Aide", "Help")}" aria-label="${tr("Aide", "Help")}">
-        <i class="fa-solid fa-circle-question" aria-hidden="true"></i>
-      </a>
-      <button id="saved-designs-btn" class="nav-icon-btn" type="button" title="${tr("Mes sauvegardes", "My saves")}" aria-label="${tr("Mes sauvegardes", "My saves")}">
+      <a id="saved-designs-btn" class="nav-account-btn nav-saves-btn" href="my-designs.php" title="${tr("Sauvegardes", "Saves")}" aria-label="${tr("Sauvegardes", "Saves")}">
         <i class="fa-regular fa-folder-open" aria-hidden="true"></i>
-      </button>
+        <span class="nav-account-label">${tr("Sauvegardes", "Saves")}</span>
+      </a>
       <span id="account-pill" class="account-pill" style="display:none"></span>
       <div class="account-menu-wrap">
         <button id="account-menu-btn" class="nav-account-btn" type="button">
@@ -151,14 +232,6 @@
     `;
 
     navActions.append(cluster);
-
-    $("saved-designs-btn")?.addEventListener("click", () => {
-      if (!authState.user) {
-        window.location.href = "login.php";
-        return;
-      }
-      openSavedDesignsModal();
-    });
 
     $("account-menu-btn")?.addEventListener("click", () => {
       if (!authState.user) {
@@ -188,16 +261,18 @@
       pill.innerHTML = `${tr("Compte", "Account")} <strong>${tr("non connecte", "not signed in")}</strong>`;
       button.innerHTML = `<i class="fa-regular fa-user" aria-hidden="true"></i><span class="nav-account-label">${tr("Connexion", "Sign in")}</span>`;
       menu.innerHTML = "";
+      syncSaveUi();
       return;
     }
 
     pill.innerHTML = `${tr("Compte", "Account")} <strong>${escapeHtml(authState.user.username || authState.user.email)}</strong>`;
-    button.innerHTML = `<i class="fa-solid fa-user-check" aria-hidden="true"></i><span class="nav-account-label">${tr("Mon compte", "My account")}</span>`;
+    button.innerHTML = `<i class="fa-solid fa-user-check" aria-hidden="true"></i><span class="nav-account-label">${tr("Compte", "Account")}</span>`;
     menu.innerHTML = `
       <a class="account-menu-link" role="menuitem" href="profile.php">${tr("Profil", "Profile")}</a>
       ${String(authState.user.role) === "admin" ? `<a class="account-menu-link" role="menuitem" href="admin.php">${tr("Administration", "Admin")}</a>` : ""}
       <a class="account-menu-link" role="menuitem" href="logout.php">${tr("Deconnexion", "Sign out")}</a>
     `;
+    syncSaveUi();
   }
 
   function toggleAccountMenu() {
@@ -212,6 +287,43 @@
     if (!menu) return;
     menu.classList.add("hidden");
     menu.setAttribute("aria-hidden", "true");
+  }
+
+  async function maybeLoadRequestedDesign() {
+    if (requestedRemoteDesignHandled) return;
+    const params = new URLSearchParams(window.location.search);
+    const designId = Number(params.get("remote_design_id") || 0);
+    if (!Number.isFinite(designId) || designId <= 0) return;
+    requestedRemoteDesignHandled = true;
+
+    if (!authState.user) {
+      const message = tr(
+        "Connectez-vous pour ouvrir cette production sauvegardee.",
+        "Sign in to open this saved design."
+      );
+      app()?.showNotice?.(message, "warning");
+      app()?.announce?.(message);
+      return;
+    }
+
+    try {
+      const data = await fetchJson(`get_design.php?design_id=${encodeURIComponent(String(designId))}`);
+      app()?.loadDocument?.(data.design.document, {
+        remoteDesignId: data.design.id,
+        remoteUpdatedAt: data.design.updatedAt
+      });
+      lastLoadTime = Date.now();
+      const cleanUrl = new URL(window.location.href);
+      cleanUrl.searchParams.delete("remote_design_id");
+      window.history.replaceState({}, "", cleanUrl.toString());
+      const message = tr("Production chargee.", "Design loaded.");
+      app()?.showNotice?.(message, "success");
+      app()?.announce?.(message);
+    } catch (error) {
+      const message = error.message || tr("Chargement impossible.", "Load failed.");
+      app()?.showNotice?.(message, "error");
+      app()?.announce?.(message);
+    }
   }
 
   function ensureSavedDesignsModal() {
@@ -318,7 +430,7 @@
         remoteDesignId: data.design.id,
         remoteUpdatedAt: data.design.updatedAt
       });
-      updateSaveStatus(tr("Production chargee depuis votre compte.", "Design loaded from your account."));
+      lastLoadTime = Date.now();
       closeSavedDesignsModal();
       app()?.announce?.(tr("Production chargee.", "Design loaded."));
     } catch (error) {
@@ -357,17 +469,17 @@
   }
 
   function bindSaveButton() {
-    $("save-btn")?.addEventListener("click", () => {
-      if (authState.user) {
-        saveRemoteDesign();
-      }
-    });
+    $("save-btn")?.addEventListener("click", saveToAccountOrLogin, true);
   }
+
+  window.learningDesignerOpenSaves = openSavedDesignsOrLogin;
+  window.learningDesignerSaveToAccount = saveToAccountOrLogin;
 
   document.addEventListener("DOMContentLoaded", () => {
     ensureSiteNavUi();
-    ensureSavedDesignsModal();
     bindSaveButton();
+    syncSaveUi();
     refreshAuth();
+    window.addEventListener("ld:statechange", scheduleAutoSave);
   });
 })();

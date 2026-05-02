@@ -274,6 +274,167 @@ function sanitize_username(string $value): string
     return mb_substr($value, 0, 80, 'UTF-8');
 }
 
+function h(string $value): string
+{
+    return htmlspecialchars($value, ENT_QUOTES, 'UTF-8');
+}
+
+function render_site_nav(string $active = ''): void
+{
+    $user = current_user();
+    $isAdmin = (string)($user['role'] ?? '') === 'admin';
+    $username = trim((string)($user['username'] ?? $user['email'] ?? ''));
+    $homeClass = $active === 'home' ? ' nav-account-btn-active' : '';
+    $savesClass = $active === 'saves' ? ' nav-account-btn-active' : '';
+    $profileClass = $active === 'profile' ? ' nav-account-btn-active' : '';
+    $adminClass = $active === 'admin' ? ' nav-account-btn-active' : '';
+    ?>
+    <header class="site-nav site-nav-page" role="navigation" aria-label="Navigation principale">
+        <div class="site-nav-brand">
+            <a class="site-nav-brand-link" href="index.html" aria-label="Accueil Learning Designer">
+                <span class="site-nav-brand-mark" aria-hidden="true"></span>
+                <div class="site-nav-brand-copy">
+                    <p class="site-nav-title">Learning Designer</p>
+                </div>
+            </a>
+        </div>
+        <div class="site-nav-actions">
+            <label for="lang-select" class="sr-only">Langue de l'interface</label>
+            <select id="lang-select" class="nav-lang-select" aria-label="Langue de l'interface">
+                <option value="fr">FR</option>
+                <option value="en">EN</option>
+            </select>
+            <button id="theme-toggle-btn" class="theme-toggle-btn" type="button" aria-label="Basculer le thème sombre/clair" title="Thème sombre / clair">
+                <svg class="theme-icon-sun" viewBox="0 0 24 24" aria-hidden="true" width="18" height="18">
+                    <path fill="currentColor" d="M12 7a5 5 0 1 0 0 10A5 5 0 0 0 12 7zm0-5a1 1 0 0 1 1 1v1a1 1 0 0 1-2 0V3a1 1 0 0 1 1-1zm0 18a1 1 0 0 1 1 1v1a1 1 0 0 1-2 0v-1a1 1 0 0 1 1-1zM5 12a1 1 0 0 1-1 1H3a1 1 0 0 1 0-2h1a1 1 0 0 1 1 1zm16 0a1 1 0 0 1-1 1h-1a1 1 0 0 1 0-2h1a1 1 0 0 1 1 1zM6.34 7.76a1 1 0 0 1 0-1.42l.7-.7a1 1 0 1 1 1.42 1.42l-.71.71a1 1 0 0 1-1.41-.01zm9.9 9.9a1 1 0 0 1 0-1.42l.7-.7a1 1 0 0 1 1.42 1.42l-.71.71a1 1 0 0 1-1.41-.01zM6.34 17.66a1 1 0 0 1-1.41.01l-.71-.71a1 1 0 0 1 1.42-1.42l.7.7a1 1 0 0 1 0 1.42zM17.66 6.34a1 1 0 0 1-1.41.01l-.71-.71a1 1 0 0 1 1.42-1.42l.7.7a1 1 0 0 1 0 1.42z"/>
+                </svg>
+                <svg class="theme-icon-moon" viewBox="0 0 24 24" aria-hidden="true" width="18" height="18">
+                    <path fill="currentColor" d="M12 3c-4.97 0-9 4.03-9 9s4.03 9 9 9 9-4.03 9-9c0-.46-.04-.92-.1-1.36a5.389 5.389 0 0 1-4.4 2.26 5.403 5.403 0 0 1-3.14-9.8c-.44-.06-.9-.1-1.36-.1z"/>
+                </svg>
+            </button>
+            <div class="account-toolbar-cluster">
+                <a class="nav-icon-btn<?= $homeClass ?>" href="index.html" title="Editeur" aria-label="Editeur">
+                    <i class="fa-solid fa-house" aria-hidden="true"></i>
+                </a>
+                <?php if ($user): ?>
+                    <a class="nav-account-btn<?= $savesClass ?>" href="my-designs.php">
+                        <i class="fa-regular fa-folder-open" aria-hidden="true"></i>
+                        <span class="nav-account-label">Sauvegardes</span>
+                    </a>
+                    <div class="account-menu-wrap">
+                        <button id="account-menu-btn" class="nav-account-btn<?= $profileClass !== '' || $adminClass !== '' ? ' nav-account-btn-active' : '' ?>" type="button" aria-expanded="false" aria-controls="account-menu">
+                            <i class="fa-solid fa-user-check" aria-hidden="true"></i>
+                            <span class="nav-account-label">Compte</span>
+                        </button>
+                        <div id="account-menu" class="account-menu hidden" role="menu" aria-hidden="true">
+                            <a class="account-menu-link<?= $profileClass ?>" role="menuitem" href="profile.php">Profil</a>
+                            <?php if ($isAdmin): ?>
+                                <a class="account-menu-link<?= $adminClass ?>" role="menuitem" href="admin.php">Administration</a>
+                            <?php endif; ?>
+                            <a class="account-menu-link" role="menuitem" href="logout.php">Deconnexion</a>
+                        </div>
+                    </div>
+                <?php else: ?>
+                    <a class="nav-account-btn<?= $active === 'signup' ? ' nav-account-btn-active' : '' ?>" href="signup.php">
+                        <i class="fa-solid fa-user-plus" aria-hidden="true"></i>
+                        <span class="nav-account-label">Creer un compte</span>
+                    </a>
+                    <a class="nav-account-btn<?= $active === 'login' ? ' nav-account-btn-active' : '' ?>" href="login.php">
+                        <i class="fa-regular fa-user" aria-hidden="true"></i>
+                        <span class="nav-account-label">Connexion</span>
+                    </a>
+                <?php endif; ?>
+            </div>
+        </div>
+    </header>
+    <script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var html = document.documentElement;
+        var savedTheme = '';
+        try {
+            savedTheme = localStorage.getItem('learningDesignerTheme') || '';
+        } catch (error) {
+            savedTheme = '';
+        }
+        if (savedTheme === 'dark') {
+            html.setAttribute('data-theme', 'dark');
+        }
+
+        var themeButton = document.getElementById('theme-toggle-btn');
+        if (themeButton) {
+            themeButton.addEventListener('click', function () {
+                var isDark = html.getAttribute('data-theme') === 'dark';
+                if (isDark) {
+                    html.removeAttribute('data-theme');
+                    try {
+                        localStorage.setItem('learningDesignerTheme', 'light');
+                    } catch (error) {
+                    }
+                } else {
+                    html.setAttribute('data-theme', 'dark');
+                    try {
+                        localStorage.setItem('learningDesignerTheme', 'dark');
+                    } catch (error) {
+                    }
+                }
+            });
+        }
+
+        var langSelect = document.getElementById('lang-select');
+        if (langSelect) {
+            var savedLang = 'fr';
+            try {
+                savedLang = localStorage.getItem('learningDesignerLang') || 'fr';
+            } catch (error) {
+                savedLang = 'fr';
+            }
+            if (savedLang !== 'fr' && savedLang !== 'en') {
+                savedLang = 'fr';
+            }
+            langSelect.value = savedLang;
+            html.setAttribute('lang', savedLang);
+            langSelect.addEventListener('change', function () {
+                html.setAttribute('lang', langSelect.value);
+                try {
+                    localStorage.setItem('learningDesignerLang', langSelect.value);
+                } catch (error) {
+                }
+            });
+        }
+
+        var button = document.getElementById('account-menu-btn');
+        var menu = document.getElementById('account-menu');
+        if (!button || !menu) {
+            return;
+        }
+
+        function closeMenu() {
+            menu.classList.add('hidden');
+            menu.setAttribute('aria-hidden', 'true');
+            button.setAttribute('aria-expanded', 'false');
+        }
+
+        button.addEventListener('click', function () {
+            var opening = menu.classList.contains('hidden');
+            if (opening) {
+                menu.classList.remove('hidden');
+                menu.setAttribute('aria-hidden', 'false');
+                button.setAttribute('aria-expanded', 'true');
+            } else {
+                closeMenu();
+            }
+        });
+
+        document.addEventListener('click', function (event) {
+            if (!menu.contains(event.target) && !button.contains(event.target)) {
+                closeMenu();
+            }
+        });
+    });
+    </script>
+    <?php
+}
+
 function require_same_origin_post(bool $allowJson = false): void
 {
     if (($_SERVER['REQUEST_METHOD'] ?? 'GET') !== 'POST') {

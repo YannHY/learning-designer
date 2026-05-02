@@ -1,7 +1,5 @@
 (() => {
 "use strict";
-const STORAGE_KEY = "learning-designer-fr-v3";
-
 const LEARNING_TYPES = [
   { id: "undefined", label: "Non défini", color: "#d1d5db" },
   { id: "read", label: "Lire / Regarder / Écouter", color: "#a1f5ed" },
@@ -445,7 +443,6 @@ const TOOL_CATEGORY_LABELS = {
 let uid = 0;
 const nextId = () => `id-${Date.now()}-${uid++}`;
 const DEFAULT_DAY_HOURS = 7;
-const AUTOSAVE_INTERVAL_MS = 10_000;
 
 /**
  * Returns a debounced version of fn that fires after `delay` ms of inactivity.
@@ -515,7 +512,6 @@ const sessionTpl = document.getElementById("session-template");
 const activityTpl = document.getElementById("activity-template");
 
 const addSessionBtn = document.getElementById("add-session-btn");
-const expandNotesBtn = document.getElementById("expand-notes-btn");
 const boardLayoutToggle = document.getElementById("board-layout-toggle");
 const boardLayoutListBtn = document.getElementById("board-layout-list-btn");
 const boardLayoutColumnsBtn = document.getElementById("board-layout-columns-btn");
@@ -527,9 +523,8 @@ const newDesignBtn = document.getElementById("new-design-btn");
 const importDesignBtn = document.getElementById("import-design-btn");
 const exportDesignBtn = document.getElementById("export-design-btn");
 const infoBtn = document.getElementById("info-btn");
+const footerAboutBtn = document.getElementById("footer-about-btn");
 const saveBtn = document.getElementById("save-btn");
-const saveStatusLabel = document.getElementById("save-status-label");
-const saveStatusValue = document.getElementById("save-status-value");
 const importFileInput = document.getElementById("import-file-input");
 const langSelect = document.getElementById("lang-select");
 const srStatus = document.getElementById("sr-status");
@@ -587,16 +582,28 @@ const exportModalBackdrop = document.getElementById("export-modal-backdrop");
 const exportFormatSelect = document.getElementById("export-format-select");
 const exportModalCancelBtn = document.getElementById("export-modal-cancel-btn");
 const exportModalConfirmBtn = document.getElementById("export-modal-confirm-btn");
+const exportResultModalBackdrop = document.getElementById("export-result-modal-backdrop");
+const exportResultDownloadLink = document.getElementById("export-result-download-link");
+const exportResultText = document.getElementById("export-result-text");
+const exportResultCopyBtn = document.getElementById("export-result-copy-btn");
+const exportResultCloseBtn = document.getElementById("export-result-close-btn");
 const importModalBackdrop = document.getElementById("import-modal-backdrop");
 const importFormatSelect = document.getElementById("import-format-select");
 const importModalCancelBtn = document.getElementById("import-modal-cancel-btn");
 const importModalConfirmBtn = document.getElementById("import-modal-confirm-btn");
 
-let state = loadState();
+const LD_STORAGE_KEY = "ld_state_v1";
+
+let state = (() => {
+  try {
+    const raw = localStorage.getItem(LD_STORAGE_KEY);
+    if (raw) return hydrateState(JSON.parse(raw), defaultState());
+  } catch (_) {}
+  return defaultState();
+})();
 let dragState = null;
 let activeModalBackdrop = null;
 let previousFocusedElement = null;
-let lastSavedAt = null;
 
 const I18N = {
   fr: {
@@ -617,10 +624,7 @@ const I18N = {
     export: "Exporter",
     save: "Enregistrer",
     saved: "Enregistré",
-    savedLocal: "Enregistré localement.",
-    autosaveLabel: "Autosauvegarde locale",
-    autosaveReady: "Modifications enregistrées automatiquement",
-    autosaveSavedAt: "Dernier enregistrement :",
+    savedLocal: "Modifications mises à jour.",
     info: "Information",
     toolbarRegion: "Actions du design",
     analysisTitle: "Expérience d’apprentissage",
@@ -634,8 +638,8 @@ const I18N = {
     metaSizeLabel: "Taille du groupe",
     metaDesignersLabel: "Concepteur(s)",
     metaTrainersLabel: "Formateur(s)",
-    metaPersonasLabel: "Personas (profils)",
-    metaSlidersLabel: "Curseurs de la formation",
+    metaPersonasLabel: "Objectifs",
+    metaSlidersLabel: "Résultats",
     unitDays: "jours",
     unitHours: "heures",
     unitMinutes: "minutes",
@@ -687,10 +691,10 @@ const I18N = {
     sessionTitlePlaceholder: "Titre du moment",
     activityDescriptionPlaceholder: "Activité",
     newDesignConfirm: "Créer un nouveau design et écraser le contenu actuel ?",
-    importInvalid: "Fichier invalide. Importez un JSON, CSV ou Excel exporté depuis cette application.",
+    importInvalid: "Fichier invalide. Importez un LDJ, JSON, CSV ou Excel exporté depuis cette application.",
     commandPlaceholder: "Collez ici la commande institutionnelle déjà définie...",
-    personasPlaceholder: "Collez ici les personas (profils) déjà définis...",
-    slidersPlaceholder: "Collez ici les curseurs déjà définis...",
+    personasPlaceholder: "Décrivez les objectifs de la formation...",
+    slidersPlaceholder: "Décrivez les résultats attendus...",
     sessionNotesPlaceholder: "Notes de la séance...",
     sessionObjectivesPlaceholder: "Objectifs du moment...",
     sessionIntentionsLabel: "Choix pédagogiques",
@@ -808,10 +812,7 @@ const I18N = {
     export: "Export",
     save: "Save",
     saved: "Saved",
-    savedLocal: "Saved locally.",
-    autosaveLabel: "Local autosave",
-    autosaveReady: "Changes are saved automatically",
-    autosaveSavedAt: "Last saved:",
+    savedLocal: "Changes updated.",
     info: "About",
     toolbarRegion: "Design actions",
     analysisTitle: "Learning Experience",
@@ -825,8 +826,8 @@ const I18N = {
     metaSizeLabel: "Group size",
     metaDesignersLabel: "Designer(s)",
     metaTrainersLabel: "Trainer(s)",
-    metaPersonasLabel: "Personas (profiles)",
-    metaSlidersLabel: "Training sliders",
+    metaPersonasLabel: "Objectives",
+    metaSlidersLabel: "Results",
     unitDays: "days",
     unitHours: "hours",
     unitMinutes: "minutes",
@@ -878,10 +879,10 @@ const I18N = {
     sessionTitlePlaceholder: "Moment title",
     activityDescriptionPlaceholder: "Activity",
     newDesignConfirm: "Create a new design and replace current content?",
-    importInvalid: "Invalid file. Import a JSON, CSV or Excel file exported by this application.",
+    importInvalid: "Invalid file. Import an LDJ, JSON, CSV or Excel file exported by this application.",
     commandPlaceholder: "Paste the previously defined institutional brief here...",
-    personasPlaceholder: "Paste previously defined personas here...",
-    slidersPlaceholder: "Paste previously defined sliders here...",
+    personasPlaceholder: "Describe the learning objectives...",
+    slidersPlaceholder: "Describe the expected results...",
     sessionNotesPlaceholder: "Session notes...",
     sessionObjectivesPlaceholder: "Moment objectives...",
     sessionIntentionsLabel: "Pedagogical choices",
@@ -1034,6 +1035,35 @@ function announce(message) {
   }, 10);
 }
 
+let noticeTimeoutId = 0;
+function ensureNoticeHost() {
+  let host = document.getElementById("app-notice-host");
+  if (host) return host;
+  host = document.createElement("div");
+  host.id = "app-notice-host";
+  host.className = "app-notice-host";
+  host.setAttribute("aria-live", "polite");
+  host.setAttribute("aria-atomic", "true");
+  document.body.appendChild(host);
+  return host;
+}
+
+function showNotice(message, kind = "info") {
+  if (!message) return;
+  announce(message);
+  const host = ensureNoticeHost();
+  const notice = document.createElement("div");
+  notice.className = `app-notice app-notice-${kind}`;
+  notice.textContent = message;
+  host.replaceChildren(notice);
+  window.clearTimeout(noticeTimeoutId);
+  noticeTimeoutId = window.setTimeout(() => {
+    if (host.firstChild === notice) {
+      host.replaceChildren();
+    }
+  }, 4200);
+}
+
 function shortLabel(label) {
   return String(label || "")
     .split(/[ /-]+/)
@@ -1047,19 +1077,6 @@ function formatSavedTime(date) {
     hour: "2-digit",
     minute: "2-digit"
   }).format(date);
-}
-
-function updateSaveStatus() {
-  if (!saveStatusLabel || !saveStatusValue) return;
-  saveStatusLabel.textContent = t("autosaveLabel");
-  const valueText = lastSavedAt
-    ? `${t("autosaveSavedAt")} ${formatSavedTime(lastSavedAt)}`
-    : t("autosaveReady");
-  saveStatusValue.textContent = valueText;
-  const saveStatusEl = document.getElementById("save-status");
-  if (saveStatusEl) {
-    saveStatusEl.title = `${t("autosaveLabel")} — ${valueText}`;
-  }
 }
 
 function ensureMarkdownToolbars(root = document) {
@@ -1081,6 +1098,17 @@ function ensureMarkdownToolbars(root = document) {
     });
     wrapper.insertBefore(toolbar, textarea);
   });
+}
+
+const AUTO_RESIZE_SELECTOR = ".session-title, .session-objectives, .session-intentions, .activity-description, .session-notes-input, .activity-notes-input";
+
+function autoResizeTextarea(el) {
+  el.style.height = "auto";
+  el.style.height = el.scrollHeight + "px";
+}
+
+function initAutoResizeTextareas(root = document) {
+  root.querySelectorAll(AUTO_RESIZE_SELECTOR).forEach(autoResizeTextarea);
 }
 
 function localizeExpandableFieldControls(root = document) {
@@ -1255,7 +1283,6 @@ function applyLocalizedUI() {
   document.getElementById("info-modal-p5").innerHTML = t("infoP5");
   infoModalCloseBtn.textContent = t("close");
   document.querySelector("label[for='lang-select']").textContent = t("uiLanguage");
-  updateSaveStatus();
   document.querySelectorAll(".duration-unit").forEach((unit) => {
     unit.textContent = "min";
   });
@@ -1368,16 +1395,6 @@ function hydrateState(parsed, fallback = defaultState()) {
   return hydrated;
 }
 
-function loadState() {
-  const raw = localStorage.getItem(STORAGE_KEY);
-  if (!raw) return defaultState();
-  try {
-    return hydrateState(JSON.parse(raw), defaultState());
-  } catch {
-    return defaultState();
-  }
-}
-
 function createNewDesignState() {
   return {
     allNotesExpanded: false,
@@ -1395,26 +1412,9 @@ function createNewDesignState() {
 
 function saveState() {
   try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
-    lastSavedAt = new Date();
-    updateSaveStatus();
-  } catch (error) {
-    console.error("Impossible de sauvegarder l'état local.", error);
-    announce(currentLang() === "en" ? "Local save failed." : "Échec de la sauvegarde locale.");
-  }
-}
-
-function setupAutoSave() {
-  // Filet de sécurité: persistance périodique même sans clic explicite.
-  window.setInterval(saveState, AUTOSAVE_INTERVAL_MS);
-
-  document.addEventListener("visibilitychange", () => {
-    if (document.hidden) saveState();
-  });
-
-  window.addEventListener("beforeunload", () => {
-    saveState();
-  });
+    localStorage.setItem(LD_STORAGE_KEY, JSON.stringify(state));
+  } catch (_) {}
+  window.dispatchEvent(new CustomEvent("ld:statechange"));
 }
 
 function setupFormAccessibility() {
@@ -1438,6 +1438,9 @@ function setupFormAccessibility() {
     }
     if (field.validity.valid) {
       field.removeAttribute("aria-invalid");
+    }
+    if (field instanceof HTMLTextAreaElement && field.matches(AUTO_RESIZE_SELECTOR)) {
+      autoResizeTextarea(field);
     }
   });
 }
@@ -2568,12 +2571,12 @@ function buildMarkdownExport() {
     lines.push("");
   }
   if (state.meta.personas) {
-    lines.push("### Personas (profils)");
+    lines.push("### Objectifs");
     lines.push(state.meta.personas);
     lines.push("");
   }
   if (state.meta.sliders) {
-    lines.push("### Curseurs");
+    lines.push("### Résultats");
     lines.push(state.meta.sliders);
     lines.push("");
   }
@@ -2685,14 +2688,14 @@ function buildHtmlExportDocument() {
     }
     ${
       state.meta.personas
-        ? `<p><strong>Personas (profils):</strong><br />${escapeHtmlWithBreaks(
+        ? `<p><strong>Objectifs:</strong><br />${escapeHtmlWithBreaks(
             state.meta.personas
           )}</p>`
         : ""
     }
     ${
       state.meta.sliders
-        ? `<p><strong>Curseurs:</strong><br />${escapeHtmlWithBreaks(state.meta.sliders)}</p>`
+        ? `<p><strong>Résultats:</strong><br />${escapeHtmlWithBreaks(state.meta.sliders)}</p>`
         : ""
     }
   </section>`;
@@ -3015,6 +3018,126 @@ function parseCsvPedagogicalTime(value, dayHours = DEFAULT_DAY_HOURS) {
   return normalizePedagogicalTime(days, hours, minutes, dayHours);
 }
 
+function parseLegacyLearningType(value) {
+  return lookupValue(value, CSV_TYPE_LOOKUP, "read");
+}
+
+function parseLegacyEvaluationType(value) {
+  return lookupValue(value, CSV_EVAL_LOOKUP, "none");
+}
+
+function parseLegacyGroupMode(groupSize, groupSizeSameAsSession, sessionGroupSize) {
+  if (groupSizeSameAsSession) {
+    return Number(sessionGroupSize) > 1 ? "whole" : "individual";
+  }
+  const size = Math.max(0, parseCsvInteger(groupSize, 0));
+  if (size <= 1) return "individual";
+  if (size < Math.max(2, Number(sessionGroupSize) || 15)) return "subgroups";
+  return "whole";
+}
+
+function isLegacyLdjDocument(parsed) {
+  return Boolean(
+    parsed &&
+    typeof parsed === "object" &&
+    Array.isArray(parsed.activities) &&
+    !Array.isArray(parsed.sessions)
+  );
+}
+
+function buildStateFromLegacyLdj(parsed) {
+  if (!isLegacyLdjDocument(parsed)) return null;
+
+  const imported = createNewDesignState();
+  const topic = String(parsed.topic ?? "").trim();
+  const description = String(parsed.description ?? "").trim();
+  const aims = String(parsed.aims ?? "").trim();
+  const outcomes = Array.isArray(parsed.outcomes)
+    ? parsed.outcomes
+        .map((item) => {
+          const details = String(item?.details ?? "").trim();
+          const verb = String(item?.verb ?? "").trim();
+          if (details && verb) return `${details} (${verb})`;
+          return details || verb;
+        })
+        .filter(Boolean)
+        .join("\n")
+    : "";
+
+  imported.meta.uiLanguage = currentLang();
+  imported.meta.name = String(parsed.name ?? "").trim();
+  imported.meta.modeDelivery = lookupValue(parsed.modeOfDelivery, CSV_LOCATION_LOOKUP, "onsite");
+  imported.meta.sizeClass = String(parsed.groupSize ?? "").trim();
+  imported.meta.designers = String(parsed.author ?? "").trim();
+  imported.meta.description = description;
+  imported.meta.command = topic;
+  imported.meta.personas = aims;
+  imported.meta.sliders = outcomes;
+
+  const learningTime = parseCsvPedagogicalTime(parsed.learningTime, imported.meta.dayHours);
+  imported.meta.learningDays = learningTime.days;
+  imported.meta.learningHours = learningTime.hours;
+  imported.meta.learningMinutes = learningTime.minutes;
+
+  imported.sessions = parsed.activities.map((legacySession, sessionIndex) => {
+    const sessionGroupSize = parseCsvInteger(
+      legacySession?.groupSize ?? parsed.groupSize,
+      parseCsvInteger(parsed.groupSize, 0)
+    );
+    const session = {
+      id: nextId(),
+      title: String(legacySession?.title ?? "").trim() || defaultSessionTitle(sessionIndex + 1),
+      objectives: "",
+      intentions: String(legacySession?.teachingMethod ?? "").trim(),
+      notes: String(legacySession?.notes ?? "").trim(),
+      notesExpanded: false,
+      activities: []
+    };
+
+    const resources = Array.isArray(legacySession?.resources)
+      ? legacySession.resources.map((value) => String(value ?? "").trim()).filter(Boolean)
+      : [];
+    if (resources.length) {
+      session.notes = [session.notes, resources.join("\n")].filter(Boolean).join("\n\n");
+    }
+
+    session.activities = Array.isArray(legacySession?.slas)
+      ? legacySession.slas.map((legacyActivity) => {
+          const activity = {
+            id: nextId(),
+            type: parseLegacyLearningType(legacyActivity?.type),
+            duration: Math.max(1, parseCsvInteger(legacyActivity?.duration, 1)),
+            groupMode: parseLegacyGroupMode(
+              legacyActivity?.groupSize,
+              String(legacyActivity?.groupSizeSameAsSession) === "true",
+              sessionGroupSize
+            ),
+            teacherPresence: String(legacyActivity?.tutorAvailable) === "true" ? "present" : "absent",
+            syncMode: String(legacyActivity?.syncActivity) === "true" ? "sync" : "async",
+            locationMode: String(legacyActivity?.onlineActivity) === "true" ? "online" : "onsite",
+            evaluationMode: parseLegacyEvaluationType(legacyActivity?.assessmentType),
+            description: String(legacyActivity?.description ?? "").trim(),
+            notes: "",
+            tools: []
+          };
+
+          const activityResources = Array.isArray(legacyActivity?.resources)
+            ? legacyActivity.resources.map((value) => String(value ?? "").trim()).filter(Boolean)
+            : [];
+          if (activityResources.length) {
+            activity.notes = activityResources.join("\n");
+          }
+          normalizeActivity(activity);
+          return activity;
+        })
+      : [];
+
+    return session;
+  });
+
+  return hydrateState(imported, null);
+}
+
 function buildStateFromCsv(csvText) {
   const rows = parseCsvRows(csvText);
   if (rows.length < 2) return null;
@@ -3125,14 +3248,76 @@ function buildStateFromCsv(csvText) {
   return hydrateState(imported, null);
 }
 
-function downloadBlob(content, type, filename) {
+async function downloadBlob(content, type, filename) {
   const blob = new Blob([content], { type });
+  if (typeof navigator !== "undefined" && typeof navigator.msSaveOrOpenBlob === "function") {
+    navigator.msSaveOrOpenBlob(blob, filename);
+    return;
+  }
+
+  const userAgent = typeof navigator !== "undefined" ? String(navigator.userAgent || "") : "";
+  const isTouchDevice =
+    typeof navigator !== "undefined" &&
+    (Number(navigator.maxTouchPoints || 0) > 0 || /Android|iPhone|iPad|iPod/i.test(userAgent));
+  const isSafariLike =
+    /Safari/i.test(userAgent) &&
+    !/Chrome|Chromium|CriOS|Edg|OPR|Firefox|FxiOS|Android/i.test(userAgent);
+
+  if (
+    isTouchDevice &&
+    typeof File === "function" &&
+    typeof navigator !== "undefined" &&
+    typeof navigator.canShare === "function" &&
+    typeof navigator.share === "function"
+  ) {
+    try {
+      const file = new File([blob], filename, { type });
+      if (navigator.canShare({ files: [file] })) {
+        await navigator.share({ files: [file], title: filename });
+        return;
+      }
+    } catch (error) {
+      if (error?.name === "AbortError") return;
+    }
+  }
+
+  if (isSafariLike && typeof FileReader !== "undefined") {
+    const popup = window.open("", "_blank", "noopener");
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      const dataUrl = String(reader.result || "");
+      if (!dataUrl) return;
+      if (popup) {
+        popup.location.replace(dataUrl);
+      } else {
+        window.location.href = dataUrl;
+      }
+    };
+    reader.readAsDataURL(blob);
+    return;
+  }
+
   const url = URL.createObjectURL(blob);
   const a = document.createElement("a");
   a.href = url;
   a.download = filename;
+  a.rel = "noopener";
+  a.style.display = "none";
+  document.body.appendChild(a);
   a.click();
-  URL.revokeObjectURL(url);
+  a.remove();
+  window.setTimeout(() => URL.revokeObjectURL(url), 1000);
+}
+
+function openExportResultModal(content, type, filename) {
+  const text = typeof content === "string" ? content : String(content ?? "");
+  const blob = new Blob([text], { type });
+  const url = URL.createObjectURL(blob);
+  exportResultDownloadLink.href = url;
+  exportResultDownloadLink.download = filename;
+  exportResultText.value = text;
+  openModal(exportResultModalBackdrop, "#export-result-copy-btn");
+  window.setTimeout(() => URL.revokeObjectURL(url), 60_000);
 }
 
 function getFocusableElements(container) {
@@ -3181,9 +3366,23 @@ function closeImportModal() {
   closeModal(importModalBackdrop);
 }
 
+function openImportPicker(format = "") {
+  const normalized = String(format || "").toLowerCase();
+  importFileInput.dataset.format = normalized;
+  importFileInput.accept =
+    normalized === "csv" ? ".csv,text/csv,text/plain"
+    : normalized === "xlsx" ? ".xlsx,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+    : normalized === "ldj" ? ".ldj,.json,application/json,text/json,text/plain"
+    : "";
+  importFileInput.value = "";
+  importFileInput.click();
+}
+
 function openInfoModal() {
   openModal(infoModalBackdrop, "#info-modal-close-btn");
 }
+
+window.learningDesignerOpenInfo = openInfoModal;
 
 function closeInfoModal() {
   closeModal(infoModalBackdrop);
@@ -4191,11 +4390,7 @@ function render() {
 
   ensureMarkdownToolbars(board);
   localizeExpandableFieldControls(board);
-  setButtonLabel(
-    expandNotesBtn,
-    state.allNotesExpanded ? "fa-regular fa-note-sticky" : "fa-regular fa-note-sticky",
-    state.allNotesExpanded ? t("collapseNotes") : t("expandNotes")
-  );
+  initAutoResizeTextareas(board);
   const toggleIntentionsBtn = document.getElementById("toggle-intentions-btn");
   if (toggleIntentionsBtn) {
     setButtonLabel(
@@ -4342,12 +4537,6 @@ addSessionBtn.addEventListener("click", () => {
   render();
 });
 
-expandNotesBtn.addEventListener("click", () => {
-  state.allNotesExpanded = !state.allNotesExpanded;
-  saveState();
-  render();
-});
-
 document.getElementById("toggle-intentions-btn")?.addEventListener("click", () => {
   state.intentionsCollapsed = !state.intentionsCollapsed;
   saveState();
@@ -4392,42 +4581,67 @@ newDesignBtn.addEventListener("click", () => {
   announce(t("moved"));
 });
 
-saveBtn.addEventListener("click", () => {
-  saveState();
-  announce(t("savedLocal"));
-});
-
-function exportDesign(format = "json") {
+function getExportPayload(format = "json") {
   const chosen = String(format).toLowerCase();
   if (chosen === "excel" || chosen === "xls") {
-    downloadBlob(
-      buildExcelExportDocument(),
-      "application/vnd.ms-excel;charset=utf-8",
-      "design-learning-designer-fr.xls"
-    );
-    return;
+    return {
+      content: buildExcelExportDocument(),
+      type: "application/vnd.ms-excel;charset=utf-8",
+      filename: "design-learning-designer-fr.xls"
+    };
   }
   if (chosen === "md" || chosen === "markdown") {
-    downloadBlob(buildMarkdownExport(), "text/markdown;charset=utf-8", "design-learning-designer-fr.md");
-    return;
+    return {
+      content: buildMarkdownExport(),
+      type: "text/markdown;charset=utf-8",
+      filename: "design-learning-designer-fr.md"
+    };
   }
   if (chosen === "html") {
-    downloadBlob(buildHtmlExportDocument(), "text/html;charset=utf-8", "design-learning-designer-fr.html");
-    return;
+    return {
+      content: buildHtmlExportDocument(),
+      type: "text/html;charset=utf-8",
+      filename: "design-learning-designer-fr.html"
+    };
   }
   if (chosen === "word" || chosen === "doc" || chosen === "docx") {
-    downloadBlob(
-      buildHtmlExportDocument(),
-      "application/msword",
-      "design-learning-designer-fr.doc"
-    );
-    return;
+    return {
+      content: buildHtmlExportDocument(),
+      type: "application/msword",
+      filename: "design-learning-designer-fr.doc"
+    };
   }
-  downloadBlob(
-    JSON.stringify(state, null, 2),
-    "application/json;charset=utf-8",
-    "design-learning-designer-fr.json"
-  );
+  return {
+    content: JSON.stringify(state, null, 2),
+    type: "application/json;charset=utf-8",
+    filename: "design-learning-designer-fr.json"
+  };
+}
+
+window.learningDesignerGetExportPayload = getExportPayload;
+
+async function exportDesign(format = "json") {
+  const { content, type, filename } = getExportPayload(format);
+  openExportResultModal(content, type, filename);
+  try {
+    await downloadBlob(content, type, filename);
+  } catch (error) {
+    console.error("Export failed", error);
+    showNotice(currentLang() === "en" ? "Download blocked by browser. Use the export window." : "Téléchargement bloqué par le navigateur. Utilisez la fenêtre d’export.", "warning");
+  }
+}
+
+if (typeof window.learningDesignerOpenExport !== "function") {
+  window.learningDesignerOpenExport = () => {
+    openExportModal();
+  };
+}
+
+if (typeof window.learningDesignerRunExport !== "function") {
+  window.learningDesignerRunExport = async () => {
+    await exportDesign(exportFormatSelect?.value || "json");
+    closeExportModal();
+  };
 }
 
 exportDesignBtn.addEventListener("click", () => {
@@ -4452,9 +4666,8 @@ exportModalCancelBtn.addEventListener("click", () => {
   closeExportModal();
 });
 
-exportModalConfirmBtn.addEventListener("click", () => {
-  exportDesign(exportFormatSelect.value);
-  closeExportModal();
+exportModalConfirmBtn.addEventListener("click", async () => {
+  await window.learningDesignerRunExport();
 });
 
 exportModalBackdrop.addEventListener("click", (event) => {
@@ -4463,8 +4676,28 @@ exportModalBackdrop.addEventListener("click", (event) => {
   }
 });
 
+exportResultCopyBtn?.addEventListener("click", async () => {
+  try {
+    await navigator.clipboard.writeText(exportResultText.value);
+    showNotice(currentLang() === "en" ? "Export copied." : "Export copié.", "success");
+  } catch {
+    exportResultText.focus();
+    exportResultText.select();
+  }
+});
+
+exportResultCloseBtn?.addEventListener("click", () => {
+  closeModal(exportResultModalBackdrop);
+});
+
+exportResultModalBackdrop?.addEventListener("click", (event) => {
+  if (event.target === exportResultModalBackdrop) {
+    closeModal(exportResultModalBackdrop);
+  }
+});
+
 importDesignBtn.addEventListener("click", () => {
-  openImportModal();
+  openImportPicker();
 });
 
 importModalCancelBtn.addEventListener("click", () => {
@@ -4474,14 +4707,9 @@ importModalCancelBtn.addEventListener("click", () => {
 importModalConfirmBtn.addEventListener("click", () => {
   const format = importFormatSelect.value === "csv" ? "csv"
                : importFormatSelect.value === "xlsx" ? "xlsx"
+               : importFormatSelect.value === "ldj" ? "ldj"
                : "json";
-  importFileInput.dataset.format = format;
-  importFileInput.accept =
-    format === "csv"  ? ".csv,text/csv,text/plain"
-    : format === "xlsx" ? ".xlsx,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-    : ".json,application/json,text/json";
-  importFileInput.value = "";
-  importFileInput.click();
+  openImportPicker(format);
   closeImportModal();
 });
 
@@ -4505,6 +4733,7 @@ importFileInput.addEventListener("change", async (e) => {
   const selectedFormat =
     forcedFormat === "xlsx" || filename.endsWith(".xlsx") ? "xlsx"
     : forcedFormat === "csv" || filename.endsWith(".csv") ? "csv"
+    : forcedFormat === "ldj" || filename.endsWith(".ldj") ? "ldj"
     : "json";
   try {
     let hydrated = null;
@@ -4520,7 +4749,9 @@ importFileInput.addEventListener("change", async (e) => {
     } else {
       const text = await file.text();
       const parsed = JSON.parse(text);
-      hydrated = hydrateState(parsed, null);
+      hydrated = isLegacyLdjDocument(parsed)
+        ? buildStateFromLegacyLdj(parsed)
+        : hydrateState(parsed, null);
     }
     if (!hydrated) {
       throw new Error("Format invalide");
@@ -4533,7 +4764,7 @@ importFileInput.addEventListener("change", async (e) => {
     alert(t("importInvalid"));
   } finally {
     importFileInput.value = "";
-    importFileInput.accept = ".json,.csv,.xlsx,application/json,text/csv";
+    importFileInput.accept = ".json,.ldj,.csv,.xlsx,application/json,text/csv";
     delete importFileInput.dataset.format;
   }
 });
@@ -4680,7 +4911,6 @@ partitionConfigModalBackdrop?.addEventListener("click", (e) => {
 
 // ─────────────────────────────────────────────────────────────────────────────
 
-setupAutoSave();
 setupExpandableFields();
 setupFormAccessibility();
 bindTopPanelEvents();
@@ -4693,6 +4923,7 @@ window.learningDesignerApp = {
   },
   t,
   announce,
+  showNotice,
   saveLocal() {
     saveState();
   },
@@ -4713,5 +4944,147 @@ window.learningDesignerApp = {
     render();
   }
 };
+// ── Tooltip personnalisé ─────────────────────────────────────
+(function initTooltip() {
+  const tip = document.createElement("div");
+  tip.id = "app-tooltip";
+  tip.setAttribute("role", "tooltip");
+  tip.setAttribute("aria-hidden", "true");
+  document.body.appendChild(tip);
+
+  let timer = null;
+  let activeTarget = null;
+
+  // Déplace title → data-tooltip pour éviter le doublon natif
+  function hoistTitles(root) {
+    (root.querySelectorAll ? root.querySelectorAll("[title]:not(abbr)") : [])
+      .forEach((el) => {
+        if (!el.dataset.tooltip) el.dataset.tooltip = el.getAttribute("title");
+        el.removeAttribute("title");
+      });
+  }
+  hoistTitles(document);
+
+  // Surveille les nouveaux éléments (cartes d'activité, boutons de choix…)
+  new MutationObserver((mutations) => {
+    mutations.forEach((m) => {
+      m.addedNodes.forEach((node) => {
+        if (node.nodeType === 1) {
+          if (node.getAttribute && node.getAttribute("title") && node.tagName !== "ABBR") {
+            if (!node.dataset.tooltip) node.dataset.tooltip = node.getAttribute("title");
+            node.removeAttribute("title");
+          }
+          hoistTitles(node);
+        }
+      });
+      // Gère aussi les attributions dynamiques de title (setChoiceButton)
+      if (
+        m.type === "attributes" &&
+        m.attributeName === "title" &&
+        m.target.tagName !== "ABBR" &&
+        m.target.getAttribute("title")
+      ) {
+        m.target.dataset.tooltip = m.target.getAttribute("title");
+        m.target.removeAttribute("title");
+      }
+    });
+  }).observe(document.body, { childList: true, subtree: true, attributes: true, attributeFilter: ["title"] });
+
+  function nearestTip(el) {
+    let node = el;
+    while (node && node !== document.body) {
+      if (node.dataset && node.dataset.tooltip) return node;
+      node = node.parentElement;
+    }
+    return null;
+  }
+
+  function place(target) {
+    const rect = target.getBoundingClientRect();
+    const tw = tip.offsetWidth;
+    const th = tip.offsetHeight;
+    const gap = 9;
+    const vw = window.innerWidth;
+
+    tip.classList.remove("tip-above", "tip-below");
+
+    let top;
+    if (rect.top - th - gap > 6) {
+      top = rect.top - th - gap;
+      tip.classList.add("tip-above");
+    } else {
+      top = rect.bottom + gap;
+      tip.classList.add("tip-below");
+    }
+
+    let left = rect.left + rect.width / 2 - tw / 2;
+    left = Math.max(6, Math.min(vw - tw - 6, left));
+
+    // Décale la flèche si le tooltip est déporté
+    const arrowPos = Math.max(14, Math.min(tw - 14, rect.left + rect.width / 2 - left));
+    tip.style.setProperty("--tip-arrow", arrowPos + "px");
+    tip.style.top = Math.round(top) + "px";
+    tip.style.left = Math.round(left) + "px";
+  }
+
+  function show(target) {
+    activeTarget = target;
+    tip.textContent = target.dataset.tooltip;
+    tip.setAttribute("aria-hidden", "false");
+    // Positionne hors-écran le temps de mesurer
+    tip.style.left = "-9999px";
+    tip.style.top = "-9999px";
+    tip.classList.add("tip-visible");
+    requestAnimationFrame(() => { if (activeTarget === target) place(target); });
+  }
+
+  function hide() {
+    clearTimeout(timer);
+    activeTarget = null;
+    tip.classList.remove("tip-visible", "tip-above", "tip-below");
+    tip.setAttribute("aria-hidden", "true");
+  }
+
+  document.addEventListener("mouseover", (e) => {
+    const target = nearestTip(e.target);
+    if (!target || target === activeTarget) return;
+    clearTimeout(timer);
+    timer = setTimeout(() => show(target), 480);
+  });
+
+  document.addEventListener("mouseout", (e) => {
+    if (!nearestTip(e.target)) return;
+    clearTimeout(timer);
+    hide();
+  });
+
+  document.addEventListener("click", hide, true);
+  document.addEventListener("keydown", hide, true);
+  document.addEventListener("scroll", () => {
+    if (activeTarget) place(activeTarget);
+  }, { passive: true, capture: true });
+})();
+
+// ── Effet ripple au clic ──────────────────────────────────────
+(function initRipple() {
+  document.addEventListener("click", (e) => {
+    const btn = e.target.closest(
+      ".btn:not(.btn-primary), .icon-btn, .layout-toggle-btn"
+    );
+    if (!btn) return;
+
+    const rect = btn.getBoundingClientRect();
+    const size = Math.max(rect.width, rect.height) * 2.2;
+    const x = e.clientX - rect.left - size / 2;
+    const y = e.clientY - rect.top - size / 2;
+
+    const ripple = document.createElement("span");
+    ripple.className = "btn-ripple";
+    ripple.style.cssText = `width:${size}px;height:${size}px;left:${x}px;top:${y}px`;
+    btn.appendChild(ripple);
+    ripple.addEventListener("animationend", () => ripple.remove(), { once: true });
+  });
+})();
+
 render();
 })();

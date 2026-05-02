@@ -9,24 +9,55 @@
   --danger: #b83645;
   --shadow: 0 20px 50px rgba(24, 48, 84, 0.12);
   --radius: 22px;
-  --font: "Trebuchet MS", "Segoe UI", sans-serif;
+  --font-family: "Inter", "Segoe UI", "Trebuchet MS", sans-serif;
 }
 
 * { box-sizing: border-box; }
 body {
   margin: 0;
   min-height: 100vh;
-  font-family: var(--font);
+  font-family: var(--font-family);
   color: var(--text);
   background:
     radial-gradient(circle at top left, rgba(20, 91, 180, 0.12), transparent 28%),
     linear-gradient(180deg, #f8fbff 0%, var(--bg) 100%);
+}
+.site-nav-page {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+}
+.site-nav-brand-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  text-decoration: none;
+}
+.site-nav-brand-link:hover .site-nav-brand-mark,
+.site-nav-brand-link:focus-visible .site-nav-brand-mark {
+  transform: none;
+}
+.nav-account-btn-active {
+  background: rgba(255, 255, 255, 0.18);
+  color: #f8fbff;
+  border-color: rgba(255, 255, 255, 0.3);
+}
+.account-menu-link.nav-account-btn-active {
+  background: #eef4ff;
+  color: var(--primary);
 }
 .account-shell {
   min-height: 100vh;
   display: grid;
   place-items: center;
   padding: 32px 18px;
+}
+.account-shell.with-nav {
+  min-height: auto;
+  padding-top: 24px;
+}
+.site-nav-page + .saved-shell {
+  margin-top: 24px;
 }
 .profile-shell {
   display: block;
@@ -167,5 +198,8 @@ th {
   }
   .account-topbar {
     flex-direction: column;
+  }
+  .account-shell.with-nav {
+    padding-top: 18px;
   }
 }

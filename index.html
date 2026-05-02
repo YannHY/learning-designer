@@ -6,24 +6,18 @@
     <title>Learning Designer - Prototype</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" referrerpolicy="no-referrer" />
-    <link rel="stylesheet" href="account-ui.css" />
+    <link rel="stylesheet" href="account-ui.css?v=20260502-3" />
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="interface.css" />
-    <script>
-      (function() {
-        var saved = localStorage.getItem('ld-theme');
-        if (saved === 'dark') document.documentElement.setAttribute('data-theme', 'dark');
-      })();
-    </script>
+    <link rel="stylesheet" href="interface.css?v=20260502-3" />
   </head>
   <body>
     <a id="skip-link" class="skip-link" href="#board">Aller au contenu principal</a>
     <p id="sr-status" class="sr-only" role="status" aria-live="polite" aria-atomic="true"></p>
     <header class="site-nav" role="navigation" aria-label="Navigation principale">
       <div class="site-nav-brand">
-        <span class="site-nav-brand-mark" aria-hidden="true">LD</span>
+        <span class="site-nav-brand-mark" aria-hidden="true"></span>
         <div class="site-nav-brand-copy">
           <p class="site-nav-title">Learning Designer</p>
         </div>
@@ -136,16 +130,16 @@
               <input id="meta-trainers" class="panel-input" type="text" />
             </div>
             <div class="form-row">
-              <label id="label-meta-personas" for="meta-personas">Personas (profils)</label>
+              <label id="label-meta-personas" for="meta-personas">Objectifs</label>
               <div class="expandable-field">
-                <textarea id="meta-personas" class="panel-textarea" placeholder="Collez ici les personas (profils) déjà définis..."></textarea>
+                <textarea id="meta-personas" class="panel-textarea" placeholder="Décrivez les objectifs de la formation..."></textarea>
                 <button class="expand-btn" type="button" aria-label="Plein écran">⤢</button>
               </div>
             </div>
             <div class="form-row">
-              <label id="label-meta-sliders" for="meta-sliders">Curseurs de la formation</label>
+              <label id="label-meta-sliders" for="meta-sliders">Résultats</label>
               <div class="expandable-field">
-                <textarea id="meta-sliders" class="panel-textarea" placeholder="Collez ici les curseurs déjà définis..."></textarea>
+                <textarea id="meta-sliders" class="panel-textarea" placeholder="Décrivez les résultats attendus..."></textarea>
                 <button class="expand-btn" type="button" aria-label="Plein écran">⤢</button>
               </div>
             </div>
@@ -205,12 +199,11 @@
     <header class="toolbar" role="region" aria-label="Actions du design">
       <div class="toolbar-left">
         <div class="toolbar-cluster">
-          <button id="add-session-btn" class="btn btn-primary"><span class="btn-label"><i class="fa-solid fa-plus btn-icon-inline" aria-hidden="true"></i>Ajouter un moment</span></button>
+          <button id="add-session-btn" class="btn btn-primary" type="button"><span class="btn-label"><i class="fa-solid fa-plus btn-icon-inline" aria-hidden="true"></i>Ajouter un moment</span></button>
         </div>
         <span class="toolbar-sep" aria-hidden="true"></span>
         <div class="toolbar-cluster">
           <button id="toggle-intentions-btn" class="btn btn-light" type="button"><span class="btn-label"><i class="fa-solid fa-bullseye btn-icon-inline" aria-hidden="true"></i>Intentions</span></button>
-          <button id="expand-notes-btn" class="btn btn-light"><span class="btn-label"><i class="fa-regular fa-note-sticky btn-icon-inline" aria-hidden="true"></i>Notes</span></button>
           <div id="board-layout-toggle" class="layout-toggle" role="group" aria-label="Mode d'affichage des séances">
           <button
             id="board-layout-list-btn"
@@ -256,20 +249,17 @@
       </div>
       <div class="toolbar-right">
         <div class="toolbar-cluster">
-          <button id="new-design-btn" class="btn"><span class="btn-label"><i class="fa-regular fa-file btn-icon-inline" aria-hidden="true"></i>Nouveau</span></button>
-          <button id="import-design-btn" class="btn"><span class="btn-label"><i class="fa-solid fa-file-arrow-up btn-icon-inline" aria-hidden="true"></i>Importer</span></button>
+          <button id="new-design-btn" class="btn" type="button"><span class="btn-label"><i class="fa-regular fa-file btn-icon-inline" aria-hidden="true"></i>Nouveau</span></button>
+          <button id="import-design-btn" class="btn" type="button"><span class="btn-label"><i class="fa-solid fa-file-arrow-up btn-icon-inline" aria-hidden="true"></i>Importer</span></button>
         </div>
         <span class="toolbar-sep" aria-hidden="true"></span>
         <div class="toolbar-cluster">
-          <div id="save-status" class="save-status" role="status" aria-live="polite" aria-atomic="true" data-state="saved">
-            <span id="save-status-label" class="save-status-label">Autosauvegarde locale</span>
-            <span id="save-status-value" class="save-status-value">Modifications enregistrées automatiquement</span>
-          </div>
-          <button id="save-btn" class="btn btn-light"><span class="btn-label"><i class="fa-regular fa-floppy-disk btn-icon-inline" aria-hidden="true"></i>Enregistrer</span></button>
-          <button id="export-design-btn" class="btn btn-primary"><span class="btn-label"><i class="fa-solid fa-file-export btn-icon-inline" aria-hidden="true"></i>Exporter</span></button>
+          <button id="save-btn" class="btn btn-light" type="button" hidden><span class="btn-label"><i class="fa-regular fa-floppy-disk btn-icon-inline" aria-hidden="true"></i>Enregistrer</span></button>
+          <span id="autosave-status" class="autosave-status" aria-live="polite" aria-atomic="true"></span>
+          <button id="export-design-btn" class="btn btn-primary" type="button" onclick="window.learningDesignerOpenExport && window.learningDesignerOpenExport()"><span class="btn-label"><i class="fa-solid fa-file-export btn-icon-inline" aria-hidden="true"></i>Exporter</span></button>
         </div>
       </div>
-      <input id="import-file-input" type="file" accept=".json,.csv,application/json,text/csv" hidden />
+      <input id="import-file-input" type="file" accept=".json,.ldj,.csv,application/json,text/csv" hidden />
       <button id="info-btn" hidden></button>
     </header>
 
@@ -280,7 +270,7 @@
     <footer class="site-footer">
       <span class="site-footer-copy">Learning Designer · Yann Houry &amp; François Jourde · 2026 · <abbr title="Creative Commons Attribution - Partage dans les mêmes conditions">CC BY-SA</abbr></span>
       <nav class="site-footer-links" aria-label="Liens du pied de page">
-        <button class="site-footer-link" type="button" id="footer-about-btn">À propos</button>
+        <a class="site-footer-link" id="footer-about-btn" href="about.php">À propos</a>
       </nav>
     </footer>
 
@@ -394,7 +384,20 @@
         </select>
         <div class="modal-actions">
           <button id="export-modal-cancel-btn" class="btn btn-light" type="button">Annuler</button>
-          <button id="export-modal-confirm-btn" class="btn btn-primary" type="button">Exporter</button>
+          <button id="export-modal-confirm-btn" class="btn btn-primary" type="button" onclick="window.learningDesignerRunExport && window.learningDesignerRunExport()">Exporter</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="export-result-modal-backdrop" class="modal-backdrop hidden" role="dialog" aria-modal="true" aria-hidden="true" aria-labelledby="export-result-modal-title">
+      <div class="modal">
+        <h2 id="export-result-modal-title" class="modal-title">Contenu exporté</h2>
+        <p id="export-result-modal-copy">Si le téléchargement ne démarre pas, copiez le contenu ci-dessous.</p>
+        <a id="export-result-download-link" class="site-footer-link" href="#" download>Ouvrir le fichier exporté</a>
+        <textarea id="export-result-text" class="panel-textarea" rows="12" readonly></textarea>
+        <div class="modal-actions">
+          <button id="export-result-copy-btn" class="btn btn-light" type="button">Copier</button>
+          <button id="export-result-close-btn" class="btn btn-primary" type="button">Fermer</button>
         </div>
       </div>
     </div>
@@ -404,6 +407,7 @@
         <h2 id="import-modal-title" class="modal-title">Importer le design</h2>
         <label for="import-format-select">Format</label>
         <select id="import-format-select" class="panel-select">
+          <option value="ldj">LDJ (Learning Designer)</option>
           <option value="json">JSON</option>
           <option value="csv">CSV</option>
           <option value="xlsx">Excel (.xlsx)</option>
@@ -441,8 +445,86 @@
         </div>
       </div>
     </div>
-    <script src="interface.js"></script>
-    <script src="account-ui.js"></script>
+    <script>
+      (function () {
+        function fallbackOpenExportModal() {
+          var backdrop = document.getElementById("export-modal-backdrop");
+          var select = document.getElementById("export-format-select");
+          if (!backdrop) return;
+          if (select && !select.value) select.value = "json";
+          backdrop.classList.remove("hidden");
+          backdrop.setAttribute("aria-hidden", "false");
+        }
+
+        function fallbackCloseExportModal() {
+          var backdrop = document.getElementById("export-modal-backdrop");
+          if (!backdrop) return;
+          backdrop.classList.add("hidden");
+          backdrop.setAttribute("aria-hidden", "true");
+        }
+
+        function fallbackOpenExportResult(content, filename, mimeType) {
+          var resultBackdrop = document.getElementById("export-result-modal-backdrop");
+          var resultText = document.getElementById("export-result-text");
+          var resultLink = document.getElementById("export-result-download-link");
+          var blob, url;
+          if (!resultBackdrop || !resultText || !resultLink) return;
+          resultText.value = String(content || "");
+          blob = new Blob([content], { type: mimeType || "text/plain;charset=utf-8" });
+          url = URL.createObjectURL(blob);
+          resultLink.href = url;
+          resultLink.download = filename || "export.txt";
+          resultBackdrop.classList.remove("hidden");
+          resultBackdrop.setAttribute("aria-hidden", "false");
+          window.setTimeout(function () {
+            URL.revokeObjectURL(url);
+          }, 60000);
+        }
+
+        function fallbackDownload(content, filename, mimeType) {
+          var blob = new Blob([content], { type: mimeType || "text/plain;charset=utf-8" });
+          var url = URL.createObjectURL(blob);
+          var link = document.createElement("a");
+          link.href = url;
+          link.download = filename || "export.txt";
+          link.style.display = "none";
+          document.body.appendChild(link);
+          link.click();
+          link.remove();
+          window.setTimeout(function () {
+            URL.revokeObjectURL(url);
+          }, 1000);
+        }
+
+        window.learningDesignerOpenExport = function () {
+          fallbackOpenExportModal();
+        };
+
+        window.learningDesignerRunExport = function () {
+          var formatSelect = document.getElementById("export-format-select");
+          var format = formatSelect ? String(formatSelect.value || "json").toLowerCase() : "json";
+          var payload = null;
+          var app = window.learningDesignerApp;
+          if (typeof window.learningDesignerGetExportPayload === "function") {
+            payload = window.learningDesignerGetExportPayload(format);
+          }
+          if (!payload) {
+            payload = {
+              content: app && typeof app.getState === "function"
+                ? JSON.stringify(app.getState(), null, 2)
+                : "{}",
+              type: "application/json;charset=utf-8",
+              filename: "design-learning-designer-fr.json"
+            };
+          }
+          fallbackOpenExportResult(payload.content, payload.filename, payload.type);
+          fallbackDownload(payload.content, payload.filename, payload.type);
+          fallbackCloseExportModal();
+        };
+      })();
+    </script>
+    <script src="interface.js?v=20260502-4"></script>
+    <script src="account-ui.js?v=20260502-4"></script>
     <script>
       (function() {
         var btn = document.getElementById('theme-toggle-btn');
@@ -452,17 +534,9 @@
             var isDark = html.getAttribute('data-theme') === 'dark';
             if (isDark) {
               html.removeAttribute('data-theme');
-              localStorage.setItem('ld-theme', 'light');
             } else {
               html.setAttribute('data-theme', 'dark');
-              localStorage.setItem('ld-theme', 'dark');
             }
-          });
-        }
-        var aboutBtn = document.getElementById('footer-about-btn');
-        if (aboutBtn) {
-          aboutBtn.addEventListener('click', function() {
-            document.getElementById('info-btn').click();
           });
         }
       })();

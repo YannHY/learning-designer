@@ -98,17 +98,23 @@ $designCount = (int)$countStmt->fetchColumn();
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Mon profil | Learning Designer</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" referrerpolicy="no-referrer">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="interface.css?v=20260502-2">
+    <link rel="stylesheet" href="account-ui.css?v=20260502-2">
     <link rel="stylesheet" href="account-pages.css">
 </head>
 <body>
-<main class="account-shell profile-shell">
+<?php render_site_nav('profile'); ?>
+<main class="account-shell with-nav profile-shell">
     <section class="account-card wide">
         <div class="account-topbar">
             <div>
                 <p class="account-kicker">Compte</p>
                 <h1>Mon profil</h1>
             </div>
-            <a class="subtle-link" href="index.html">Retour a l’interface</a>
         </div>
         <p class="account-copy">Role: <?= htmlspecialchars((string)$me['role'], ENT_QUOTES, 'UTF-8') ?>. Productions sauvegardees: <?= $designCount ?>.</p>
 

@@ -21,32 +21,36 @@ try {
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     require_same_origin_post();
+    $username = sanitize_username((string)($_POST['username'] ?? ''));
     $email = trim((string)($_POST['email'] ?? ''));
     $password = (string)($_POST['password'] ?? '');
 
     if ($db === null) {
         $error = 'Le stockage utilisateur n’est pas disponible pour le moment.';
-    } elseif ($email === '' || $password === '') {
-        $error = 'Merci de renseigner l’email et le mot de passe.';
+    } elseif ($username === '' || $email === '' || $password === '') {
+        $error = 'Nom d’utilisateur, email et mot de passe requis.';
+    } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        $error = 'Adresse email invalide.';
+    } elseif (strlen($password) < 8) {
+        $error = 'Le mot de passe doit contenir au moins 8 caracteres.';
     } else {
-        $stmt = $db->prepare("SELECT id, username, email, password_hash, role, status FROM users WHERE email = ? LIMIT 1");
-        $stmt->execute([$email]);
-        $user = $stmt->fetch();
+        try {
+            $stmt = $db->prepare("INSERT INTO users (username, email, password_hash, role, status, last_login_at) VALUES (?, ?, ?, 'designer', 'active', CURRENT_TIMESTAMP)");
+            $stmt->execute([$username, $email, password_hash($password, PASSWORD_DEFAULT)]);
 
-        if (!$user || $user['status'] !== 'active' || !password_verify($password, (string)$user['password_hash'])) {
-            $error = 'Identifiants invalides.';
-        } else {
+            $userId = (int)$db->lastInsertId();
             session_regenerate_id(true);
             $_SESSION['user'] = [
-                'id' => (int)$user['id'],
-                'username' => (string)$user['username'],
-                'email' => (string)$user['email'],
-                'role' => (string)$user['role'],
+                'id' => $userId,
+                'username' => $username,
+                'email' => $email,
+                'role' => 'designer',
             ];
-            $touch = $db->prepare("UPDATE users SET last_login_at = CURRENT_TIMESTAMP WHERE id = ?");
-            $touch->execute([(int)$user['id']]);
+
             header('Location: index.html');
             exit;
+        } catch (PDOException $e) {
+            $error = 'Impossible de creer ce compte (email ou nom deja utilise ?).';
         }
     }
 }
@@ -56,7 +60,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Connexion | Learning Designer</title>
+    <title>Creer un compte | Learning Designer</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" referrerpolicy="no-referrer">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -66,23 +70,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <link rel="stylesheet" href="account-pages.css">
 </head>
 <body>
-<?php render_site_nav('login'); ?>
+<?php render_site_nav('signup'); ?>
 <main class="account-shell with-nav">
     <section class="account-card">
         <p class="account-kicker">Learning Designer</p>
-        <h1>Connexion</h1>
-        <p class="account-copy">Connectez-vous pour sauvegarder et retrouver vos productions.</p>
+        <h1>Creer un compte</h1>
+        <p class="account-copy">Inscrivez-vous pour sauvegarder vos productions et les retrouver plus tard.</p>
         <form method="post" class="account-form">
+            <label for="username">Nom d’utilisateur</label>
+            <input id="username" name="username" type="text" required autocomplete="nickname">
             <label for="email">Email</label>
             <input id="email" name="email" type="email" required autocomplete="username">
             <label for="password">Mot de passe</label>
-            <input id="password" name="password" type="password" required autocomplete="current-password">
-            <button type="submit">Se connecter</button>
+            <input id="password" name="password" type="password" minlength="8" required autocomplete="new-password">
+            <button type="submit">Creer mon compte</button>
         </form>
         <?php if ($error !== ''): ?>
             <p class="account-message error"><?= htmlspecialchars($error, ENT_QUOTES, 'UTF-8') ?></p>
         <?php endif; ?>
-        <p class="account-footer"><a href="signup.php">Creer un compte</a></p>
+        <p class="account-footer"><a href="login.php">J’ai deja un compte</a></p>
     </section>
 </main>
 </body>

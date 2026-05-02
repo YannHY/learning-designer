@@ -10,6 +10,7 @@ Interface dérivée de UCL Learning Designer.
 Le projet peut maintenant être déployé sur un hébergement PHP avec base MySQL pour permettre :
 
 - la création d'un premier compte administrateur via `setup_admin.php`
+- l'inscription autonome des nouveaux utilisateurs via `signup.php`
 - la connexion des utilisateurs via `login.php`
 - la sauvegarde des productions dans la table `learning_designs`
 - le chargement et la suppression des productions depuis l'interface

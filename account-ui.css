@@ -47,12 +47,18 @@
   cursor: pointer;
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 7px;
   white-space: nowrap;
+  text-decoration: none;
   transition:
     background 120ms ease,
     color 120ms ease,
     border-color 120ms ease;
+}
+
+.nav-saves-btn {
+  text-decoration: none;
 }
 
 .nav-account-btn:hover {

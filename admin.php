@@ -63,7 +63,7 @@ $users = $usersStmt->fetchAll();
                 <p class="account-kicker">Administration</p>
                 <h1>Gestion des comptes</h1>
             </div>
-            <a class="subtle-link" href="interface.html">Retour a l’interface</a>
+            <a class="subtle-link" href="index.html">Retour a l’interface</a>
         </div>
 
         <?php if ($message !== ''): ?>

@@ -1,7 +1,7 @@
 # learning-designer-revised
 Interface dérivée de UCL Learning Designer.
 
-➜ [https://jourde.github.io/learning-designer-revised/interface.html](https://jourde.github.io/learning-designer-revised/interface.html)
+➜ [https://jourde.github.io/learning-designer-revised/index.html](https://jourde.github.io/learning-designer-revised/index.html)
 
 - [Guide d'utilisation](https://jourde.github.io/learning-designer-revised/guide-fr.md)
 
@@ -16,7 +16,7 @@ Le projet peut maintenant être déployé sur un hébergement PHP avec base MySQ
 
 ### Configuration
 
-Renseigner les accès base de données dans [app-config.php](/Users/rene/Documents/claude/learning-designer-revised/app-config.php) :
+Laisser [app-config.php](/Users/rene/Documents/claude/learning-designer-revised/app-config.php) comme gabarit, puis renseigner les accès réels dans [learning-design-secret.php](/Users/rene/Documents/claude/learning-designer-revised/learning-design-secret.php) :
 
 - `APP_DB_DSN`
 - `APP_DB_USER`

@@ -28,7 +28,7 @@ if ($designId > 0) {
     $check = $db->prepare("SELECT id FROM learning_designs WHERE id = ? AND owner_user_id = ? LIMIT 1");
     $check->execute([$designId, (int)$user['id']]);
     if ($check->fetch()) {
-        $stmt = $db->prepare("UPDATE learning_designs SET title = ?, document_json = ? WHERE id = ? AND owner_user_id = ?");
+        $stmt = $db->prepare("UPDATE learning_designs SET title = ?, document_json = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ? AND owner_user_id = ?");
         $stmt->execute([$title, $payload, $designId, (int)$user['id']]);
     } else {
         $designId = 0;

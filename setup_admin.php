@@ -2,30 +2,41 @@
 declare(strict_types=1);
 require_once __DIR__ . '/lib/bootstrap.php';
 
-$db = app_db();
-if (!is_admin_seed_needed($db)) {
-    header('Location: login.php');
-    exit;
+$error = '';
+try {
+    $db = app_db();
+    if (!is_admin_seed_needed($db)) {
+        header('Location: login.php');
+        exit;
+    }
+} catch (Throwable $e) {
+    $db = null;
+    $error = 'Le stockage utilisateur n’a pas pu etre initialise. Verifiez la configuration ou les droits d’ecriture du dossier data/.';
 }
 
-$error = '';
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     require_same_origin_post();
     $username = sanitize_username((string)($_POST['username'] ?? ''));
     $email = trim((string)($_POST['email'] ?? ''));
     $password = (string)($_POST['password'] ?? '');
 
-    if ($username === '' || $email === '' || $password === '') {
+    if ($db === null) {
+        $error = 'Le stockage utilisateur n’est pas disponible pour le moment.';
+    } elseif ($username === '' || $email === '' || $password === '') {
         $error = 'Nom d’utilisateur, email et mot de passe requis.';
     } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
         $error = 'Adresse email invalide.';
     } elseif (strlen($password) < 8) {
         $error = 'Le mot de passe doit contenir au moins 8 caracteres.';
     } else {
-        $stmt = $db->prepare("INSERT INTO users (username, email, password_hash, role, status) VALUES (?, ?, ?, 'admin', 'active')");
-        $stmt->execute([$username, $email, password_hash($password, PASSWORD_DEFAULT)]);
-        header('Location: login.php');
-        exit;
+        try {
+            $stmt = $db->prepare("INSERT INTO users (username, email, password_hash, role, status) VALUES (?, ?, ?, 'admin', 'active')");
+            $stmt->execute([$username, $email, password_hash($password, PASSWORD_DEFAULT)]);
+            header('Location: login.php');
+            exit;
+        } catch (PDOException $e) {
+            $error = 'Impossible de creer ce compte (email ou nom deja utilise ?).';
+        }
     }
 }
 ?>

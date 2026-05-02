@@ -23,9 +23,19 @@ function app_file_config(): array
 
     $config = [];
     $projectRoot = dirname(__DIR__);
+    $parent1 = dirname($projectRoot);
+    $parent2 = dirname($parent1);
+    $parent3 = dirname($parent2);
     $candidates = [
         $projectRoot . '/app-config.php',
+        $projectRoot . '/learning-design-secret.php',
         $projectRoot . '/config.local.php',
+        $parent1 . '/learning-design-secret.php',
+        $parent2 . '/learning-design-secret.php',
+        $parent3 . '/learning-design-secret.php',
+        $parent1 . '/config.local.php',
+        $parent2 . '/config.local.php',
+        $parent3 . '/config.local.php',
     ];
 
     foreach ($candidates as $path) {
@@ -87,6 +97,21 @@ function app_base_url(): string
     return $scheme . '://' . $host . $scriptDir;
 }
 
+function app_origin_url(): string
+{
+    $scheme = app_is_https() ? 'https' : 'http';
+    $host = trim((string)($_SERVER['HTTP_HOST'] ?? $_SERVER['SERVER_NAME'] ?? 'localhost'));
+    if ($host === '') {
+        $host = 'localhost';
+    }
+    return $scheme . '://' . $host;
+}
+
+function app_default_sqlite_path(): string
+{
+    return dirname(__DIR__) . '/data/learning-designer.sqlite';
+}
+
 function app_db(): PDO
 {
     static $db = null;
@@ -103,19 +128,39 @@ function app_db(): PDO
         $dbName = trim((string)(app_env('APP_DB_NAME') ?? ''));
         if ($dbHost !== '' && $dbName !== '') {
             $dsn = "mysql:host={$dbHost};dbname={$dbName};charset=utf8mb4";
+        } else {
+            $sqlitePath = trim((string)(app_env('APP_DB_SQLITE_PATH') ?? ''));
+            if ($sqlitePath === '') {
+                $sqlitePath = app_default_sqlite_path();
+            }
+            $sqliteDir = dirname($sqlitePath);
+            if (!is_dir($sqliteDir) && !mkdir($sqliteDir, 0775, true) && !is_dir($sqliteDir)) {
+                throw new RuntimeException("Impossible de creer le dossier de stockage local.");
+            }
+            $dsn = 'sqlite:' . $sqlitePath;
         }
     }
 
-    if ($dsn === '' || $dbUser === '') {
+    if ($dsn === '') {
+        throw new RuntimeException(
+            "Configuration base de donnees manquante."
+        );
+    }
+
+    $isSqlite = str_starts_with($dsn, 'sqlite:');
+    if (!$isSqlite && $dbUser === '') {
         throw new RuntimeException(
             "Configuration base de donnees manquante (APP_DB_DSN ou APP_DB_HOST/APP_DB_NAME + APP_DB_USER + APP_DB_PASS)."
         );
     }
 
-    $db = new PDO($dsn, $dbUser, $dbPass, [
+    $db = new PDO($dsn, $isSqlite ? null : $dbUser, $isSqlite ? null : $dbPass, [
         PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
         PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
     ]);
+    if ($isSqlite) {
+        $db->exec('PRAGMA foreign_keys = ON');
+    }
 
     ensure_app_tables($db);
     return $db;
@@ -123,6 +168,32 @@ function app_db(): PDO
 
 function ensure_app_tables(PDO $db): void
 {
+    if ($db->getAttribute(PDO::ATTR_DRIVER_NAME) === 'sqlite') {
+        $db->exec("CREATE TABLE IF NOT EXISTS users (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            username TEXT NOT NULL UNIQUE,
+            email TEXT NOT NULL UNIQUE,
+            password_hash TEXT NOT NULL,
+            role TEXT NOT NULL DEFAULT 'designer' CHECK (role IN ('admin','designer')),
+            status TEXT NOT NULL DEFAULT 'active' CHECK (status IN ('active','disabled')),
+            created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            last_login_at TEXT NULL
+        )");
+
+        $db->exec("CREATE TABLE IF NOT EXISTS learning_designs (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            owner_user_id INTEGER NOT NULL,
+            title TEXT NOT NULL DEFAULT '',
+            document_json TEXT NOT NULL,
+            created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY (owner_user_id) REFERENCES users(id) ON DELETE CASCADE
+        )");
+
+        $db->exec("CREATE INDEX IF NOT EXISTS idx_learning_designs_owner ON learning_designs(owner_user_id)");
+        return;
+    }
+
     $db->exec("CREATE TABLE IF NOT EXISTS users (
         id INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
         username VARCHAR(80) NOT NULL UNIQUE,
@@ -213,13 +284,42 @@ function require_same_origin_post(bool $allowJson = false): void
     $origin = trim((string)($_SERVER['HTTP_ORIGIN'] ?? ''));
     $referer = trim((string)($_SERVER['HTTP_REFERER'] ?? ''));
     $baseUrl = app_base_url();
+    $originUrl = app_origin_url();
+    $basePath = (string)(parse_url($baseUrl, PHP_URL_PATH) ?? '');
+    if ($basePath === '/') {
+        $basePath = '';
+    }
 
     $matches = false;
-    if ($origin !== '' && str_starts_with($origin, $baseUrl)) {
-        $matches = true;
+    if ($origin !== '') {
+        $originScheme = (string)(parse_url($origin, PHP_URL_SCHEME) ?? '');
+        $originHost = (string)(parse_url($origin, PHP_URL_HOST) ?? '');
+        $appScheme = (string)(parse_url($originUrl, PHP_URL_SCHEME) ?? '');
+        $appHost = (string)(parse_url($originUrl, PHP_URL_HOST) ?? '');
+        $originPort = (int)(parse_url($origin, PHP_URL_PORT) ?? 0);
+        $appPort = (int)(parse_url($originUrl, PHP_URL_PORT) ?? 0);
+        if (
+            $originScheme !== '' &&
+            $originHost !== '' &&
+            $originScheme === $appScheme &&
+            $originHost === $appHost &&
+            $originPort === $appPort
+        ) {
+            $matches = true;
+        }
     }
-    if (!$matches && $referer !== '' && str_starts_with($referer, $baseUrl)) {
-        $matches = true;
+    if (!$matches && $referer !== '') {
+        $refererOrigin = (string)(parse_url($referer, PHP_URL_SCHEME) ?? '') . '://' . (string)(parse_url($referer, PHP_URL_HOST) ?? '');
+        $refererPath = (string)(parse_url($referer, PHP_URL_PATH) ?? '');
+        $refererPort = (int)(parse_url($referer, PHP_URL_PORT) ?? 0);
+        $appPort = (int)(parse_url($originUrl, PHP_URL_PORT) ?? 0);
+        if (
+            $refererOrigin === $originUrl &&
+            $refererPort === $appPort &&
+            ($basePath === '' || str_starts_with($refererPath, $basePath))
+        ) {
+            $matches = true;
+        }
     }
 
     if (!$matches && !$allowJson) {
@@ -258,4 +358,3 @@ function app_design_title_from_document(array $document): string
 
     return 'Production sans titre';
 }
-

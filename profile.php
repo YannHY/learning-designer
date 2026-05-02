@@ -108,7 +108,7 @@ $designCount = (int)$countStmt->fetchColumn();
                 <p class="account-kicker">Compte</p>
                 <h1>Mon profil</h1>
             </div>
-            <a class="subtle-link" href="interface.html">Retour a l’interface</a>
+            <a class="subtle-link" href="index.html">Retour a l’interface</a>
         </div>
         <p class="account-copy">Role: <?= htmlspecialchars((string)$me['role'], ENT_QUOTES, 'UTF-8') ?>. Productions sauvegardees: <?= $designCount ?>.</p>
 

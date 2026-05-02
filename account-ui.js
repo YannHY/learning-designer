@@ -134,16 +134,17 @@
     cluster.className = "account-toolbar-cluster";
     cluster.id = "account-toolbar-cluster";
     cluster.innerHTML = `
-      <a id="nav-help-link" class="btn btn-light" href="https://github.com/jourde/learning-designer-revised" target="_blank" rel="noopener noreferrer">
-        <span class="btn-label"><i class="fa-solid fa-circle-question btn-icon-inline" aria-hidden="true"></i>${tr("Aide", "Help")}</span>
+      <a id="nav-help-link" class="nav-icon-btn" href="https://github.com/jourde/learning-designer-revised" target="_blank" rel="noopener noreferrer" title="${tr("Aide", "Help")}" aria-label="${tr("Aide", "Help")}">
+        <i class="fa-solid fa-circle-question" aria-hidden="true"></i>
       </a>
-      <button id="saved-designs-btn" class="btn btn-light" type="button">
-        <span class="btn-label"><i class="fa-regular fa-folder-open btn-icon-inline" aria-hidden="true"></i>${tr("Mes sauvegardes", "My saves")}</span>
+      <button id="saved-designs-btn" class="nav-icon-btn" type="button" title="${tr("Mes sauvegardes", "My saves")}" aria-label="${tr("Mes sauvegardes", "My saves")}">
+        <i class="fa-regular fa-folder-open" aria-hidden="true"></i>
       </button>
-      <span id="account-pill" class="account-pill">${tr("Compte", "Account")} <strong>${tr("hors ligne", "offline")}</strong></span>
+      <span id="account-pill" class="account-pill" style="display:none"></span>
       <div class="account-menu-wrap">
-        <button id="account-menu-btn" class="btn" type="button">
-          <span class="btn-label"><i class="fa-regular fa-user btn-icon-inline" aria-hidden="true"></i>${tr("Connexion", "Sign in")}</span>
+        <button id="account-menu-btn" class="nav-account-btn" type="button">
+          <i class="fa-regular fa-user" aria-hidden="true"></i>
+          <span class="nav-account-label">${tr("Connexion", "Sign in")}</span>
         </button>
         <div id="account-menu" class="account-menu hidden" role="menu" aria-hidden="true"></div>
       </div>
@@ -185,13 +186,13 @@
 
     if (!authState.user) {
       pill.innerHTML = `${tr("Compte", "Account")} <strong>${tr("non connecte", "not signed in")}</strong>`;
-      button.innerHTML = `<span class="btn-label"><i class="fa-regular fa-user btn-icon-inline" aria-hidden="true"></i>${tr("Connexion", "Sign in")}</span>`;
+      button.innerHTML = `<i class="fa-regular fa-user" aria-hidden="true"></i><span class="nav-account-label">${tr("Connexion", "Sign in")}</span>`;
       menu.innerHTML = "";
       return;
     }
 
     pill.innerHTML = `${tr("Compte", "Account")} <strong>${escapeHtml(authState.user.username || authState.user.email)}</strong>`;
-    button.innerHTML = `<span class="btn-label"><i class="fa-solid fa-user-check btn-icon-inline" aria-hidden="true"></i>${tr("Mon compte", "My account")}</span>`;
+    button.innerHTML = `<i class="fa-solid fa-user-check" aria-hidden="true"></i><span class="nav-account-label">${tr("Mon compte", "My account")}</span>`;
     menu.innerHTML = `
       <a class="account-menu-link" role="menuitem" href="profile.php">${tr("Profil", "Profile")}</a>
       ${String(authState.user.role) === "admin" ? `<a class="account-menu-link" role="menuitem" href="admin.php">${tr("Administration", "Admin")}</a>` : ""}

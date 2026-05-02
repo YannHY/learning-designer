@@ -1,9 +1,88 @@
 .account-toolbar-cluster {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
   flex-wrap: wrap;
   justify-content: flex-end;
+}
+
+/* Boutons icône (Aide, Sauvegardes) */
+.nav-icon-btn {
+  width: 38px;
+  height: 38px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08);
+  color: #94a3b8;
+  font-size: 16px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  text-decoration: none;
+  transition:
+    background 120ms ease,
+    color 120ms ease,
+    border-color 120ms ease;
+}
+
+.nav-icon-btn:hover {
+  background: rgba(255, 255, 255, 0.14);
+  color: #f1f5f9;
+  border-color: rgba(255, 255, 255, 0.22);
+}
+
+/* Bouton compte / connexion */
+.nav-account-btn {
+  height: 38px;
+  padding: 0 14px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08);
+  color: #94a3b8;
+  font-family: var(--font-family);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  white-space: nowrap;
+  transition:
+    background 120ms ease,
+    color 120ms ease,
+    border-color 120ms ease;
+}
+
+.nav-account-btn:hover {
+  background: rgba(255, 255, 255, 0.14);
+  color: #f1f5f9;
+  border-color: rgba(255, 255, 255, 0.22);
+}
+
+.nav-account-label {
+  font-size: 13px;
+}
+
+/* Dark mode */
+[data-theme="dark"] .nav-icon-btn,
+[data-theme="dark"] .nav-account-btn {
+  background: #161b22;
+  border-color: var(--line);
+  color: var(--muted);
+}
+
+[data-theme="dark"] .nav-icon-btn:hover,
+[data-theme="dark"] .nav-account-btn:hover {
+  background: rgba(88, 166, 255, 0.1);
+  color: #58a6ff;
+  border-color: rgba(88, 166, 255, 0.3);
+}
+
+[data-theme="dark"] .account-menu {
+  background: #1c2128;
+  border-color: var(--line);
 }
 
 .account-pill {

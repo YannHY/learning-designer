@@ -163,6 +163,7 @@ function app_db(): PDO
     }
 
     ensure_app_tables($db);
+    ensure_app_migrations($db);
     return $db;
 }
 
@@ -217,6 +218,36 @@ function ensure_app_tables(PDO $db): void
             FOREIGN KEY (owner_user_id) REFERENCES users(id)
             ON DELETE CASCADE
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+}
+
+function ensure_app_migrations(PDO $db): void
+{
+    $isSqlite = $db->getAttribute(PDO::ATTR_DRIVER_NAME) === 'sqlite';
+
+    if ($isSqlite) {
+        $cols = $db->query("PRAGMA table_info(learning_designs)")->fetchAll();
+        $colNames = array_column($cols, 'name');
+        if (!in_array('share_token', $colNames, true)) {
+            $db->exec("ALTER TABLE learning_designs ADD COLUMN share_token TEXT NULL");
+            $db->exec("CREATE UNIQUE INDEX IF NOT EXISTS idx_learning_designs_share_token ON learning_designs(share_token) WHERE share_token IS NOT NULL");
+        }
+        if (!in_array('is_published', $colNames, true)) {
+            $db->exec("ALTER TABLE learning_designs ADD COLUMN is_published INTEGER NOT NULL DEFAULT 0");
+        }
+        return;
+    }
+
+    $stmt = $db->prepare("SELECT COUNT(*) FROM information_schema.COLUMNS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'learning_designs' AND COLUMN_NAME = 'share_token'");
+    $stmt->execute();
+    if ((int)$stmt->fetchColumn() === 0) {
+        $db->exec("ALTER TABLE learning_designs ADD COLUMN share_token VARCHAR(64) NULL UNIQUE");
+    }
+
+    $stmt = $db->prepare("SELECT COUNT(*) FROM information_schema.COLUMNS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'learning_designs' AND COLUMN_NAME = 'is_published'");
+    $stmt->execute();
+    if ((int)$stmt->fetchColumn() === 0) {
+        $db->exec("ALTER TABLE learning_designs ADD COLUMN is_published TINYINT(1) NOT NULL DEFAULT 0");
+    }
 }
 
 function current_user(): ?array
@@ -319,7 +350,7 @@ function render_site_nav(string $active = ''): void
                 <?php if ($user): ?>
                     <a class="nav-account-btn<?= $savesClass ?>" href="my-designs.php">
                         <i class="fa-regular fa-folder-open" aria-hidden="true"></i>
-                        <span class="nav-account-label">Sauvegardes</span>
+                        <span class="nav-account-label">Designs</span>
                     </a>
                     <div class="account-menu-wrap">
                         <button id="account-menu-btn" class="nav-account-btn<?= $profileClass !== '' || $adminClass !== '' ? ' nav-account-btn-active' : '' ?>" type="button" aria-expanded="false" aria-controls="account-menu">

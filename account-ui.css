@@ -202,7 +202,55 @@
     width: 100%;
     justify-content: flex-start;
   }
+}
+
+@media (max-width: 720px) {
+  .account-toolbar-cluster {
+    flex-direction: column;
+    align-items: flex-start;
+  }
   .saved-design-head {
     flex-direction: column;
   }
+}
+
+/* ── Modal card (shared) ────────────────────────────────────── */
+.modal-card {
+  background: var(--panel, #fff);
+  border: 1px solid var(--border, #d0d7e2);
+  border-radius: 14px;
+  padding: 24px;
+  box-shadow: 0 12px 40px rgba(15, 23, 42, .12);
+}
+
+/* ── Publish modal ──────────────────────────────────────────── */
+.publish-hint {
+  font-size: 14px;
+  color: var(--muted);
+  margin: 0 0 14px;
+  line-height: 1.6;
+}
+
+.publish-url-row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.publish-url-input {
+  flex: 1;
+  min-width: 0;
+  padding: 9px 12px;
+  font-size: 13px;
+  font-family: ui-monospace, monospace;
+  border: 1px solid var(--border, #d0d7e2);
+  border-radius: 8px;
+  background: var(--input-bg, #f5f7fb);
+  color: var(--text, #1e2430);
+  outline: none;
+}
+
+.publish-url-input:focus {
+  border-color: var(--accent, #2f5bea);
+  box-shadow: 0 0 0 3px rgba(47,91,234,.12);
 }

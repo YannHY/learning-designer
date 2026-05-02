@@ -2080,8 +2080,11 @@ function renderPieOuterLabels(wrapEl, pieEl, labelsEl, tooltipEl, data, codeForS
   const centerY = pieRect.height
     ? pieRect.top - labelsRect.top + pieRect.height / 2
     : labelsHeight / 2;
-  const radius = Math.min(pieWidth, pieHeight) / 2 + 10;
+  const pieRadius = Math.min(pieWidth, pieHeight) / 2;
   const labelInset = 16;
+  const labelGap = 16;
+  const labelRingGap = 18;
+  const positionedLabels = [];
 
   segments.forEach((segment) => {
     const label = document.createElement("span");
@@ -2090,12 +2093,74 @@ function renderPieOuterLabels(wrapEl, pieEl, labelsEl, tooltipEl, data, codeForS
     label.setAttribute("aria-hidden", "true");
     label.title = `${segment.label} ${Math.round(segment.pct)}%`;
     const angle = (((segment.start + segment.end) / 2) / 100) * (Math.PI * 2) - (Math.PI / 2);
-    const x = centerX + Math.cos(angle) * radius;
-    const y = centerY + Math.sin(angle) * radius;
-    const clampedX = Math.max(labelInset, Math.min(x, labelsWidth - labelInset));
-    const clampedY = Math.max(labelInset, Math.min(y, labelsHeight - labelInset));
-    label.style.left = `${clampedX}px`;
-    label.style.top = `${clampedY}px`;
+    const ux = Math.cos(angle);
+    const uy = Math.sin(angle);
+    let align = "center";
+    if (ux > 0.35) align = "right";
+    else if (ux < -0.35) align = "left";
+    else if (uy < 0) align = "top";
+    else align = "bottom";
+    labelsEl.appendChild(label);
+    const labelWidth = label.offsetWidth || 24;
+    const labelHeight = label.offsetHeight || 12;
+    const halfWidth = labelWidth / 2;
+    const halfHeight = labelHeight / 2;
+    const radialDistance = pieRadius + labelRingGap;
+    const x = centerX + ux * radialDistance;
+    const y = centerY + uy * radialDistance;
+    positionedLabels.push({
+      label,
+      segment,
+      align,
+      ux,
+      uy,
+      x,
+      y,
+      labelWidth,
+      labelHeight,
+      halfWidth,
+      halfHeight
+    });
+  });
+
+  ["left", "right"].forEach((align) => {
+    const sideLabels = positionedLabels
+      .filter((item) => item.align === align)
+      .sort((a, b) => a.y - b.y);
+
+    sideLabels.forEach((item, index) => {
+      if (index === 0) return;
+      const previous = sideLabels[index - 1];
+      if (item.y - previous.y < labelGap) {
+        item.y = previous.y + labelGap;
+      }
+    });
+  });
+
+  ["top", "bottom"].forEach((align) => {
+    const sideLabels = positionedLabels
+      .filter((item) => item.align === align)
+      .sort((a, b) => a.x - b.x);
+
+    sideLabels.forEach((item, index) => {
+      if (index === 0) return;
+      const previous = sideLabels[index - 1];
+      const minGap = Math.max(labelGap, (previous.halfWidth + item.halfWidth) + 6);
+      if (item.x - previous.x < minGap) {
+        item.x = previous.x + minGap;
+      }
+    });
+  });
+
+  positionedLabels.forEach(({ label, segment, x, y, align, halfWidth, halfHeight }) => {
+    const safeX = Math.max(labelInset + halfWidth, Math.min(x, labelsWidth - labelInset - halfWidth));
+    const safeY = Math.max(labelInset + halfHeight, Math.min(y, labelsHeight - labelInset - halfHeight));
+    label.style.left = `${safeX}px`;
+    label.style.top = `${safeY}px`;
+    if (align === "right") label.style.transform = "translate(0, -50%)";
+    else if (align === "left") label.style.transform = "translate(-100%, -50%)";
+    else if (align === "top") label.style.transform = "translate(-50%, -100%)";
+    else label.style.transform = "translate(-50%, 0)";
     label.addEventListener("mouseenter", (event) => {
       showPieTooltip(wrapEl, tooltipEl, segment, event.clientX, event.clientY);
     });
@@ -2105,7 +2170,6 @@ function renderPieOuterLabels(wrapEl, pieEl, labelsEl, tooltipEl, data, codeForS
     label.addEventListener("mouseleave", () => {
       hidePieTooltip(tooltipEl);
     });
-    labelsEl.appendChild(label);
   });
 
   pieEl.addEventListener("mousemove", (event) => {
@@ -2381,6 +2445,7 @@ function renderPartitionView() {
         }
       });
 
+      if (track.children.length > 0) track.classList.add('has-blocks');
       lineDiv.appendChild(track);
       sessionDiv.appendChild(lineDiv);
     });
@@ -3495,7 +3560,10 @@ function setupExpandableFields() {
     if (!btn) return;
     const wrapper = btn.closest(".expandable-field");
     if (!wrapper) return;
-    const isFullscreen = wrapper.classList.toggle("fullscreen");
+    const textarea = wrapper.querySelector("textarea");
+    const isFullscreen = !wrapper.classList.contains("fullscreen");
+    toggleExpandableFieldFullscreen(wrapper, isFullscreen);
+    if (textarea) autoResizeTextarea(textarea);
     btn.textContent = isFullscreen ? "✕" : "⤢";
     const label = isFullscreen ? t("closeFullscreen") : t("fullscreen");
     btn.setAttribute("aria-label", label);
@@ -3528,7 +3596,68 @@ function setupExpandableFields() {
   });
 }
 
+function toggleExpandableFieldFullscreen(wrapper, shouldOpen) {
+  if (!wrapper) return;
+  if (shouldOpen) {
+    if (!wrapper.dataset.fullscreenPlaceholderId) {
+      const placeholder = wrapper.cloneNode(true);
+      placeholder.classList.add("expandable-field-placeholder");
+      placeholder.setAttribute("aria-hidden", "true");
+      placeholder.querySelectorAll("textarea").forEach((textarea, index) => {
+        const sourceTextarea = wrapper.querySelectorAll("textarea")[index];
+        textarea.value = sourceTextarea?.value || "";
+        textarea.readOnly = true;
+        textarea.tabIndex = -1;
+      });
+      placeholder.querySelectorAll("button").forEach((button) => {
+        button.tabIndex = -1;
+        button.disabled = true;
+      });
+      const placeholderId = `expandable-placeholder-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+      placeholder.id = placeholderId;
+      wrapper.dataset.fullscreenPlaceholderId = placeholderId;
+      wrapper.parentNode?.insertBefore(placeholder, wrapper.nextSibling);
+    }
+    document.body.appendChild(wrapper);
+    wrapper.classList.add("fullscreen");
+    document.body.classList.add("fullscreen-editor-open");
+    return;
+  }
+
+  const placeholder = document.getElementById(wrapper.dataset.fullscreenPlaceholderId || "");
+  if (placeholder?.parentNode) {
+    placeholder.parentNode.insertBefore(wrapper, placeholder);
+    placeholder.remove();
+  }
+  delete wrapper.dataset.fullscreenPlaceholderId;
+  wrapper.classList.remove("fullscreen");
+  if (!document.querySelector(".expandable-field.fullscreen")) {
+    document.body.classList.remove("fullscreen-editor-open");
+  }
+}
+
+function restoreAllFullscreenExpandableFields() {
+  document.querySelectorAll(".expandable-field.fullscreen").forEach((wrapper) => {
+    toggleExpandableFieldFullscreen(wrapper, false);
+    const btn = wrapper.querySelector(".expand-btn");
+    const textarea = wrapper.querySelector("textarea");
+    if (btn) {
+      btn.textContent = "⤢";
+      btn.setAttribute("aria-label", t("fullscreen"));
+      btn.setAttribute("title", t("fullscreen"));
+    }
+    if (textarea) autoResizeTextarea(textarea);
+    localizeExpandableFieldControls(wrapper);
+  });
+}
+
 document.addEventListener("keydown", (event) => {
+  const activeFullscreenField = document.querySelector(".expandable-field.fullscreen");
+  if (activeFullscreenField && event.key === "Escape" && !activeModalBackdrop && !activeToolPicker && !activeChoiceMenu) {
+    event.preventDefault();
+    activeFullscreenField.querySelector(".expand-btn")?.click();
+    return;
+  }
   if (activeChoiceMenu && event.key === "Escape") {
     event.preventDefault();
     closeChoiceMenu(true);
@@ -3998,6 +4127,7 @@ function renderGridView() {
 // ─── End grid view ──────────────────────────────────────────────────────────
 
 function render() {
+  restoreAllFullscreenExpandableFields();
   closeChoiceMenu();
   closeToolPicker();
   applyLocalizedUI();
@@ -4576,6 +4706,7 @@ boardLayoutGridBtn.addEventListener("click", () => {
 newDesignBtn.addEventListener("click", () => {
   if (!window.confirm(t("newDesignConfirm"))) return;
   state = createNewDesignState();
+  window.learningDesignerClearRemoteDesignUrl?.();
   saveState();
   render();
   announce(t("moved"));

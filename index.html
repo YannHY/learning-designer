@@ -6,11 +6,11 @@
     <title>Learning Designer - Prototype</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" referrerpolicy="no-referrer" />
-    <link rel="stylesheet" href="account-ui.css?v=20260502-3" />
+    <link rel="stylesheet" href="account-ui.css?v=20260502-6" />
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="interface.css?v=20260502-3" />
+    <link rel="stylesheet" href="interface.css?v=20260502-9" />
   </head>
   <body>
     <a id="skip-link" class="skip-link" href="#board">Aller au contenu principal</a>
@@ -39,6 +39,12 @@
           </svg>
         </button>
       </div>
+      <button id="nav-hamburger" class="nav-hamburger" type="button"
+              aria-label="Ouvrir le menu" aria-expanded="false" aria-controls="site-nav-actions">
+        <span class="hamburger-bar"></span>
+        <span class="hamburger-bar"></span>
+        <span class="hamburger-bar"></span>
+      </button>
     </header>
     <section id="top-panel" class="top-panel" role="region" aria-labelledby="app-title">
       <div class="top-brand">
@@ -255,6 +261,7 @@
         <span class="toolbar-sep" aria-hidden="true"></span>
         <div class="toolbar-cluster">
           <button id="save-btn" class="btn btn-light" type="button" hidden><span class="btn-label"><i class="fa-regular fa-floppy-disk btn-icon-inline" aria-hidden="true"></i>Enregistrer</span></button>
+          <button id="publish-btn" class="btn btn-light" type="button" hidden><span class="btn-label"><i class="fa-solid fa-share-nodes btn-icon-inline" aria-hidden="true"></i>Partager</span></button>
           <span id="autosave-status" class="autosave-status" aria-live="polite" aria-atomic="true"></span>
           <button id="export-design-btn" class="btn btn-primary" type="button" onclick="window.learningDesignerOpenExport && window.learningDesignerOpenExport()"><span class="btn-label"><i class="fa-solid fa-file-export btn-icon-inline" aria-hidden="true"></i>Exporter</span></button>
         </div>
@@ -288,11 +295,11 @@
         </header>
         <div class="session-title-wrap">
           <textarea class="session-title" rows="2"></textarea>
-          <div class="expandable-field">
+          <div class="expandable-field session-objectives-wrap">
             <textarea class="session-objectives" rows="2" placeholder="Objectifs du moment..."></textarea>
             <button class="expand-btn" type="button" aria-label="Plein écran">⤢</button>
           </div>
-          <div class="expandable-field">
+          <div class="expandable-field session-intentions-wrap">
             <textarea class="session-intentions" rows="2" placeholder="Choix pédagogiques (ex. : pourquoi cet ordre d'activités ? quelle alternance de modalités ? quel rythme ?)"></textarea>
             <button class="expand-btn" type="button" aria-label="Plein écran">⤢</button>
           </div>
@@ -523,8 +530,8 @@
         };
       })();
     </script>
-    <script src="interface.js?v=20260502-4"></script>
-    <script src="account-ui.js?v=20260502-4"></script>
+    <script src="interface.js?v=20260502-13"></script>
+    <script src="account-ui.js?v=20260502-9"></script>
     <script>
       (function() {
         var btn = document.getElementById('theme-toggle-btn');
@@ -536,6 +543,21 @@
               html.removeAttribute('data-theme');
             } else {
               html.setAttribute('data-theme', 'dark');
+            }
+          });
+        }
+
+        var hamburger = document.getElementById('nav-hamburger');
+        var navActions = document.getElementById('site-nav-actions');
+        if (hamburger && navActions) {
+          hamburger.addEventListener('click', function() {
+            var open = navActions.classList.toggle('nav-open');
+            hamburger.setAttribute('aria-expanded', open ? 'true' : 'false');
+          });
+          document.addEventListener('click', function(e) {
+            if (!hamburger.contains(e.target) && !navActions.contains(e.target)) {
+              navActions.classList.remove('nav-open');
+              hamburger.setAttribute('aria-expanded', 'false');
             }
           });
         }

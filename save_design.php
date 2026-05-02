@@ -13,6 +13,7 @@ if (!is_array($document) || !isset($document['sessions']) || !is_array($document
 }
 
 $designId = isset($input['design_id']) ? (int)$input['design_id'] : 0;
+$expectedUpdatedAt = trim((string)($input['expected_updated_at'] ?? ''));
 $title = trim((string)($input['title'] ?? app_design_title_from_document($document)));
 if ($title === '') {
     $title = app_design_title_from_document($document);
@@ -25,9 +26,22 @@ if (!is_string($payload)) {
 }
 
 if ($designId > 0) {
-    $check = $db->prepare("SELECT id FROM learning_designs WHERE id = ? AND owner_user_id = ? LIMIT 1");
+    $check = $db->prepare("SELECT id, updated_at FROM learning_designs WHERE id = ? AND owner_user_id = ? LIMIT 1");
     $check->execute([$designId, (int)$user['id']]);
-    if ($check->fetch()) {
+    $existing = $check->fetch();
+    if ($existing) {
+        $currentUpdatedAt = (string)($existing['updated_at'] ?? '');
+        if ($expectedUpdatedAt !== '' && $currentUpdatedAt !== '' && $expectedUpdatedAt !== $currentUpdatedAt) {
+            app_json_response([
+                'success' => false,
+                'error' => 'Conflit de sauvegarde : cette production a été modifiée dans une autre fenêtre.',
+                'conflict' => true,
+                'design' => [
+                    'id' => $designId,
+                    'updatedAt' => $currentUpdatedAt,
+                ],
+            ], 409);
+        }
         $stmt = $db->prepare("UPDATE learning_designs SET title = ?, document_json = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ? AND owner_user_id = ?");
         $stmt->execute([$title, $payload, $designId, (int)$user['id']]);
     } else {

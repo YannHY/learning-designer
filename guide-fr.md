@@ -1,176 +1,262 @@
-# Aide — Interface de conception d'apprentissage
+# Guide d'utilisation — Learning Designer
 
-> Application web monopage inspirée de l'[UCL Learning Designer](https://www.ucl.ac.uk/learning-designer/).
-> **Toutes les données restent dans votre navigateur** : rien n'est transmis en ligne.
+> Application web de scénarisation pédagogique inspirée de l'[UCL Learning Designer](https://www.ucl.ac.uk/learning-designer/).
+> Le projet peut fonctionner en local dans le navigateur ou en mode connecté avec sauvegarde sur serveur.
 
 ---
 
 ## Vue d'ensemble
 
-L'interface se compose de trois zones :
+L'interface s'organise autour de trois zones :
 
-1. **Le panneau supérieur** (repliable) — paramètres, analyse et chronologie du design
-2. **La barre d'outils** — actions principales (ajouter, enregistrer, importer, exporter…)
-3. **Le tableau de séances** — cœur du design, organisé en cartes
+1. **Le panneau supérieur** : paramètres, analyses et chronologie
+2. **La barre d'actions** : création, import, export, sauvegarde, partage
+3. **L'espace de conception** : moments, activités et notes
 
 ---
 
 ## Panneau supérieur
 
-Cliquez sur **Replier / Déplier le panneau** (en haut à droite du panneau) pour l'afficher ou le masquer.
+Le panneau supérieur peut être replié ou déplié.
 
-Le panneau contient trois onglets.
+Il contient trois onglets.
 
-### Onglet Paramètres
+### Paramètres
 
-Renseignez ici les métadonnées globales de votre design :
+Vous y renseignez les informations globales du design :
 
-| Champ | Rôle |
-|---|---|
-| **Titre** | Nom du design |
-| **Temps d'apprentissage** | Durée totale visée (jours / heures / min) |
-| **Temps conçu** | Calculé automatiquement à partir des activités |
-| **1 jour =** | Nombre d'heures d'une journée (par défaut : 7 h) |
-| **Description** | Présentation libre du design |
-| **Commande institutionnelle** | Collez ici le cahier des charges existant |
-| **Mode** | Présentiel, distanciel ou hybride |
-| **Taille du groupe** | Effectif de la formation |
-| **Concepteur(s) / Formateur(s)** | Noms des personnes concernées |
-| **Personas** | Collez ici les profils d'apprenants déjà définis |
-| **Curseurs** | Collez ici les paramètres de positionnement pédagogique |
+- **Titre**
+- **Temps d'apprentissage** visé
+- **Temps conçu** calculé automatiquement
+- **1 jour =** nombre d'heures d'une journée pédagogique
+- **Description**
+- **Commande institutionnelle**
+- **Mode** : présentiel, distanciel, hybride
+- **Taille du groupe**
+- **Concepteur(s)** et **Formateur(s)**
+- **Objectifs**
+- **Acquis d'apprentissage**
 
-Un **graphique circulaire** s'affiche en temps réel à droite, montrant la répartition des types d'apprentissage de l'ensemble du design.
+Les acquis d'apprentissage peuvent être formulés à partir de la **taxonomie révisée de Bloom**, via un sélecteur de catégories et de verbes d'action.
 
-### Onglet Analyse
+### Analyse
 
-Tableaux de bord automatiques avec des graphiques circulaires pour :
+L'onglet **Analyse** affiche plusieurs visualisations automatiques selon les données saisies :
 
-- la répartition des **types d'apprentissage**
-- le **mode de diffusion** (présentiel / distanciel / hybride)
-- la **présence du formateur**
-- le **mode synchrone / asynchrone**
-- le **type d'évaluation**
-- la répartition par **mode de groupement**
+- répartition des **types d'apprentissage**
+- répartition par **modalité**
+- répartition par **mode de groupement**
+- présence ou absence du **formateur**
+- répartition **synchrone / asynchrone**
+- répartition des **modes d'évaluation**
 
-Des alertes s'affichent si des déséquilibres pédagogiques sont détectés.
+Des messages d'alerte peuvent apparaître si certaines données sont absentes ou incohérentes.
 
-### Onglet Chronologie
+### Chronologie
 
-Représentation visuelle en **partition musicale** : chaque séance est affichée sous forme d'une ligne temporelle proportionnelle à la durée des activités.
+L'onglet **Chronologie** représente les séances sous forme de lignes temporelles proportionnelles à la durée des activités.
 
-Cliquez sur **Configurer les lignes** pour choisir quelles modalités afficher (lieu, groupement, synchronicité, présence du formateur).
+Vous pouvez :
 
----
+- afficher ou masquer certaines lignes
+- changer leur ordre
+- choisir quelles dimensions représenter
 
-## Barre d'outils
-
-### Côté gauche
-
-| Bouton / contrôle | Action |
-|---|---|
-| **+ Ajouter un moment** | Crée une nouvelle séance |
-| **Déplier les notes** | Affiche ou masque toutes les notes de séances et d'activités |
-| Icônes de mise en page | Bascule entre **liste**, **colonnes** et **grille** |
-
-### Côté droit
-
-| Bouton / contrôle | Action |
-|---|---|
-| **Nouveau** | Crée un design vierge (efface le design en cours) |
-| **Importer** | Importe un fichier JSON, CSV ou Excel (.xlsx) |
-| **Enregistrer** | Sauvegarde manuelle dans le stockage local du navigateur |
-| **Exporter** | Exporte le design dans le format de votre choix |
-| **FR / EN** | Bascule la langue de l'interface |
-
-> **Autosauvegarde locale** : le design est sauvegardé automatiquement toutes les 10 secondes. L'indicateur d'état confirme l'enregistrement.
+Cette vue sert à visualiser rapidement le rythme d'ensemble du scénario.
 
 ---
 
-## Formats d'export et d'import
+## Barre d'actions
 
-**Export** : JSON · Markdown · Word · HTML · Excel
+### À gauche
 
-**Import** : JSON · CSV · Excel (.xlsx)
+- **+ Ajouter un moment** : crée une nouvelle séance
+- **Déplier les notes** : affiche ou masque toutes les notes
+- **Icônes de vue** : bascule entre **liste**, **colonnes** et **grille**
 
----
+### À droite
 
-## Gérer les séances
+- **Nouveau** : crée un design vierge
+- **Importer** : importe un fichier pris en charge
+- **Enregistrer** : sauvegarde le design
+- **Exporter** : ouvre la fenêtre d'export
+- **Partager** : publie un design et génère un lien public quand le backend est actif
+- **FR / EN** : change la langue de l'interface
+- **Thème** : bascule entre mode clair et sombre
 
-Chaque **carte de séance** contient :
+### Sauvegarde
 
-- un **titre** (champ texte en haut)
-- les **objectifs** du moment
-- les **choix pédagogiques** (justifications de l'ordre des activités, de l'alternance des modalités, etc.)
-- une zone d'**activités**
-- un **pied de carte** avec la durée totale et un bouton Notes
+Deux logiques coexistent :
 
-**Ajouter une séance** : bouton **+ Ajouter un moment** dans la barre d'outils.
+- une **persistance locale** dans le navigateur pour retrouver l'état en cours
+- une **sauvegarde serveur** si vous êtes connecté à un compte
 
-**Supprimer une séance** : icône × en haut à droite de la carte.
-
-**Réorganiser les séances** : glissez-déposez les cartes dans le tableau.
-
----
-
-## Gérer les activités
-
-Cliquez sur **+ Ajouter type d'apprentissage** en bas d'une séance pour ajouter une activité.
-
-Chaque activité dispose d'une **barre d'outils** avec six paramètres :
-
-| Paramètre | Options |
-|---|---|
-| **Type d'apprentissage** | Lire/Regarder/Écouter · Investiguer · Pratiquer · Produire · Discuter · Collaborer |
-| **Durée** | Saisie en minutes (champ numérique) |
-| **Groupement** | Groupe entier · Sous-groupes · Individuel |
-| **Présence du formateur** | Présent · Absent |
-| **Synchronicité** | Synchrone · Asynchrone |
-| **Lieu** | Présentiel · Distanciel · Hybride |
-| **Évaluation** | Aucune · Diagnostique · Formative · Sommative · Certificative |
-
-Cliquez sur l'icône **🔧 Outils** pour associer à l'activité un ou plusieurs outils numériques (Moodle, H5P, etc.).
-
-Le champ **description** (zone de texte) est extensible en plein écran via le bouton ⤢.
-
-**Réorganiser les activités** : glissez-déposez les cartes d'activité au sein d'une séance ou d'une séance à une autre.
-
-**Supprimer une activité** : icône × à droite de la barre d'outils de l'activité.
+Autrement dit, l'application n'est plus limitée à un simple stockage local.
 
 ---
 
-## Types d'apprentissage et leurs couleurs
+## Import et export
 
-| Couleur | Type |
-|---|---|
-| 🩵 Turquoise | Lire / Regarder / Écouter |
-| 🩷 Saumon | Investiguer |
-| 🪻 Mauve | Pratiquer |
-| 🟢 Vert | Produire |
-| 🔵 Bleu | Discuter |
-| 🟡 Jaune | Collaborer |
+### Import
+
+L'application peut importer :
+
+- `JSON`
+- `LDJ`
+- `CSV`
+- `XLSX`
+
+Les imports `CSV` et `XLSX` servent notamment à réhydrater des exports issus de l'application.
+
+### Export
+
+L'application peut exporter :
+
+- `JSON`
+- `Markdown`
+- `HTML`
+
+L'export ouvre aussi une fenêtre contenant le contenu exporté, ce qui permet de le copier même si le téléchargement est bloqué par le navigateur.
 
 ---
 
-## Catalogue d'outils numériques
+## Travailler avec les moments
 
-L'interface propose un catalogue intégré couvrant notamment :
+Chaque **moment** contient :
 
-- **Moodle** : ressources (Fichier, Page, Livre, URL…) et activités (Forum, Devoir, Test, Leçon, Atelier, Base de données, Glossaire, Wiki, Sondage, Feedback…)
-- **H5P** : Vidéo interactive, Présentation de cours, Scénario ramifié, et de nombreux autres types de contenus interactifs
+- un **titre**
+- des **objectifs**
+- des **choix pédagogiques**
+- une liste d'**activités**
+- des **notes**
+
+Vous pouvez :
+
+- ajouter un moment
+- le supprimer
+- le déplacer par glisser-déposer
 
 ---
 
-## Raccourcis et astuces
+## Travailler avec les activités
 
-- **Plein écran** : le bouton ⤢ en haut à droite d'un champ de texte l'ouvre en plein écran avec une barre d'outils Markdown.
-- **Notes de séance** : cliquez sur le bouton **Notes** en bas d'une carte de séance pour afficher ou masquer le champ de notes.
-- **Notes d'activité** : les notes d'activité sont masquées par défaut ; utilisez **Déplier les notes** dans la barre d'outils pour toutes les afficher.
-- **Langue** : le sélecteur FR / EN en haut à droite bascule instantanément l'interface sans perte de données.
+Chaque activité comporte plusieurs paramètres :
+
+- **Type d'apprentissage**
+- **Durée**
+- **Mode de groupement**
+- **Présence du formateur**
+- **Synchronicité**
+- **Modalité**
+- **Évaluation**
+- **Description**
+- **Notes**
+
+Les activités peuvent être :
+
+- ajoutées à un moment
+- déplacées dans le même moment ou vers un autre
+- supprimées
+
+Le champ **description** peut être ouvert en **plein écran**.  
+Une petite barre d'outils Markdown est disponible pour certains champs texte.
+
+---
+
+## Compétences numériques
+
+L'ancienne logique de sélection d'outils Moodle / H5P a été remplacée.
+
+Chaque activité peut maintenant être associée à une ou plusieurs **compétences numériques** issues d'un référentiel structuré en trois domaines :
+
+- **Acquérir**
+- **Approfondir**
+- **Créer**
+
+### Comment cela fonctionne
+
+1. Cliquez sur l'icône de compétence de l'activité.
+2. Choisissez un domaine.
+3. Recherchez ou sélectionnez une compétence.
+
+### Affichage
+
+- les compétences sont repérées par un code court, par exemple `A1`, `P7`, `C14`
+- les tags affichés dans l'activité montrent uniquement ce code
+- la couleur du tag dépend du domaine
+- une **infobulle au survol** donne le détail de la compétence
+
+---
+
+## Types d'apprentissage
+
+Les activités peuvent être classées dans les catégories suivantes :
+
+- **Lire / Regarder / Écouter**
+- **Investiguer**
+- **Pratiquer**
+- **Produire**
+- **Discuter**
+- **Collaborer**
+- **Non défini**
+
+Ces catégories alimentent les graphiques d'analyse et la coloration de certaines vues.
+
+---
+
+## Vues disponibles
+
+### Vue liste
+
+Affichage vertical classique des moments et activités.
+
+### Vue colonnes
+
+Affichage en colonnes pour comparer plus facilement plusieurs moments côte à côte.
+
+### Vue grille
+
+Affichage tabulaire synthétique des activités et de leurs paramètres.
+
+---
+
+## Comptes, sauvegardes et partage
+
+Quand le backend PHP/MySQL est actif, vous pouvez :
+
+- créer un compte
+- vous connecter
+- sauvegarder plusieurs productions
+- retrouver vos designs dans votre espace
+- publier un design via un lien partageable
+- consulter une version publiée en lecture seule
+
+Des pages dédiées existent aussi pour :
+
+- le **profil**
+- la **liste des designs**
+- l'**administration**
+
+---
+
+## Conseils pratiques
+
+- utilisez les **objectifs** et **choix pédagogiques** pour documenter les intentions de chaque moment
+- complétez les paramètres d'activité le plus tôt possible pour obtenir des analyses utiles
+- servez-vous de la **chronologie** pour vérifier l'alternance des modalités
+- utilisez les **compétences numériques** comme repères explicites de progression
+- basculez en **plein écran** pour rédiger les contenus longs plus confortablement
 
 ---
 
 ## À propos
 
-Cette application s'inspire de l'UCL Learning Designer (UCL Knowledge Lab, 2013–2026).
-Développée par François Jourde (2026) — licence CC BY-SA.
-Code source : [github.com/jourde/learning-designer](https://github.com/jourde/learning-designer)
+Learning Designer est inspiré de l'UCL Learning Designer et a évolué vers une application web plus complète, avec :
+
+- scénarisation pédagogique
+- analyses visuelles
+- compétences numériques
+- sauvegarde par compte
+- partage public de designs
+
+Code source : [https://github.com/YannHY/learning-designer](https://github.com/YannHY/learning-designer)

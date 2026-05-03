@@ -149,7 +149,7 @@ require_once __DIR__ . '/lib/bootstrap.php';
                 </li>
                 <li class="feature-item">
                     <strong>Typez vos activités</strong>
-                    <span>Associez chaque activité à l'un des 7 types ci-dessous pour visualiser l'équilibre de votre scénario.</span>
+                    <span>Associez chaque activité à l'un des 6 types ci-dessous pour visualiser l'équilibre de votre scénario.</span>
                 </li>
                 <li class="feature-item">
                     <strong>Paramétrez le contexte</strong>
@@ -179,7 +179,7 @@ require_once __DIR__ . '/lib/bootstrap.php';
         </div>
 
         <div class="about-section">
-            <h2>7 types d'activités</h2>
+            <h2>6 types d'activités</h2>
             <ul class="type-list">
                 <li class="type-tag" style="background:#a1f5ed22"><span class="type-dot" style="background:#a1f5ed"></span>Lire / Regarder / Écouter</li>
                 <li class="type-tag" style="background:#f8807f22"><span class="type-dot" style="background:#f8807f"></span>Investiguer</li>
@@ -201,7 +201,7 @@ require_once __DIR__ . '/lib/bootstrap.php';
         <p class="about-meta">
             Inspiré de l'<a href="https://www.ucl.ac.uk/learning-designer/" target="_blank" rel="noopener noreferrer">UCL Learning Designer</a> (UCL Knowledge Lab, UCL Institute of Education, 2013–2026).<br>
             Conçu et développé par Yann Houry &amp; François Jourde (2026) · <abbr title="Creative Commons Attribution - Partage dans les mêmes conditions">CC BY-SA</abbr><br>
-            Code source : <a href="https://github.com/jourde" target="_blank" rel="noopener noreferrer">github.com/jourde</a><br>
+            Code source : <a href="https://github.com/YannHY/learning-designer" target="_blank" rel="noopener noreferrer">github.com/YannHY/learning-designer</a> (basé sur <a href="https://github.com/jourde" target="_blank" rel="noopener noreferrer">github.com/jourde</a>)<br>
         </p>
     </div>
 </main>

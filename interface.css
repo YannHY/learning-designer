@@ -83,7 +83,7 @@
 html,
 body {
   margin: 0;
-  min-height: 100%;
+  min-height: 100vh;
   background: #ffffff;
   color: var(--text);
   font-family: var(--font-family);
@@ -323,12 +323,11 @@ select:focus-visible,
 }
 
 .top-tab.active {
-  background: rgba(20, 91, 180, 0.12);
-  border-color: rgba(20, 91, 180, 0.18);
-  box-shadow: inset 0 0 0 1px rgba(20, 91, 180, 0.08);
-  font-weight: 700;
-  color: #fff;
-  color: #124f9c;
+  background: var(--panel);
+  border-color: transparent;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.10), 0 0 0 1px rgba(0, 0, 0, 0.05);
+  font-weight: 600;
+  color: var(--primary);
 }
 
 .panel-grid {
@@ -3022,13 +3021,11 @@ main {
   letter-spacing: 0.01em;
 }
 .top-tab.active {
-  background: linear-gradient(135deg, rgba(20, 91, 180, 0.14), rgba(43, 123, 224, 0.08));
-  border-color: rgba(20, 91, 180, 0.22);
-  color: #124f9c;
-  font-weight: 700;
-  box-shadow:
-    inset 0 0 0 1px rgba(20, 91, 180, 0.10),
-    0 2px 8px rgba(20, 91, 180, 0.08);
+  background: var(--panel);
+  border-color: transparent;
+  color: var(--primary);
+  font-weight: 600;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.10), 0 0 0 1px rgba(0, 0, 0, 0.05);
 }
 
 /* ── Brand mark: subtle pulse on logo ─────────────────────── */
@@ -3245,12 +3242,10 @@ html[data-theme="dark"] body {
 
 /* ── Tabs in dark mode ── */
 [data-theme="dark"] .top-tab.active {
-  background: linear-gradient(135deg, rgba(88, 166, 255, 0.14), rgba(88, 166, 255, 0.07));
-  border-color: rgba(88, 166, 255, 0.22);
-  color: #79c0ff;
-  box-shadow:
-    inset 0 0 0 1px rgba(88, 166, 255, 0.10),
-    0 2px 8px rgba(88, 166, 255, 0.08);
+  background: var(--panel);
+  border-color: transparent;
+  color: var(--primary);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.30), 0 0 0 1px rgba(255, 255, 255, 0.06);
 }
 
 /* ── Overlays / modals ── */

@@ -444,6 +444,61 @@ let uid = 0;
 const nextId = () => `id-${Date.now()}-${uid++}`;
 const DEFAULT_DAY_HOURS = 7;
 
+const BLOOM_TAXONOMY = {
+  fr: [
+    {
+      id: "souvenir", label: "Se souvenir",
+      verbs: ["Citer", "Définir", "Décrire", "Dupliquer", "Énumérer", "Identifier", "Lister", "Localiser", "Mémoriser", "Nommer", "Rappeler", "Reconnaître", "Reproduire", "Retrouver"]
+    },
+    {
+      id: "comprendre", label: "Comprendre",
+      verbs: ["Clarifier", "Classer", "Comparer", "Décrire", "Distinguer", "Exemplifier", "Expliquer", "Généraliser", "Illustrer", "Inférer", "Interpréter", "Paraphraser", "Reformuler", "Résumer", "Traduire"]
+    },
+    {
+      id: "appliquer", label: "Appliquer",
+      verbs: ["Appliquer", "Calculer", "Choisir", "Compléter", "Construire", "Démontrer", "Employer", "Exécuter", "Mettre en œuvre", "Modifier", "Pratiquer", "Produire", "Résoudre", "Utiliser"]
+    },
+    {
+      id: "analyser", label: "Analyser",
+      verbs: ["Analyser", "Attribuer", "Comparer", "Contraster", "Décomposer", "Déconstruire", "Différencier", "Discriminer", "Distinguer", "Examiner", "Expérimenter", "Inférer", "Organiser", "Questionner", "Structurer"]
+    },
+    {
+      id: "evaluer", label: "Évaluer",
+      verbs: ["Apprécier", "Argumenter", "Choisir", "Comparer", "Conclure", "Critiquer", "Décider", "Défendre", "Estimer", "Évaluer", "Juger", "Justifier", "Recommander", "Sélectionner"]
+    },
+    {
+      id: "creer", label: "Créer",
+      verbs: ["Assembler", "Combiner", "Composer", "Concevoir", "Construire", "Créer", "Développer", "Élaborer", "Formuler", "Générer", "Imaginer", "Inventer", "Organiser", "Planifier", "Produire"]
+    }
+  ],
+  en: [
+    {
+      id: "remember", label: "Remember",
+      verbs: ["Cite", "Define", "Describe", "Duplicate", "Enumerate", "Find out", "Identify", "Label", "List", "Locate", "Memorize", "Name", "Recall", "Recognize", "Reproduce", "Retrieve"]
+    },
+    {
+      id: "understand", label: "Understand",
+      verbs: ["Clarify", "Classify", "Compare", "Describe", "Distinguish", "Exemplify", "Explain", "Generalize", "Identify", "Illustrate", "Infer", "Interpret", "Paraphrase", "Summarize", "Translate"]
+    },
+    {
+      id: "apply", label: "Apply",
+      verbs: ["Apply", "Calculate", "Choose", "Complete", "Construct", "Demonstrate", "Execute", "Implement", "Modify", "Practice", "Produce", "Resolve", "Use"]
+    },
+    {
+      id: "analyze", label: "Analyze",
+      verbs: ["Analyze", "Attribute", "Compare", "Contrast", "Deconstruct", "Differentiate", "Discriminate", "Distinguish", "Examine", "Experiment", "Infer", "Organize", "Question", "Structure"]
+    },
+    {
+      id: "evaluate", label: "Evaluate",
+      verbs: ["Appreciate", "Argue", "Choose", "Compare", "Conclude", "Criticize", "Decide", "Defend", "Estimate", "Evaluate", "Judge", "Justify", "Recommend", "Select"]
+    },
+    {
+      id: "create", label: "Create",
+      verbs: ["Assemble", "Combine", "Compose", "Conceive", "Construct", "Create", "Design", "Develop", "Elaborate", "Formulate", "Generate", "Imagine", "Invent", "Organize", "Plan", "Produce"]
+    }
+  ]
+};
+
 /**
  * Returns a debounced version of fn that fires after `delay` ms of inactivity.
  * @param {Function} fn
@@ -470,7 +525,7 @@ const DEFAULT_META = {
   description: "",
   command: "",
   personas: "",
-  sliders: "",
+  sliders: [],
   activeTab: "settings",
   boardLayout: "columns"
 };
@@ -489,7 +544,7 @@ const NEW_DESIGN_META = {
   description: "",
   command: "",
   personas: "",
-  sliders: "",
+  sliders: [],
   activeTab: "settings",
   boardLayout: "columns"
 };
@@ -554,7 +609,16 @@ const metaTrainersInput = document.getElementById("meta-trainers");
 const metaDescriptionInput = document.getElementById("meta-description");
 const metaCommandInput = document.getElementById("meta-command");
 const metaPersonasInput = document.getElementById("meta-personas");
-const metaSlidersInput = document.getElementById("meta-sliders");
+const outcomesListEl = document.getElementById("outcomes-list");
+const addOutcomeBtn = document.getElementById("add-outcome-btn");
+const newDesignModalBackdrop = document.getElementById("new-design-modal-backdrop");
+const newDesignModalMsg = document.getElementById("new-design-modal-msg");
+const newDesignCancelBtn = document.getElementById("new-design-cancel-btn");
+const newDesignConfirmBtn = document.getElementById("new-design-confirm-btn");
+const bloomModalBackdrop = document.getElementById("bloom-modal-backdrop");
+const bloomCategoryList = document.getElementById("bloom-category-list");
+const bloomAddBtn = document.getElementById("bloom-add-btn");
+const bloomCancelBtn = document.getElementById("bloom-cancel-btn");
 const topPieWrap = document.getElementById("top-pie-wrap");
 const topPie = document.getElementById("top-pie");
 const topPieLabels = document.getElementById("top-pie-labels");
@@ -640,6 +704,15 @@ const I18N = {
     metaTrainersLabel: "Formateur(s)",
     metaPersonasLabel: "Objectifs",
     metaSlidersLabel: "Résultats",
+    outcomesLabel: "Acquis d'apprentissage",
+    addOutcome: "+ Acquis",
+    outcomeTextPlaceholder: "Décrivez cet acquis...",
+    deleteOutcome: "Supprimer l'acquis",
+    changeVerb: "Modifier le verbe",
+    bloomTitle: "Taxonomie de Bloom",
+    bloomSubtitle: "Sélectionnez une catégorie ou un verbe d'action",
+    bloomAdd: "Ajouter",
+    bloomEdit: "Modifier",
     unitDays: "jours",
     unitHours: "heures",
     unitMinutes: "minutes",
@@ -691,6 +764,9 @@ const I18N = {
     sessionTitlePlaceholder: "Titre du moment",
     activityDescriptionPlaceholder: "Activité",
     newDesignConfirm: "Créer un nouveau design et écraser le contenu actuel ?",
+    newDesignModalTitle: "Nouveau design",
+    newDesignModalMsg: "Vous allez créer un nouveau design vierge. Si vous n'avez pas enregistré le design actuel, il sera perdu.",
+    newDesignModalConfirm: "Créer un nouveau design",
     importInvalid: "Fichier invalide. Importez un LDJ, JSON, CSV ou Excel exporté depuis cette application.",
     commandPlaceholder: "Collez ici la commande institutionnelle déjà définie...",
     personasPlaceholder: "Décrivez les objectifs de la formation...",
@@ -828,6 +904,15 @@ const I18N = {
     metaTrainersLabel: "Trainer(s)",
     metaPersonasLabel: "Objectives",
     metaSlidersLabel: "Results",
+    outcomesLabel: "Learning Outcomes",
+    addOutcome: "+ Outcome",
+    outcomeTextPlaceholder: "Describe this outcome...",
+    deleteOutcome: "Delete outcome",
+    changeVerb: "Change verb",
+    bloomTitle: "Bloom's Taxonomy",
+    bloomSubtitle: "Select a category or an action verb",
+    bloomAdd: "Add",
+    bloomEdit: "Update",
     unitDays: "days",
     unitHours: "hours",
     unitMinutes: "minutes",
@@ -879,6 +964,9 @@ const I18N = {
     sessionTitlePlaceholder: "Moment title",
     activityDescriptionPlaceholder: "Activity",
     newDesignConfirm: "Create a new design and replace current content?",
+    newDesignModalTitle: "New design",
+    newDesignModalMsg: "You are about to create a blank new design. If you have not saved the current design, it will be lost.",
+    newDesignModalConfirm: "Create a new design",
     importInvalid: "Invalid file. Import an LDJ, JSON, CSV or Excel file exported by this application.",
     commandPlaceholder: "Paste the previously defined institutional brief here...",
     personasPlaceholder: "Describe the learning objectives...",
@@ -1200,6 +1288,10 @@ function applyLocalizedUI() {
   if (partCfgSave) partCfgSave.textContent = t("validate");
   const partAddBtn = document.getElementById("partition-add-line-btn");
   if (partAddBtn) partAddBtn.textContent = t("partitionAdd");
+  document.getElementById("new-design-modal-title").textContent = t("newDesignModalTitle");
+  newDesignModalMsg.textContent = t("newDesignModalMsg");
+  newDesignCancelBtn.textContent = t("cancel");
+  newDesignConfirmBtn.textContent = t("newDesignModalConfirm");
   document.getElementById("analysis-title").textContent = t("analysisTitle");
   document.getElementById("label-meta-name").textContent = t("metaNameLabel");
   document.getElementById("label-meta-learning").textContent = t("metaLearningLabel");
@@ -1212,7 +1304,7 @@ function applyLocalizedUI() {
   document.getElementById("label-meta-designers").textContent = t("metaDesignersLabel");
   document.getElementById("label-meta-trainers").textContent = t("metaTrainersLabel");
   document.getElementById("label-meta-personas").textContent = t("metaPersonasLabel");
-  document.getElementById("label-meta-sliders").textContent = t("metaSlidersLabel");
+  document.getElementById("label-meta-outcomes").textContent = t("outcomesLabel");
   document.getElementById("unit-learning-days").textContent = t("unitDays");
   document.getElementById("unit-learning-hours").textContent = t("unitHours");
   document.getElementById("unit-learning-minutes").textContent = t("unitMinutes");
@@ -1260,7 +1352,6 @@ function applyLocalizedUI() {
   board.setAttribute("aria-label", t("boardRegion"));
   metaCommandInput.placeholder = t("commandPlaceholder");
   metaPersonasInput.placeholder = t("personasPlaceholder");
-  metaSlidersInput.placeholder = t("slidersPlaceholder");
   metaLearningDaysInput.setAttribute("aria-label", t("learningDaysLabel"));
   metaLearningHoursInput.setAttribute("aria-label", t("learningHoursLabel"));
   metaLearningMinutesInput.setAttribute("aria-label", t("learningMinutesLabel"));
@@ -1325,7 +1416,12 @@ function hydrateState(parsed, fallback = defaultState()) {
           : typeof parsedMeta.author === "string"
             ? parsedMeta.author
             : "",
-      trainers: typeof parsedMeta.trainers === "string" ? parsedMeta.trainers : ""
+      trainers: typeof parsedMeta.trainers === "string" ? parsedMeta.trainers : "",
+      sliders: Array.isArray(parsedMeta.sliders)
+        ? parsedMeta.sliders
+        : typeof parsedMeta.sliders === "string" && parsedMeta.sliders.trim()
+          ? [{ id: nextId(), category: "", categoryLabel: "", verb: "", text: parsedMeta.sliders }]
+          : []
     },
     partitionLineConfig: Array.isArray(parsed.partitionLineConfig)
       ? parsed.partitionLineConfig
@@ -1415,6 +1511,157 @@ function saveState() {
     localStorage.setItem(LD_STORAGE_KEY, JSON.stringify(state));
   } catch (_) {}
   window.dispatchEvent(new CustomEvent("ld:statechange"));
+}
+
+// --- Outcomes (Acquis d'apprentissage) ---
+
+let bloomModalMode = "add";
+let bloomEditOutcomeId = null;
+let bloomSelectedCategory = null;
+let bloomSelectedVerb = null;
+
+function renderOutcomes() {
+  if (!outcomesListEl) return;
+  const outcomes = Array.isArray(state.meta.sliders) ? state.meta.sliders : [];
+  outcomesListEl.innerHTML = "";
+  outcomes.forEach((outcome) => {
+    const item = document.createElement("div");
+    item.className = "outcome-item";
+    item.dataset.id = outcome.id;
+
+    const header = document.createElement("div");
+    header.className = "outcome-item-header";
+
+    const verbBtn = document.createElement("button");
+    verbBtn.className = "outcome-verb-btn";
+    verbBtn.type = "button";
+    verbBtn.title = t("changeVerb");
+    verbBtn.setAttribute("aria-label", t("changeVerb"));
+    const verbLabel = outcome.verb || outcome.categoryLabel || "—";
+    verbBtn.innerHTML = `<span class="outcome-verb-text">${escapeHtml(verbLabel)}</span><span class="outcome-verb-edit" aria-hidden="true">✎</span>`;
+    verbBtn.addEventListener("click", () => openBloomModal("edit", outcome.id));
+
+    const deleteBtn = document.createElement("button");
+    deleteBtn.className = "icon-btn delete-btn outcome-delete-btn";
+    deleteBtn.type = "button";
+    deleteBtn.setAttribute("aria-label", t("deleteOutcome"));
+    deleteBtn.innerHTML = `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12"></path><path d="M18 6l-12 12"></path></svg>`;
+    deleteBtn.addEventListener("click", () => {
+      state.meta.sliders = state.meta.sliders.filter((o) => o.id !== outcome.id);
+      saveState();
+      renderOutcomes();
+    });
+
+    header.appendChild(verbBtn);
+    header.appendChild(deleteBtn);
+
+    const textarea = document.createElement("textarea");
+    textarea.className = "outcome-text panel-textarea";
+    textarea.rows = 1;
+    textarea.placeholder = t("outcomeTextPlaceholder");
+    textarea.value = outcome.text || "";
+    textarea.addEventListener("input", () => {
+      const found = (Array.isArray(state.meta.sliders) ? state.meta.sliders : []).find((o) => o.id === outcome.id);
+      if (found) found.text = textarea.value;
+      saveState();
+    });
+
+    item.appendChild(header);
+    item.appendChild(textarea);
+    outcomesListEl.appendChild(item);
+  });
+}
+
+function renderBloomModal() {
+  if (!bloomCategoryList) return;
+  bloomCategoryList.innerHTML = "";
+  const taxonomy = BLOOM_TAXONOMY[currentLang()] || BLOOM_TAXONOMY.fr;
+
+  taxonomy.forEach((cat) => {
+    const details = document.createElement("details");
+    details.className = "bloom-category";
+    if (bloomSelectedCategory === cat.id) details.open = true;
+
+    const summary = document.createElement("summary");
+    summary.className = "bloom-category-summary";
+    if (bloomSelectedCategory === cat.id && !bloomSelectedVerb) {
+      summary.classList.add("selected");
+    }
+    summary.textContent = cat.label;
+    summary.addEventListener("click", () => {
+      bloomSelectedCategory = cat.id;
+      bloomSelectedVerb = null;
+      bloomCategoryList.querySelectorAll(".bloom-category-summary, .bloom-verb-item").forEach((el) => el.classList.remove("selected"));
+      summary.classList.add("selected");
+    });
+
+    details.appendChild(summary);
+
+    cat.verbs.forEach((verb) => {
+      const verbItem = document.createElement("div");
+      verbItem.className = "bloom-verb-item";
+      if (bloomSelectedVerb === verb && bloomSelectedCategory === cat.id) {
+        verbItem.classList.add("selected");
+      }
+      verbItem.textContent = verb;
+      verbItem.addEventListener("click", () => {
+        bloomSelectedCategory = cat.id;
+        bloomSelectedVerb = verb;
+        bloomCategoryList.querySelectorAll(".bloom-category-summary, .bloom-verb-item").forEach((el) => el.classList.remove("selected"));
+        verbItem.classList.add("selected");
+      });
+      details.appendChild(verbItem);
+    });
+
+    bloomCategoryList.appendChild(details);
+  });
+}
+
+function openBloomModal(mode, outcomeId = null) {
+  bloomModalMode = mode;
+  bloomEditOutcomeId = outcomeId;
+
+  if (mode === "edit" && outcomeId) {
+    const outcome = (Array.isArray(state.meta.sliders) ? state.meta.sliders : []).find((o) => o.id === outcomeId);
+    bloomSelectedCategory = outcome?.category || null;
+    bloomSelectedVerb = outcome?.verb || null;
+  } else {
+    bloomSelectedCategory = null;
+    bloomSelectedVerb = null;
+  }
+
+  if (bloomAddBtn) bloomAddBtn.textContent = mode === "edit" ? t("bloomEdit") : t("bloomAdd");
+  renderBloomModal();
+  openModal(bloomModalBackdrop, "#bloom-cancel-btn");
+}
+
+function confirmBloom() {
+  if (!bloomSelectedCategory) return;
+  const taxonomy = BLOOM_TAXONOMY[currentLang()] || BLOOM_TAXONOMY.fr;
+  const cat = taxonomy.find((c) => c.id === bloomSelectedCategory);
+  const categoryLabel = cat?.label || "";
+
+  if (bloomModalMode === "add") {
+    if (!Array.isArray(state.meta.sliders)) state.meta.sliders = [];
+    state.meta.sliders.push({
+      id: nextId(),
+      category: bloomSelectedCategory,
+      categoryLabel,
+      verb: bloomSelectedVerb || "",
+      text: ""
+    });
+  } else if (bloomModalMode === "edit" && bloomEditOutcomeId) {
+    const outcome = (Array.isArray(state.meta.sliders) ? state.meta.sliders : []).find((o) => o.id === bloomEditOutcomeId);
+    if (outcome) {
+      outcome.category = bloomSelectedCategory;
+      outcome.categoryLabel = categoryLabel;
+      outcome.verb = bloomSelectedVerb || "";
+    }
+  }
+
+  saveState();
+  closeModal(bloomModalBackdrop);
+  renderOutcomes();
 }
 
 function setupFormAccessibility() {
@@ -2484,7 +2731,7 @@ function renderTopPanel() {
   metaDescriptionInput.value = state.meta.description;
   metaCommandInput.value = state.meta.command;
   metaPersonasInput.value = state.meta.personas;
-  metaSlidersInput.value = state.meta.sliders;
+  renderOutcomes();
 
   const panelExpanded = !state.topPanelCollapsed;
   topTabSettings.classList.toggle("active", panelExpanded && state.meta.activeTab === "settings");
@@ -2558,6 +2805,14 @@ function labelForGroupMode(groupMode) {
 
 function labelForTrainerMode(mode) {
   return mode === "absent" ? t("trainer_absent") : t("trainer_present");
+}
+
+function slidersToString(sliders) {
+  if (!Array.isArray(sliders)) return typeof sliders === "string" ? sliders : "";
+  return sliders.map((o) => {
+    const label = o.verb || o.categoryLabel || "";
+    return label ? `${label}: ${o.text || ""}` : (o.text || "");
+  }).filter(Boolean).join("\n");
 }
 
 function labelForSyncMode(mode) {
@@ -2640,9 +2895,12 @@ function buildMarkdownExport() {
     lines.push(state.meta.personas);
     lines.push("");
   }
-  if (state.meta.sliders) {
-    lines.push("### Résultats");
-    lines.push(state.meta.sliders);
+  if (Array.isArray(state.meta.sliders) && state.meta.sliders.length) {
+    lines.push("### Acquis d'apprentissage");
+    state.meta.sliders.forEach((o) => {
+      const label = o.verb || o.categoryLabel || "";
+      lines.push(`- ${label}${label && o.text ? " : " : ""}${o.text || ""}`);
+    });
     lines.push("");
   }
   lines.push("## Séances");
@@ -2759,8 +3017,11 @@ function buildHtmlExportDocument() {
         : ""
     }
     ${
-      state.meta.sliders
-        ? `<p><strong>Résultats:</strong><br />${escapeHtmlWithBreaks(state.meta.sliders)}</p>`
+      Array.isArray(state.meta.sliders) && state.meta.sliders.length
+        ? `<p><strong>Acquis d'apprentissage :</strong></p><ul>${state.meta.sliders.map((o) => {
+            const label = o.verb || o.categoryLabel || "";
+            return `<li>${label ? `<strong>${escapeHtml(label)}</strong> : ` : ""}${escapeHtmlWithBreaks(o.text || "")}</li>`;
+          }).join("")}</ul>`
         : ""
     }
   </section>`;
@@ -2871,7 +3132,7 @@ function buildSpreadsheetRows() {
           state.meta.description || "",
           state.meta.command || "",
           state.meta.personas || "",
-          state.meta.sliders || ""
+          slidersToString(state.meta.sliders)
         ]
       );
       return;
@@ -2907,7 +3168,7 @@ function buildSpreadsheetRows() {
           state.meta.description || "",
           state.meta.command || "",
           state.meta.personas || "",
-          state.meta.sliders || ""
+          slidersToString(state.meta.sliders)
         ]
       );
     });
@@ -3120,14 +3381,12 @@ function buildStateFromLegacyLdj(parsed) {
   const outcomes = Array.isArray(parsed.outcomes)
     ? parsed.outcomes
         .map((item) => {
-          const details = String(item?.details ?? "").trim();
+          const text = String(item?.details ?? "").trim();
           const verb = String(item?.verb ?? "").trim();
-          if (details && verb) return `${details} (${verb})`;
-          return details || verb;
+          return { id: nextId(), category: "", categoryLabel: "", verb, text };
         })
-        .filter(Boolean)
-        .join("\n")
-    : "";
+        .filter((o) => o.verb || o.text)
+    : [];
 
   imported.meta.uiLanguage = currentLang();
   imported.meta.name = String(parsed.name ?? "").trim();
@@ -4642,9 +4901,11 @@ function bindTopPanelEvents() {
     state.meta.personas = event.target.value;
     saveState();
   });
-  metaSlidersInput.addEventListener("input", (event) => {
-    state.meta.sliders = event.target.value;
-    saveState();
+  addOutcomeBtn.addEventListener("click", () => openBloomModal("add"));
+  bloomCancelBtn.addEventListener("click", () => closeModal(bloomModalBackdrop));
+  bloomAddBtn.addEventListener("click", confirmBloom);
+  bloomModalBackdrop.addEventListener("click", (e) => {
+    if (e.target === bloomModalBackdrop) closeModal(bloomModalBackdrop);
   });
   langSelect.addEventListener("change", (event) => {
     state.meta.uiLanguage = event.target.value === "en" ? "en" : "fr";
@@ -4704,12 +4965,19 @@ boardLayoutGridBtn.addEventListener("click", () => {
 })();
 
 newDesignBtn.addEventListener("click", () => {
-  if (!window.confirm(t("newDesignConfirm"))) return;
+  openModal(newDesignModalBackdrop, "#new-design-cancel-btn");
+});
+newDesignCancelBtn.addEventListener("click", () => closeModal(newDesignModalBackdrop));
+newDesignConfirmBtn.addEventListener("click", () => {
+  closeModal(newDesignModalBackdrop);
   state = createNewDesignState();
   window.learningDesignerClearRemoteDesignUrl?.();
   saveState();
   render();
   announce(t("moved"));
+});
+newDesignModalBackdrop.addEventListener("click", (e) => {
+  if (e.target === newDesignModalBackdrop) closeModal(newDesignModalBackdrop);
 });
 
 function getExportPayload(format = "json") {

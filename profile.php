@@ -116,7 +116,7 @@ $designCount = (int)$countStmt->fetchColumn();
                 <h1>Mon profil</h1>
             </div>
         </div>
-        <p class="account-copy">Role: <?= htmlspecialchars((string)$me['role'], ENT_QUOTES, 'UTF-8') ?>. Productions sauvegardees: <?= $designCount ?>.</p>
+        <p class="account-copy">Role: <?= htmlspecialchars((string)$me['role'], ENT_QUOTES, 'UTF-8') ?>. Productions sauvegardées : <?= $designCount ?>.</p>
 
         <?php if ($message !== ''): ?>
             <p class="account-message success"><?= htmlspecialchars($message, ENT_QUOTES, 'UTF-8') ?></p>

@@ -1128,6 +1128,223 @@ body.fullscreen-editor-open {
   justify-content: flex-end;
 }
 
+/* --- Outcomes (Acquis d'apprentissage) --- */
+
+.outcomes-row {
+  flex-direction: column;
+  align-items: stretch;
+  gap: 6px;
+}
+
+.outcomes-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.outcomes-header label {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-label);
+}
+
+.outcomes-add-btn {
+  flex-shrink: 0;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  border: 1px solid var(--line);
+  background: var(--panel);
+  color: var(--text-body);
+  font-size: 18px;
+  line-height: 1;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  transition: background 0.15s, border-color 0.15s;
+}
+
+.outcomes-add-btn:hover {
+  background: var(--hover);
+  border-color: var(--accent);
+}
+
+.outcomes-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.outcome-item {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  overflow: hidden;
+  background: var(--panel);
+}
+
+.outcome-item-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 4px;
+  padding: 4px 6px 4px 8px;
+  background: var(--panel);
+  border-bottom: 1px solid var(--line);
+}
+
+.outcome-verb-btn {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  flex: 1;
+  min-width: 0;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 2px 4px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-body);
+  text-align: left;
+}
+
+.outcome-verb-btn:hover {
+  background: var(--hover);
+}
+
+.outcome-verb-text {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.outcome-verb-edit {
+  opacity: 0.45;
+  font-size: 11px;
+  flex-shrink: 0;
+}
+
+.outcome-verb-btn:hover .outcome-verb-edit {
+  opacity: 0.8;
+}
+
+.outcome-delete-btn {
+  flex-shrink: 0;
+  width: 22px !important;
+  height: 22px !important;
+}
+
+.outcome-delete-btn svg {
+  width: 9px !important;
+  height: 9px !important;
+}
+
+.outcome-text {
+  border: none !important;
+  border-radius: 0 !important;
+  resize: vertical;
+  font-size: 13px;
+  min-height: unset;
+  padding-top: 6px;
+  padding-bottom: 6px;
+}
+
+/* --- Bloom taxonomy modal --- */
+
+.bloom-modal {
+  width: min(460px, 92vw);
+  max-height: 85vh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.bloom-modal-subtitle {
+  font-size: 13px;
+  color: var(--muted);
+  margin: 0;
+}
+
+.bloom-category-list {
+  overflow-y: auto;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 4px;
+}
+
+.bloom-category {
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.bloom-category-summary {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 10px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  border-radius: 6px;
+  list-style: none;
+  user-select: none;
+  color: var(--text-body);
+}
+
+.bloom-category-summary::-webkit-details-marker {
+  display: none;
+}
+
+.bloom-category-summary::before {
+  content: "▶";
+  font-size: 10px;
+  color: var(--muted);
+  flex-shrink: 0;
+  transition: transform 0.15s;
+}
+
+.bloom-category[open] > .bloom-category-summary::before {
+  transform: rotate(90deg);
+}
+
+.bloom-category-summary:hover,
+.bloom-category-summary.selected {
+  background: var(--hover);
+}
+
+.bloom-category-summary.selected {
+  color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 10%, transparent);
+}
+
+.bloom-verb-item {
+  padding: 6px 10px 6px 28px;
+  font-size: 13px;
+  cursor: pointer;
+  border-radius: 4px;
+  color: var(--text-body);
+  margin: 1px 0;
+}
+
+.bloom-verb-item:hover {
+  background: var(--hover);
+}
+
+.bloom-verb-item.selected {
+  background: color-mix(in srgb, var(--accent) 12%, transparent);
+  color: var(--accent);
+  font-weight: 600;
+}
+
+/* --- end outcomes --- */
+
 .toolbar {
   display: flex;
   gap: 16px;

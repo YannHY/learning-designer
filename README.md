@@ -2,6 +2,10 @@
 
 Application web de scénarisation pédagogique inspirée de l'UCL Learning Designer.
 
+Inspiré de l'[UCL Learning Designer](https://www.ucl.ac.uk/learning-designer/) (UCL Knowledge Lab, UCL Institute of Education, 2013–2026).
+
+Basé sur le travail de François Jourde : https://github.com/jourde/learning-designer-revised
+
 Le projet permet de concevoir des séquences d'apprentissage structurées en moments et activités, de les analyser visuellement, de les enrichir avec des compétences numériques, puis de les exporter, sauvegarder et partager.
 
 - Dépôt : [https://github.com/YannHY/learning-designer](https://github.com/YannHY/learning-designer)
@@ -23,8 +27,6 @@ Le projet permet de concevoir des séquences d'apprentissage structurées en mom
 - thème clair / sombre
 
 ## Compétences numériques
-
-L'application n'utilise plus un catalogue Moodle / H5P.
 
 Les activités peuvent maintenant être liées à un référentiel de compétences numériques structuré en trois domaines :
 

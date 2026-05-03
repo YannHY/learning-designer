@@ -1156,7 +1156,7 @@ body.fullscreen-editor-open {
   background: var(--panel);
   color: var(--text-body);
   font-size: 18px;
-  line-height: 1;
+  line-height: 0;
   cursor: pointer;
   display: flex;
   align-items: center;

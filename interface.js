@@ -440,6 +440,220 @@ const TOOL_CATEGORY_LABELS = {
   "h5p-all":                { fr: "H5P – Tous les types de contenus",          en: "H5P – All Content Types" },
 };
 
+function normalizeCatalogSlug(value) {
+  return String(value ?? "")
+    .trim()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "") || "general";
+}
+
+const COMPETENCY_CATALOG_SOURCE = String.raw`# acquerir	Acquérir	Acquire
+Utilisation de l'iPad		1	Verrouiller et déverrouiller l'iPad	Garder l'iPad dans son cartable tant que l'enseignant ne recquiert pas son utilisation | Mettre en veille la tablette quand on a terminé
+Utilisation de l'iPad		2	Connaître et protéger ses identifiants	Connaître ses principaux identifiants | Protéger son mot de passe et ses données avec Touch ID | Activer l'enregistrement des mots de passe dans les réglages | Utiliser le gestionnaire de mots de passe
+Utilisation de l'iPad		3	Connaître les principaux gestes multitâches	Passer d'une application à une autre avec les quatre doigts | Revenir sur l'écran d'accueil avec les quatre doigts | Annuler ou rétablir une action à l'aide de trois doigts | Faire l'équivalent d'un clic droit avec deux doigts ou d'un simple clic en appuyant sur la touche contrôle
+Utilisation de l'iPad		4	Taper efficacement et rapidement	Développer sa maîtrise de la dactylographie avec Taptouche (taper au moins 40 mots par minute) | Utiliser les prédictions de texte | Créer des raccourcis
+Utilisation de l'iPad		5	Prendre soin du matériel et savoir régler des problèmes de base	Ranger son iPad dans son cartable | Placer son cartable dans un endroit sûr | Nettoyer régulièrement sa tablette | Charger la batterie de l’iPad régulièrement pour limiter sa détérioration | Redémarrer son iPad en cas de blocage (bug)
+Productivité et organisation	Safari	6	Faire une recherche avec Safari	Utiliser un moteur de recherche pour trouver des informations
+Productivité et organisation		7	Connaître les sites essentiels	Utiliser les sites les plus courants (Pronote, site de l'Institut, dictionnaires en ligne, Geogebra, Quizlet…) | Consulter ses notes ainsi que le cahier de textes sur Pronote | Voir son emploi du temps sur Pronote
+Productivité et organisation		8	Retrouver aisément et rapidement les sites les plus utilisés	Créer un marque-page, un favori ou une icône sur l'écran d'accueil pour retrouver facilement les sites dont on a besoin
+Productivité et organisation		9	Lire sur l'iPad	Lire sur l'iPad en supprimant éventuellement les publicités | Lire sans distraction sur l'iPad en recourant au mode lecteur | Exporter une page web au format PDF pour souligner ou annoter des passages importants
+Productivité et organisation	OneNote, Teams & OneDrive	10	Consulter ses cours sur OneNote	Trouver le « notebook » de la classe pour chaque matière | Consulter régulièrement l'application pour lire les documents et les corrections
+Productivité et organisation		11	Trouver ou rendre un devoir sur Teams	Trouver un devoir sur Teams et savoir remettre son travail sur Teams (en sachant chercher sur son iPad ou sur Office 365 le travail effectué)
+Productivité et organisation		12	Sauvegarder, organiser et retrouver des documents sur l'iPad ou OneDrive	Enregistrer ses documents dans le répertoire approprié (rangement par matière) | Nommer ses documents de façon à les retrouver facilement | Connaître la fonction d'historique d'un fichier permettant de retrouver un état antérieur d'un document
+Productivité et organisation		13	Prendre des notes soit au clavier soit avec un stylet	Utiliser les applications permettant d'écrire ou de prendre des notes (OneNote, Notability, Word…) | Ajouter une section ou une page dans son carnet personnel (OneNote)
+Communication et collaboration	Partager	14	Partager des documents avec ses enseignants ou d'autres élèves	Savoir partager via mail, Teams ou OneNote ses documents pour travailler à plusieurs ou simplement communiquer un travail
+Communication et collaboration		15	Savoir travailler sur des documents en temps réel avec d’autres élèves	Inviter un élève ou un enseignant à collaborer | Collaborer et respecter le travail de chacun | Utiliser les commentaires pour suggérer des modifications
+Communication et collaboration		16	Partager des documents avec les bons niveaux d’accès	Transmettre un document en attribuant les droits voulus (lecture, commentaire, édition)
+Communication et collaboration		17	Joindre la personne à laquelle on souhaite s'adresser	Poser des questions ou répondre de manière claire et utile à son enseignant ou à d’autres élèves via Teams, en notifiant son correspondant (signe arobase suivi du nom)
+Communication et collaboration		18	Réaliser une présentation pour faire un exposé en classe	Connaître les fonctions essentielles d'un logiciel de présentation (PowerPoint, Genially ou Canva…)
+Communication et collaboration	Écrire des emails	19	Écrire un email	Structurer un email correctement, en incluant l'objet, une salutation appropriée, des formules de politesse, une signature.
+Communication et collaboration		20	Inclure une pièce jointe	Joindre des fichiers à un email en s’assurant que les pièces jointes sont correctement nommées et ne dépassent pas la taille limite.
+Communication et collaboration		21	Savoir répondre en fonction des situations	Répondre aux emails de manière appropriée (« Répondre à tous » si nécessaire uniquement, faire preuve de politesse et suivre les règles de communication).
+Communication et collaboration		22	Envoyer un email	Envoyer un courrier avec le client mail Outlook (y compris transférer)
+Créativité et expression		23	Connaître sommairement les applications courantes de bureautique	Connaître les principales fonctions du traitement de texte Word, du logiciel de présentation PowerPoint et du tableur Excel
+Créativité et expression		24	Identifier l’application à utiliser pour la tâche correspondante	Savoir que Word permet d'écrire du texte, PowerPoint de faire une présentation…
+Créativité et expression		25	Connaître les principales règles de formatage d’un texte	Connaître les principales possibilités de mise en forme du texte (mettre du texte en gras ou en italique, aligner un texte, etc.
+Créativité et expression		26	Utiliser iMovie pour créer de courtes vidéos.	Être capable d'enregistrer un petit film | Faire quelques modifications (couper un passage, insérer un titre…)
+Créativité et expression		27	Utiliser des applications comme Dictaphone ou GarageBand	Être en mesure d'effectuer un enregistrement (une lecture à voix haute, une récitation, un podcast ou un livre audio…)
+Créativité et expression		28	Dessiner ou faire des croquis, des schémas….	Utiliser des applications comme Procreate ou FreeForm | Utiliser une application pour réaliser une carte mentale
+Créativité et expression		29	Comprendre la notion de droit	Comprendre ce qu'on entend par droit d’auteur, droit d’image et images libres de droits | Définir ce qu'est la propriété intellectuelle
+Créativité et expression		30	Citer ses sources, être attentif au droit d'image, droit d'auteur, utiliser des images libres de droits	Faire preuve d'honnêteté et donner la provenance des informations que l'on procure | Prendre conscience de ce qu'est le plagiat
+# approfondir	Approfondir	Deepen
+Utilisation de l'iPad		1	Personnaliser son environnement de travail	Créer et gérer des dossiers d'applications | Utiliser le mode concentration pour éviter les distractions | Éventuellement, couper, limiter ou sélectionner les notifications
+Utilisation de l'iPad		2	Connaître et protéger ses identifiants	Activer l'authentification à deux facteurs quand cela est possible | Connaître les principaux paramètres de confidentialité (géolocalisation, accès aux données personnelles, utilisation des cookies…)
+Utilisation de l'iPad		3	Maîtriser les gestes multitâches avancés	Connaître tous les gestes multitâches | Afficher deux applications à la fois grâce Split View et Slide Over | Glisser et déposer un ou plusieurs fichiers à la fois entre des applications | Utiliser Spotlight pour trouver une information ou ouvrir une application
+Utilisation de l'iPad		4	Taper efficacement et rapidement	Atteindre une vitesse de frappe de 60 mots par minute | Utiliser les fonctionnalités de dictée vocale
+Utilisation de l'iPad		5	Prendre soin du matériel et savoir régler des problèmes de base	Effectuer régulièrement des sauvegardes de ses données importantes | S'assurer que l'espace de stockage de l'iPad n'est pas saturé
+Productivité et organisation	Safari	6	Faire une recherche avec Safari	Utiliser différents moteurs de recherche en fonction de ses besoins | Posséder quelques notions présidant au classement des résultats de recherche | Utiliser des opérateurs de recherche avancés | Évaluer la pertinence et la fiabilité des sources (faire la différence entre publicité, contenu sponsorisé ; identifier une information fiable)
+Productivité et organisation		7	Organiser une veille informationnelle	Exploiter des flux RSS ou s'abonner à des newsletters pertinentes | Connaître des ressources fiables et être capable d'identifer des ressources dignes de confiance (identifier fake news et désinformation)
+Productivité et organisation		8	Retrouver aisément et rapidement les sites les plus utilisés	Organiser ses favoris et ses ressources numériques
+Productivité et organisation		9	Lire sur l'iPad	Lire et utiliser les fonctions offertes par l'ePub (annotations, dictionnaire intégré…)
+Productivité et organisation	OneNote, Teams & OneDrive	10	Consulter ses cours sur OneNote	Utiliser le lecteur immersif pour faciliter la lecture | Ajouter une section ou une page
+Productivité et organisation		11	Trouver ou rendre un devoir sur Teams	Utiliser les fonctions plus avancées de Teams (Calendrier, Réunion instantanée…) | Trouver et retrouver les devoirs passés ou en retard
+Productivité et organisation		12	Sauvegarder et organiser et retrouver des documents sur l'iPad ou OneDrive	Dans l'application Fichiers, utiliser les tags pour repérer plus rapidement les fichiers importants | Utiliser les différents modes de vue (icônes, liste, colonnes…) | D'un appui long sur un fichier, connaître les principales fonctions (Lire les informations, Compresser, Dupliquer, Partager…)
+Productivité et organisation		13	Prendre des notes soit au clavier soit avec un stylet	Structurer ses notes | Utiliser des codes couleurs | Insérer des images ou des enregistrements | Connaître l'étendue des outils (lasso, insertion de formes, utilisation de l'IA...) | Connaître d'autres applications de prises de notes comme Notes d'Apple ou Notability
+Communication et collaboration	Partager	14	Partager des documents avec ses enseignants ou d'autres élèves	Au cas où un travail partagé aurait été altéré et des passages supprimés, savoir retrouver l'historique du fichier | Identifier qui est responsable de quelle modification
+Communication et collaboration		15	Savoir travailler sur des documents en temps réel avec d’autres élèves	Définir des accès qui évoluent (lecture puis écriture) | Proposer plusieurs versions selon l'état du document (brouillon, révision, final) | Restreindre l'édition de certaines parties spécifiques d'un document
+Communication et collaboration	Écrire des emails	16	Créer des favoris dans Outlook	Créer des favoris pour retrouver plus rapidement les destinataires les plus fréquents
+Communication et collaboration		17	Créer des règles dans Outlook	Créer des règles permettant de retrouver plus facilement ses emails
+Communication et collaboration		18	Créer une signature dans Outlook	Dans les réglages d'Outlook, insérer une signature automatiquement à la fin de son email
+Communication et collaboration		19	S'organiser	Insérer des événements dans le calendrier avec des dates butoirs afin de ne pas oublier certaines tâches à réaliser | Inviter un ou une élève à participer à un événement lorsque l'on travaille sur un projet à plusieurs | Sauvegarder un email important dans OneNote
+Données et programmation	Excel & calcul	20	Collecter des données simples	Collecter des données à l'aide d'un formulaire conçu avec Microsoft Forms | Créer un petit tableau de bord pour analyser des résultats (ses notes par exemple) ou pour rassembler des informations (par exemple, des dates sur un événement ou une bibliographie)
+Données et programmation		21	Organiser et représenter visuellement des données	Utiliser le formatage conditionnel | Insérer un graphique simple (du type camembert ou barres)
+Données et programmation		22	Procéder à des calculs simples	Connaître des formules simples comme calculer une moyenne ou compter des données
+Données et programmation		23	Formater les données	Appliquer quelques règles de formatage simples pour rendre lisibles le tableur
+Données et programmation		24	Utiliser la calculette	Savoir faire des calculs courants | Basculer de la calculette élémentaire à la calculette scientifique | Savoir faire des conversions | Résoudre des équations ou tracer des graphiques grâce à Notes mathématiques
+Données et programmation	Scratch	25	Se familiariser avec l'interface	Savoir naviguer dans l’interface, ajouter des sprites, des arrière-plans et des blocs de code
+Données et programmation		26	Comprendre la notion de bloc	Combiner les différents types de blocs pour créer des animations, des jeux simples, ou des histoires interactives.
+Données et programmation		27	Connaître les bases de la programmation	Utiliser des instructions conditionnelles comme « si… alors » | Comprendre comment utiliser les boucles pour répéter une série d’instructions plusieurs fois | Comprendre le concept de variables pour stocker et manipuler des données
+Créativité et expression		28	Connaître sommairement les applications courantes de bureautique	En plus de la suite Office 365 (Word, PowerPoint…), connaître les équivalents d'Apple et leurs particularités (Pages, Keynote…)
+Créativité et expression		29	Créer des documents multimédias enrichis	Avec Canva, créer des documents riches incluant différents types de médias (texte, image, son…) | Les présenter oralement sans regarder ses notes en respectant un temps imparti
+Créativité et expression		30	Traiter et modifier des images	Recadrer, redimensionner et ajuster les paramètres de base d'une image (luminosité, contraste…) | Appliquer des filtres et des effets simples
+Créativité et expression		31	Utiliser iMovie pour faire du montage vidéo	Procéder à la réalisation de films plus longs et plus travaillés (insertion de titres ou de transitions) | Connaître les différents formats vidéos, savoir comment les compresser ou les partager notamment grâce à Microsoft Stream
+Créativité et expression		32	Utiliser des applications comme Dictaphone ou GarageBand	Enregistrer et éditer un contenu audio | Partager ses productions, les accompagner d'une image ou d'une description en vue d'une publication
+Créativité et expression		33	Dessiner ou faire des croquis, des schémas….	Perfectionner sa maîtrise de Procreate | Utiliser Notes et savoir insérer un graphique ainsi que les possibilités de calcul | Utiliser des applications de création de cartes mentales (comme Whimsical)
+Créativité et expression		34	Utiliser l'intelligence artificielle	Poser des questions pertinentes dans un chatbot | Mesurer la pertinence des réponses apportées | Discerner biais, stéréotypes et autres hallucinations
+Créativité et expression		35	Utiliser des IA multimodales	Utiliser l'IA pour générer du texte, des images ou des compositions musicales
+# creer	Créer	Create
+Productivité et organisation	Safari	1	Utiliser les fonctions avancées du navigateur	Utiliser les profils, les onglets groupés ; masquer les éléments indésirables ; afficher le lecteur ; utiliser la traduction, les extensions et le menu de partage (par exemple, envoyer une page web dans OneNote)
+Productivité et organisation		2	Réaliser des recherches approfondies	Utiliser Google Scholar (faire une recherche par auteur, par date, etc. ; faire une recherche avancée ; recevoir des alertes... | Utiliser JSTOR (recherche avancée, utilisation d'opérateurs booléens, d'outils comme Text analyzer/Understanding series…)
+Productivité et organisation		3	Faire des recherches complexes pour retrouver des informations	Utiliser un moteur de recherche inversée pour retrouver l'origine d'une image ou encore Wayback Machine pour trouver l'archive d'une page web
+Productivité et organisation		4	Utiliser les fonctions avancées de Wikipédia	Consulter l'historique d'une page, les modifications, les discussions, les outils…
+Productivité et organisation	OneNote, Teams & OneDrive	5	Trier ses cours sur OneNote	Archiver, classer et retrouver rapidement des documents dans OneDrive grâce à une arborescence logique et une nomenclature cohérente
+Productivité et organisation		6	Utiliser Teams comme outil de gestion de projet	Créer un canal ou une équipe pour un projet, attribuer des rôles, suivre les contributions de chacun via le fil de discussion ou les commentaires de documents | Intégrer des ressources (planning, OneNote, calendrier partagé)
+Productivité et organisation		7	Mettre en place un système de suivi personnel de ses tâches et projets	Créer et maintenir à jour une to-do list numérique dans OneNote (ou Outlook) | Créer des rappels (on pourra aussi utiliser l'application Rappels d'Apple)
+Productivité et organisation		8	Animer une courte réunion ou une présentation en ligne via Teams	Organiser une visioconférence simple (invitation, ordre du jour, partage d’écran) pour réaliser un travail (exposé, projet collaboratif…) | Gérer les rôles (prise de parole, modération, gestion du temps), utiliser le chat ou les réactions (émojis)
+Communication et collaboration		9	Être acteur d'une communication	Créer un guide ou une charte des bonnes pratiques notamment en participant à des campagnes d'information (sur l'écologie, sur le harcèlement, etc.) | Organiser un atelier de sensibilisation pour identifier et combattre le réchauffement climatique, les formes de harcèlement numérique ou de désinformation...
+Communication et collaboration		10	Mobiliser toutes les compétences et applications permettant d'être acteur de cette communication	Animer un projet collaboratif numérique en utilisant Teams, Padlet, Trello, Notion… | Assurer l'organisation des ressources partagées et leur accès
+Communication et collaboration		11	Réaliser une production multimédia collaborative avancée	Produire un contenu numérique complexe (site web collaboratif, web-documentaire, podcast collaboratif, etc.). Voir domaine Créativité et expression
+Communication et collaboration		12	Être responsible dans ses usages du web	Se familiariser avec la notion d’identité numérique | Être attentif aux traces qu’on laisse sur le web et prendre conscience des enjeux et de la portée de ses écrits
+Données et programmation	Excel & Word	13	Bâtir des documents Word enrichis	Inclure une table des matières | Inclure des citations correctement formatées (APA, MLA…)
+Données et programmation		14	Analyser des données avec Excel	Recourir à des formules conditionnelles (SI, NB.SI...) et la validation de données | Créer des filtres (pour soi ou pour tout le monde) | Créer un graphique adapté au type de données | Ces compétences peuvent être exploitées pour réaliser un budget, suivre des données sportives ou scientifiques
+Données et programmation		15	Réaliser des calculs dans Excel	Connaître et combiner plusieurs formules (comme SI + ET, OU + MOYENNE, etc.)
+Données et programmation		16	Connaître quelques formules avancées	Maîtriser des formules avancées telles que INDEX, MATCH, IFS, VLOOKUP…
+Données et programmation		17	Insérer des équations	Dans Word, savoir utiliser l'éditeur d'équation
+Données et programmation	Programmation	18	Perfectionner sa maîtrise de Scratch	Réaliser un mini-jeu mettant en œuvre les compétences précédemment acquises (variables, conditions, boucles et événements multiples…) | Participer à différentes initiatives du type la Nuit du code, Algorea. Aller au fablab.
+Données et programmation		19	S'initier à Python	Écrire un programme linéaire simple | Utiliser des variables, des conditions et des boucles | Insérer des commentaires pour faciliter la lecture du code
+Données et programmation		20	Automatiser des tâches	Écrire des scripts simples pour automatiser des tâches répétitives (renommer des fichiers, trier automatiquement des dossiers, générer des listes). | Éventuellement, s'aider de l'IA pour générer ces scripts.
+Créativité et expression		21	Participer au développement de l'encyclopédie Vikidia ou Wikipédia	Posséder un compte pour faire éventuellement de simples modifications | Rédiger pour l'encyclopédie (informer de façon neutre, objectif, fournir des références, connaître la syntaxe wiki) | Participer à un projet collaboratif (corriger ou modérer, répondre à une demande de modification)
+Créativité et expression		22	Créer un podcast ou participer à la web radio	Utiliser des applications comme GarageBand ou SoundTrap pour procéder un montage complexe voire collaboratif | Dans GarageBand, savoir insérer des boucles, des bruitages ou de la musique | Publier sur une plateforme comme Spotify ou autre
+Créativité et expression		23	Réaliser un site web	S'initier au développement web (HTML, CSS…) | Connaître des outils de type no-code | Créer des sites complexes avec Wordpress ou Wix
+Créativité et expression		24	Proposer des animations complexes	Avec Procreate ou Procreate Dreams, proposer des animations complexes (des œuvres artistiques ou des tutoriels)
+Créativité et expression		25	Utiliser l'intelligence artificielle pour créer un contenu riche et personnel	Générer des images, des documents sonores ou écrire du code pour proposer des projets complexes
+Créativité et expression		26	Utiliser les applications courantes de bureautique pour créer un contenu riche	Des applications comme PowerPoint ou Keynote pourront être utilisées de façon à proposer des présentations interactives avec des animations et des transitions variées
+Créativité et expression		27	Traiter et modifier des images	Savoir modifier des images et utiliser des fonctions avancées de logiciels de retouche d'images | Connaître et utiliser les calques, le lasso et tout type d'outils variés
+Créativité et expression		28	Faire du montage vidéo	Utiliser un logiciel de montage en ligne comme Capcut pour des projets plus complexes que ceux produits avec iMovie | Réaliser des projets complexes du type booktube, reportage, web TV (utilisation d'un fond vert, prise de son, effets…)
+Créativité et expression		29	Utiliser la réalité augmentée ou créer des activités recourant à la réalité augmentée	Utilisation de différentes apps comme Reality Composer, FoxAR, ARMaker, Adobe Aero…
+Créativité et expression		30	Générer des objets exploitables en 3D ainsi que la réalité virtuelle	Réaliser un environnement immersif à partir d'une application accessible comme CoSpaces Edu | Concevoir ses propres objets 3D avec TinkerCAD ou SketchUp | Exporter un objet 3D au format standard (STL, OBJ) pour impression 3D ou visualisation`;
+
+function parseCompetencyCatalog(source) {
+  const data = [];
+  const categories = {};
+  const tabs = [];
+  const badgeByLevel = { acquerir: "N1", approfondir: "N2", creer: "N3" };
+  const codeByLevel = { acquerir: "A", approfondir: "P", creer: "C" };
+  let currentLevel = null;
+
+  String(source ?? "").split("\n").forEach((rawLine) => {
+    const line = rawLine.trim();
+    if (!line) return;
+
+    if (line.startsWith("# ")) {
+      const [id = "", labelFr = "", labelEn = ""] = line.slice(2).split("\t");
+      currentLevel = { id, labelFr, labelEn };
+      tabs.push(currentLevel);
+      return;
+    }
+
+    if (!currentLevel) return;
+    const [sectionRaw = "", appRaw = "", numberRaw = "", labelRaw = "", descRaw = ""] = line.split("\t");
+    const section = sectionRaw.trim() || "Général";
+    const category = `${currentLevel.id}:${normalizeCatalogSlug(section)}`;
+    categories[category] ||= { fr: section, en: section };
+
+    data.push({
+      id: `competency:${currentLevel.id}:${numberRaw.trim()}`,
+      platform: currentLevel.id,
+      category,
+      sectionFr: section,
+      sectionEn: section,
+      appFr: appRaw.trim(),
+      appEn: appRaw.trim(),
+      levelLabelFr: currentLevel.labelFr,
+      levelLabelEn: currentLevel.labelEn,
+      levelBadge: badgeByLevel[currentLevel.id] || currentLevel.id,
+      levelCode: codeByLevel[currentLevel.id] || currentLevel.id.charAt(0).toUpperCase(),
+      number: Number(numberRaw),
+      shortCode: `${codeByLevel[currentLevel.id] || currentLevel.id.charAt(0).toUpperCase()}${Number(numberRaw)}`,
+      labelFr: labelRaw.trim(),
+      labelEn: labelRaw.trim(),
+      descFr: descRaw.trim(),
+      descEn: descRaw.trim()
+    });
+  });
+
+  return { data, categories, tabs };
+}
+
+const {
+  data: SELECTABLE_TOOLS_DATA,
+  categories: SELECTABLE_TOOL_CATEGORY_LABELS,
+  tabs: TOOL_PICKER_TABS
+} = parseCompetencyCatalog(COMPETENCY_CATALOG_SOURCE);
+
+const SELECTABLE_TOOL_IDS_SET = new Set(SELECTABLE_TOOLS_DATA.map(tool => tool.id));
+
+const COMPETENCY_LEVEL_STYLES = {
+  acquerir: {
+    bg: "#e0f2fe",
+    border: "#7dd3fc",
+    text: "#075985",
+    active: "#bae6fd"
+  },
+  approfondir: {
+    bg: "#ede9fe",
+    border: "#c4b5fd",
+    text: "#5b21b6",
+    active: "#ddd6fe"
+  },
+  creer: {
+    bg: "#dcfce7",
+    border: "#86efac",
+    text: "#166534",
+    active: "#bbf7d0"
+  }
+};
+
+function getCompetencyStyle(level) {
+  return COMPETENCY_LEVEL_STYLES[level] || COMPETENCY_LEVEL_STYLES.acquerir;
+}
+
+function applyCompetencyTheme(element, level) {
+  if (!element) return;
+  const theme = getCompetencyStyle(level);
+  element.style.setProperty("--competency-bg", theme.bg);
+  element.style.setProperty("--competency-border", theme.border);
+  element.style.setProperty("--competency-text", theme.text);
+  element.style.setProperty("--competency-active", theme.active);
+}
+
+function competencyTooltip(toolDef, lang) {
+  if (!toolDef) return "";
+  const label = lang === "en" ? toolDef.labelEn : toolDef.labelFr;
+  const section = lang === "en" ? toolDef.sectionEn : toolDef.sectionFr;
+  const details = lang === "en" ? toolDef.descEn : toolDef.descFr;
+  const app = lang === "en" ? toolDef.appEn : toolDef.appFr;
+  return [
+    `${toolDef.shortCode} — ${label}`,
+    section ? `${lang === "en" ? "Domain" : "Domaine"}: ${section}` : "",
+    app ? `${lang === "en" ? "App" : "App"}: ${app}` : "",
+    details
+  ].filter(Boolean).join("\n");
+}
+
 let uid = 0;
 const nextId = () => `id-${Date.now()}-${uid++}`;
 const DEFAULT_DAY_HOURS = 7;
@@ -748,12 +962,12 @@ const I18N = {
     activityDeleted: "Activité supprimée.",
     activityAdded: "Activité ajoutée.",
     sessionDeleted: "Séance supprimée.",
-    selectTools: "Sélectionner des outils",
-    toolPickerTitle: "Outils numériques",
+    selectTools: "Sélectionner des compétences",
+    toolPickerTitle: "Compétences numériques",
     toolPickerClose: "Fermer",
-    toolsAriaLabel: "Outils sélectionnés",
+    toolsAriaLabel: "Compétences sélectionnées",
     removeToolAriaLabel: (name) => `Retirer ${name}`,
-    toolCount: (n) => n === 1 ? "1 outil" : `${n} outils`,
+    toolCount: (n) => n === 1 ? "1 compétence" : `${n} compétences`,
     groupTitleType: "Type d'apprentissage",
     groupTitleGroup: "Groupe",
     groupTitleTrainer: "Formateur",
@@ -829,7 +1043,7 @@ const I18N = {
     infoP2: "(UCL Knowledge Lab, UCL Institute of Education, 2013-2026).",
     infoP3: "Traitement local par défaut : les données restent dans votre navigateur, sauf si vous vous connectez et enregistrez explicitement une production sur votre compte.",
     infoP4: "Yann Houry &amp; François Jourde (2026) • CC BY-SA<br />Code source : <a href=\"https://github.com/jourde\" target=\"_blank\" rel=\"noopener noreferrer\">https://github.com/jourde</a>",
-    infoP5: "Outils Moodle : <a href=\"https://moodletoolguide.net/\" target=\"_blank\" rel=\"noopener noreferrer\">moodletoolguide.net</a> • Outils H5P : <a href=\"https://h5p.org/content-types-and-applications\" target=\"_blank\" rel=\"noopener noreferrer\">h5p.org/content-types-and-applications</a>",
+    infoP5: "Les compétences numériques proposées dans l'application sont issues du référentiel interne fourni au format Excel.",
     noData: "Aucune donnée",
     learningDaysLabel: "Jours d'apprentissage",
     learningHoursLabel: "Heures d'apprentissage",
@@ -948,12 +1162,12 @@ const I18N = {
     activityDeleted: "Activity deleted.",
     activityAdded: "Activity added.",
     sessionDeleted: "Session deleted.",
-    selectTools: "Select tools",
-    toolPickerTitle: "Digital tools",
+    selectTools: "Select competencies",
+    toolPickerTitle: "Digital competencies",
     toolPickerClose: "Close",
-    toolsAriaLabel: "Selected tools",
+    toolsAriaLabel: "Selected competencies",
     removeToolAriaLabel: (name) => `Remove ${name}`,
-    toolCount: (n) => n === 1 ? "1 tool" : `${n} tools`,
+    toolCount: (n) => n === 1 ? "1 competency" : `${n} competencies`,
     groupTitleType: "Learning type",
     groupTitleGroup: "Group",
     groupTitleTrainer: "Trainer",
@@ -1029,7 +1243,7 @@ const I18N = {
     infoP2: "(UCL Knowledge Lab, UCL Institute of Education, 2013-2026).",
     infoP3: "Local processing by default: data stays in your browser unless you sign in and explicitly save a design to your account.",
     infoP4: "Yann Houry &amp; François Jourde (2026) • CC BY-SA<br />Source code: <a href=\"https://github.com/jourde\" target=\"_blank\" rel=\"noopener noreferrer\">https://github.com/jourde</a>",
-    infoP5: "Moodle tools: <a href=\"https://moodletoolguide.net/\" target=\"_blank\" rel=\"noopener noreferrer\">moodletoolguide.net</a> • H5P tools: <a href=\"https://h5p.org/content-types-and-applications\" target=\"_blank\" rel=\"noopener noreferrer\">h5p.org/content-types-and-applications</a>",
+    infoP5: "The digital competencies offered in the app come from the internal reference workbook provided in Excel format.",
     noData: "No data",
     learningDaysLabel: "Learning days",
     learningHoursLabel: "Learning hours",
@@ -1724,7 +1938,7 @@ let activeChoiceIndex = -1;
 
 let activeToolPicker = null;
 let activeToolPickerTrigger = null;
-let activeToolPickerTab = "moodle";
+let activeToolPickerTab = TOOL_PICKER_TABS[0]?.id || "acquerir";
 
 function focusChoiceItem(index) {
   if (!activeChoiceItems.length) return;
@@ -1764,21 +1978,24 @@ function closeToolPicker(restoreFocus = false) {
 function renderPickerBody(body, platform, activity) {
   body.innerHTML = "";
   const lang = currentLang();
-  const categories = Object.keys(TOOL_CATEGORY_LABELS).filter(cat => cat.startsWith(platform));
+  const categories = Object.keys(SELECTABLE_TOOL_CATEGORY_LABELS).filter(cat => cat.startsWith(platform));
   categories.forEach(categoryKey => {
-    const categoryTitle = TOOL_CATEGORY_LABELS[categoryKey][lang];
-    const tools = TOOLS_DATA.filter(tool => tool.category === categoryKey);
+    const categoryTitle = SELECTABLE_TOOL_CATEGORY_LABELS[categoryKey][lang];
+    const tools = SELECTABLE_TOOLS_DATA.filter(tool => tool.category === categoryKey);
     if (categoryTitle) {
       const sectionTitle = document.createElement("div");
       sectionTitle.className = "tool-picker-section-title";
       sectionTitle.setAttribute("aria-hidden", "true");
       sectionTitle.textContent = categoryTitle;
+      applyCompetencyTheme(sectionTitle, platform);
       body.appendChild(sectionTitle);
     }
     tools.forEach(tool => {
       const item = document.createElement("button");
       item.type = "button";
       item.className = "tool-picker-item";
+      item.dataset.level = tool.platform;
+      applyCompetencyTheme(item, tool.platform);
       const isSelected = activity.tools.includes(tool.id);
       if (isSelected) item.classList.add("selected");
       const checkBox = document.createElement("span");
@@ -1787,15 +2004,19 @@ function renderPickerBody(body, platform, activity) {
       checkBox.textContent = isSelected ? "✓" : "";
       const nameEl = document.createElement("span");
       nameEl.className = "tool-picker-item-name";
-      nameEl.textContent = lang === "en" ? tool.labelEn : tool.labelFr;
+      nameEl.textContent = `${tool.shortCode} — ${lang === "en" ? tool.labelEn : tool.labelFr}`;
       const textWrapper = document.createElement("span");
       textWrapper.className = "tool-picker-item-text";
       textWrapper.appendChild(nameEl);
+      const appLabel = lang === "en" ? tool.appEn : tool.appFr;
       const desc = lang === "en" ? tool.descEn : tool.descFr;
-      if (desc) {
+      const helperText = [appLabel ? `${lang === "en" ? "App" : "App"}: ${appLabel}` : "", desc]
+        .filter(Boolean)
+        .join(" — ");
+      if (helperText) {
         const descEl = document.createElement("span");
         descEl.className = "tool-picker-item-desc";
-        descEl.textContent = `(${desc})`;
+        descEl.textContent = `(${helperText})`;
         textWrapper.appendChild(descEl);
       }
       item.appendChild(checkBox);
@@ -1852,6 +2073,9 @@ function openToolPicker(trigger, activity) {
   }
   closeToolPicker();
   closeChoiceMenu();
+  if (!TOOL_PICKER_TABS.some((tab) => tab.id === activeToolPickerTab)) {
+    activeToolPickerTab = TOOL_PICKER_TABS[0]?.id || "acquerir";
+  }
 
   const panel = document.createElement("div");
   panel.className = "tool-picker";
@@ -1880,14 +2104,17 @@ function openToolPicker(trigger, activity) {
   const body = document.createElement("div");
   body.className = "tool-picker-body";
 
-  ["moodle", "h5p"].forEach(platform => {
+  const lang = currentLang();
+  TOOL_PICKER_TABS.forEach(({ id, labelFr, labelEn }) => {
     const tab = document.createElement("button");
     tab.type = "button";
-    tab.className = "tool-picker-tab" + (platform === activeToolPickerTab ? " active" : "");
-    tab.dataset.platform = platform;
-    tab.textContent = platform === "moodle" ? "Moodle" : "H5P";
+    tab.className = "tool-picker-tab" + (id === activeToolPickerTab ? " active" : "");
+    tab.dataset.platform = id;
+    tab.dataset.level = id;
+    applyCompetencyTheme(tab, id);
+    tab.textContent = lang === "en" ? labelEn : labelFr;
     tab.setAttribute("role", "tab");
-    tab.addEventListener("click", () => switchPickerTab(platform, body, activity));
+    tab.addEventListener("click", () => switchPickerTab(id, body, activity));
     tabsRow.appendChild(tab);
   });
 
@@ -1898,9 +2125,8 @@ function openToolPicker(trigger, activity) {
   const searchInput = document.createElement("input");
   searchInput.type = "search";
   searchInput.className = "tool-picker-search-input";
-  const lang = currentLang();
   searchInput.placeholder = lang === "en" ? "Search…" : "Rechercher…";
-  searchInput.setAttribute("aria-label", lang === "en" ? "Search tools" : "Rechercher des outils");
+  searchInput.setAttribute("aria-label", lang === "en" ? "Search competencies" : "Rechercher des compétences");
   searchInput.addEventListener("input", () => {
     filterPickerItems(body, searchInput.value.trim().toLowerCase());
   });
@@ -1965,20 +2191,19 @@ function updateActivityToolsDisplay(trigger, activity) {
   toolsRow.innerHTML = "";
   const lang = currentLang();
   activity.tools.forEach(toolId => {
-    const toolDef = TOOLS_DATA.find(td => td.id === toolId);
+    const toolDef = SELECTABLE_TOOLS_DATA.find(td => td.id === toolId);
     if (!toolDef) return;
     const chip = document.createElement("span");
     chip.className = "tool-chip";
+    chip.dataset.level = toolDef.platform;
     chip.setAttribute("role", "listitem");
-    const platformBadge = document.createElement("span");
-    platformBadge.className = "tool-chip-platform";
-    platformBadge.setAttribute("aria-hidden", "true");
-    platformBadge.textContent = toolDef.platform.toUpperCase();
+    applyCompetencyTheme(chip, toolDef.platform);
+    chip.title = competencyTooltip(toolDef, lang);
     const nameEl = document.createElement("span");
     nameEl.className = "tool-chip-name";
     const label = lang === "en" ? toolDef.labelEn : toolDef.labelFr;
-    nameEl.textContent = label;
-    nameEl.title = label;
+    nameEl.textContent = toolDef.shortCode;
+    nameEl.title = competencyTooltip(toolDef, lang);
     const removeBtn = document.createElement("button");
     removeBtn.type = "button";
     removeBtn.className = "tool-chip-remove";
@@ -1993,7 +2218,6 @@ function updateActivityToolsDisplay(trigger, activity) {
         renderPickerBody(activeToolPicker.querySelector(".tool-picker-body"), activeToolPickerTab, activity);
       }
     });
-    chip.appendChild(platformBadge);
     chip.appendChild(nameEl);
     chip.appendChild(removeBtn);
     toolsRow.appendChild(chip);
@@ -2106,7 +2330,7 @@ function openChoiceMenu(trigger, options, currentValue, onSelect) {
 
 function normalizeActivity(activity) {
   if (!Array.isArray(activity.tools)) activity.tools = [];
-  activity.tools = activity.tools.filter(id => TOOL_IDS_SET.has(id));
+  activity.tools = activity.tools.filter(id => SELECTABLE_TOOL_IDS_SET.has(id));
   const legacyGroupSize = Number(activity.groupSize || 0);
   if (!["whole", "subgroups", "individual"].includes(activity.groupMode)) {
     if (legacyGroupSize > 1 && legacyGroupSize < 15) {
@@ -2933,11 +3157,11 @@ function buildMarkdownExport() {
       if (activity.notes) lines.push(`- Notes: ${activity.notes}`);
       if (activity.tools && activity.tools.length) {
         const toolLabels = activity.tools
-          .map(id => TOOLS_DATA.find(t => t.id === id))
+          .map(id => SELECTABLE_TOOLS_DATA.find(t => t.id === id))
           .filter(Boolean)
           .map(t => t.labelFr)
           .join(", ");
-        lines.push(`- Outils: ${toolLabels}`);
+        lines.push(`- Compétences: ${toolLabels}`);
       }
       lines.push("");
     });
@@ -2962,7 +3186,7 @@ function buildHtmlExportDocument() {
             <p><strong>Évaluation:</strong> ${escapeHtml(labelForEvaluationMode(activity.evaluationMode))}</p>
             <p><strong>Description:</strong> ${escapeHtmlWithBreaks(activity.description || "")}</p>
             ${activity.notes ? `<p><strong>Notes:</strong> ${escapeHtmlWithBreaks(activity.notes)}</p>` : ""}
-            ${activity.tools && activity.tools.length ? `<p><strong>Outils:</strong> ${escapeHtml(activity.tools.map(id => { const t = TOOLS_DATA.find(x => x.id === id); return t ? t.labelFr : id; }).join(", "))}</p>` : ""}
+            ${activity.tools && activity.tools.length ? `<p><strong>Compétences:</strong> ${escapeHtml(activity.tools.map(id => { const t = SELECTABLE_TOOLS_DATA.find(x => x.id === id); return t ? t.labelFr : id; }).join(", "))}</p>` : ""}
           </li>
         `
         )
@@ -3085,7 +3309,7 @@ function buildSpreadsheetRows() {
     "assessment",
     "activity_description",
     "activity_notes",
-    "activity_tools",
+    "activity_competencies",
     "design_title",
     "design_mode",
     "design_group_size",
@@ -3554,7 +3778,7 @@ function buildStateFromCsv(csvText) {
       evaluationMode: lookupValue(read("assessment"), CSV_EVAL_LOOKUP, "none"),
       description: read("activity_description"),
       notes: read("activity_notes"),
-      tools: read("activity_tools").split(";").map(s => s.trim()).filter(Boolean),
+      tools: (read("activity_competencies") || read("activity_tools")).split(";").map(s => s.trim()).filter(Boolean),
       _csvOrder: parseCsvInteger(read("activity_index"), session.activities.length + 1)
     };
     normalizeActivity(activity);

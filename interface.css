@@ -2185,30 +2185,20 @@ main {
   display: inline-flex;
   align-items: center;
   gap: 3px;
-  background: var(--indigo-bg);
-  border: 1px solid var(--indigo-border);
+  background: var(--competency-bg, var(--indigo-bg));
+  border: 1px solid var(--competency-border, var(--indigo-border));
   border-radius: 999px;
   padding: 2px 6px 2px 8px;
   font-size: 11px;
   font-weight: 600;
-  color: var(--indigo-dark);
+  color: var(--competency-text, var(--indigo-dark));
   line-height: 1.4;
-  max-width: 200px;
-}
-
-.tool-chip-platform {
-  font-size: 9px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-  opacity: 0.6;
-  flex-shrink: 0;
+  max-width: 120px;
 }
 
 .tool-chip-name {
-  overflow: hidden;
-  text-overflow: ellipsis;
   white-space: nowrap;
+  letter-spacing: 0.02em;
 }
 
 .tool-chip-remove {
@@ -2242,7 +2232,7 @@ main {
   flex-direction: column;
   border: 1px solid var(--line);
   border-radius: 16px;
-  background: var(--surface-menu);
+  background: #fff;
   box-shadow: var(--shadow-picker);
   z-index: 1500;
   overflow: hidden;
@@ -2344,9 +2334,9 @@ main {
 }
 
 .tool-picker-tab.active {
-  background: var(--panel);
-  border-color: var(--indigo-border);
-  color: var(--indigo);
+  background: var(--competency-bg, var(--panel));
+  border-color: var(--competency-border, var(--indigo-border));
+  color: var(--competency-text, var(--indigo));
 }
 
 .tool-picker-body {
@@ -2358,7 +2348,7 @@ main {
 .tool-picker-section-title {
   font-size: 13px;
   font-weight: 600;
-  color: #4b5563;
+  color: var(--competency-text, #4b5563);
   padding: 12px 10px 6px;
   text-transform: none;
   letter-spacing: 0;
@@ -2385,7 +2375,7 @@ main {
 }
 
 .tool-picker-item.selected {
-  background: var(--indigo-active);
+  background: var(--competency-active, var(--indigo-active));
 }
 
 .tool-picker-item-text {
@@ -2411,19 +2401,20 @@ main {
 }
 
 .tool-picker-item.selected .tool-picker-item-name {
-  color: var(--indigo-dark);
+  color: var(--competency-text, var(--indigo-dark));
   font-weight: 600;
 }
 
 .tool-picker-item.selected .tool-picker-item-desc {
-  color: var(--indigo-hover);
+  color: var(--competency-text, var(--indigo-hover));
+  opacity: 0.88;
 }
 
 .tool-picker-item-check {
   width: 15px;
   height: 15px;
   flex-shrink: 0;
-  border: 2px solid var(--indigo-border);
+  border: 2px solid var(--competency-border, var(--indigo-border));
   border-radius: 4px;
   background: var(--panel);
   display: flex;
@@ -2440,8 +2431,8 @@ main {
 }
 
 .tool-picker-item.selected .tool-picker-item-check {
-  background: var(--indigo);
-  border-color: var(--indigo);
+  background: var(--competency-text, var(--indigo));
+  border-color: var(--competency-text, var(--indigo));
   color: #fff;
 }
 

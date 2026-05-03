@@ -3127,45 +3127,40 @@ html[data-theme="dark"] body {
 }
 
 /* ═══════════════════════════════════════════════════════════
-   INDICATEUR DE SAUVEGARDE AUTO (#autosave-status)
+   RETOUR DE SAUVEGARDE DANS LE BOUTON (#save-btn)
    ═══════════════════════════════════════════════════════════ */
-.autosave-status {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-  font-size: 11.5px;
-  font-weight: 500;
-  color: var(--muted);
-  white-space: nowrap;
-  opacity: 0;
-  max-width: 0;
-  overflow: hidden;
-  transition:
-    opacity 350ms ease,
-    max-width 350ms ease,
-    color 200ms ease;
-  pointer-events: none;
+#save-btn {
+  min-width: 176px;
 }
 
-.autosave-status.as-visible {
-  opacity: 1;
-  max-width: 160px;
+#save-btn .btn-label {
+  justify-content: center;
+  width: 100%;
 }
 
-.autosave-status.as-saving {
-  color: var(--muted);
+#save-btn[data-save-status="saving"] {
+  color: var(--text-subtle);
 }
 
-.autosave-status.as-success {
-  color: #16a34a;
+#save-btn[data-save-status="success"] {
+  color: #15803d;
+  border-color: rgba(21, 128, 61, 0.2);
+  background: #effaf3;
 }
 
-.autosave-status.as-error {
+#save-btn[data-save-status="error"] {
   color: var(--danger);
+  border-color: rgba(220, 38, 38, 0.22);
+  background: #fff1f2;
 }
 
-[data-theme="dark"] .autosave-status.as-success {
-  color: #4ade80;
+[data-theme="dark"] #save-btn[data-save-status="success"] {
+  color: #86efac;
+  background: rgba(21, 128, 61, 0.18);
+}
+
+[data-theme="dark"] #save-btn[data-save-status="error"] {
+  background: rgba(220, 38, 38, 0.16);
 }
 
 /* ═══════════════════════════════════════════════════════════

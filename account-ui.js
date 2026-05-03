@@ -115,16 +115,28 @@
     button.title = label;
   }
 
+  function resetSaveButtonState() {
+    const button = $("save-btn");
+    if (!button) return;
+    clearTimeout(autoSaveHideTimer);
+    button.removeAttribute("data-save-status");
+    button.removeAttribute("aria-busy");
+    setSaveButtonText(tr("Enregistrer", "Save"));
+  }
+
   function syncSaveUi() {
     const button = $("save-btn");
     if (!button) return;
 
     if (authState.user) {
       button.hidden = false;
-      setSaveButtonText(tr("Enregistrer", "Save"));
+      if (!button.dataset.saveStatus) {
+        setSaveButtonText(tr("Enregistrer", "Save"));
+      }
       return;
     }
 
+    resetSaveButtonState();
     button.hidden = true;
   }
 
@@ -149,17 +161,20 @@
   }
 
   function setAutoSaveStatus(kind, text) {
-    const el = $("autosave-status");
-    if (!el) return;
+    const button = $("save-btn");
+    if (!button || button.hidden) return;
     clearTimeout(autoSaveHideTimer);
-    el.textContent = text;
-    el.className = `autosave-status as-visible as-${kind}`;
-    if (kind !== "saving") {
-      autoSaveHideTimer = setTimeout(() => {
-        el.classList.remove("as-visible");
-        setTimeout(() => { el.textContent = ""; el.className = "autosave-status"; }, 400);
-      }, 4000);
+    button.dataset.saveStatus = kind;
+    if (kind === "saving") {
+      button.setAttribute("aria-busy", "true");
+    } else {
+      button.removeAttribute("aria-busy");
     }
+    setSaveButtonText(text);
+    if (kind === "saving") return;
+    autoSaveHideTimer = setTimeout(() => {
+      resetSaveButtonState();
+    }, kind === "error" ? 4000 : 2500);
   }
 
   function scheduleAutoSave() {

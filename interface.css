@@ -2815,6 +2815,12 @@ main {
   pointer-events: auto;
 }
 
+.site-footer-copy-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
 .site-footer-copy {
   letter-spacing: 0.01em;
 }

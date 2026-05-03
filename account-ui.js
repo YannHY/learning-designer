@@ -251,8 +251,8 @@
       });
       setRemoteDesignUrl(data.design.id);
       const message = tr(
-        "Production sauvegardée sur votre compte. Ouvrez Sauvegardes pour la retrouver.",
-        "Design saved to your account. Open Saves to find it again."
+        "Production sauvegardée sur votre compte. Ouvrez Designs pour la retrouver.",
+        "Design saved to your account. Open Designs to find it again."
       );
       app()?.showNotice?.(message, "success");
       app()?.announce?.(message);

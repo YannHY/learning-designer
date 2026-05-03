@@ -175,6 +175,41 @@ require_once __DIR__ . '/lib/bootstrap.php';
                     <strong>3 vues d'affichage</strong>
                     <span>Passez en vue liste, colonnes ou grille selon vos préférences de travail.</span>
                 </li>
+                <li class="feature-item">
+                    <strong>Acquis d'apprentissage</strong>
+                    <span>Formulez vos acquis à partir de la taxonomie révisée de Bloom, avec des verbes d'action classés par niveau cognitif.</span>
+                </li>
+            </ul>
+        </div>
+
+        <div class="about-section">
+            <h2>Taxonomie révisée de Bloom</h2>
+            <p>Les acquis d'apprentissage s'appuient sur la taxonomie révisée d'Anderson &amp; Krathwohl (2001), qui décrit six niveaux cognitifs progressifs :</p>
+            <ul class="feature-grid">
+                <li class="feature-item">
+                    <strong>1 — Se souvenir</strong>
+                    <span>Citer, définir, identifier, lister, reconnaître…</span>
+                </li>
+                <li class="feature-item">
+                    <strong>2 — Comprendre</strong>
+                    <span>Expliquer, illustrer, interpréter, résumer…</span>
+                </li>
+                <li class="feature-item">
+                    <strong>3 — Appliquer</strong>
+                    <span>Démontrer, exécuter, résoudre, utiliser…</span>
+                </li>
+                <li class="feature-item">
+                    <strong>4 — Analyser</strong>
+                    <span>Comparer, décomposer, différencier, examiner…</span>
+                </li>
+                <li class="feature-item">
+                    <strong>5 — Évaluer</strong>
+                    <span>Critiquer, défendre, justifier, recommander…</span>
+                </li>
+                <li class="feature-item">
+                    <strong>6 — Créer</strong>
+                    <span>Concevoir, élaborer, formuler, produire…</span>
+                </li>
             </ul>
         </div>
 

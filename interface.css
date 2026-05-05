@@ -2174,7 +2174,7 @@ main {
 .choice-menu-item .fa-regular {
   width: 18px;
   font-size: 16px;
-  color: #4b5563;
+  color: currentColor;
   text-align: center;
 }
 
@@ -2188,7 +2188,7 @@ main {
 .duration-symbol .fa-solid,
 .duration-symbol .fa-regular {
   font-size: 15px;
-  color: #4b5563;
+  color: currentColor;
 }
 
 .choice-btn .choice-label {
@@ -2294,6 +2294,13 @@ main {
   background: var(--indigo-bg);
 }
 
+.activity-links-btn.has-links:hover,
+.select-tools-btn.has-tools:hover {
+  border-color: var(--indigo-hover);
+  color: var(--indigo-dark);
+  background: var(--active-bg);
+}
+
 .activity-links-btn {
   position: relative;
   overflow: visible !important;
@@ -2312,7 +2319,7 @@ main {
 .activity-links-btn .fa-regular {
   width: 16px;
   font-size: 14px;
-  color: #4b5563;
+  color: currentColor;
   text-align: center;
   pointer-events: none;
 }
@@ -2709,10 +2716,17 @@ main {
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  color: var(--text-body);
   transition:
     background var(--transition-fast),
     border-color var(--transition-fast),
     color var(--transition-fast);
+}
+
+.icon-btn:hover {
+  background: var(--hover-bg);
+  border-color: rgba(20, 91, 180, 0.25);
+  color: var(--text-strong);
 }
 
 .delete-btn {
@@ -3554,6 +3568,9 @@ html[data-theme="dark"] body {
   background: rgba(34, 40, 64, 0.75);
   border-top-color: var(--line);
 }
+[data-theme="dark"] .activities::before {
+  color: var(--text-strong);
+}
 [data-theme="dark"] .activity-card {
   background: rgba(30, 36, 54, 0.95);
 }
@@ -3610,6 +3627,24 @@ html[data-theme="dark"] body {
 [data-theme="dark"] .icon-btn {
   background: #242b40;
   border-color: var(--line);
+  color: var(--text-body);
+}
+[data-theme="dark"] .icon-btn:hover {
+  background: rgba(88, 166, 255, 0.1);
+  border-color: rgba(88, 166, 255, 0.28);
+  color: var(--text-strong);
+}
+[data-theme="dark"] .activity-links-btn[data-count]:not([data-count=""]):not([data-count="0"])::after,
+[data-theme="dark"] .select-tools-btn[data-count]:not([data-count=""]):not([data-count="0"])::after {
+  background: var(--text-strong);
+  color: #111827;
+  box-shadow: 0 0 0 1px #111827;
+}
+[data-theme="dark"] .activity-links-btn.has-links:hover,
+[data-theme="dark"] .select-tools-btn.has-tools:hover {
+  background: rgba(88, 166, 255, 0.18);
+  border-color: rgba(136, 196, 255, 0.48);
+  color: var(--text-strong);
 }
 [data-theme="dark"] .delete-btn {
   background: rgba(22, 27, 34, 0.9);

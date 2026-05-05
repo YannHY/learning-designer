@@ -144,7 +144,7 @@
             </div>
             <div class="form-row outcomes-row">
               <div class="outcomes-header">
-                <button id="add-outcome-btn" type="button" class="outcomes-add-btn" aria-label="Ajouter un acquis d'apprentissage">+</button>
+                <button id="add-outcome-btn" type="button" class="outcomes-add-btn" aria-label="Ajouter un acquis d'apprentissage"><i class="fa-solid fa-plus" aria-hidden="true"></i></button>
                 <label id="label-meta-outcomes">Acquis d'apprentissage</label>
               </div>
               <div id="outcomes-list" class="outcomes-list"></div>
@@ -308,10 +308,12 @@
         </div>
         <div class="activities"></div>
         <footer class="session-footer">
-          <button class="btn btn-light add-activity-btn" type="button">+ Activité</button>
+          <div class="session-footer-actions">
+            <button class="btn btn-light add-activity-btn" type="button">+ Activité</button>
+            <button class="btn btn-light toggle-session-notes-btn" type="button">Notes</button>
+          </div>
           <div class="session-metas">
             <span class="duration-pill"><span class="total-duration">0</span> <span class="duration-unit">min</span></span>
-            <button class="btn btn-light toggle-session-notes-btn">Notes</button>
           </div>
         </footer>
         <div class="session-notes hidden">
@@ -329,7 +331,7 @@
           <button class="choice-btn activity-type-btn" type="button"></button>
           <span class="mini-label">
             <span class="sr-only">Durée en minutes</span>
-            <span class="duration-symbol" aria-hidden="true">⏱</span>
+            <span class="duration-symbol" aria-hidden="true"><i class="fa-regular fa-clock"></i></span>
             <input class="activity-duration" type="number" min="1" aria-label="Durée en minutes" />
           </span>
           <button class="choice-btn activity-group-mode-btn" type="button"></button>
@@ -355,12 +357,6 @@
         <div class="expandable-field">
           <textarea class="activity-description" rows="3"></textarea>
           <button class="expand-btn" type="button" aria-label="Plein écran">⤢</button>
-        </div>
-        <div class="activity-notes hidden">
-          <div class="expandable-field">
-            <textarea class="activity-notes-input" rows="2" placeholder="Notes de l'activité..."></textarea>
-            <button class="expand-btn" type="button" aria-label="Plein écran">⤢</button>
-          </div>
         </div>
       </div>
     </template>

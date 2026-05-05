@@ -367,6 +367,11 @@ select:focus-visible,
   grid-template-columns: 150px minmax(0, 1fr);
 }
 
+#label-meta-delivery {
+  align-self: center;
+  padding-top: 0;
+}
+
 .panel-input,
 .panel-select,
 .panel-textarea {
@@ -382,7 +387,8 @@ select:focus-visible,
 
 .panel-textarea {
   min-height: 64px;
-  resize: vertical;
+  resize: none;
+  overflow: hidden;
 }
 
 .expandable-field {
@@ -587,13 +593,14 @@ body.fullscreen-editor-open {
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.18);
   padding: 8px 10px;
   min-width: 106px;
+  max-width: 170px;
   pointer-events: none;
 }
 
 .pie-tooltip::after {
   content: "";
   position: absolute;
-  left: 14px;
+  left: var(--pie-tooltip-arrow, 14px);
   bottom: -6px;
   width: 11px;
   height: 11px;
@@ -605,14 +612,16 @@ body.fullscreen-editor-open {
 
 .pie-tooltip-name {
   display: block;
-  font-size: 18px;
-  line-height: 1.04;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.18;
+  text-wrap: balance;
 }
 
 .pie-tooltip-pct {
   display: block;
   margin-top: 2px;
-  font-size: 18px;
+  font-size: 12px;
   line-height: 1;
 }
 
@@ -1156,13 +1165,18 @@ body.fullscreen-editor-open {
   background: var(--panel);
   color: var(--text-body);
   font-size: 18px;
-  line-height: 0;
+  line-height: 1;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 0;
   transition: background 0.15s, border-color 0.15s;
+}
+
+.outcomes-add-btn .fa-plus {
+  font-size: 12px;
+  line-height: 1;
 }
 
 .outcomes-add-btn:hover {
@@ -1499,6 +1513,11 @@ body.fullscreen-editor-open {
   padding: 9px 13px;
   cursor: pointer;
   white-space: nowrap;
+  min-height: 40px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  vertical-align: middle;
   -webkit-tap-highlight-color: transparent;
   box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
   transition:
@@ -1561,7 +1580,7 @@ body.fullscreen-editor-open {
 }
 
 .btn-light {
-  background: var(--surface-light);
+  background: #fff;
 }
 
 .btn-icon {
@@ -1648,7 +1667,6 @@ main {
 .grid-col-teacher { width: 92px;  }
 .grid-col-eval    { width: 100px; }
 .grid-col-desc    { width: 180px; }
-.grid-col-notes   { width: 180px; }
 .grid-col-actions { width: 66px;  text-align: center; }
 .grid-activity-row td {
   padding: 3px 4px;
@@ -2070,8 +2088,35 @@ main {
 }
 
 .choice-btn .material-icon-svg,
-.choice-menu-item .material-icon-svg {
+.choice-menu-item .material-icon-svg,
+.choice-btn .fa-solid,
+.choice-btn .fa-regular,
+.choice-menu-item .fa-solid,
+.choice-menu-item .fa-regular {
   flex: 0 0 auto;
+}
+
+.choice-btn .fa-solid,
+.choice-btn .fa-regular,
+.choice-menu-item .fa-solid,
+.choice-menu-item .fa-regular {
+  width: 18px;
+  font-size: 16px;
+  color: #4b5563;
+  text-align: center;
+}
+
+.duration-symbol {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 16px;
+}
+
+.duration-symbol .fa-solid,
+.duration-symbol .fa-regular {
+  font-size: 15px;
+  color: #4b5563;
 }
 
 .choice-btn .choice-label {
@@ -2137,9 +2182,12 @@ main {
 .select-tools-btn {
   position: relative;
   color: #4a5568;
+  overflow: visible !important;
 }
 
 .select-tools-btn svg {
+  width: 16px;
+  height: 16px;
   fill: currentColor;
   pointer-events: none;
 }
@@ -2148,7 +2196,7 @@ main {
   content: attr(data-count);
   position: absolute;
   top: -5px;
-  right: -5px;
+  right: -4px;
   background: var(--indigo);
   color: #fff;
   font-size: 9px;
@@ -2162,6 +2210,8 @@ main {
   padding: 0 2px;
   pointer-events: none;
   line-height: 1;
+  box-shadow: 0 0 0 1px #fff;
+  z-index: 1;
 }
 
 .select-tools-btn.has-tools {
@@ -2561,16 +2611,29 @@ main {
   padding: 6px 9px;
 }
 
+.session-footer-actions {
+  display: inline-flex;
+  gap: 6px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.session-footer-actions .btn-label {
+  gap: 5px;
+}
+
 .session-metas {
   display: inline-flex;
   gap: 6px;
   align-items: center;
+  margin-left: auto;
 }
 
 .duration-pill {
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  gap: 4px;
   border: 1px solid var(--line);
   border-radius: 999px;
   background: #fff;

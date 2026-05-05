@@ -39,29 +39,31 @@ const materialIcon = (name) => {
   return `<svg class="material-icon-svg" viewBox="0 0 24 24" aria-hidden="true">${pathMarkup}</svg>`;
 };
 
+const fontAwesomeIcon = (classes) => `<i class="${classes}" aria-hidden="true"></i>`;
+
 const ICONS = {
-  undefined: materialIcon("radio_button_unchecked"),
-  read: materialIcon("menu_book"),
-  investigate: materialIcon("search"),
-  practice: materialIcon("autorenew"),
-  produce: materialIcon("auto_awesome"),
-  discuss: materialIcon("forum"),
-  collaborate: materialIcon("groups"),
-  whole: materialIcon("groups"),
-  subgroups: materialIcon("group_work"),
-  individual: materialIcon("person"),
-  present: materialIcon("person"),
-  absent: materialIcon("person_off"),
-  sync: materialIcon("schedule"),
-  async: materialIcon("update"),
-  onsite: materialIcon("meeting_room"),
-  online: materialIcon("computer"),
-  hybrid: materialIcon("hub"),
-  none: materialIcon("radio_button_unchecked"),
-  diagnostic: materialIcon("search"),
-  formative: materialIcon("school"),
-  summative: materialIcon("fact_check"),
-  certificative: materialIcon("verified")
+  undefined: fontAwesomeIcon("fa-regular fa-circle"),
+  read: fontAwesomeIcon("fa-solid fa-book-open"),
+  investigate: fontAwesomeIcon("fa-solid fa-magnifying-glass"),
+  practice: fontAwesomeIcon("fa-solid fa-person-running"),
+  produce: fontAwesomeIcon("fa-solid fa-pen-ruler"),
+  discuss: fontAwesomeIcon("fa-solid fa-comments"),
+  collaborate: fontAwesomeIcon("fa-solid fa-users"),
+  whole: fontAwesomeIcon("fa-solid fa-users"),
+  subgroups: fontAwesomeIcon("fa-solid fa-user-group"),
+  individual: fontAwesomeIcon("fa-solid fa-user"),
+  present: fontAwesomeIcon("fa-solid fa-user-check"),
+  absent: fontAwesomeIcon("fa-solid fa-user-slash"),
+  sync: fontAwesomeIcon("fa-regular fa-clock"),
+  async: fontAwesomeIcon("fa-regular fa-calendar-days"),
+  onsite: fontAwesomeIcon("fa-solid fa-school"),
+  online: fontAwesomeIcon("fa-solid fa-desktop"),
+  hybrid: fontAwesomeIcon("fa-solid fa-shuffle"),
+  none: fontAwesomeIcon("fa-regular fa-circle"),
+  diagnostic: fontAwesomeIcon("fa-solid fa-magnifying-glass"),
+  formative: fontAwesomeIcon("fa-solid fa-pen-to-square"),
+  summative: fontAwesomeIcon("fa-solid fa-graduation-cap"),
+  certificative: fontAwesomeIcon("fa-solid fa-certificate")
 };
 
 const ACTIVITY_TYPE_OPTIONS = LEARNING_TYPES.map((type) => ({
@@ -549,30 +551,89 @@ Créativité et expression		28	Faire du montage vidéo	Utiliser un logiciel de m
 Créativité et expression		29	Utiliser la réalité augmentée ou créer des activités recourant à la réalité augmentée	Utilisation de différentes apps comme Reality Composer, FoxAR, ARMaker, Adobe Aero…
 Créativité et expression		30	Générer des objets exploitables en 3D ainsi que la réalité virtuelle	Réaliser un environnement immersif à partir d'une application accessible comme CoSpaces Edu | Concevoir ses propres objets 3D avec TinkerCAD ou SketchUp | Exporter un objet 3D au format standard (STL, OBJ) pour impression 3D ou visualisation`;
 
+function toRomanNumeral(value) {
+  const number = Number(value);
+  if (!Number.isFinite(number) || number <= 0) return "";
+  const numerals = [
+    ["M", 1000],
+    ["CM", 900],
+    ["D", 500],
+    ["CD", 400],
+    ["C", 100],
+    ["XC", 90],
+    ["L", 50],
+    ["XL", 40],
+    ["X", 10],
+    ["IX", 9],
+    ["V", 5],
+    ["IV", 4],
+    ["I", 1]
+  ];
+  let remaining = Math.floor(number);
+  let result = "";
+  numerals.forEach(([symbol, amount]) => {
+    while (remaining >= amount) {
+      result += symbol;
+      remaining -= amount;
+    }
+  });
+  return result;
+}
+
 function parseCompetencyCatalog(source) {
   const data = [];
   const categories = {};
   const tabs = [];
   const badgeByLevel = { acquerir: "N1", approfondir: "N2", creer: "N3" };
-  const codeByLevel = { acquerir: "A", approfondir: "P", creer: "C" };
+  const legacyCodeByLevel = { acquerir: "A", approfondir: "P", creer: "C" };
   let currentLevel = null;
+  let currentLevelSections = null;
 
-  String(source ?? "").split("\n").forEach((rawLine) => {
-    const line = rawLine.trim();
-    if (!line) return;
+  String(source ?? "").split("\n").forEach((rawLine, index) => {
+    const line = String(rawLine ?? "").replace(/\r/g, "");
+    if (!line.trim()) return;
 
     if (line.startsWith("# ")) {
       const [id = "", labelFr = "", labelEn = ""] = line.slice(2).split("\t");
       currentLevel = { id, labelFr, labelEn };
+      currentLevelSections = [];
       tabs.push(currentLevel);
       return;
     }
 
     if (!currentLevel) return;
-    const [sectionRaw = "", appRaw = "", numberRaw = "", labelRaw = "", descRaw = ""] = line.split("\t");
+    const [sectionRaw = "", appRaw = "", numberRaw = "", labelRaw = "", ...descParts] = line.split("\t");
+    const descRaw = descParts.join("\t");
     const section = sectionRaw.trim() || "Général";
     const category = `${currentLevel.id}:${normalizeCatalogSlug(section)}`;
-    categories[category] ||= { fr: section, en: section };
+    let sectionIndex = currentLevelSections.indexOf(section);
+    if (sectionIndex === -1) {
+      currentLevelSections.push(section);
+      sectionIndex = currentLevelSections.length - 1;
+    }
+    const sectionNumber = sectionIndex + 1;
+    const sectionRoman = toRomanNumeral(sectionNumber);
+    const competencyNumber = Number(numberRaw);
+    const label = labelRaw.trim();
+    const description = descRaw.trim();
+    if (!Number.isFinite(competencyNumber) || !label || !description) {
+      console.warn("Invalid competency catalog row", {
+        lineNumber: index + 1,
+        level: currentLevel.id,
+        row: line
+      });
+      return;
+    }
+    categories[category] ||= {
+      fr: `${sectionRoman} - ${section}`,
+      en: `${sectionRoman} - ${section}`,
+      plainFr: section,
+      plainEn: section,
+      number: sectionNumber,
+      roman: sectionRoman
+    };
+    const shortCode = `${currentLevel.labelFr}-${sectionRoman}-${competencyNumber}`;
+    const legacyShortCode = `${legacyCodeByLevel[currentLevel.id] || currentLevel.id.charAt(0).toUpperCase()}${competencyNumber}`;
 
     data.push({
       id: `competency:${currentLevel.id}:${numberRaw.trim()}`,
@@ -585,13 +646,15 @@ function parseCompetencyCatalog(source) {
       levelLabelFr: currentLevel.labelFr,
       levelLabelEn: currentLevel.labelEn,
       levelBadge: badgeByLevel[currentLevel.id] || currentLevel.id,
-      levelCode: codeByLevel[currentLevel.id] || currentLevel.id.charAt(0).toUpperCase(),
-      number: Number(numberRaw),
-      shortCode: `${codeByLevel[currentLevel.id] || currentLevel.id.charAt(0).toUpperCase()}${Number(numberRaw)}`,
-      labelFr: labelRaw.trim(),
-      labelEn: labelRaw.trim(),
-      descFr: descRaw.trim(),
-      descEn: descRaw.trim()
+      number: competencyNumber,
+      sectionNumber,
+      sectionRoman,
+      shortCode,
+      legacyShortCode,
+      labelFr: label,
+      labelEn: label,
+      descFr: description,
+      descEn: description
     });
   });
 
@@ -605,6 +668,19 @@ const {
 } = parseCompetencyCatalog(COMPETENCY_CATALOG_SOURCE);
 
 const SELECTABLE_TOOL_IDS_SET = new Set(SELECTABLE_TOOLS_DATA.map(tool => tool.id));
+const COMPETENCY_REFERENCE_MAP = SELECTABLE_TOOLS_DATA.reduce((map, tool) => {
+  [
+    tool.id,
+    tool.shortCode,
+    tool.legacyShortCode,
+    tool.labelFr,
+    tool.labelEn
+  ].forEach((value) => {
+    const token = normalizeToken(value);
+    if (token) map[token] = tool.id;
+  });
+  return map;
+}, {});
 
 const COMPETENCY_LEVEL_STYLES = {
   acquerir: {
@@ -642,16 +718,15 @@ function applyCompetencyTheme(element, level) {
 
 function competencyTooltip(toolDef, lang) {
   if (!toolDef) return "";
-  const label = lang === "en" ? toolDef.labelEn : toolDef.labelFr;
-  const section = lang === "en" ? toolDef.sectionEn : toolDef.sectionFr;
+  const label = formatCompetencyLabel(toolDef, lang);
   const details = lang === "en" ? toolDef.descEn : toolDef.descFr;
-  const app = lang === "en" ? toolDef.appEn : toolDef.appFr;
-  return [
-    `${toolDef.shortCode} — ${label}`,
-    section ? `${lang === "en" ? "Domain" : "Domaine"}: ${section}` : "",
-    app ? `${lang === "en" ? "App" : "App"}: ${app}` : "",
-    details
-  ].filter(Boolean).join("\n");
+  return [label, details].filter(Boolean).join(" — ");
+}
+
+function formatCompetencyLabel(toolDef, lang = currentLang()) {
+  if (!toolDef) return "";
+  const label = lang === "en" ? toolDef.labelEn : toolDef.labelFr;
+  return `${toolDef.number}. ${label}`;
 }
 
 let uid = 0;
@@ -1300,6 +1375,11 @@ function setButtonLabel(button, iconClass, text) {
   button.innerHTML = `<span class="btn-label"><i class="${iconClass} btn-icon-inline" aria-hidden="true"></i>${escapeHtml(text)}</span>`;
 }
 
+function setSessionNotesButtonLabel(button, expanded) {
+  if (!button) return;
+  setButtonLabel(button, expanded ? "fa-solid fa-chevron-up" : "fa-solid fa-chevron-down", t("sessionNotes"));
+}
+
 const MARKDOWN_ACTIONS = [
   { id: "bold", text: "B", titleKey: "mdBold" },
   { id: "italic", text: "I", titleKey: "mdItalic" },
@@ -1402,7 +1482,7 @@ function ensureMarkdownToolbars(root = document) {
   });
 }
 
-const AUTO_RESIZE_SELECTOR = ".session-title, .session-objectives, .session-intentions, .activity-description, .session-notes-input, .activity-notes-input";
+const AUTO_RESIZE_SELECTOR = ".session-title, .session-objectives, .session-intentions, .activity-description, .session-notes-input, .panel-textarea, .outcome-text";
 
 function autoResizeTextarea(el) {
   el.style.height = "auto";
@@ -1411,6 +1491,22 @@ function autoResizeTextarea(el) {
 
 function initAutoResizeTextareas(root = document) {
   root.querySelectorAll(AUTO_RESIZE_SELECTOR).forEach(autoResizeTextarea);
+}
+
+function migrateActivityNotesToSession(session) {
+  if (!session || !Array.isArray(session.activities)) return;
+  const migratedNotes = session.activities
+    .map((activity, index) => {
+      const note = toPlainTextareaValue(activity?.notes).trim();
+      if (!note) return "";
+      activity.notes = "";
+      return `Activité ${index + 1}:\n${note}`;
+    })
+    .filter(Boolean);
+  if (!migratedNotes.length) return;
+  session.notes = [toPlainTextareaValue(session.notes).trim(), ...migratedNotes]
+    .filter(Boolean)
+    .join("\n\n");
 }
 
 function localizeExpandableFieldControls(root = document) {
@@ -1600,9 +1696,6 @@ function applyLocalizedUI() {
   document.querySelectorAll(".session-intentions").forEach((input) => {
     input.placeholder = t("sessionIntentionsPlaceholder");
   });
-  document.querySelectorAll(".activity-notes-input").forEach((input) => {
-    input.placeholder = t("activityNotesPlaceholder");
-  });
   document.querySelectorAll(".activity-duration-sr-label").forEach((label) => {
     label.textContent = t("durationMinutesSr");
   });
@@ -1646,10 +1739,10 @@ function hydrateState(parsed, fallback = defaultState()) {
         ],
     sessions: parsed.sessions.map((session, sessionIndex) => ({
       id: session?.id || nextId(),
-      title: typeof session?.title === "string" ? session.title : defaultSessionTitle(sessionIndex + 1),
-      objectives: typeof session?.objectives === "string" ? session.objectives : "",
-      intentions: typeof session?.intentions === "string" ? session.intentions : "",
-      notes: typeof session?.notes === "string" ? session.notes : "",
+      title: toPlainTextareaValue(session?.title).trim() || defaultSessionTitle(sessionIndex + 1),
+      objectives: toPlainTextareaValue(session?.objectives),
+      intentions: toPlainTextareaValue(session?.intentions),
+      notes: toPlainTextareaValue(session?.notes),
       notesExpanded: Boolean(session?.notesExpanded),
       activities: Array.isArray(session?.activities)
         ? session.activities.map((activity) => {
@@ -1662,8 +1755,8 @@ function hydrateState(parsed, fallback = defaultState()) {
               syncMode: activity?.syncMode,
               locationMode: activity?.locationMode,
               evaluationMode: activity?.evaluationMode,
-              description: typeof activity?.description === "string" ? activity.description : "",
-              notes: typeof activity?.notes === "string" ? activity.notes : "",
+              description: toPlainTextareaValue(activity?.description),
+              notes: toPlainTextareaValue(activity?.notes),
               tools: Array.isArray(activity?.tools) ? activity.tools : []
             };
             normalizeActivity(normalized);
@@ -1674,6 +1767,7 @@ function hydrateState(parsed, fallback = defaultState()) {
   };
 
   hydrated.meta.dayHours = Math.max(1, Number(hydrated.meta.dayHours) || DEFAULT_DAY_HOURS);
+  hydrated.sessions.forEach(migrateActivityNotesToSession);
   const normalizedLearning = normalizePedagogicalTime(
     hydrated.meta.learningDays,
     hydrated.meta.learningHours,
@@ -1995,6 +2089,7 @@ function renderPickerBody(body, platform, activity) {
       item.type = "button";
       item.className = "tool-picker-item";
       item.dataset.level = tool.platform;
+      item.dataset.tooltip = competencyTooltip(tool, lang);
       applyCompetencyTheme(item, tool.platform);
       const isSelected = activity.tools.includes(tool.id);
       if (isSelected) item.classList.add("selected");
@@ -2004,7 +2099,7 @@ function renderPickerBody(body, platform, activity) {
       checkBox.textContent = isSelected ? "✓" : "";
       const nameEl = document.createElement("span");
       nameEl.className = "tool-picker-item-name";
-      nameEl.textContent = `${tool.shortCode} — ${lang === "en" ? tool.labelEn : tool.labelFr}`;
+      nameEl.textContent = formatCompetencyLabel(tool, lang);
       const textWrapper = document.createElement("span");
       textWrapper.className = "tool-picker-item-text";
       textWrapper.appendChild(nameEl);
@@ -2196,14 +2291,13 @@ function updateActivityToolsDisplay(trigger, activity) {
     const chip = document.createElement("span");
     chip.className = "tool-chip";
     chip.dataset.level = toolDef.platform;
+    chip.dataset.tooltip = competencyTooltip(toolDef, lang);
     chip.setAttribute("role", "listitem");
     applyCompetencyTheme(chip, toolDef.platform);
-    chip.title = competencyTooltip(toolDef, lang);
     const nameEl = document.createElement("span");
     nameEl.className = "tool-chip-name";
     const label = lang === "en" ? toolDef.labelEn : toolDef.labelFr;
     nameEl.textContent = toolDef.shortCode;
-    nameEl.title = competencyTooltip(toolDef, lang);
     const removeBtn = document.createElement("button");
     removeBtn.type = "button";
     removeBtn.className = "tool-chip-remove";
@@ -2330,7 +2424,13 @@ function openChoiceMenu(trigger, options, currentValue, onSelect) {
 
 function normalizeActivity(activity) {
   if (!Array.isArray(activity.tools)) activity.tools = [];
-  activity.tools = activity.tools.filter(id => SELECTABLE_TOOL_IDS_SET.has(id));
+  activity.tools = activity.tools
+    .map((reference) => {
+      if (SELECTABLE_TOOL_IDS_SET.has(reference)) return reference;
+      return COMPETENCY_REFERENCE_MAP[normalizeToken(reference)] || null;
+    })
+    .filter(Boolean)
+    .filter((id, index, array) => array.indexOf(id) === index);
   const legacyGroupSize = Number(activity.groupSize || 0);
   if (!["whole", "subgroups", "individual"].includes(activity.groupMode)) {
     if (legacyGroupSize > 1 && legacyGroupSize < 15) {
@@ -2485,8 +2585,8 @@ function hidePieTooltip(tooltipEl) {
   tooltipEl.setAttribute("aria-hidden", "true");
 }
 
-function showPieTooltip(wrapEl, tooltipEl, segment, clientX, clientY) {
-  if (!wrapEl || !tooltipEl || !segment) return;
+function showPieTooltip(wrapEl, pieEl, tooltipEl, segment) {
+  if (!wrapEl || !pieEl || !tooltipEl || !segment) return;
   tooltipEl.textContent = "";
   const nameEl = document.createElement("span");
   nameEl.className = "pie-tooltip-name";
@@ -2499,14 +2599,23 @@ function showPieTooltip(wrapEl, tooltipEl, segment, clientX, clientY) {
   tooltipEl.setAttribute("aria-hidden", "false");
 
   const wrapRect = wrapEl.getBoundingClientRect();
-  const leftBase = clientX - wrapRect.left + 8;
-  const topBase = clientY - wrapRect.top - 10;
+  const pieRect = pieEl.getBoundingClientRect();
+  const centerX = pieRect.left - wrapRect.left + pieRect.width / 2;
+  const centerY = pieRect.top - wrapRect.top + pieRect.height / 2;
+  const radius = Math.min(pieRect.width, pieRect.height) / 2;
+  const middlePct = (segment.start + segment.end) / 2;
+  const angle = ((middlePct / 100) * (Math.PI * 2)) - (Math.PI / 2);
+  const anchorRadius = radius * 0.68;
+  const anchorX = centerX + (Math.cos(angle) * anchorRadius);
+  const anchorY = centerY + (Math.sin(angle) * anchorRadius);
   const tooltipWidth = tooltipEl.offsetWidth || 130;
   const tooltipHeight = tooltipEl.offsetHeight || 66;
-  const left = Math.max(8, Math.min(leftBase, wrapRect.width - tooltipWidth - 8));
-  const top = Math.max(8, Math.min(topBase - tooltipHeight, wrapRect.height - tooltipHeight - 8));
+  const left = Math.max(8, Math.min(anchorX - (tooltipWidth / 2), wrapRect.width - tooltipWidth - 8));
+  const top = Math.max(8, Math.min(anchorY - tooltipHeight - 14, wrapRect.height - tooltipHeight - 8));
+  const arrowLeft = Math.max(14, Math.min(tooltipWidth - 14, anchorX - left));
   tooltipEl.style.left = `${left}px`;
   tooltipEl.style.top = `${top}px`;
+  tooltipEl.style.setProperty("--pie-tooltip-arrow", `${arrowLeft}px`);
 }
 
 function segmentForPointer(data, pieEl, event) {
@@ -2632,11 +2741,11 @@ function renderPieOuterLabels(wrapEl, pieEl, labelsEl, tooltipEl, data, codeForS
     else if (align === "left") label.style.transform = "translate(-100%, -50%)";
     else if (align === "top") label.style.transform = "translate(-50%, -100%)";
     else label.style.transform = "translate(-50%, 0)";
-    label.addEventListener("mouseenter", (event) => {
-      showPieTooltip(wrapEl, tooltipEl, segment, event.clientX, event.clientY);
+    label.addEventListener("mouseenter", () => {
+      showPieTooltip(wrapEl, pieEl, tooltipEl, segment);
     });
-    label.addEventListener("mousemove", (event) => {
-      showPieTooltip(wrapEl, tooltipEl, segment, event.clientX, event.clientY);
+    label.addEventListener("mousemove", () => {
+      showPieTooltip(wrapEl, pieEl, tooltipEl, segment);
     });
     label.addEventListener("mouseleave", () => {
       hidePieTooltip(tooltipEl);
@@ -2649,7 +2758,7 @@ function renderPieOuterLabels(wrapEl, pieEl, labelsEl, tooltipEl, data, codeForS
       hidePieTooltip(tooltipEl);
       return;
     }
-    showPieTooltip(wrapEl, tooltipEl, segment, event.clientX, event.clientY);
+    showPieTooltip(wrapEl, pieEl, tooltipEl, segment);
   }, { signal });
   pieEl.addEventListener("mouseleave", () => {
     hidePieTooltip(tooltipEl);
@@ -3154,12 +3263,11 @@ function buildMarkdownExport() {
       lines.push(`- Modalité: ${labelForLocationMode(activity.locationMode)}`);
       lines.push(`- Évaluation: ${labelForEvaluationMode(activity.evaluationMode)}`);
       lines.push(`- Description: ${activity.description || "-"}`);
-      if (activity.notes) lines.push(`- Notes: ${activity.notes}`);
       if (activity.tools && activity.tools.length) {
         const toolLabels = activity.tools
           .map(id => SELECTABLE_TOOLS_DATA.find(t => t.id === id))
           .filter(Boolean)
-          .map(t => t.labelFr)
+          .map(t => formatCompetencyLabel(t, "fr"))
           .join(", ");
         lines.push(`- Compétences: ${toolLabels}`);
       }
@@ -3185,8 +3293,7 @@ function buildHtmlExportDocument() {
             <p><strong>Modalité:</strong> ${escapeHtml(labelForLocationMode(activity.locationMode))}</p>
             <p><strong>Évaluation:</strong> ${escapeHtml(labelForEvaluationMode(activity.evaluationMode))}</p>
             <p><strong>Description:</strong> ${escapeHtmlWithBreaks(activity.description || "")}</p>
-            ${activity.notes ? `<p><strong>Notes:</strong> ${escapeHtmlWithBreaks(activity.notes)}</p>` : ""}
-            ${activity.tools && activity.tools.length ? `<p><strong>Compétences:</strong> ${escapeHtml(activity.tools.map(id => { const t = SELECTABLE_TOOLS_DATA.find(x => x.id === id); return t ? t.labelFr : id; }).join(", "))}</p>` : ""}
+            ${activity.tools && activity.tools.length ? `<p><strong>Compétences:</strong> ${escapeHtml(activity.tools.map(id => { const t = SELECTABLE_TOOLS_DATA.find(x => x.id === id); return t ? formatCompetencyLabel(t, "fr") : id; }).join(", "))}</p>` : ""}
           </li>
         `
         )
@@ -3380,7 +3487,9 @@ function buildSpreadsheetRows() {
           labelForEvaluationMode(activity.evaluationMode),
           activity.description || "",
           activity.notes || "",
-          (activity.tools || []).join(";"),
+          (activity.tools || [])
+            .map((id) => SELECTABLE_TOOLS_DATA.find((tool) => tool.id === id)?.shortCode || id)
+            .join(";"),
           state.meta.name || "",
           labelForLocationMode(state.meta.modeDelivery),
           state.meta.sizeClass || "",
@@ -3599,24 +3708,24 @@ function buildStateFromLegacyLdj(parsed) {
   if (!isLegacyLdjDocument(parsed)) return null;
 
   const imported = createNewDesignState();
-  const topic = String(parsed.topic ?? "").trim();
-  const description = String(parsed.description ?? "").trim();
-  const aims = String(parsed.aims ?? "").trim();
+  const topic = toPlainTextareaValue(parsed.topic).trim();
+  const description = toPlainTextareaValue(parsed.description).trim();
+  const aims = toPlainTextareaValue(parsed.aims).trim();
   const outcomes = Array.isArray(parsed.outcomes)
     ? parsed.outcomes
         .map((item) => {
-          const text = String(item?.details ?? "").trim();
-          const verb = String(item?.verb ?? "").trim();
+          const text = toPlainTextareaValue(item?.details).trim();
+          const verb = toPlainTextareaValue(item?.verb).trim();
           return { id: nextId(), category: "", categoryLabel: "", verb, text };
         })
         .filter((o) => o.verb || o.text)
     : [];
 
   imported.meta.uiLanguage = currentLang();
-  imported.meta.name = String(parsed.name ?? "").trim();
+  imported.meta.name = toPlainTextareaValue(parsed.name).trim();
   imported.meta.modeDelivery = lookupValue(parsed.modeOfDelivery, CSV_LOCATION_LOOKUP, "onsite");
-  imported.meta.sizeClass = String(parsed.groupSize ?? "").trim();
-  imported.meta.designers = String(parsed.author ?? "").trim();
+  imported.meta.sizeClass = toPlainTextareaValue(parsed.groupSize).trim();
+  imported.meta.designers = toPlainTextareaValue(parsed.author).trim();
   imported.meta.description = description;
   imported.meta.command = topic;
   imported.meta.personas = aims;
@@ -3634,16 +3743,16 @@ function buildStateFromLegacyLdj(parsed) {
     );
     const session = {
       id: nextId(),
-      title: String(legacySession?.title ?? "").trim() || defaultSessionTitle(sessionIndex + 1),
+      title: toPlainTextareaValue(legacySession?.title).trim() || defaultSessionTitle(sessionIndex + 1),
       objectives: "",
-      intentions: String(legacySession?.teachingMethod ?? "").trim(),
-      notes: String(legacySession?.notes ?? "").trim(),
+      intentions: toPlainTextareaValue(legacySession?.teachingMethod).trim(),
+      notes: toPlainTextareaValue(legacySession?.notes).trim(),
       notesExpanded: false,
       activities: []
     };
 
     const resources = Array.isArray(legacySession?.resources)
-      ? legacySession.resources.map((value) => String(value ?? "").trim()).filter(Boolean)
+      ? legacySession.resources.map((value) => toPlainTextareaValue(value).trim()).filter(Boolean)
       : [];
     if (resources.length) {
       session.notes = [session.notes, resources.join("\n")].filter(Boolean).join("\n\n");
@@ -3664,13 +3773,13 @@ function buildStateFromLegacyLdj(parsed) {
             syncMode: String(legacyActivity?.syncActivity) === "true" ? "sync" : "async",
             locationMode: String(legacyActivity?.onlineActivity) === "true" ? "online" : "onsite",
             evaluationMode: parseLegacyEvaluationType(legacyActivity?.assessmentType),
-            description: String(legacyActivity?.description ?? "").trim(),
+            description: toPlainTextareaValue(legacyActivity?.description).trim(),
             notes: "",
             tools: []
           };
 
           const activityResources = Array.isArray(legacyActivity?.resources)
-            ? legacyActivity.resources.map((value) => String(value ?? "").trim()).filter(Boolean)
+            ? legacyActivity.resources.map((value) => toPlainTextareaValue(value).trim()).filter(Boolean)
             : [];
           if (activityResources.length) {
             activity.notes = activityResources.join("\n");
@@ -4332,13 +4441,34 @@ function buildGridSelect(options, currentValue, className) {
   return sel;
 }
 
+function toPlainTextareaValue(value) {
+  if (typeof value === "string") return value;
+  if (value == null) return "";
+  if (Array.isArray(value)) {
+    return value.map((item) => toPlainTextareaValue(item).trim()).filter(Boolean).join("\n");
+  }
+  if (typeof value === "object") {
+    if (typeof value.text === "string") return value.text;
+    const commonTextKeys = ["details", "description", "content", "notes", "label", "title", "value", "name"];
+    for (const key of commonTextKeys) {
+      if (typeof value[key] === "string" && value[key].trim()) return value[key];
+    }
+    try {
+      return JSON.stringify(value);
+    } catch {
+      return "";
+    }
+  }
+  return String(value);
+}
+
 function buildGridSessionRow(session, sIdx) {
   const tr = document.createElement("tr");
   tr.className = "grid-session-row";
   tr.dataset.sessionId = session.id;
 
   const td = document.createElement("td");
-  td.setAttribute("colspan", "11");
+  td.setAttribute("colspan", "10");
 
   const totalDur = session.activities.reduce((s, a) => s + (Number(a.duration) || 0), 0);
 
@@ -4458,7 +4588,7 @@ function buildGridActivityRow(session, act, aIdx) {
   const descInput = document.createElement("textarea");
   descInput.className = "grid-desc-input";
   descInput.rows = 1;
-  descInput.value = act.description;
+  descInput.value = toPlainTextareaValue(act.description);
   descInput.placeholder = t("activityDescriptionPlaceholder") || "—";
   descInput.addEventListener("input", (e) => {
     act.description = e.target.value;
@@ -4467,21 +4597,7 @@ function buildGridActivityRow(session, act, aIdx) {
   descTd.appendChild(descInput);
   tr.appendChild(descTd);
 
-  // Col 10 — Notes
-  const notesTd = mkTd();
-  const notesInput = document.createElement("textarea");
-  notesInput.className = "grid-desc-input";
-  notesInput.rows = 1;
-  notesInput.value = act.notes;
-  notesInput.placeholder = t("activityNotesPlaceholder") || "—";
-  notesInput.addEventListener("input", (e) => {
-    act.notes = e.target.value;
-    saveState();
-  });
-  notesTd.appendChild(notesInput);
-  tr.appendChild(notesTd);
-
-  // Col 11 — Actions ↑ ↓ ✕
+  // Col 10 — Actions ↑ ↓ ✕
   const actTd = mkTd();
   const btns = document.createElement("div");
   btns.className = "grid-action-btns";
@@ -4540,7 +4656,6 @@ function renderGridView() {
     { cls: "grid-col-teacher", label: t("gridColTeacher") },
     { cls: "grid-col-eval",    label: t("gridColEval") },
     { cls: "grid-col-desc",    label: t("gridColDesc") },
-    { cls: "grid-col-notes",   label: t("gridColNotes") },
     { cls: "grid-col-actions", label: "" },
   ].forEach(({ cls, label }) => {
     const th = document.createElement("th");
@@ -4563,7 +4678,7 @@ function renderGridView() {
     const addActRow = document.createElement("tr");
     addActRow.className = "grid-add-activity-row";
     const addActTd = document.createElement("td");
-    addActTd.setAttribute("colspan", "11");
+    addActTd.setAttribute("colspan", "10");
     const addActBtn = document.createElement("button");
     addActBtn.className = "grid-add-activity-btn";
     addActBtn.type = "button";
@@ -4586,7 +4701,7 @@ function renderGridView() {
   const addSessRow = document.createElement("tr");
   addSessRow.className = "grid-add-session-row";
   const addSessTd = document.createElement("td");
-  addSessTd.setAttribute("colspan", "11");
+  addSessTd.setAttribute("colspan", "10");
   const addSessBtn = document.createElement("button");
   addSessBtn.className = "grid-add-session-btn";
   addSessBtn.type = "button";
@@ -4768,8 +4883,6 @@ function render() {
       const locationLabel = activityFrag.querySelector(".activity-location-label");
       const evaluationLabel = activityFrag.querySelector(".activity-evaluation-label");
       const description = activityFrag.querySelector(".activity-description");
-      const activityNotes = activityFrag.querySelector(".activity-notes");
-      const activityNotesInput = activityFrag.querySelector(".activity-notes-input");
       const deleteActivityBtn = activityFrag.querySelector(".delete-activity-btn");
       const selectToolsBtn = activityFrag.querySelector(".select-tools-btn");
 
@@ -4806,12 +4919,8 @@ function render() {
       description.value = activity.description;
       description.placeholder = t("activityDescriptionPlaceholder");
       description.setAttribute("aria-label", `${t("activityDescriptionLabel")} ${activityIndex + 1}`);
-      activityNotesInput.value = activity.notes || "";
-      activityNotesInput.setAttribute("aria-label", `${t("activityNotesLabel")} ${activityIndex + 1}`);
-      activityNotesInput.placeholder = t("activityNotesPlaceholder");
       deleteActivityBtn.title = t("deleteActivity");
       deleteActivityBtn.setAttribute("aria-label", deleteActivityBtn.title);
-      activityNotes.classList.toggle("hidden", !(state.allNotesExpanded || session.notesExpanded));
       updateActivityToolsDisplay(selectToolsBtn, activity);
       activityCard.addEventListener("dragstart", (event) => {
         if (isInteractiveTarget(event.target)) {
@@ -4929,11 +5038,6 @@ function render() {
         saveState();
       });
 
-      activityNotesInput.addEventListener("input", (e) => {
-        activity.notes = e.target.value;
-        saveState();
-      });
-
       deleteActivityBtn.addEventListener("click", () => {
         session.activities = session.activities.filter((a) => a.id !== activity.id);
         saveState();
@@ -4955,8 +5059,9 @@ function render() {
 
     const addActivityBtn = frag.querySelector(".add-activity-btn");
     const toggleSessionNotesBtn = frag.querySelector(".toggle-session-notes-btn");
-    addActivityBtn.textContent = t("addLearningType");
-    toggleSessionNotesBtn.textContent = t("sessionNotes");
+    setButtonLabel(addActivityBtn, "fa-solid fa-plus", t("addLearningType").replace(/^\+\s*/, ""));
+    setSessionNotesButtonLabel(toggleSessionNotesBtn, session.notesExpanded);
+    toggleSessionNotesBtn.setAttribute("aria-expanded", String(Boolean(session.notesExpanded)));
     addActivityBtn.addEventListener("click", () => {
       session.activities.push({
         id: nextId(),
@@ -4986,7 +5091,17 @@ function render() {
     toggleSessionNotesBtn.addEventListener("click", () => {
       session.notesExpanded = !session.notesExpanded;
       saveState();
-      render();
+      const isVisible = session.notesExpanded;
+      sessionNotes.classList.toggle("hidden", !isVisible);
+      setSessionNotesButtonLabel(toggleSessionNotesBtn, isVisible);
+      toggleSessionNotesBtn.setAttribute("aria-expanded", String(Boolean(isVisible)));
+      if (isVisible) {
+        autoResizeTextarea(sessionNotesInput);
+        requestAnimationFrame(() => {
+          sessionNotesInput.focus();
+          sessionNotesInput.scrollIntoView({ block: "nearest", behavior: "smooth" });
+        });
+      }
     });
 
     sessionNotesInput.value = session.notes || "";
@@ -4996,14 +5111,14 @@ function render() {
       session.notes = e.target.value;
       saveState();
     });
-    sessionNotes.classList.toggle("hidden", !(state.allNotesExpanded || session.notesExpanded));
+    sessionNotes.classList.toggle("hidden", !session.notesExpanded);
 
     board.appendChild(frag);
   });
 
   ensureMarkdownToolbars(board);
   localizeExpandableFieldControls(board);
-  initAutoResizeTextareas(board);
+  initAutoResizeTextareas();
   const toggleIntentionsBtn = document.getElementById("toggle-intentions-btn");
   if (toggleIntentionsBtn) {
     setButtonLabel(

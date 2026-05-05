@@ -1906,7 +1906,7 @@ main {
 }
 
 .board.layout-columns .session-card {
-  flex: 0 0 430px;
+  flex: 0 0 470px;
   height: auto;
   min-height: 560px;
 }
@@ -2095,7 +2095,8 @@ main {
 .activity-toolbar {
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: 0;
+  justify-content: space-between;
   flex-wrap: nowrap;
   border-bottom: 2px solid var(--card-type-color, var(--line));
   background: color-mix(in srgb, var(--card-type-color, var(--panel-2)) 12%, var(--panel-2));
@@ -2105,7 +2106,7 @@ main {
 }
 
 .activity-toolbar .activity-actions {
-  margin-left: auto;
+  margin-left: 0;
 }
 
 .activity-duration {
@@ -2656,9 +2657,8 @@ main {
 }
 
 .activity-actions {
-  display: inline-flex;
-  gap: 3px;
-  margin-left: auto;
+  display: contents;
+  margin-left: 0;
   align-self: center;
   flex-shrink: 0;
 }
@@ -2893,7 +2893,7 @@ main {
   }
 
   .board.layout-columns .session-card {
-    flex-basis: min(94vw, 430px);
+    flex-basis: min(94vw, 470px);
   }
 
   .activity-toolbar {
@@ -2946,6 +2946,19 @@ main {
 }
 
 @media (max-width: 640px) {
+  .board {
+    gap: 12px;
+    padding: 16px 8px 24px;
+  }
+
+  .board.layout-columns {
+    scroll-padding-inline: 8px;
+  }
+
+  .board.layout-columns .session-card {
+    flex-basis: calc(100vw - 16px);
+  }
+
   .toolbar {
     gap: 12px;
     padding: 10px 12px;
@@ -3298,12 +3311,15 @@ main {
   font-size: 12px;
 }
 
-.activity-toolbar .icon-btn {
+.activity-toolbar .icon-btn,
+.activity-toolbar .delete-btn {
   width: 24px;
   height: 24px;
 }
 
-.activity-toolbar .activity-links-btn {
+.activity-toolbar .activity-links-btn,
+.activity-toolbar .select-tools-btn,
+.activity-toolbar .delete-activity-btn {
   width: 30px;
   height: 30px;
 }
@@ -3317,6 +3333,16 @@ main {
 .activity-toolbar .activity-links-btn .fa-regular {
   width: 18px;
   font-size: 15px;
+}
+
+.activity-toolbar .select-tools-btn svg {
+  width: 18px;
+  height: 18px;
+}
+
+.activity-toolbar .delete-activity-btn svg {
+  width: 13px;
+  height: 13px;
 }
 
 /* ── Session card: entrance + hover lift ───────────────────── */

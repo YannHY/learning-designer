@@ -49,6 +49,13 @@ function e(string $value): string
         background: linear-gradient(180deg, #f8fbff 0%, #eef3f8 100%);
       }
 
+      [data-theme="dark"] body {
+        background:
+          radial-gradient(ellipse 70% 50% at top left, rgba(56, 139, 253, 0.07), transparent),
+          radial-gradient(ellipse 60% 40% at bottom right, rgba(163, 113, 247, 0.06), transparent),
+          #1a1f2e;
+      }
+
       .saved-shell {
         width: min(980px, calc(100vw - 32px));
         margin: 40px auto;
@@ -142,6 +149,51 @@ function e(string $value): string
 
       .saved-card-actions form {
         margin: 0;
+      }
+
+      [data-theme="dark"] .saved-shell {
+        border-color: rgba(103, 116, 145, 0.45);
+        background: linear-gradient(180deg, rgba(36, 43, 64, 0.96), rgba(30, 36, 54, 0.96));
+        box-shadow: 0 18px 42px rgba(0, 0, 0, 0.35);
+      }
+
+      [data-theme="dark"] .saved-title {
+        color: #f3f6ff;
+      }
+
+      [data-theme="dark"] .saved-subtitle,
+      [data-theme="dark"] .saved-card-meta,
+      [data-theme="dark"] .saved-empty {
+        color: var(--text-body);
+      }
+
+      [data-theme="dark"] .saved-flash {
+        border-color: rgba(103, 116, 145, 0.4);
+        background: rgba(30, 36, 54, 0.94);
+        color: #e8edf5;
+      }
+
+      [data-theme="dark"] .saved-flash-success {
+        border-color: rgba(106, 176, 255, 0.28);
+      }
+
+      [data-theme="dark"] .saved-flash-warning {
+        border-color: rgba(251, 191, 36, 0.24);
+        color: #fde68a;
+      }
+
+      [data-theme="dark"] .saved-empty {
+        border-color: rgba(103, 116, 145, 0.38);
+        background: rgba(30, 36, 54, 0.78);
+      }
+
+      [data-theme="dark"] .saved-card {
+        border-color: rgba(103, 116, 145, 0.38);
+        background: rgba(30, 36, 54, 0.78);
+      }
+
+      [data-theme="dark"] .saved-card-title {
+        color: #eef3ff;
       }
 
       @media (max-width: 760px) {

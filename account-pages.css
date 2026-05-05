@@ -192,6 +192,86 @@ th {
   color: var(--muted);
   font-weight: 700;
 }
+
+[data-theme="dark"] body {
+  color: #e8edf5;
+  background:
+    radial-gradient(circle at top left, rgba(56, 139, 253, 0.10), transparent 28%),
+    linear-gradient(180deg, #1f2537 0%, #1a1f2e 100%);
+}
+
+[data-theme="dark"] .account-menu-link.nav-account-btn-active {
+  background: rgba(106, 176, 255, 0.14);
+  color: #8cc6ff;
+}
+
+[data-theme="dark"] .account-card {
+  background: linear-gradient(180deg, rgba(36, 43, 64, 0.96), rgba(30, 36, 54, 0.96));
+  border-color: rgba(103, 116, 145, 0.45);
+  box-shadow: 0 18px 42px rgba(0, 0, 0, 0.35);
+}
+
+[data-theme="dark"] .account-kicker {
+  color: #8cc6ff;
+}
+
+[data-theme="dark"] h1,
+[data-theme="dark"] h2,
+[data-theme="dark"] .account-form label {
+  color: #f3f6ff;
+}
+
+[data-theme="dark"] .account-copy,
+[data-theme="dark"] .account-footer,
+[data-theme="dark"] th {
+  color: #c7d2e5;
+}
+
+[data-theme="dark"] .account-form input,
+[data-theme="dark"] .account-form select {
+  background: #1e2436;
+  color: #e8edf5;
+  border-color: rgba(103, 116, 145, 0.5);
+}
+
+[data-theme="dark"] .account-form input::placeholder {
+  color: #8892aa;
+}
+
+[data-theme="dark"] .account-form select,
+[data-theme="dark"] input[type="number"] {
+  color-scheme: dark;
+}
+
+[data-theme="dark"] .account-message {
+  border: 1px solid rgba(103, 116, 145, 0.4);
+}
+
+[data-theme="dark"] .account-message.success {
+  background: rgba(30, 36, 54, 0.94);
+  color: #e8edf5;
+  border-color: rgba(106, 176, 255, 0.28);
+}
+
+[data-theme="dark"] .account-message.error {
+  background: rgba(30, 36, 54, 0.94);
+  color: #fecaca;
+  border-color: rgba(248, 113, 113, 0.24);
+}
+
+[data-theme="dark"] .panel {
+  background: rgba(30, 36, 54, 0.78);
+  border-color: rgba(103, 116, 145, 0.38);
+}
+
+[data-theme="dark"] .danger-panel {
+  border-color: rgba(248, 113, 113, 0.28);
+}
+
+[data-theme="dark"] td {
+  color: #e8edf5;
+  border-bottom-color: rgba(103, 116, 145, 0.32);
+}
 @media (max-width: 720px) {
   .account-card {
     padding: 22px;

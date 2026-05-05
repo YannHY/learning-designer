@@ -977,6 +977,7 @@ const I18N = {
     collapsePanel: "Replier le panneau",
     expandPanel: "Déplier le panneau",
     addMoment: "Ajouter un moment",
+    addMomentCompact: "Ajouter",
     expandNotes: "Déplier les notes",
     collapseNotes: "Replier les notes",
     hideIntentions: "Masquer les intentions",
@@ -1187,6 +1188,7 @@ const I18N = {
     collapsePanel: "Collapse panel",
     expandPanel: "Expand panel",
     addMoment: "Add moment",
+    addMomentCompact: "Add",
     expandNotes: "Expand notes",
     collapseNotes: "Collapse notes",
     hideIntentions: "Hide intentions",
@@ -1606,6 +1608,9 @@ function refreshLocalizedCatalogs() {
 function applyLocalizedUI() {
   refreshLocalizedCatalogs();
   document.documentElement.lang = currentLang();
+  try {
+    localStorage.setItem("learningDesignerLang", currentLang());
+  } catch (_) {}
   document.title = t("docTitle");
   if (langSelect) langSelect.value = currentLang();
   document.getElementById("skip-link").textContent = t("skipLink");
@@ -1658,7 +1663,7 @@ function applyLocalizedUI() {
   const toggleLabel = state.topPanelCollapsed ? t("expandPanel") : t("collapsePanel");
   topPanelToggleBtn.setAttribute("aria-label", toggleLabel);
   topPanelToggleBtn.setAttribute("title", toggleLabel);
-  setButtonLabel(addSessionBtn, "fa-solid fa-plus", t("addMoment"));
+  updateResponsiveButtonLabels();
   boardLayoutToggle.setAttribute("aria-label", t("viewModeLabel"));
   boardLayoutListText.textContent = t("viewList");
   boardLayoutColumnsText.textContent = t("viewColumns");
@@ -1681,6 +1686,7 @@ function applyLocalizedUI() {
   infoBtn.setAttribute("aria-label", t("info"));
   infoBtn.setAttribute("title", t("info"));
   infoBtn.setAttribute("aria-haspopup", "dialog");
+  if (footerAboutBtn) footerAboutBtn.textContent = t("infoTitle");
   const helpBtn = document.getElementById("help-btn");
   if (helpBtn) {
     helpBtn.setAttribute("aria-label", t("help") || "Aide");
@@ -1744,6 +1750,11 @@ function applyLocalizedUI() {
     currentLang() === "en" ? "Top panel views" : "Vues du panneau supérieur"
   );
   localizeExpandableFieldControls();
+}
+
+function updateResponsiveButtonLabels() {
+  const compactToolbar = window.innerWidth <= 640;
+  setButtonLabel(addSessionBtn, "fa-solid fa-plus", compactToolbar ? t("addMomentCompact") : t("addMoment"));
 }
 
 function hydrateState(parsed, fallback = defaultState()) {
@@ -2791,6 +2802,7 @@ function hidePieTooltip(tooltipEl) {
 function showPieTooltip(wrapEl, pieEl, tooltipEl, segment) {
   if (!wrapEl || !pieEl || !tooltipEl || !segment) return;
   tooltipEl.textContent = "";
+  tooltipEl.classList.remove("tooltip-below");
   const nameEl = document.createElement("span");
   nameEl.className = "pie-tooltip-name";
   nameEl.textContent = segment.label;
@@ -2814,11 +2826,17 @@ function showPieTooltip(wrapEl, pieEl, tooltipEl, segment) {
   const tooltipWidth = tooltipEl.offsetWidth || 130;
   const tooltipHeight = tooltipEl.offsetHeight || 66;
   const left = Math.max(8, Math.min(anchorX - (tooltipWidth / 2), wrapRect.width - tooltipWidth - 8));
-  const top = Math.max(8, Math.min(anchorY - tooltipHeight - 14, wrapRect.height - tooltipHeight - 8));
+  const topAbove = anchorY - tooltipHeight - 14;
+  const topBelow = anchorY + 14;
+  const shouldPlaceBelow = topAbove < 8 && topBelow <= wrapRect.height - tooltipHeight - 8;
+  const top = shouldPlaceBelow
+    ? Math.max(8, Math.min(topBelow, wrapRect.height - tooltipHeight - 8))
+    : Math.max(8, Math.min(topAbove, wrapRect.height - tooltipHeight - 8));
   const arrowLeft = Math.max(14, Math.min(tooltipWidth - 14, anchorX - left));
   tooltipEl.style.left = `${left}px`;
   tooltipEl.style.top = `${top}px`;
   tooltipEl.style.setProperty("--pie-tooltip-arrow", `${arrowLeft}px`);
+  tooltipEl.classList.toggle("tooltip-below", shouldPlaceBelow);
 }
 
 function segmentForPointer(data, pieEl, event) {
@@ -2864,9 +2882,10 @@ function renderPieOuterLabels(wrapEl, pieEl, labelsEl, tooltipEl, data, codeForS
     ? pieRect.top - labelsRect.top + pieRect.height / 2
     : labelsHeight / 2;
   const pieRadius = Math.min(pieWidth, pieHeight) / 2;
-  const labelInset = 16;
-  const labelGap = 16;
-  const labelRingGap = 18;
+  const compactLabels = labelsWidth <= pieWidth + 110 || window.innerWidth <= 520;
+  const labelInset = compactLabels ? 8 : 16;
+  const labelGap = compactLabels ? 10 : 16;
+  const labelRingGap = compactLabels ? 8 : 18;
   const positionedLabels = [];
 
   segments.forEach((segment) => {
@@ -4505,7 +4524,13 @@ document.addEventListener("click", (event) => {
   closeChoiceMenu();
 });
 
+const debouncedResizeLayoutRefresh = debounce(() => {
+  updateResponsiveButtonLabels();
+  renderTopPanel();
+}, 120);
+
 window.addEventListener("resize", closeChoiceMenu, { passive: true });
+window.addEventListener("resize", debouncedResizeLayoutRefresh, { passive: true });
 window.addEventListener("scroll", closeChoiceMenu, { capture: true, passive: true });
 
 function stripGradientForSession(session) {
@@ -5489,6 +5514,10 @@ function bindTopPanelEvents() {
   });
   langSelect.addEventListener("change", (event) => {
     state.meta.uiLanguage = event.target.value === "en" ? "en" : "fr";
+    document.documentElement.lang = state.meta.uiLanguage;
+    try {
+      localStorage.setItem("learningDesignerLang", state.meta.uiLanguage);
+    } catch (_) {}
     saveState();
     render();
   });

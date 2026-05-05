@@ -386,7 +386,7 @@
       setRemoteDesignUrl(data.design.id);
       lastLoadTime = Date.now();
       if (showLoadedMessage) {
-        const message = tr("Production chargee.", "Design loaded.");
+        const message = tr("Production chargée.", "Design loaded.");
         app()?.showNotice?.(message, "success");
         app()?.announce?.(message);
       }
@@ -468,11 +468,11 @@
       const data = await fetchJson("list_designs.php");
       if (!data.items.length) {
         status.textContent = "";
-        list.innerHTML = `<p class="saved-designs-empty">${tr("Aucune production enregistree pour le moment.", "No saved designs yet.")}</p>`;
+        list.innerHTML = `<p class="saved-designs-empty">${tr("Aucune production enregistrée pour le moment.", "No saved designs yet.")}</p>`;
         return;
       }
 
-      status.textContent = tr("Choisissez une production a charger ou supprimer.", "Choose a design to load or delete.");
+      status.textContent = tr("Choisissez une production à charger ou supprimer.", "Choose a design to load or delete.");
       const fragment = document.createDocumentFragment();
 
       data.items.forEach((item) => {
@@ -482,7 +482,7 @@
           <div class="saved-design-head">
             <div>
               <h3 class="saved-design-title">${escapeHtml(item.title)}</h3>
-              <p class="saved-design-meta">${tr("Derniere mise a jour: ", "Last updated: ")}${escapeHtml(formatDate(item.updatedAt))}</p>
+              <p class="saved-design-meta">${tr("Dernière mise à jour : ", "Last updated: ")}${escapeHtml(formatDate(item.updatedAt))}</p>
             </div>
             <div class="saved-design-actions">
               <button class="btn btn-light" type="button" data-action="load" data-id="${item.id}">${tr("Charger", "Load")}</button>
@@ -517,7 +517,7 @@
         throw new Error(tr("Chargement impossible.", "Load failed."));
       }
       closeSavedDesignsModal();
-      app()?.announce?.(tr("Production chargee.", "Design loaded."));
+      app()?.announce?.(tr("Production chargée.", "Design loaded."));
     } catch (error) {
       app()?.announce?.(error.message || tr("Chargement impossible.", "Load failed."));
     }

@@ -4,6 +4,16 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Learning Designer - Prototype</title>
+    <script>
+      (function() {
+        try {
+          if (localStorage.getItem('learningDesignerTheme') === 'dark') {
+            document.documentElement.setAttribute('data-theme', 'dark');
+          }
+        } catch (error) {
+        }
+      })();
+    </script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" referrerpolicy="no-referrer" />
     <link rel="stylesheet" href="account-ui.css?v=20260502-6" />
@@ -585,15 +595,30 @@
     <script src="account-ui.js?v=20260502-9"></script>
     <script>
       (function() {
+        var html = document.documentElement;
+        try {
+          if (localStorage.getItem('learningDesignerTheme') === 'dark') {
+            html.setAttribute('data-theme', 'dark');
+          }
+        } catch (error) {
+        }
+
         var btn = document.getElementById('theme-toggle-btn');
         if (btn) {
           btn.addEventListener('click', function() {
-            var html = document.documentElement;
             var isDark = html.getAttribute('data-theme') === 'dark';
             if (isDark) {
               html.removeAttribute('data-theme');
+              try {
+                localStorage.setItem('learningDesignerTheme', 'light');
+              } catch (error) {
+              }
             } else {
               html.setAttribute('data-theme', 'dark');
+              try {
+                localStorage.setItem('learningDesignerTheme', 'dark');
+              } catch (error) {
+              }
             }
           });
         }

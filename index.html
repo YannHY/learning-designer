@@ -339,6 +339,9 @@
           <button class="choice-btn activity-sync-mode-btn" type="button"></button>
           <button class="choice-btn activity-location-mode-btn" type="button"></button>
           <button class="choice-btn activity-evaluation-mode-btn" type="button"></button>
+          <button class="icon-btn activity-links-btn" type="button" aria-haspopup="dialog" aria-expanded="false">
+            <i class="fa-solid fa-link" aria-hidden="true"></i>
+          </button>
           <div class="activity-actions">
             <button class="icon-btn select-tools-btn" type="button" aria-haspopup="dialog" aria-expanded="false">
               <svg viewBox="0 0 24 24" aria-hidden="true" width="16" height="16">
@@ -354,6 +357,7 @@
           </div>
         </div>
         <div class="activity-tools hidden" role="list"></div>
+        <div class="activity-links hidden" role="list"></div>
         <div class="expandable-field">
           <textarea class="activity-description" rows="3"></textarea>
           <button class="expand-btn" type="button" aria-label="Plein écran">⤢</button>
@@ -479,6 +483,26 @@
         </div>
       </div>
     </div>
+
+    <div id="activity-link-modal-backdrop" class="modal-backdrop hidden"
+         role="dialog" aria-modal="true" aria-hidden="true"
+         aria-labelledby="activity-link-modal-title">
+      <div class="modal activity-link-modal">
+        <h2 id="activity-link-modal-title" class="modal-title">Ajouter un lien</h2>
+        <div class="activity-link-modal-fields">
+          <label for="activity-link-title-input" id="activity-link-title-label">Titre</label>
+          <input id="activity-link-title-input" class="panel-select modal-text-input" type="text" maxlength="140" />
+          <label for="activity-link-url-input" id="activity-link-url-label">Lien</label>
+          <input id="activity-link-url-input" class="panel-select modal-text-input" type="url" placeholder="https://…" />
+          <p id="activity-link-modal-error" class="modal-inline-error hidden" role="alert"></p>
+        </div>
+        <div id="activity-link-list" class="activity-link-list" role="list"></div>
+        <div class="modal-actions">
+          <button id="activity-link-cancel-btn" class="btn btn-light" type="button">Fermer</button>
+          <button id="activity-link-save-btn" class="btn btn-primary" type="button">Ajouter</button>
+        </div>
+      </div>
+    </div>
     <script>
       (function () {
         function fallbackOpenExportModal() {
@@ -557,7 +581,7 @@
         };
       })();
     </script>
-    <script src="interface.js?v=20260502-13"></script>
+    <script src="interface.js?v=20260505-1"></script>
     <script src="account-ui.js?v=20260502-9"></script>
     <script>
       (function() {

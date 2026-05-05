@@ -944,8 +944,17 @@ const importModalBackdrop = document.getElementById("import-modal-backdrop");
 const importFormatSelect = document.getElementById("import-format-select");
 const importModalCancelBtn = document.getElementById("import-modal-cancel-btn");
 const importModalConfirmBtn = document.getElementById("import-modal-confirm-btn");
+const activityLinkModalBackdrop = document.getElementById("activity-link-modal-backdrop");
+const activityLinkTitleInput = document.getElementById("activity-link-title-input");
+const activityLinkUrlInput = document.getElementById("activity-link-url-input");
+const activityLinkList = document.getElementById("activity-link-list");
+const activityLinkError = document.getElementById("activity-link-modal-error");
+const activityLinkCancelBtn = document.getElementById("activity-link-cancel-btn");
+const activityLinkSaveBtn = document.getElementById("activity-link-save-btn");
 
 const LD_STORAGE_KEY = "ld_state_v1";
+let activeActivityLinkTrigger = null;
+let activeActivityLinkActivity = null;
 
 let state = (() => {
   try {
@@ -1043,6 +1052,16 @@ const I18N = {
     toolsAriaLabel: "Compétences sélectionnées",
     removeToolAriaLabel: (name) => `Retirer ${name}`,
     toolCount: (n) => n === 1 ? "1 compétence" : `${n} compétences`,
+    manageLinks: "Insérer un lien",
+    activityLinksTitle: "Liens de l'activité",
+    activityLinkTitleLabel: "Titre",
+    activityLinkUrlLabel: "Lien",
+    activityLinkAdd: "Ajouter",
+    activityLinkEmpty: "Aucun lien ajouté pour cette activité.",
+    activityLinkCount: (n) => n === 1 ? "1 lien" : `${n} liens`,
+    removeLinkAriaLabel: (name) => `Retirer le lien ${name}`,
+    activityLinkErrorRequired: "Renseignez un titre et un lien.",
+    activityLinkErrorInvalid: "Le lien saisi n'est pas valide.",
     groupTitleType: "Type d'apprentissage",
     groupTitleGroup: "Groupe",
     groupTitleTrainer: "Formateur",
@@ -1243,6 +1262,16 @@ const I18N = {
     toolsAriaLabel: "Selected competencies",
     removeToolAriaLabel: (name) => `Remove ${name}`,
     toolCount: (n) => n === 1 ? "1 competency" : `${n} competencies`,
+    manageLinks: "Insert link",
+    activityLinksTitle: "Activity links",
+    activityLinkTitleLabel: "Title",
+    activityLinkUrlLabel: "Link",
+    activityLinkAdd: "Add",
+    activityLinkEmpty: "No links added for this activity.",
+    activityLinkCount: (n) => n === 1 ? "1 link" : `${n} links`,
+    removeLinkAriaLabel: (name) => `Remove link ${name}`,
+    activityLinkErrorRequired: "Enter both a title and a link.",
+    activityLinkErrorInvalid: "The link entered is not valid.",
     groupTitleType: "Learning type",
     groupTitleGroup: "Group",
     groupTitleTrainer: "Trainer",
@@ -1676,6 +1705,17 @@ function applyLocalizedUI() {
   exportModalBackdrop.querySelector("label[for='export-format-select']").textContent = t("format");
   exportModalCancelBtn.textContent = t("cancel");
   exportModalConfirmBtn.textContent = t("export");
+  const activityLinkTitle = document.getElementById("activity-link-modal-title");
+  if (activityLinkTitle) activityLinkTitle.textContent = t("activityLinksTitle");
+  const activityLinkTitleLabel = document.getElementById("activity-link-title-label");
+  if (activityLinkTitleLabel) activityLinkTitleLabel.textContent = t("activityLinkTitleLabel");
+  const activityLinkUrlLabel = document.getElementById("activity-link-url-label");
+  if (activityLinkUrlLabel) activityLinkUrlLabel.textContent = t("activityLinkUrlLabel");
+  if (activityLinkTitleInput) activityLinkTitleInput.placeholder = t("activityLinkTitleLabel");
+  if (activityLinkUrlInput) activityLinkUrlInput.placeholder = "https://…";
+  if (activityLinkList) activityLinkList.dataset.empty = t("activityLinkEmpty");
+  if (activityLinkCancelBtn) activityLinkCancelBtn.textContent = t("close");
+  if (activityLinkSaveBtn) activityLinkSaveBtn.textContent = t("activityLinkAdd");
   document.getElementById("info-modal-title").textContent = t("infoTitle");
   document.getElementById("info-modal-p1").textContent = t("infoP1");
   document.getElementById("info-modal-p2").textContent = t("infoP2");
@@ -1757,7 +1797,8 @@ function hydrateState(parsed, fallback = defaultState()) {
               evaluationMode: activity?.evaluationMode,
               description: toPlainTextareaValue(activity?.description),
               notes: toPlainTextareaValue(activity?.notes),
-              tools: Array.isArray(activity?.tools) ? activity.tools : []
+              tools: Array.isArray(activity?.tools) ? activity.tools : [],
+              links: Array.isArray(activity?.links) ? activity.links : []
             };
             normalizeActivity(normalized);
             return normalized;
@@ -2318,6 +2359,139 @@ function updateActivityToolsDisplay(trigger, activity) {
   });
 }
 
+function updateActivityLinksDisplay(trigger, activity) {
+  if (!trigger) return;
+  const card = trigger.closest(".activity-card");
+  if (!card) return;
+  const count = Array.isArray(activity.links) ? activity.links.length : 0;
+  trigger.dataset.count = count;
+  trigger.classList.toggle("has-links", count > 0);
+  trigger.setAttribute("aria-label", count > 0
+    ? `${t("manageLinks")} (${t("activityLinkCount")(count)})`
+    : t("manageLinks"));
+  const linksRow = card.querySelector(".activity-links");
+  if (!linksRow) return;
+  linksRow.classList.toggle("hidden", count === 0);
+  linksRow.setAttribute("aria-label", t("activityLinksTitle"));
+  linksRow.innerHTML = "";
+  (activity.links || []).forEach((link) => {
+    const chip = document.createElement("span");
+    chip.className = "activity-link-chip";
+    chip.setAttribute("role", "listitem");
+    const anchor = document.createElement("a");
+    anchor.className = "activity-link-chip-anchor";
+    anchor.href = link.url;
+    anchor.target = "_blank";
+    anchor.rel = "noopener noreferrer";
+    anchor.textContent = link.title;
+    const removeBtn = document.createElement("button");
+    removeBtn.type = "button";
+    removeBtn.className = "activity-link-chip-remove";
+    removeBtn.setAttribute("aria-label", t("removeLinkAriaLabel")(link.title));
+    removeBtn.textContent = "×";
+    removeBtn.addEventListener("click", (event) => {
+      event.stopPropagation();
+      activity.links = (activity.links || []).filter((item) => item.id !== link.id);
+      saveState();
+      updateActivityLinksDisplay(trigger, activity);
+      if (activeActivityLinkActivity === activity) {
+        renderActivityLinkList(activity);
+      }
+    });
+    chip.appendChild(anchor);
+    chip.appendChild(removeBtn);
+    linksRow.appendChild(chip);
+  });
+}
+
+function renderActivityLinkList(activity) {
+  if (!activityLinkList) return;
+  activityLinkList.innerHTML = "";
+  activityLinkList.dataset.empty = t("activityLinkEmpty");
+  (activity.links || []).forEach((link) => {
+    const item = document.createElement("div");
+    item.className = "activity-link-list-item";
+    item.setAttribute("role", "listitem");
+    const main = document.createElement("div");
+    main.className = "activity-link-list-main";
+    const anchor = document.createElement("a");
+    anchor.className = "activity-link-list-title";
+    anchor.href = link.url;
+    anchor.target = "_blank";
+    anchor.rel = "noopener noreferrer";
+    anchor.textContent = link.title;
+    const url = document.createElement("div");
+    url.className = "activity-link-list-url";
+    url.textContent = link.url;
+    main.appendChild(anchor);
+    main.appendChild(url);
+    const removeBtn = document.createElement("button");
+    removeBtn.type = "button";
+    removeBtn.className = "btn btn-light";
+    removeBtn.textContent = "×";
+    removeBtn.setAttribute("aria-label", t("removeLinkAriaLabel")(link.title));
+    removeBtn.addEventListener("click", () => {
+      activity.links = (activity.links || []).filter((item) => item.id !== link.id);
+      saveState();
+      renderActivityLinkList(activity);
+      updateActivityLinksDisplay(activeActivityLinkTrigger, activity);
+    });
+    item.appendChild(main);
+    item.appendChild(removeBtn);
+    activityLinkList.appendChild(item);
+  });
+}
+
+function setActivityLinkError(message = "") {
+  if (!activityLinkError) return;
+  activityLinkError.textContent = message;
+  activityLinkError.classList.toggle("hidden", !message);
+}
+
+function openActivityLinkModal(trigger, activity) {
+  activeActivityLinkTrigger = trigger;
+  activeActivityLinkActivity = activity;
+  if (activityLinkTitleInput) activityLinkTitleInput.value = "";
+  if (activityLinkUrlInput) activityLinkUrlInput.value = "";
+  setActivityLinkError("");
+  renderActivityLinkList(activity);
+  if (trigger) trigger.setAttribute("aria-expanded", "true");
+  openModal(activityLinkModalBackdrop, "#activity-link-title-input");
+}
+
+function closeActivityLinkModal() {
+  if (activeActivityLinkTrigger) {
+    activeActivityLinkTrigger.setAttribute("aria-expanded", "false");
+  }
+  setActivityLinkError("");
+  closeModal(activityLinkModalBackdrop);
+  activeActivityLinkTrigger = null;
+  activeActivityLinkActivity = null;
+}
+
+function confirmActivityLink() {
+  if (!activeActivityLinkActivity) return;
+  const title = toPlainTextareaValue(activityLinkTitleInput?.value || "").trim();
+  const url = normalizeExternalUrl(activityLinkUrlInput?.value || "");
+  if (!title || !url) {
+    setActivityLinkError(title || String(activityLinkUrlInput?.value || "").trim()
+      ? t("activityLinkErrorInvalid")
+      : t("activityLinkErrorRequired"));
+    return;
+  }
+  activeActivityLinkActivity.links = [
+    ...(Array.isArray(activeActivityLinkActivity.links) ? activeActivityLinkActivity.links : []),
+    { id: nextId(), title, url }
+  ];
+  saveState();
+  renderActivityLinkList(activeActivityLinkActivity);
+  updateActivityLinksDisplay(activeActivityLinkTrigger, activeActivityLinkActivity);
+  setActivityLinkError("");
+  activityLinkTitleInput.value = "";
+  activityLinkUrlInput.value = "";
+  activityLinkTitleInput.focus();
+}
+
 function openChoiceMenu(trigger, options, currentValue, onSelect) {
   if (activeChoiceMenu && activeChoiceTrigger === trigger) {
     closeChoiceMenu(true);
@@ -2423,6 +2597,10 @@ function openChoiceMenu(trigger, options, currentValue, onSelect) {
 }
 
 function normalizeActivity(activity) {
+  if (!Array.isArray(activity.links)) activity.links = [];
+  activity.links = activity.links
+    .map(normalizeActivityLinkEntry)
+    .filter(Boolean);
   if (!Array.isArray(activity.tools)) activity.tools = [];
   activity.tools = activity.tools
     .map((reference) => {
@@ -2458,6 +2636,31 @@ function normalizeActivity(activity) {
     )
   ) {
     activity.evaluationMode = "none";
+  }
+}
+
+function normalizeActivityLinkEntry(link) {
+  if (!link) return null;
+  const title = toPlainTextareaValue(link.title || "").trim();
+  const url = normalizeExternalUrl(link.url || "");
+  if (!title || !url) return null;
+  return {
+    id: link.id || nextId(),
+    title,
+    url
+  };
+}
+
+function normalizeExternalUrl(value) {
+  const raw = String(value || "").trim();
+  if (!raw) return "";
+  const candidate = /^[a-z][a-z0-9+.-]*:/i.test(raw) ? raw : `https://${raw}`;
+  try {
+    const parsed = new URL(candidate);
+    if (!["http:", "https:"].includes(parsed.protocol)) return "";
+    return parsed.toString();
+  } catch (_) {
+    return "";
   }
 }
 
@@ -3263,6 +3466,12 @@ function buildMarkdownExport() {
       lines.push(`- Modalité: ${labelForLocationMode(activity.locationMode)}`);
       lines.push(`- Évaluation: ${labelForEvaluationMode(activity.evaluationMode)}`);
       lines.push(`- Description: ${activity.description || "-"}`);
+      if (activity.links && activity.links.length) {
+        const linkLabels = activity.links
+          .map((link) => `${link.title} (${link.url})`)
+          .join(", ");
+        lines.push(`- Liens: ${linkLabels}`);
+      }
       if (activity.tools && activity.tools.length) {
         const toolLabels = activity.tools
           .map(id => SELECTABLE_TOOLS_DATA.find(t => t.id === id))
@@ -3293,6 +3502,7 @@ function buildHtmlExportDocument() {
             <p><strong>Modalité:</strong> ${escapeHtml(labelForLocationMode(activity.locationMode))}</p>
             <p><strong>Évaluation:</strong> ${escapeHtml(labelForEvaluationMode(activity.evaluationMode))}</p>
             <p><strong>Description:</strong> ${escapeHtmlWithBreaks(activity.description || "")}</p>
+            ${activity.links && activity.links.length ? `<p><strong>Liens:</strong> ${activity.links.map((link) => `<a href="${escapeHtml(link.url)}" target="_blank" rel="noopener noreferrer">${escapeHtml(link.title)}</a>`).join(", ")}</p>` : ""}
             ${activity.tools && activity.tools.length ? `<p><strong>Compétences:</strong> ${escapeHtml(activity.tools.map(id => { const t = SELECTABLE_TOOLS_DATA.find(x => x.id === id); return t ? formatCompetencyLabel(t, "fr") : id; }).join(", "))}</p>` : ""}
           </li>
         `
@@ -3775,7 +3985,8 @@ function buildStateFromLegacyLdj(parsed) {
             evaluationMode: parseLegacyEvaluationType(legacyActivity?.assessmentType),
             description: toPlainTextareaValue(legacyActivity?.description).trim(),
             notes: "",
-            tools: []
+            tools: [],
+            links: []
           };
 
           const activityResources = Array.isArray(legacyActivity?.resources)
@@ -4688,7 +4899,7 @@ function renderGridView() {
         id: nextId(), type: "undefined", duration: 10,
         groupMode: "whole", teacherPresence: "present",
         syncMode: "sync", locationMode: "onsite",
-        evaluationMode: "none", description: "", notes: "", tools: []
+        evaluationMode: "none", description: "", notes: "", tools: [], links: []
       });
       saveState(); renderGridView(); renderTopPanel(); renderPartitionView();
     });
@@ -4728,6 +4939,9 @@ function render() {
   restoreAllFullscreenExpandableFields();
   closeChoiceMenu();
   closeToolPicker();
+  if (activeActivityLinkActivity || !activityLinkModalBackdrop.classList.contains("hidden")) {
+    closeActivityLinkModal();
+  }
   applyLocalizedUI();
   renderTopPanel();
   renderPartitionView();
@@ -4875,6 +5089,7 @@ function render() {
       const syncModeBtn = activityFrag.querySelector(".activity-sync-mode-btn");
       const locationModeBtn = activityFrag.querySelector(".activity-location-mode-btn");
       const evaluationModeBtn = activityFrag.querySelector(".activity-evaluation-mode-btn");
+      const activityLinksBtn = activityFrag.querySelector(".activity-links-btn");
       const typeLabel = activityFrag.querySelector(".activity-type-label");
       const durationLabel = activityFrag.querySelector(".activity-duration-label");
       const groupLabel = activityFrag.querySelector(".activity-group-label");
@@ -4921,7 +5136,11 @@ function render() {
       description.setAttribute("aria-label", `${t("activityDescriptionLabel")} ${activityIndex + 1}`);
       deleteActivityBtn.title = t("deleteActivity");
       deleteActivityBtn.setAttribute("aria-label", deleteActivityBtn.title);
+      activityLinksBtn.title = t("manageLinks");
+      activityLinksBtn.setAttribute("aria-haspopup", "dialog");
+      activityLinksBtn.setAttribute("aria-expanded", "false");
       updateActivityToolsDisplay(selectToolsBtn, activity);
+      updateActivityLinksDisplay(activityLinksBtn, activity);
       activityCard.addEventListener("dragstart", (event) => {
         if (isInteractiveTarget(event.target)) {
           event.preventDefault();
@@ -5053,6 +5272,14 @@ function render() {
         }
         if (e.key === "Escape") closeToolPicker(true);
       });
+      activityLinksBtn.addEventListener("click", () => openActivityLinkModal(activityLinksBtn, activity));
+      activityLinksBtn.addEventListener("keydown", (event) => {
+        if (event.key === "Enter" || event.key === " " || event.key === "ArrowDown") {
+          event.preventDefault();
+          openActivityLinkModal(activityLinksBtn, activity);
+        }
+        if (event.key === "Escape") closeActivityLinkModal();
+      });
 
       activitiesWrap.appendChild(activityFrag);
     });
@@ -5074,7 +5301,8 @@ function render() {
         evaluationMode: "none",
         description: "",
         notes: "",
-        tools: []
+        tools: [],
+        links: []
       });
       saveState();
       render();
@@ -5245,6 +5473,19 @@ function bindTopPanelEvents() {
   bloomAddBtn.addEventListener("click", confirmBloom);
   bloomModalBackdrop.addEventListener("click", (e) => {
     if (e.target === bloomModalBackdrop) closeModal(bloomModalBackdrop);
+  });
+  activityLinkCancelBtn.addEventListener("click", closeActivityLinkModal);
+  activityLinkSaveBtn.addEventListener("click", confirmActivityLink);
+  activityLinkModalBackdrop.addEventListener("click", (event) => {
+    if (event.target === activityLinkModalBackdrop) closeActivityLinkModal();
+  });
+  activityLinkTitleInput.addEventListener("input", () => setActivityLinkError(""));
+  activityLinkUrlInput.addEventListener("input", () => setActivityLinkError(""));
+  activityLinkUrlInput.addEventListener("keydown", (event) => {
+    if (event.key === "Enter") {
+      event.preventDefault();
+      confirmActivityLink();
+    }
   });
   langSelect.addEventListener("change", (event) => {
     state.meta.uiLanguage = event.target.value === "en" ? "en" : "fr";

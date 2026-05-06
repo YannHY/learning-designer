@@ -53,9 +53,6 @@ if ($token === '') {
        ->execute([$designId, (int)$user['id']]);
 }
 
-$scheme  = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
-$host    = (string)($_SERVER['HTTP_HOST'] ?? '');
-$dir     = rtrim(str_replace('\\', '/', dirname((string)($_SERVER['SCRIPT_NAME'] ?? ''))), '/');
-$url     = $scheme . '://' . $host . $dir . '/view.php?token=' . urlencode($token);
+$url = app_base_url() . '/view.php?token=' . urlencode($token);
 
 app_json_response(['success' => true, 'is_published' => true, 'share_url' => $url]);

@@ -61,9 +61,13 @@ $users = $usersStmt->fetchAll();
     <link rel="stylesheet" href="account-ui.css?v=20260502-2">
     <link rel="stylesheet" href="account-pages.css">
     <style>
-        body.admin-page,
-        [data-theme="dark"] body.admin-page {
+        body.admin-page {
             background: #fff;
+        }
+        [data-theme="dark"] body.admin-page {
+            background:
+                radial-gradient(circle at top left, rgba(56, 139, 253, 0.10), transparent 28%),
+                linear-gradient(180deg, #1f2537 0%, #1a1f2e 100%);
         }
     </style>
 </head>

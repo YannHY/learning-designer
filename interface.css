@@ -1642,11 +1642,11 @@ body.fullscreen-editor-open {
 }
 
 .layout-toggle-btn:hover {
-  background: #fff;
+  background: var(--hover-bg);
 }
 
 .layout-toggle-btn[aria-pressed="true"]:hover {
-  background: #fff;
+  background: var(--hover-bg);
 }
 
 .toolbar .panel-select {
@@ -3824,7 +3824,7 @@ html[data-theme="dark"] body {
   color: #6ab0ff;
 }
 [data-theme="dark"] .layout-toggle-btn:hover {
-  background: #2a314a;
+  background: var(--hover-bg);
   color: var(--text-strong);
 }
 

@@ -45,9 +45,13 @@ function e(string $value): string
     <link rel="stylesheet" href="account-ui.css?v=20260502-2" />
     <link rel="stylesheet" href="account-pages.css?v=20260502-2" />
     <style>
-      body.designs-page,
-      [data-theme="dark"] body.designs-page {
+      body.designs-page {
         background: #fff;
+      }
+      [data-theme="dark"] body.designs-page {
+        background:
+          radial-gradient(circle at top left, rgba(56, 139, 253, 0.10), transparent 28%),
+          linear-gradient(180deg, #1f2537 0%, #1a1f2e 100%);
       }
 
       .saved-shell {

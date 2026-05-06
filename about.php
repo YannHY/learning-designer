@@ -68,7 +68,9 @@ require_once __DIR__ . '/lib/bootstrap.php';
             margin-bottom: 0;
         }
         .about-section a {
-            color: var(--primary);
+            color: inherit;
+            text-decoration: underline;
+            text-underline-offset: 2px;
         }
         .feature-grid {
             display: grid;
@@ -159,14 +161,22 @@ require_once __DIR__ . '/lib/bootstrap.php';
             color: var(--muted);
             line-height: 2.15;
         }
-        .about-meta a { color: var(--primary); }
+        .about-meta a {
+            color: inherit;
+            text-decoration: underline;
+            text-underline-offset: 2px;
+        }
         .about-meta abbr {
             border-bottom: none;
             text-decoration: none;
         }
-        body.about-page,
-        [data-theme="dark"] body.about-page {
+        body.about-page {
             background: #fff;
+        }
+        [data-theme="dark"] body.about-page {
+            background:
+                radial-gradient(circle at top left, rgba(56, 139, 253, 0.10), transparent 28%),
+                linear-gradient(180deg, #1f2537 0%, #1a1f2e 100%);
         }
         [data-theme="dark"] .about-card {
             background: linear-gradient(180deg, rgba(36, 43, 64, 0.96), rgba(30, 36, 54, 0.96));

@@ -1001,7 +1001,7 @@ const I18N = {
     metaDeliveryLabel: "Mode",
     metaSizeLabel: "Taille du groupe",
     metaDesignersLabel: "Concepteur(s)",
-    metaTrainersLabel: "Formateur(s)",
+    metaTrainersLabel: "Enseignant(s)",
     metaPersonasLabel: "Objectifs",
     metaSlidersLabel: "Résultats",
     outcomesLabel: "Acquis d'apprentissage",
@@ -1066,7 +1066,7 @@ const I18N = {
     activityLinkErrorInvalid: "Le lien saisi n'est pas valide.",
     groupTitleType: "Type d'apprentissage",
     groupTitleGroup: "Groupe",
-    groupTitleTrainer: "Formateur",
+    groupTitleTrainer: "Enseignant",
     groupTitlePacing: "Rythme",
     groupTitleMode: "Modalité",
     groupTitleEvaluation: "Évaluation",
@@ -1107,7 +1107,7 @@ const I18N = {
     an01: "Un ou plusieurs graphiques peuvent être incorrects, car une ou plusieurs activités n’ont pas de durée valide.",
     an02: "Les graphiques ne peuvent pas être calculés, car aucune durée d’activité n’est définie.",
     an03: "Le graphe social peut être incorrect, car un ou plusieurs types d’apprentissage n’ont pas de taille de groupe définie.",
-    an04: "Le graphique « Formateur » peut être incorrect, car une ou plusieurs activités n’ont pas ce paramètre défini.",
+    an04: "Le graphique « Enseignant » peut être incorrect, car une ou plusieurs activités n’ont pas ce paramètre défini.",
     an05: "Le graphique « Rythme » peut être incorrect, car une ou plusieurs activités n’ont pas ce paramètre défini.",
     an06: "Le graphique « Modalité » peut être incorrect, car une ou plusieurs activités n’ont pas ce paramètre défini.",
     an07: "Le temps conçu dépasse le temps d’apprentissage déclaré.",
@@ -1125,8 +1125,8 @@ const I18N = {
     group_individual: "Individuel",
     trainer_present: "Présent",
     trainer_absent: "Absent",
-    teacherPresentLabel: "Formateur présent",
-    teacherAbsentLabel: "Formateur absent",
+    teacherPresentLabel: "Enseignant présent",
+    teacherAbsentLabel: "Enseignant absent",
     sync_sync: "Synchrone",
     sync_async: "Asynchrone",
     eval_none: "Aucune évaluation",
@@ -1163,7 +1163,7 @@ const I18N = {
     partitionTypeLocation: "Localisation",
     partitionTypeGroup: "Mode groupe",
     partitionTypeSync: "Synchronicité",
-    partitionTypePresence: "Présence formateur",
+    partitionTypePresence: "Présence enseignant",
     partitionTotal: "Total",
     partitionSession: "Session",
     viewGrid: "Grille",
@@ -1172,7 +1172,7 @@ const I18N = {
     gridColLocation: "Lieu",
     gridColGroup: "Groupe",
     gridColSync: "Sync",
-    gridColTeacher: "Formateur",
+    gridColTeacher: "Enseignant",
     gridColEval: "Évaluation",
     gridColDesc: "Description",
     gridColNotes: "Notes",
@@ -1212,7 +1212,7 @@ const I18N = {
     metaDeliveryLabel: "Mode",
     metaSizeLabel: "Group size",
     metaDesignersLabel: "Designer(s)",
-    metaTrainersLabel: "Trainer(s)",
+    metaTrainersLabel: "Teacher(s)",
     metaPersonasLabel: "Objectives",
     metaSlidersLabel: "Results",
     outcomesLabel: "Learning Outcomes",
@@ -1277,7 +1277,7 @@ const I18N = {
     activityLinkErrorInvalid: "The link entered is not valid.",
     groupTitleType: "Learning type",
     groupTitleGroup: "Group",
-    groupTitleTrainer: "Trainer",
+    groupTitleTrainer: "Teacher",
     groupTitlePacing: "Pacing",
     groupTitleMode: "Mode",
     groupTitleEvaluation: "Assessment",
@@ -1318,7 +1318,7 @@ const I18N = {
     an01: "One or more graphs might not display correctly, because one or more activities do not have a valid duration.",
     an02: "Graphs cannot be computed, because no activity duration is set.",
     an03: "The social learning graph might not display correctly, because one or more learning types do not have group size set.",
-    an04: "The “Trainer presence” graph might be inaccurate, because one or more activities are missing this setting.",
+    an04: "The “Teacher presence” graph might be inaccurate, because one or more activities are missing this setting.",
     an05: "The “Pacing” graph might be inaccurate, because one or more activities are missing this setting.",
     an06: "The “Delivery mode” graph might be inaccurate, because one or more activities are missing this setting.",
     an07: "Designed time exceeds declared learning time.",
@@ -1336,8 +1336,8 @@ const I18N = {
     group_individual: "Individual",
     trainer_present: "Present",
     trainer_absent: "Absent",
-    teacherPresentLabel: "Trainer present",
-    teacherAbsentLabel: "Trainer absent",
+    teacherPresentLabel: "Teacher present",
+    teacherAbsentLabel: "Teacher absent",
     sync_sync: "Synchronous",
     sync_async: "Asynchronous",
     eval_none: "No assessment",
@@ -1374,7 +1374,7 @@ const I18N = {
     partitionTypeLocation: "Location",
     partitionTypeGroup: "Group mode",
     partitionTypeSync: "Synchronicity",
-    partitionTypePresence: "Trainer presence",
+    partitionTypePresence: "Teacher presence",
     partitionTotal: "Total",
     partitionSession: "Session",
     viewGrid: "Grid",
@@ -1383,7 +1383,7 @@ const I18N = {
     gridColLocation: "Location",
     gridColGroup: "Group",
     gridColSync: "Sync",
-    gridColTeacher: "Trainer",
+    gridColTeacher: "Teacher",
     gridColEval: "Assessment",
     gridColDesc: "Description",
     gridColNotes: "Notes",
@@ -2427,9 +2427,9 @@ function updateActivityToolsDisplay(trigger, activity) {
   const count = activity.tools.length;
   trigger.dataset.count = count;
   trigger.classList.toggle("has-tools", count > 0);
-  trigger.setAttribute("aria-label", count > 0
-    ? `${t("selectTools")} (${t("toolCount")(count)})`
-    : t("selectTools"));
+  const label = t("selectTools");
+  trigger.setAttribute("aria-label", label);
+  trigger.title = label;
   const toolsRow = card.querySelector(".activity-tools");
   if (!toolsRow) return;
   toolsRow.classList.toggle("hidden", count === 0);
@@ -3541,7 +3541,7 @@ function buildMarkdownExport() {
   lines.push(`- Mode: ${labelForLocationMode(state.meta.modeDelivery)}`);
   lines.push(`- Taille du groupe: ${state.meta.sizeClass || "-"}`);
   lines.push(`- Concepteur(s): ${state.meta.designers || "-"}`);
-  lines.push(`- Formateur(s): ${state.meta.trainers || "-"}`);
+  lines.push(`- Enseignant(s): ${state.meta.trainers || "-"}`);
   lines.push(
     `- Temps d'apprentissage: ${formatPedagogicalTime(
       state.meta.learningDays,
@@ -3599,7 +3599,7 @@ function buildMarkdownExport() {
       lines.push(`### ${sessionIndex + 1}.${activityIndex + 1} ${labelForType(activity.type)}`);
       lines.push(`- Durée: ${activity.duration} min`);
       lines.push(`- Groupe: ${labelForGroupMode(activity.groupMode)}`);
-      lines.push(`- Formateur: ${labelForTrainerMode(activity.teacherPresence)}`);
+      lines.push(`- Enseignant: ${labelForTrainerMode(activity.teacherPresence)}`);
       lines.push(`- Rythme: ${labelForSyncMode(activity.syncMode)}`);
       lines.push(`- Modalité: ${labelForLocationMode(activity.locationMode)}`);
       lines.push(`- Évaluation: ${labelForEvaluationMode(activity.evaluationMode)}`);
@@ -3635,7 +3635,7 @@ function buildHtmlExportDocument() {
             <h4>${sessionIndex + 1}.${activityIndex + 1} ${escapeHtml(labelForType(activity.type))}</h4>
             <p><strong>Durée:</strong> ${escapeHtml(activity.duration)} min</p>
             <p><strong>Groupe:</strong> ${escapeHtml(labelForGroupMode(activity.groupMode))}</p>
-            <p><strong>Formateur:</strong> ${escapeHtml(labelForTrainerMode(activity.teacherPresence))}</p>
+            <p><strong>Enseignant:</strong> ${escapeHtml(labelForTrainerMode(activity.teacherPresence))}</p>
             <p><strong>Rythme:</strong> ${escapeHtml(labelForSyncMode(activity.syncMode))}</p>
             <p><strong>Modalité:</strong> ${escapeHtml(labelForLocationMode(activity.locationMode))}</p>
             <p><strong>Évaluation:</strong> ${escapeHtml(labelForEvaluationMode(activity.evaluationMode))}</p>
@@ -3664,7 +3664,7 @@ function buildHtmlExportDocument() {
     <p><strong>Mode:</strong> ${escapeHtml(labelForLocationMode(state.meta.modeDelivery))}</p>
     <p><strong>Taille du groupe:</strong> ${escapeHtml(state.meta.sizeClass || "-")}</p>
     <p><strong>Concepteur(s):</strong> ${escapeHtml(state.meta.designers || "-")}</p>
-    <p><strong>Formateur(s):</strong> ${escapeHtml(state.meta.trainers || "-")}</p>
+    <p><strong>Enseignant(s):</strong> ${escapeHtml(state.meta.trainers || "-")}</p>
     <p><strong>Temps d'apprentissage:</strong> ${escapeHtml(
       formatPedagogicalTime(
         state.meta.learningDays,
@@ -6157,6 +6157,12 @@ window.learningDesignerApp = {
     return null;
   }
 
+  function formatTipText(text) {
+    const raw = String(text || "");
+    if (currentLang() !== "fr") return raw;
+    return raw.replace(/([^:\s])\s*:\s*(?!\/\/)/g, "$1\u00a0:\u00a0");
+  }
+
   function place(target) {
     const rect = target.getBoundingClientRect();
     const tw = tip.offsetWidth;
@@ -6187,7 +6193,7 @@ window.learningDesignerApp = {
 
   function show(target) {
     activeTarget = target;
-    tip.textContent = target.dataset.tooltip;
+    tip.textContent = formatTipText(target.dataset.tooltip);
     tip.setAttribute("aria-hidden", "false");
     // Positionne hors-écran le temps de mesurer
     tip.style.left = "-9999px";

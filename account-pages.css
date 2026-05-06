@@ -23,9 +23,7 @@ body {
     linear-gradient(180deg, #f8fbff 0%, var(--bg) 100%);
 }
 body.login-page,
-body.signup-page,
-[data-theme="dark"] body.login-page,
-[data-theme="dark"] body.signup-page {
+body.signup-page {
   background: #fff;
 }
 .site-nav-page {

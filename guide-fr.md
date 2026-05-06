@@ -33,7 +33,7 @@ Vous y renseignez les informations globales du design :
 - **Commande institutionnelle**
 - **Mode** : présentiel, distanciel, hybride
 - **Taille du groupe**
-- **Concepteur(s)** et **Formateur(s)**
+- **Concepteur(s)** et **Enseignant(s)**
 - **Objectifs**
 - **Acquis d'apprentissage**
 
@@ -46,7 +46,7 @@ L'onglet **Analyse** affiche plusieurs visualisations automatiques selon les don
 - répartition des **types d'apprentissage**
 - répartition par **modalité**
 - répartition par **mode de groupement**
-- présence ou absence du **formateur**
+- présence ou absence de l’**enseignant**
 - répartition **synchrone / asynchrone**
 - répartition des **modes d'évaluation**
 
@@ -145,7 +145,7 @@ Chaque activité comporte plusieurs paramètres :
 - **Type d'apprentissage**
 - **Durée**
 - **Mode de groupement**
-- **Présence du formateur**
+- **Présence de l’enseignant**
 - **Synchronicité**
 - **Modalité**
 - **Évaluation**

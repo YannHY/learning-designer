@@ -55,7 +55,7 @@ $LEARNING_TYPES = [
     'collaborate' => ['label' => 'Collaborer',               'color' => '#ffd966'],
 ];
 $GROUP_MODES    = ['whole' => 'Groupe entier', 'subgroups' => 'Sous-groupes', 'individual' => 'Individuel'];
-$TRAINER_MODES  = ['present' => 'Formateur présent', 'absent' => 'Formateur absent'];
+$TRAINER_MODES  = ['present' => 'Enseignant présent', 'absent' => 'Enseignant absent'];
 $SYNC_MODES     = ['sync' => 'Synchrone', 'async' => 'Asynchrone'];
 $LOCATION_MODES = ['onsite' => 'Présentiel', 'online' => 'Distanciel', 'hybrid' => 'Hybride'];
 $DELIVERY_MODES = ['onsite' => 'Présentiel', 'online' => 'Distanciel', 'hybrid' => 'Hybride'];
@@ -728,7 +728,7 @@ foreach ($sessions as $s) {
         <span>✏️ <?= esc($metaDesigners) ?></span>
       <?php endif; ?>
       <?php if ($metaTrainers !== ''): ?>
-        <span>🎓 <?= esc($metaTrainers) ?></span>
+        <span>🎓 Enseignant(s) : <?= esc($metaTrainers) ?></span>
       <?php endif; ?>
       <?php if ($updatedAt !== ''): ?>
         <span>Mis à jour le <?= esc($updatedAt) ?></span>
@@ -910,6 +910,10 @@ foreach ($sessions as $s) {
     return null;
   }
 
+  function formatTipText(text) {
+    return String(text || '').replace(/([^:\s])\s*:\s*(?!\/\/)/g, '$1\u00a0:\u00a0');
+  }
+
   function place(target) {
     const rect = target.getBoundingClientRect();
     const gap = 9;
@@ -935,7 +939,7 @@ foreach ($sessions as $s) {
 
   function show(target) {
     activeTarget = target;
-    tip.textContent = target.dataset.tooltip || '';
+    tip.textContent = formatTipText(target.dataset.tooltip);
     tip.setAttribute('aria-hidden', 'false');
     tip.style.left = '-9999px';
     tip.style.top = '-9999px';

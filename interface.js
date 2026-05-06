@@ -1514,6 +1514,104 @@ function ensureMarkdownToolbars(root = document) {
   });
 }
 
+function renderInlineMarkdown(value) {
+  const lines = String(value || "").split("\n");
+  const html = [];
+  let listType = "";
+  let paragraph = [];
+
+  const inline = (text) => escapeHtml(text)
+    .replace(/\*\*([^*\n]+)\*\*/g, "<strong>$1</strong>")
+    .replace(/(^|[^*])\*([^*\n]+)\*/g, "$1<em>$2</em>");
+  const closeParagraph = () => {
+    if (!paragraph.length) return;
+    html.push(`<p>${paragraph.map(inline).join("<br />")}</p>`);
+    paragraph = [];
+  };
+  const closeList = () => {
+    if (!listType) return;
+    html.push(`</${listType}>`);
+    listType = "";
+  };
+  const openList = (type) => {
+    closeParagraph();
+    if (listType === type) return;
+    closeList();
+    html.push(`<${type}>`);
+    listType = type;
+  };
+
+  lines.forEach((line) => {
+    const trimmed = line.trim();
+    if (!trimmed) {
+      closeParagraph();
+      closeList();
+      return;
+    }
+
+    const heading = trimmed.match(/^##\s+(.+)$/);
+    if (heading) {
+      closeParagraph();
+      closeList();
+      html.push(`<h2>${inline(heading[1])}</h2>`);
+      return;
+    }
+
+    const unordered = trimmed.match(/^[-*]\s+(.+)$/);
+    if (unordered) {
+      openList("ul");
+      html.push(`<li>${inline(unordered[1])}</li>`);
+      return;
+    }
+
+    const ordered = trimmed.match(/^\d+\.\s+(.+)$/);
+    if (ordered) {
+      openList("ol");
+      html.push(`<li>${inline(ordered[1])}</li>`);
+      return;
+    }
+
+    const quote = trimmed.match(/^>\s?(.+)$/);
+    if (quote) {
+      closeParagraph();
+      closeList();
+      html.push(`<blockquote>${inline(quote[1])}</blockquote>`);
+      return;
+    }
+
+    closeList();
+    paragraph.push(line);
+  });
+
+  closeParagraph();
+  closeList();
+  return html.join("");
+}
+
+function refreshMarkdownPreview(wrapper) {
+  const textarea = wrapper?.querySelector("textarea");
+  const preview = wrapper?.querySelector(".markdown-preview");
+  if (!textarea || !preview) return;
+  const value = textarea.value || "";
+  preview.innerHTML = renderInlineMarkdown(value);
+  wrapper.classList.toggle("preview-active", value.trim() !== "");
+}
+
+function ensureMarkdownPreviews(root = document) {
+  root.querySelectorAll(".expandable-field").forEach((wrapper) => {
+    const textarea = wrapper.querySelector("textarea");
+    if (!textarea) return;
+    let preview = wrapper.querySelector(".markdown-preview");
+    if (!preview) {
+      preview = document.createElement("div");
+      preview.className = "markdown-preview";
+      preview.setAttribute("aria-hidden", "true");
+      textarea.insertAdjacentElement("afterend", preview);
+    }
+    refreshMarkdownPreview(wrapper);
+  });
+}
+
 const AUTO_RESIZE_SELECTOR = ".session-title, .session-objectives, .session-intentions, .activity-description, .session-notes-input, .panel-textarea, .outcome-text";
 
 function autoResizeTextarea(el) {
@@ -4398,6 +4496,7 @@ function applyMarkdownAction(textarea, actionId) {
 
 function setupExpandableFields() {
   ensureMarkdownToolbars();
+  ensureMarkdownPreviews();
   document.addEventListener("click", (event) => {
     const btn = event.target.closest(".expand-btn");
     if (!btn) return;
@@ -4406,6 +4505,10 @@ function setupExpandableFields() {
     const textarea = wrapper.querySelector("textarea");
     const isFullscreen = !wrapper.classList.contains("fullscreen");
     toggleExpandableFieldFullscreen(wrapper, isFullscreen);
+    if (!isFullscreen) {
+      wrapper.classList.remove("is-editing");
+      refreshMarkdownPreview(wrapper);
+    }
     if (textarea) autoResizeTextarea(textarea);
     btn.textContent = isFullscreen ? "✕" : "⤢";
     const label = isFullscreen ? t("closeFullscreen") : t("fullscreen");
@@ -4435,7 +4538,32 @@ function setupExpandableFields() {
       const textarea = event.target.closest(".expandable-field textarea");
       if (!textarea) return;
       rememberSelection(textarea);
+      if (eventName === "focusin") {
+        textarea.closest(".expandable-field")?.classList.add("is-editing");
+      }
+      if (eventName === "input") {
+        refreshMarkdownPreview(textarea.closest(".expandable-field"));
+      }
     });
+  });
+
+  document.addEventListener("focusout", (event) => {
+    const textarea = event.target.closest(".expandable-field textarea");
+    if (!textarea) return;
+    const wrapper = textarea.closest(".expandable-field");
+    window.setTimeout(() => {
+      if (wrapper?.querySelector("textarea") !== document.activeElement) {
+        wrapper?.classList.remove("is-editing");
+        refreshMarkdownPreview(wrapper);
+      }
+    }, 0);
+  });
+
+  document.addEventListener("click", (event) => {
+    const preview = event.target.closest(".markdown-preview");
+    if (!preview) return;
+    const textarea = preview.closest(".expandable-field")?.querySelector("textarea");
+    if (textarea) textarea.focus();
   });
 }
 
@@ -5391,6 +5519,7 @@ function render() {
   });
 
   ensureMarkdownToolbars(board);
+  ensureMarkdownPreviews(board);
   localizeExpandableFieldControls(board);
   initAutoResizeTextareas();
   const toggleIntentionsBtn = document.getElementById("toggle-intentions-btn");

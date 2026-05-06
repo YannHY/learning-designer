@@ -166,6 +166,80 @@ function safeEsc(mixed $v): string {
     return esc(safeText($v));
 }
 
+function inlineMarkdown(string $text): string {
+    $html = esc($text);
+    $html = preg_replace('/\*\*([^*\n]+)\*\*/u', '<strong>$1</strong>', $html) ?? $html;
+    $html = preg_replace('/(^|[^*])\*([^*\n]+)\*/u', '$1<em>$2</em>', $html) ?? $html;
+    return $html;
+}
+
+function markdownHtml(string $text): string {
+    $lines = preg_split('/\R/u', $text) ?: [];
+    $html = [];
+    $paragraph = [];
+    $listType = '';
+
+    $closeParagraph = function () use (&$html, &$paragraph): void {
+        if (!$paragraph) return;
+        $html[] = '<p>' . implode('<br>', array_map('inlineMarkdown', $paragraph)) . '</p>';
+        $paragraph = [];
+    };
+    $closeList = function () use (&$html, &$listType): void {
+        if ($listType === '') return;
+        $html[] = '</' . $listType . '>';
+        $listType = '';
+    };
+    $openList = function (string $type) use (&$html, &$listType, $closeParagraph, $closeList): void {
+        $closeParagraph();
+        if ($listType === $type) return;
+        $closeList();
+        $html[] = '<' . $type . '>';
+        $listType = $type;
+    };
+
+    foreach ($lines as $line) {
+        $trimmed = trim($line);
+        if ($trimmed === '') {
+            $closeParagraph();
+            $closeList();
+            continue;
+        }
+
+        if (preg_match('/^##\s+(.+)$/u', $trimmed, $m)) {
+            $closeParagraph();
+            $closeList();
+            $html[] = '<h2>' . inlineMarkdown($m[1]) . '</h2>';
+            continue;
+        }
+
+        if (preg_match('/^[-*]\s+(.+)$/u', $trimmed, $m)) {
+            $openList('ul');
+            $html[] = '<li>' . inlineMarkdown($m[1]) . '</li>';
+            continue;
+        }
+
+        if (preg_match('/^\d+\.\s+(.+)$/u', $trimmed, $m)) {
+            $openList('ol');
+            $html[] = '<li>' . inlineMarkdown($m[1]) . '</li>';
+            continue;
+        }
+
+        if (preg_match('/^>\s?(.+)$/u', $trimmed, $m)) {
+            $closeParagraph();
+            $closeList();
+            $html[] = '<blockquote>' . inlineMarkdown($m[1]) . '</blockquote>';
+            continue;
+        }
+
+        $closeList();
+        $paragraph[] = $line;
+    }
+
+    $closeParagraph();
+    $closeList();
+    return implode('', $html);
+}
+
 function labelFor(array $map, string $key, string $fallback = ''): string {
     return $map[$key] ?? ($fallback !== '' ? $fallback : $key);
 }
@@ -295,10 +369,16 @@ function competencyForReference(string $reference): ?array {
 
 function competencyStyle(string $level): array {
     return match ($level) {
-        'approfondir' => ['#ede9fe', '#c4b5fd', '#5b21b6'],
-        'creer' => ['#dcfce7', '#86efac', '#166534'],
-        default => ['#e0f2fe', '#7dd3fc', '#075985'],
+        'approfondir' => ['#ede9fe', '#c4b5fd', '#5b21b6', '#ddd6fe'],
+        'creer' => ['#dcfce7', '#86efac', '#166534', '#bbf7d0'],
+        default => ['#e0f2fe', '#7dd3fc', '#075985', '#bae6fd'],
     };
+}
+
+function competencyTooltip(array $competency): string {
+    $label = trim((string)($competency['shortCode'] ?? '') . ' ' . (string)($competency['labelFr'] ?? ''));
+    $description = safeText($competency['descFr'] ?? '');
+    return implode(' — ', array_filter([$label, $description], static fn(string $part): bool => $part !== ''));
 }
 
 function formatDuration(int $minutes): string {
@@ -382,19 +462,33 @@ foreach ($sessions as $s) {
 
     /* Info cards row */
     .meta-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-      gap: 12px;
-      margin-bottom: 32px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 24px;
     }
     .meta-card {
+      display: inline-flex;
+      align-items: baseline;
+      gap: 6px;
       background: var(--surface);
       border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 14px 16px;
+      border-radius: 999px;
+      padding: 5px 10px;
+      min-width: 0;
     }
-    .meta-card-label { font-size: 11px; text-transform: uppercase; letter-spacing: .07em; color: var(--text-2); margin-bottom: 4px; }
-    .meta-card-value { font-size: 14px; font-weight: 600; }
+    .meta-card-label {
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: .04em;
+      color: var(--text-2);
+      white-space: nowrap;
+    }
+    .meta-card-value {
+      font-size: 13px;
+      font-weight: 700;
+      white-space: nowrap;
+    }
 
     /* Description block */
     .meta-description {
@@ -403,7 +497,6 @@ foreach ($sessions as $s) {
       border-radius: 12px;
       padding: 16px 20px;
       margin-bottom: 32px;
-      white-space: pre-wrap;
       font-size: 14px;
       color: var(--text-1);
       line-height: 1.65;
@@ -456,10 +549,32 @@ foreach ($sessions as $s) {
       font-size: 13px;
       color: var(--text-2);
       border-bottom: 1px solid var(--border);
-      white-space: pre-wrap;
       line-height: 1.6;
     }
-    .session-text strong { color: var(--text-1); font-size: 11px; text-transform: uppercase; letter-spacing: .07em; display: block; margin-bottom: 2px; }
+    .session-text > strong { color: var(--text-1); font-size: 11px; text-transform: uppercase; letter-spacing: .07em; display: block; margin-bottom: 2px; }
+    .markdown-content p,
+    .markdown-content blockquote,
+    .markdown-content ul,
+    .markdown-content ol {
+      margin: 0 0 8px;
+    }
+    .markdown-content > :last-child {
+      margin-bottom: 0;
+    }
+    .markdown-content h2 {
+      margin: 0 0 8px;
+      font-size: 16px;
+      color: var(--text-1);
+    }
+    .markdown-content ul,
+    .markdown-content ol {
+      padding-left: 20px;
+    }
+    .markdown-content blockquote {
+      padding-left: 10px;
+      border-left: 3px solid var(--border);
+      color: var(--text-2);
+    }
 
     /* Activities */
     .activity-list { padding: 12px 16px; display: grid; gap: 10px; }
@@ -491,7 +606,6 @@ foreach ($sessions as $s) {
     }
     .activity-description {
       font-size: 14px;
-      white-space: pre-wrap;
       color: var(--text-1);
       margin-bottom: 8px;
       line-height: 1.6;
@@ -512,6 +626,12 @@ foreach ($sessions as $s) {
       border-color: var(--competency-border);
       color: var(--competency-text);
       font-weight: 700;
+      cursor: help;
+      transition: background .15s ease, border-color .15s ease, transform .15s ease;
+    }
+    .chip-competency:hover {
+      background: var(--competency-active);
+      transform: translateY(-1px);
     }
     .activity-links-public {
       display: flex;
@@ -538,7 +658,6 @@ foreach ($sessions as $s) {
       margin-top: 8px;
       font-size: 13px;
       color: var(--text-2);
-      white-space: pre-wrap;
       font-style: italic;
       line-height: 1.5;
     }
@@ -552,9 +671,49 @@ foreach ($sessions as $s) {
     }
     .view-footer a { color: var(--accent); text-decoration: none; }
     .view-footer a:hover { text-decoration: underline; }
+    #app-tooltip {
+      position: fixed;
+      z-index: 9999;
+      padding: 5px 11px 6px;
+      border-radius: 7px;
+      background: #1e2433;
+      color: #eef2ff;
+      font-size: 12px;
+      font-weight: 500;
+      line-height: 1.4;
+      max-width: 220px;
+      white-space: normal;
+      text-align: center;
+      pointer-events: none;
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.30);
+      opacity: 0;
+      transform: translateY(5px) scale(0.96);
+      transition: opacity 140ms ease, transform 140ms cubic-bezier(0.34, 1.4, 0.64, 1);
+      will-change: opacity, transform;
+    }
+    #app-tooltip.tip-visible {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+    #app-tooltip::after {
+      content: '';
+      position: absolute;
+      left: var(--tip-arrow, 50%);
+      transform: translateX(-50%);
+      border: 5px solid transparent;
+    }
+    #app-tooltip.tip-above::after {
+      top: 100%;
+      border-top-color: #1e2433;
+    }
+    #app-tooltip.tip-below::after {
+      bottom: 100%;
+      border-bottom-color: #1e2433;
+    }
 
     @media print {
       body { background: #fff; }
+      #app-tooltip { display: none; }
       .session-card { break-inside: avoid; }
     }
   </style>
@@ -579,7 +738,7 @@ foreach ($sessions as $s) {
 
   <?php
   $metaCards = [];
-  if (count($sessions) > 0) $metaCards[] = ['Séances', count($sessions)];
+  if (count($sessions) > 0) $metaCards[] = ['Moments', count($sessions)];
   if ($totalActivities > 0) $metaCards[] = ['Activités', $totalActivities];
   if ($totalMinutes > 0)    $metaCards[] = ['Durée totale', formatDuration($totalMinutes)];
   if ($learningTime !== '')  $metaCards[] = ['Temps d\'apprentissage', $learningTime];
@@ -598,7 +757,7 @@ foreach ($sessions as $s) {
   <?php endif; ?>
 
   <?php if ($metaDescription !== ''): ?>
-  <div class="meta-description"><?= esc($metaDescription) ?></div>
+  <div class="meta-description markdown-content"><?= markdownHtml($metaDescription) ?></div>
   <?php endif; ?>
 
   <div class="sessions">
@@ -633,10 +792,10 @@ foreach ($sessions as $s) {
     <?php endif; ?>
 
     <?php if ($sObjectives !== ''): ?>
-    <div class="session-text"><strong>Objectifs</strong><?= esc($sObjectives) ?></div>
+    <div class="session-text"><strong>Objectifs</strong><div class="markdown-content"><?= markdownHtml($sObjectives) ?></div></div>
     <?php endif; ?>
     <?php if ($sIntentions !== ''): ?>
-    <div class="session-text"><strong>Intentions pédagogiques</strong><?= esc($sIntentions) ?></div>
+    <div class="session-text"><strong>Intentions pédagogiques</strong><div class="markdown-content"><?= markdownHtml($sIntentions) ?></div></div>
     <?php endif; ?>
 
     <?php if ($activities): ?>
@@ -669,7 +828,7 @@ foreach ($sessions as $s) {
           <span class="activity-duration-badge"><?= esc(formatDuration($aDur)) ?></span>
         </div>
         <?php if ($aDesc !== ''): ?>
-        <div class="activity-description"><?= esc($aDesc) ?></div>
+        <div class="activity-description markdown-content"><?= markdownHtml($aDesc) ?></div>
         <?php endif; ?>
         <?php if ($chips || $aTools): ?>
         <div class="activity-chips">
@@ -679,21 +838,22 @@ foreach ($sessions as $s) {
           <?php foreach ($aTools as $toolId):
             $competency = competencyForReference($toolId);
             if ($competency) {
-                [$competencyBg, $competencyBorder, $competencyText] = competencyStyle((string)$competency['platform']);
+                [$competencyBg, $competencyBorder, $competencyText, $competencyActive] = competencyStyle((string)$competency['platform']);
                 $toolLabel = (string)$competency['shortCode'];
-                $toolTitle = (string)$competency['number'] . '. ' . (string)$competency['labelFr'];
+                $toolTitle = competencyTooltip($competency);
             } else {
                 $toolLabel = $TOOLS_LABELS[$toolId] ?? $toolId;
                 $toolTitle = $toolLabel;
                 $competencyBg = '';
                 $competencyBorder = '';
                 $competencyText = '';
+                $competencyActive = '';
             }
           ?>
           <span
             class="chip <?= $competency ? 'chip-competency' : 'chip-tools' ?>"
-            title="<?= esc($toolTitle) ?>"
-            <?php if ($competency): ?>style="--competency-bg:<?= esc($competencyBg) ?>;--competency-border:<?= esc($competencyBorder) ?>;--competency-text:<?= esc($competencyText) ?>"<?php endif; ?>
+            data-tooltip="<?= esc($toolTitle) ?>"
+            <?php if ($competency): ?>style="--competency-bg:<?= esc($competencyBg) ?>;--competency-border:<?= esc($competencyBorder) ?>;--competency-text:<?= esc($competencyText) ?>;--competency-active:<?= esc($competencyActive) ?>"<?php endif; ?>
           ><?= esc($toolLabel) ?></span>
           <?php endforeach; ?>
         </div>
@@ -711,7 +871,7 @@ foreach ($sessions as $s) {
         </div>
         <?php endif; ?>
         <?php if ($aNotes !== ''): ?>
-        <div class="activity-notes"><?= esc($aNotes) ?></div>
+        <div class="activity-notes markdown-content"><?= markdownHtml($aNotes) ?></div>
         <?php endif; ?>
       </article>
       <?php endforeach; ?>
@@ -719,7 +879,7 @@ foreach ($sessions as $s) {
     <?php endif; ?>
 
     <?php if ($sNotes !== ''): ?>
-    <div class="session-text" style="border-top:1px solid var(--border);border-bottom:none"><strong>Notes</strong><?= esc($sNotes) ?></div>
+    <div class="session-text" style="border-top:1px solid var(--border);border-bottom:none"><strong>Notes</strong><div class="markdown-content"><?= markdownHtml($sNotes) ?></div></div>
     <?php endif; ?>
   </section>
   <?php endforeach; ?>
@@ -730,5 +890,84 @@ foreach ($sessions as $s) {
   </footer>
 
 </main>
+<script>
+(() => {
+  const tip = document.createElement('div');
+  tip.id = 'app-tooltip';
+  tip.setAttribute('role', 'tooltip');
+  tip.setAttribute('aria-hidden', 'true');
+  document.body.appendChild(tip);
+
+  let timer = null;
+  let activeTarget = null;
+
+  function nearestTip(el) {
+    let node = el;
+    while (node && node !== document.body) {
+      if (node.dataset && node.dataset.tooltip) return node;
+      node = node.parentElement;
+    }
+    return null;
+  }
+
+  function place(target) {
+    const rect = target.getBoundingClientRect();
+    const gap = 9;
+    const vw = window.innerWidth;
+    tip.classList.remove('tip-above', 'tip-below');
+
+    let top;
+    if (rect.top - tip.offsetHeight - gap > 6) {
+      top = rect.top - tip.offsetHeight - gap;
+      tip.classList.add('tip-above');
+    } else {
+      top = rect.bottom + gap;
+      tip.classList.add('tip-below');
+    }
+
+    let left = rect.left + rect.width / 2 - tip.offsetWidth / 2;
+    left = Math.max(6, Math.min(vw - tip.offsetWidth - 6, left));
+    const arrowPos = Math.max(14, Math.min(tip.offsetWidth - 14, rect.left + rect.width / 2 - left));
+    tip.style.setProperty('--tip-arrow', `${arrowPos}px`);
+    tip.style.top = `${Math.round(top)}px`;
+    tip.style.left = `${Math.round(left)}px`;
+  }
+
+  function show(target) {
+    activeTarget = target;
+    tip.textContent = target.dataset.tooltip || '';
+    tip.setAttribute('aria-hidden', 'false');
+    tip.style.left = '-9999px';
+    tip.style.top = '-9999px';
+    tip.classList.add('tip-visible');
+    requestAnimationFrame(() => {
+      if (activeTarget === target) place(target);
+    });
+  }
+
+  function hide() {
+    clearTimeout(timer);
+    activeTarget = null;
+    tip.classList.remove('tip-visible', 'tip-above', 'tip-below');
+    tip.setAttribute('aria-hidden', 'true');
+  }
+
+  document.addEventListener('mouseover', (event) => {
+    const target = nearestTip(event.target);
+    if (!target || target === activeTarget) return;
+    clearTimeout(timer);
+    timer = setTimeout(() => show(target), 480);
+  });
+  document.addEventListener('mouseout', (event) => {
+    if (!nearestTip(event.target)) return;
+    hide();
+  });
+  document.addEventListener('click', hide, true);
+  document.addEventListener('keydown', hide, true);
+  document.addEventListener('scroll', () => {
+    if (activeTarget) place(activeTarget);
+  }, { passive: true, capture: true });
+})();
+</script>
 </body>
 </html>

@@ -468,6 +468,60 @@ select:focus-visible,
   padding-right: 30px;
 }
 
+.markdown-preview {
+  display: none;
+}
+
+.expandable-field.preview-active:not(.fullscreen):not(.is-editing) textarea {
+  position: absolute;
+  inset: 0;
+  height: 100% !important;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.expandable-field.preview-active:not(.fullscreen):not(.is-editing) .markdown-preview {
+  display: block;
+  min-height: 64px;
+  padding: 10px 30px 10px 12px;
+  border: 1px solid rgba(203, 213, 225, 0.72);
+  border-radius: 10px;
+  background: #fff;
+  color: var(--text);
+  font-size: 14px;
+  line-height: 1.35;
+  white-space: normal;
+  cursor: text;
+  box-shadow: inset 0 1px 2px rgba(15, 23, 42, 0.03);
+}
+
+.markdown-preview p,
+.markdown-preview blockquote,
+.markdown-preview ul,
+.markdown-preview ol {
+  margin: 0 0 8px;
+}
+
+.markdown-preview > :last-child {
+  margin-bottom: 0;
+}
+
+.markdown-preview h2 {
+  margin: 0 0 8px;
+  font-size: 16px;
+}
+
+.markdown-preview ul,
+.markdown-preview ol {
+  padding-left: 20px;
+}
+
+.markdown-preview blockquote {
+  padding-left: 10px;
+  border-left: 3px solid var(--line);
+  color: var(--muted);
+}
+
 .expandable-field.fullscreen {
   position: fixed;
   top: 50%;
@@ -3681,6 +3735,17 @@ html[data-theme="dark"] body {
 [data-theme="dark"] .activity-description::placeholder,
 [data-theme="dark"] .session-notes-input::placeholder,
 [data-theme="dark"] .activity-notes-input::placeholder {
+  color: var(--muted);
+}
+
+[data-theme="dark"] .expandable-field.preview-active:not(.fullscreen):not(.is-editing) .markdown-preview {
+  background: #1e2436;
+  color: var(--text);
+  border-color: rgba(103, 116, 145, 0.5);
+}
+
+[data-theme="dark"] .markdown-preview blockquote {
+  border-left-color: rgba(103, 116, 145, 0.65);
   color: var(--muted);
 }
 

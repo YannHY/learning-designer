@@ -65,7 +65,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <link rel="stylesheet" href="account-ui.css?v=20260502-2">
     <link rel="stylesheet" href="account-pages.css">
 </head>
-<body>
+<body class="login-page">
 <?php render_site_nav('login'); ?>
 <main class="account-shell with-nav">
     <section class="account-card">
@@ -82,7 +82,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <?php if ($error !== ''): ?>
             <p class="account-message error"><?= htmlspecialchars($error, ENT_QUOTES, 'UTF-8') ?></p>
         <?php endif; ?>
-        <p class="account-footer"><a href="signup.php">Creer un compte</a></p>
+        <p class="account-footer"><a href="signup.php">Créer un compte</a></p>
     </section>
 </main>
 </body>

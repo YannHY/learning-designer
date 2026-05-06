@@ -16,7 +16,7 @@ try {
     }
 } catch (Throwable $e) {
     $db = null;
-    $error = 'Le stockage utilisateur n’a pas pu etre initialise. Verifiez la configuration ou les droits d’ecriture du dossier data/.';
+    $error = 'Le stockage utilisateur n’a pas pu être initialisé. Vérifiez la configuration ou les droits d’écriture du dossier data/.';
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -32,7 +32,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
         $error = 'Adresse email invalide.';
     } elseif (strlen($password) < 8) {
-        $error = 'Le mot de passe doit contenir au moins 8 caracteres.';
+        $error = 'Le mot de passe doit contenir au moins 8 caractères.';
     } else {
         try {
             $stmt = $db->prepare("INSERT INTO users (username, email, password_hash, role, status, last_login_at) VALUES (?, ?, ?, 'designer', 'active', CURRENT_TIMESTAMP)");
@@ -50,7 +50,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             header('Location: index.html');
             exit;
         } catch (PDOException $e) {
-            $error = 'Impossible de creer ce compte (email ou nom deja utilise ?).';
+            $error = 'Impossible de créer ce compte (email ou nom déjà utilisé ?).';
         }
     }
 }
@@ -60,7 +60,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Creer un compte | Learning Designer</title>
+    <title>Créer un compte | Learning Designer</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" referrerpolicy="no-referrer">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -69,12 +69,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <link rel="stylesheet" href="account-ui.css?v=20260502-2">
     <link rel="stylesheet" href="account-pages.css">
 </head>
-<body>
+<body class="signup-page">
 <?php render_site_nav('signup'); ?>
 <main class="account-shell with-nav">
     <section class="account-card">
         <p class="account-kicker">Learning Designer</p>
-        <h1>Creer un compte</h1>
+        <h1>Créer un compte</h1>
         <p class="account-copy">Inscrivez-vous pour sauvegarder vos productions et les retrouver plus tard.</p>
         <form method="post" class="account-form">
             <label for="username">Nom d’utilisateur</label>
@@ -83,12 +83,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <input id="email" name="email" type="email" required autocomplete="username">
             <label for="password">Mot de passe</label>
             <input id="password" name="password" type="password" minlength="8" required autocomplete="new-password">
-            <button type="submit">Creer mon compte</button>
+            <button type="submit">Créer mon compte</button>
         </form>
         <?php if ($error !== ''): ?>
             <p class="account-message error"><?= htmlspecialchars($error, ENT_QUOTES, 'UTF-8') ?></p>
         <?php endif; ?>
-        <p class="account-footer"><a href="login.php">J’ai deja un compte</a></p>
+        <p class="account-footer"><a href="login.php">J’ai déjà un compte</a></p>
     </section>
 </main>
 </body>

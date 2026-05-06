@@ -87,6 +87,36 @@ require_once __DIR__ . '/lib/bootstrap.php';
             color: var(--text);
             line-height: 1.4;
         }
+        .capability-item {
+            display: grid;
+            grid-template-columns: 26px minmax(0, 1fr);
+            gap: 8px 10px;
+            align-items: center;
+        }
+        .capability-icon {
+            width: 26px;
+            height: 26px;
+            display: inline-grid;
+            place-items: center;
+            border-radius: 8px;
+            background: rgba(20, 91, 180, 0.10);
+            color: var(--primary);
+            font-size: 13px;
+        }
+        .capability-item > div {
+            display: contents;
+        }
+        .feature-item.capability-item strong {
+            grid-column: 2;
+            grid-row: 1;
+            align-self: center;
+            margin-bottom: 0;
+            line-height: 1.25;
+        }
+        .feature-item.capability-item span {
+            grid-column: 1 / -1;
+            grid-row: 2;
+        }
         .feature-item strong {
             display: block;
             font-weight: 600;
@@ -99,7 +129,7 @@ require_once __DIR__ . '/lib/bootstrap.php';
             display: flex;
             flex-wrap: wrap;
             gap: 8px;
-            margin: 0;
+            margin: 0 0 16px;
             padding: 0;
             list-style: none;
         }
@@ -127,9 +157,17 @@ require_once __DIR__ . '/lib/bootstrap.php';
         .about-meta {
             font-size: 13px;
             color: var(--muted);
-            line-height: 1.7;
+            line-height: 2.15;
         }
         .about-meta a { color: var(--primary); }
+        .about-meta abbr {
+            border-bottom: none;
+            text-decoration: none;
+        }
+        body.about-page,
+        [data-theme="dark"] body.about-page {
+            background: #fff;
+        }
         [data-theme="dark"] .about-card {
             background: linear-gradient(180deg, rgba(36, 43, 64, 0.96), rgba(30, 36, 54, 0.96));
             border-color: rgba(103, 116, 145, 0.45);
@@ -160,6 +198,10 @@ require_once __DIR__ . '/lib/bootstrap.php';
         [data-theme="dark"] .feature-item strong {
             color: #eef3ff;
         }
+        [data-theme="dark"] .capability-icon {
+            background: rgba(140, 198, 255, 0.14);
+            color: #8cc6ff;
+        }
         [data-theme="dark"] .type-tag {
             border-color: rgba(103, 116, 145, 0.38);
             color: #eef3ff;
@@ -173,7 +215,7 @@ require_once __DIR__ . '/lib/bootstrap.php';
         }
     </style>
 </head>
-<body>
+<body class="about-page">
 <?php render_site_nav(); ?>
 <main class="about-shell with-nav">
     <div class="about-card">
@@ -184,48 +226,75 @@ require_once __DIR__ . '/lib/bootstrap.php';
         <div class="about-section">
             <h2 id="about-section-capabilities-title">Ce que vous pouvez faire</h2>
             <ul class="feature-grid">
-                <li class="feature-item">
-                    <strong id="about-feature-1-title">Composer des séquences</strong>
-                    <span id="about-feature-1-text">Organisez votre parcours en moments, chacun avec titre, objectifs et intentions pédagogiques.</span>
+                <li class="feature-item capability-item">
+                    <i class="fa-solid fa-layer-group capability-icon" aria-hidden="true"></i>
+                    <div>
+                        <strong id="about-feature-1-title">Composer des séquences</strong>
+                        <span id="about-feature-1-text">Organisez votre parcours en moments, chacun avec titre, objectifs et intentions pédagogiques.</span>
+                    </div>
                 </li>
-                <li class="feature-item">
-                    <strong id="about-feature-2-title">Typez vos activités</strong>
-                    <span id="about-feature-2-text">Associez chaque activité à l'un des 6 types ci-dessous pour visualiser l'équilibre de votre scénario.</span>
+                <li class="feature-item capability-item">
+                    <i class="fa-solid fa-tags capability-icon" aria-hidden="true"></i>
+                    <div>
+                        <strong id="about-feature-2-title">Typez vos activités</strong>
+                        <span id="about-feature-2-text">Associez chaque activité à l'un des 6 types ci-dessous pour visualiser l'équilibre de votre scénario.</span>
+                    </div>
                 </li>
-                <li class="feature-item">
-                    <strong id="about-feature-3-title">Paramétrez le contexte</strong>
-                    <span id="about-feature-3-text">Durée, modalité (présentiel, distanciel, hybride), synchrone ou asynchrone, mode de groupement, évaluation.</span>
+                <li class="feature-item capability-item">
+                    <i class="fa-solid fa-sliders capability-icon" aria-hidden="true"></i>
+                    <div>
+                        <strong id="about-feature-3-title">Paramétrez le contexte</strong>
+                        <span id="about-feature-3-text">Durée, modalité (présentiel, distanciel, hybride), synchrone ou asynchrone, mode de groupement, évaluation.</span>
+                    </div>
                 </li>
-                <li class="feature-item">
-                    <strong id="about-feature-4-title">Associez des outils</strong>
-                    <span id="about-feature-4-text">Liez vos activités à des outils Moodle ou à des types de contenus H5P.</span>
+                <li class="feature-item capability-item">
+                    <i class="fa-solid fa-screwdriver-wrench capability-icon" aria-hidden="true"></i>
+                    <div>
+                        <strong id="about-feature-4-title">Intégrez les compétences numériques</strong>
+                        <span id="about-feature-4-text">Associez vos activités à un curriculum structuré autour de trois domaines&nbsp;: Acquérir, Approfondir, Créer.</span>
+                    </div>
                 </li>
-                <li class="feature-item">
-                    <strong id="about-feature-5-title">Analysez visuellement</strong>
-                    <span id="about-feature-5-text">Un panneau d'analyse affiche la répartition du temps entre les types d'activités sous forme de diagrammes.</span>
+                <li class="feature-item capability-item">
+                    <i class="fa-solid fa-chart-pie capability-icon" aria-hidden="true"></i>
+                    <div>
+                        <strong id="about-feature-5-title">Analysez visuellement</strong>
+                        <span id="about-feature-5-text">Un panneau d'analyse affiche la répartition du temps entre les types d'activités sous forme de diagrammes.</span>
+                    </div>
                 </li>
-                <li class="feature-item">
-                    <strong id="about-feature-6-title">Exportez</strong>
-                    <span id="about-feature-6-text">Exportez votre scénario en Markdown, HTML, feuille de calcul ou CSV.</span>
+                <li class="feature-item capability-item">
+                    <i class="fa-solid fa-file-export capability-icon" aria-hidden="true"></i>
+                    <div>
+                        <strong id="about-feature-6-title">Exportez</strong>
+                        <span id="about-feature-6-text">Exportez votre scénario en JSON, Markdown, Word, HTML ou Excel.</span>
+                    </div>
                 </li>
-                <li class="feature-item">
-                    <strong id="about-feature-7-title">Sauvegardez</strong>
-                    <span id="about-feature-7-text">Connectez-vous pour enregistrer vos scénarios sur votre compte et les retrouver dans Designs.</span>
+                <li class="feature-item capability-item">
+                    <i class="fa-solid fa-floppy-disk capability-icon" aria-hidden="true"></i>
+                    <div>
+                        <strong id="about-feature-7-title">Sauvegardez</strong>
+                        <span id="about-feature-7-text">Connectez-vous pour enregistrer vos scénarios sur votre compte et les retrouver dans Designs.</span>
+                    </div>
                 </li>
-                <li class="feature-item">
-                    <strong id="about-feature-8-title">3 vues d'affichage</strong>
-                    <span id="about-feature-8-text">Passez en vue liste, colonnes ou grille selon vos préférences de travail.</span>
+                <li class="feature-item capability-item">
+                    <i class="fa-solid fa-table-cells-large capability-icon" aria-hidden="true"></i>
+                    <div>
+                        <strong id="about-feature-8-title">3 vues d'affichage</strong>
+                        <span id="about-feature-8-text">Passez en vue liste, colonnes ou grille selon vos préférences de travail.</span>
+                    </div>
                 </li>
-                <li class="feature-item">
-                    <strong id="about-feature-9-title">Acquis d'apprentissage</strong>
-                    <span id="about-feature-9-text">Formulez vos acquis à partir de la taxonomie révisée de Bloom, avec des verbes d'action classés par niveau cognitif.</span>
+                <li class="feature-item capability-item">
+                    <i class="fa-solid fa-graduation-cap capability-icon" aria-hidden="true"></i>
+                    <div>
+                        <strong id="about-feature-9-title">Acquis d'apprentissage</strong>
+                        <span id="about-feature-9-text">Formulez vos acquis à partir de la taxonomie révisée de Bloom, avec des verbes d'action classés par niveau cognitif.</span>
+                    </div>
                 </li>
             </ul>
         </div>
 
         <div class="about-section">
             <h2 id="about-section-bloom-title">Taxonomie révisée de Bloom</h2>
-            <p id="about-bloom-intro">Les acquis d'apprentissage s'appuient sur la taxonomie révisée d'Anderson &amp; Krathwohl (2001), qui décrit six niveaux cognitifs progressifs :</p>
+            <p id="about-bloom-intro">Les acquis d'apprentissage s'appuient sur la taxonomie révisée d'Anderson &amp; Krathwohl (2001), qui décrit six niveaux cognitifs progressifs&nbsp;:</p>
             <ul class="feature-grid">
                 <li class="feature-item">
                     <strong id="about-bloom-1-title">1 — Se souvenir</strong>
@@ -263,8 +332,15 @@ require_once __DIR__ . '/lib/bootstrap.php';
                 <li id="about-type-4" class="type-tag" style="background:#bdea7522"><span class="type-dot" style="background:#bdea75"></span>Produire</li>
                 <li id="about-type-5" class="type-tag" style="background:#7aaeea22"><span class="type-dot" style="background:#7aaeea"></span>Discuter</li>
                 <li id="about-type-6" class="type-tag" style="background:#ffd96622"><span class="type-dot" style="background:#ffd966"></span>Collaborer</li>
-                <li id="about-type-7" class="type-tag" style="background:#d1d5db22"><span class="type-dot" style="background:#d1d5db"></span>Non défini</li>
             </ul>
+            <p id="about-types-description">Ce site s’appuie sur les six types d’apprentissage issus du Cadre conversationnel de Diana Laurillard, un modèle qui décrit les conditions nécessaires pour que l’apprentissage ait lieu.</p>
+            <p id="about-types-mix">Ces six types sont&nbsp;: lire, écrire ou écouter, également appelé acquisition&nbsp;; investigation&nbsp;; pratique&nbsp;; production&nbsp;; discussion&nbsp;; collaboration. En principe, une bonne scénarisation pédagogique combine plusieurs de ces types d’apprentissage.</p>
+        </div>
+
+        <div class="about-section">
+            <h2 id="about-section-publish-title">Publication d’un design</h2>
+            <p id="about-publish-text">Une fois connecté, vous pouvez publier un design enregistré afin de générer un lien de partage consultable par d’autres personnes. La page publiée présente le scénario dans un format lisible, avec les moments, activités, durées, compétences numériques et liens associés.</p>
+            <p id="about-publish-control">Vous gardez la maîtrise de cette publication&nbsp;: le lien peut être révoqué depuis l’application, et la version publiée ne permet pas aux visiteurs de modifier votre design.</p>
         </div>
 
         <div class="about-section">
@@ -277,7 +353,7 @@ require_once __DIR__ . '/lib/bootstrap.php';
         <p id="about-meta" class="about-meta">
             Inspiré de l'<a href="https://www.ucl.ac.uk/learning-designer/" target="_blank" rel="noopener noreferrer">UCL Learning Designer</a> (UCL Knowledge Lab, UCL Institute of Education, 2013–2026).<br>
             Conçu et développé par Yann Houry &amp; François Jourde (2026) · <abbr title="Creative Commons Attribution - Partage dans les mêmes conditions">CC BY-SA</abbr><br>
-            Code source : <a href="https://github.com/YannHY/learning-designer" target="_blank" rel="noopener noreferrer">github.com/YannHY/learning-designer</a> (basé sur <a href="https://github.com/jourde" target="_blank" rel="noopener noreferrer">github.com/jourde</a>)<br>
+            Code source&nbsp;: <a href="https://github.com/YannHY/learning-designer" target="_blank" rel="noopener noreferrer">github.com/YannHY/learning-designer</a> (basé sur <a href="https://github.com/jourde" target="_blank" rel="noopener noreferrer">github.com/jourde</a>)<br>
         </p>
     </div>
 </main>
@@ -293,12 +369,12 @@ document.addEventListener('DOMContentLoaded', function () {
         'about-feature-2-text': 'Associate each activity with one of the 6 learning types below to visualize the balance of your design.',
         'about-feature-3-title': 'Set the context',
         'about-feature-3-text': 'Duration, delivery mode (onsite, online, hybrid), synchronous or asynchronous, grouping mode, assessment.',
-        'about-feature-4-title': 'Attach tools',
-        'about-feature-4-text': 'Link your activities to Moodle tools or H5P content types.',
+        'about-feature-4-title': 'Integrate digital competencies',
+        'about-feature-4-text': 'Connect activities to a structured digital competency curriculum across three domains: Acquire, Deepen, Create.',
         'about-feature-5-title': 'Analyze visually',
         'about-feature-5-text': 'An analysis panel shows how time is distributed across learning types with charts.',
         'about-feature-6-title': 'Export',
-        'about-feature-6-text': 'Export your design as Markdown, HTML, spreadsheet, or CSV.',
+        'about-feature-6-text': 'Export your design as JSON, Markdown, Word, HTML, or Excel.',
         'about-feature-7-title': 'Save',
         'about-feature-7-text': 'Sign in to save your designs to your account and find them again in Saves.',
         'about-feature-8-title': '3 display views',
@@ -326,7 +402,11 @@ document.addEventListener('DOMContentLoaded', function () {
         'about-type-4': '<span class="type-dot" style="background:#bdea75"></span>Produce',
         'about-type-5': '<span class="type-dot" style="background:#7aaeea"></span>Discuss',
         'about-type-6': '<span class="type-dot" style="background:#ffd966"></span>Collaborate',
-        'about-type-7': '<span class="type-dot" style="background:#d1d5db"></span>Undefined',
+        'about-types-description': "This site is based on the six learning types from Diana Laurillard’s Conversational Framework, a model that describes the conditions necessary for learning to take place.",
+        'about-types-mix': 'These six types are: read, write, or listen, also called acquisition; inquiry; practice; production; discussion; collaboration. In principle, a good learning design combines several of these learning types.',
+        'about-section-publish-title': 'Publishing a design',
+        'about-publish-text': 'Once signed in, you can publish a saved design to generate a shareable read-only link. The published page presents the design in a readable format, with moments, activities, durations, digital competencies, and related links.',
+        'about-publish-control': 'You stay in control of the publication: the link can be revoked from the app, and visitors cannot edit your design from the published page.',
         'about-section-privacy-title': 'Data and privacy',
         'about-privacy-text': 'Changes stay in the page while it remains open. No data is sent anywhere without your explicit action. To save a design, sign in and click <strong>Save</strong> — your work is then associated only with your account.',
         'about-meta': 'Inspired by the <a href="https://www.ucl.ac.uk/learning-designer/" target="_blank" rel="noopener noreferrer">UCL Learning Designer</a> (UCL Knowledge Lab, UCL Institute of Education, 2013–2026).<br>Designed and developed by Yann Houry &amp; François Jourde (2026) · <abbr title="Creative Commons Attribution - ShareAlike">CC BY-SA</abbr><br>Source code: <a href="https://github.com/YannHY/learning-designer" target="_blank" rel="noopener noreferrer">github.com/YannHY/learning-designer</a> (based on <a href="https://github.com/jourde" target="_blank" rel="noopener noreferrer">github.com/jourde</a>)<br>'

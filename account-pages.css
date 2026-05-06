@@ -22,6 +22,12 @@ body {
     radial-gradient(circle at top left, rgba(20, 91, 180, 0.12), transparent 28%),
     linear-gradient(180deg, #f8fbff 0%, var(--bg) 100%);
 }
+body.login-page,
+body.signup-page,
+[data-theme="dark"] body.login-page,
+[data-theme="dark"] body.signup-page {
+  background: #fff;
+}
 .site-nav-page {
   position: sticky;
   top: 0;

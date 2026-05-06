@@ -124,7 +124,7 @@ function e(string $value): string
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="interface.css?v=20260502-2">
     <link rel="stylesheet" href="account-ui.css?v=20260502-2">
-    <link rel="stylesheet" href="account-pages.css">
+    <link rel="stylesheet" href="account-pages.css?v=20260506">
 </head>
 <body>
 <?php render_site_nav('profile'); ?>
@@ -149,23 +149,33 @@ function e(string $value): string
             <form method="post" class="account-form panel">
                 <input type="hidden" name="action" value="identity">
                 <h2 class="title-with-icon"><i class="fa-regular fa-address-card" aria-hidden="true"></i>Informations</h2>
-                <label for="username">Nom d’utilisateur</label>
-                <input id="username" name="username" type="text" value="<?= e((string)$me['username']) ?>" required>
-                <label for="email">Email</label>
-                <input id="email" name="email" type="email" value="<?= e((string)$me['email']) ?>" required>
+                <div class="field">
+                    <label for="username">Nom d’utilisateur</label>
+                    <input id="username" name="username" type="text" value="<?= e((string)$me[‘username’]) ?>" required>
+                </div>
+                <div class="field">
+                    <label for="email">Email</label>
+                    <input id="email" name="email" type="email" value="<?= e((string)$me[‘email’]) ?>" required>
+                </div>
                 <button type="submit">Enregistrer</button>
             </form>
 
             <form method="post" class="account-form panel">
                 <input type="hidden" name="action" value="password">
                 <h2 class="title-with-icon"><i class="fa-solid fa-key" aria-hidden="true"></i>Mot de passe</h2>
-                <label for="current_password">Mot de passe actuel</label>
-                <input id="current_password" name="current_password" type="password" required>
-                <label for="new_password">Nouveau mot de passe</label>
-                <input id="new_password" name="new_password" type="password" minlength="8" required>
-                <label for="confirm_password">Confirmation</label>
-                <input id="confirm_password" name="confirm_password" type="password" minlength="8" required>
-                <button type="submit">Mettre a jour</button>
+                <div class="field">
+                    <label for="current_password">Mot de passe actuel</label>
+                    <input id="current_password" name="current_password" type="password" required>
+                </div>
+                <div class="field">
+                    <label for="new_password">Nouveau mot de passe</label>
+                    <input id="new_password" name="new_password" type="password" minlength="8" required>
+                </div>
+                <div class="field">
+                    <label for="confirm_password">Confirmation</label>
+                    <input id="confirm_password" name="confirm_password" type="password" minlength="8" required>
+                </div>
+                <button type="submit">Mettre à jour</button>
             </form>
         </div>
 
@@ -213,8 +223,10 @@ function e(string $value): string
             <input type="hidden" name="action" value="delete_account">
             <h2 class="title-with-icon"><i class="fa-regular fa-trash-can" aria-hidden="true"></i>Supprimer mon compte</h2>
             <p class="account-copy">Toutes vos productions seront supprimees avec votre compte.</p>
-            <label for="delete_current_password">Mot de passe actuel</label>
-            <input id="delete_current_password" name="delete_current_password" type="password" required>
+            <div class="field">
+                <label for="delete_current_password">Mot de passe actuel</label>
+                <input id="delete_current_password" name="delete_current_password" type="password" required>
+            </div>
             <button type="submit" class="danger-button">Supprimer mon compte</button>
         </form>
     </section>

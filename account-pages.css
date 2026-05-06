@@ -102,16 +102,19 @@ h1, h2 {
   line-height: 1.5;
 }
 .account-form {
-  display: grid;
-  gap: 5px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
 }
-.account-form label {
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.account-form label,
+.field label {
   font-weight: 700;
   font-size: 14px;
-  margin-top: 12px;
-}
-.account-form h2 + label {
-  margin-top: 0;
 }
 .account-form input,
 .account-form select {
@@ -127,7 +130,7 @@ h1, h2 {
   font: inherit;
 }
 .account-form button {
-  margin-top: 8px;
+  margin-top: 16px;
   border: 0;
   border-radius: 12px;
   padding: 12px 16px;

@@ -550,3 +550,15 @@ function app_design_title_from_document(array $document): string
 
     return 'Production sans titre';
 }
+
+function render_site_footer(): void
+{
+    ?>
+    <footer class="site-footer">
+        <div class="site-footer-copy-stack">
+            <span class="site-footer-copy">Learning Designer — Yann Houry &amp; François Jourde — 2026 — <abbr title="Creative Commons Attribution - Partage dans les mêmes conditions">CC BY-SA</abbr></span>
+            <span class="site-footer-copy">Inspiré de l'<a class="site-footer-link" href="https://www.ucl.ac.uk/learning-designer/" target="_blank" rel="noopener noreferrer">UCL Learning Designer</a> (UCL Knowledge Lab, UCL Institute of Education, 2013–2026).</span>
+        </div>
+    </footer>
+    <?php
+}

@@ -136,7 +136,7 @@ function e(string $value): string
                 <h1 class="title-with-icon"><i class="fa-regular fa-user" aria-hidden="true"></i>Mon profil</h1>
             </div>
         </div>
-        <p class="account-copy">Role: <?= e((string)$me['role']) ?>.</p>
+        <p class="account-copy">Rôle&nbsp;: <?= e((string)$me['role']) ?>.</p>
 
         <?php if ($message !== ''): ?>
             <p class="account-message success"><?= htmlspecialchars($message, ENT_QUOTES, 'UTF-8') ?></p>
@@ -199,7 +199,9 @@ function e(string $value): string
                             <form method="post" class="profile-publication-actions" onsubmit="return window.confirm('Supprimer cette publication et désactiver son lien public ?');">
                                 <input type="hidden" name="action" value="unpublish_design">
                                 <input type="hidden" name="design_id" value="<?= (int)$design['id'] ?>">
-                                <button class="danger-button" type="submit">Supprimer la publication</button>
+                                <button class="btn-icon-danger" type="submit" title="Supprimer la publication" aria-label="Supprimer la publication">
+                                    <i class="fa-solid fa-trash-can" aria-hidden="true"></i>
+                                </button>
                             </form>
                         </article>
                     <?php endforeach; ?>
@@ -217,5 +219,6 @@ function e(string $value): string
         </form>
     </section>
 </main>
+<?php render_site_footer(); ?>
 </body>
 </html>

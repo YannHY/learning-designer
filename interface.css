@@ -301,6 +301,23 @@ select:focus-visible,
   display: flex;
   gap: 8px;
   margin-bottom: 8px;
+  position: relative;
+}
+
+.top-tab-slider {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  border-radius: 999px;
+  background: var(--panel);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.10), 0 0 0 1px rgba(0, 0, 0, 0.05);
+  transition:
+    left 200ms cubic-bezier(0.4, 0, 0.2, 1),
+    width 200ms cubic-bezier(0.4, 0, 0.2, 1),
+    opacity 120ms ease;
+  pointer-events: none;
+  opacity: 0;
 }
 
 .top-brand .top-tabs {
@@ -309,6 +326,8 @@ select:focus-visible,
 }
 
 .top-tab {
+  position: relative;
+  z-index: 1;
   border: 1px solid transparent;
   border-radius: 999px;
   background: transparent;
@@ -323,9 +342,6 @@ select:focus-visible,
 }
 
 .top-tab.active {
-  background: var(--panel);
-  border-color: transparent;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.10), 0 0 0 1px rgba(0, 0, 0, 0.05);
   font-weight: 600;
   color: var(--primary);
 }
@@ -3500,11 +3516,8 @@ main {
   letter-spacing: 0.01em;
 }
 .top-tab.active {
-  background: var(--panel);
-  border-color: transparent;
-  color: #111827;
   font-weight: 600;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.10), 0 0 0 1px rgba(0, 0, 0, 0.05);
+  color: #111827;
 }
 
 /* ── Brand mark: subtle pulse on logo ─────────────────────── */
@@ -3752,9 +3765,9 @@ html[data-theme="dark"] body {
 
 /* ── Tabs in dark mode ── */
 [data-theme="dark"] .top-tab.active {
-  background: var(--panel);
-  border-color: transparent;
   color: var(--primary);
+}
+[data-theme="dark"] .top-tab-slider {
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.30), 0 0 0 1px rgba(255, 255, 255, 0.06);
 }
 

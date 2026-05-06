@@ -878,6 +878,7 @@ const topPanelToggleBtn = document.getElementById("top-panel-toggle-btn");
 const topTabSettings = document.getElementById("top-tab-settings");
 const topTabAnalysis = document.getElementById("top-tab-analysis");
 const topTabChronology = document.getElementById("top-tab-chronology");
+const topTabSlider = document.querySelector(".top-tab-slider");
 const timelineView = document.getElementById("timeline-view");
 const analysisView = document.getElementById("analysis-view");
 const chronologyView = document.getElementById("chronology-view");
@@ -3346,6 +3347,26 @@ function renderTopPanel() {
   }).join("");
 
   renderAnalysisPanel();
+  updateTabSlider();
+}
+
+function updateTabSlider() {
+  const panelExpanded = !state.topPanelCollapsed;
+  const activeBtn =
+    panelExpanded && state.meta.activeTab === "settings" ? topTabSettings :
+    panelExpanded && state.meta.activeTab === "analysis"  ? topTabAnalysis :
+    panelExpanded && state.meta.activeTab === "chronology" ? topTabChronology :
+    null;
+
+  if (!activeBtn || !topTabSlider) return;
+
+  const container = topTabSlider.parentElement;
+  const containerLeft = container.getBoundingClientRect().left;
+  const btnRect = activeBtn.getBoundingClientRect();
+
+  topTabSlider.style.left  = (btnRect.left - containerLeft) + "px";
+  topTabSlider.style.width = btnRect.width + "px";
+  topTabSlider.style.opacity = "1";
 }
 
 function labelForType(typeId) {

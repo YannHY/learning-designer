@@ -53,6 +53,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $message = 'Mot de passe mis a jour.';
             }
         }
+    } elseif ($action === 'unpublish_design') {
+        $designId = (int)($_POST['design_id'] ?? 0);
+        if ($designId <= 0) {
+            $error = 'Publication invalide.';
+        } else {
+            $stmt = $db->prepare("UPDATE learning_designs SET is_published = 0 WHERE id = ? AND owner_user_id = ? AND is_published = 1");
+            $stmt->execute([$designId, (int)$user['id']]);
+            $message = $stmt->rowCount() > 0
+                ? 'Publication supprimée.'
+                : 'Publication introuvable ou deja supprimée.';
+        }
     } elseif ($action === 'delete_account') {
         $password = (string)($_POST['delete_current_password'] ?? '');
 
@@ -91,6 +102,15 @@ $me = $stmt->fetch() ?: ['username' => '', 'email' => '', 'role' => 'designer'];
 $countStmt = $db->prepare("SELECT COUNT(*) FROM learning_designs WHERE owner_user_id = ?");
 $countStmt->execute([(int)$user['id']]);
 $designCount = (int)$countStmt->fetchColumn();
+
+$publishedStmt = $db->prepare("SELECT id, title, share_token, updated_at FROM learning_designs WHERE owner_user_id = ? AND is_published = 1 AND share_token IS NOT NULL AND share_token <> '' ORDER BY updated_at DESC");
+$publishedStmt->execute([(int)$user['id']]);
+$publishedDesigns = $publishedStmt->fetchAll();
+
+function e(string $value): string
+{
+    return htmlspecialchars($value, ENT_QUOTES, 'UTF-8');
+}
 ?>
 <!doctype html>
 <html lang="fr">
@@ -113,10 +133,10 @@ $designCount = (int)$countStmt->fetchColumn();
         <div class="account-topbar">
             <div>
                 <p class="account-kicker">Compte</p>
-                <h1>Mon profil</h1>
+                <h1 class="title-with-icon"><i class="fa-regular fa-user" aria-hidden="true"></i>Mon profil</h1>
             </div>
         </div>
-        <p class="account-copy">Role: <?= htmlspecialchars((string)$me['role'], ENT_QUOTES, 'UTF-8') ?>. Productions sauvegardées : <?= $designCount ?>.</p>
+        <p class="account-copy">Role: <?= e((string)$me['role']) ?>.</p>
 
         <?php if ($message !== ''): ?>
             <p class="account-message success"><?= htmlspecialchars($message, ENT_QUOTES, 'UTF-8') ?></p>
@@ -128,17 +148,17 @@ $designCount = (int)$countStmt->fetchColumn();
         <div class="account-grid">
             <form method="post" class="account-form panel">
                 <input type="hidden" name="action" value="identity">
-                <h2>Informations</h2>
+                <h2 class="title-with-icon"><i class="fa-regular fa-address-card" aria-hidden="true"></i>Informations</h2>
                 <label for="username">Nom d’utilisateur</label>
-                <input id="username" name="username" type="text" value="<?= htmlspecialchars((string)$me['username'], ENT_QUOTES, 'UTF-8') ?>" required>
+                <input id="username" name="username" type="text" value="<?= e((string)$me['username']) ?>" required>
                 <label for="email">Email</label>
-                <input id="email" name="email" type="email" value="<?= htmlspecialchars((string)$me['email'], ENT_QUOTES, 'UTF-8') ?>" required>
+                <input id="email" name="email" type="email" value="<?= e((string)$me['email']) ?>" required>
                 <button type="submit">Enregistrer</button>
             </form>
 
             <form method="post" class="account-form panel">
                 <input type="hidden" name="action" value="password">
-                <h2>Mot de passe</h2>
+                <h2 class="title-with-icon"><i class="fa-solid fa-key" aria-hidden="true"></i>Mot de passe</h2>
                 <label for="current_password">Mot de passe actuel</label>
                 <input id="current_password" name="current_password" type="password" required>
                 <label for="new_password">Nouveau mot de passe</label>
@@ -149,9 +169,47 @@ $designCount = (int)$countStmt->fetchColumn();
             </form>
         </div>
 
+        <section class="panel profile-productions" aria-labelledby="profile-productions-title">
+            <div class="profile-section-head">
+                <div>
+                    <h2 id="profile-productions-title" class="title-with-icon"><i class="fa-solid fa-layer-group" aria-hidden="true"></i>Mes productions</h2>
+                    <p class="account-copy">Suivez vos sauvegardes et les designs publiés avec un lien web.</p>
+                </div>
+                <a class="subtle-link profile-saves-link" href="my-designs.php">Voir les sauvegardes</a>
+            </div>
+
+            <div class="profile-stat">
+                <span class="profile-stat-value"><?= $designCount ?></span>
+                <span class="profile-stat-label">production<?= $designCount > 1 ? 's' : '' ?> sauvegardée<?= $designCount > 1 ? 's' : '' ?></span>
+            </div>
+
+            <h3 class="profile-subtitle title-with-icon"><i class="fa-solid fa-share-nodes" aria-hidden="true"></i>Publications actives</h3>
+            <?php if (!$publishedDesigns): ?>
+                <p class="profile-empty">Aucun design publié pour le moment.</p>
+            <?php else: ?>
+                <div class="profile-publication-list">
+                    <?php foreach ($publishedDesigns as $design): ?>
+                        <?php $shareUrl = app_base_url() . '/view.php?token=' . urlencode((string)$design['share_token']); ?>
+                        <article class="profile-publication">
+                            <div class="profile-publication-main">
+                                <h4><?= e((string)$design['title']) ?></h4>
+                                <a href="<?= e($shareUrl) ?>" target="_blank" rel="noopener noreferrer"><?= e($shareUrl) ?></a>
+                                <p>Dernière mise à jour : <?= e((string)$design['updated_at']) ?></p>
+                            </div>
+                            <form method="post" class="profile-publication-actions" onsubmit="return window.confirm('Supprimer cette publication et désactiver son lien public ?');">
+                                <input type="hidden" name="action" value="unpublish_design">
+                                <input type="hidden" name="design_id" value="<?= (int)$design['id'] ?>">
+                                <button class="danger-button" type="submit">Supprimer la publication</button>
+                            </form>
+                        </article>
+                    <?php endforeach; ?>
+                </div>
+            <?php endif; ?>
+        </section>
+
         <form method="post" class="account-form panel danger-panel" onsubmit="return window.confirm('Supprimer definitivement votre compte ?');">
             <input type="hidden" name="action" value="delete_account">
-            <h2>Supprimer mon compte</h2>
+            <h2 class="title-with-icon"><i class="fa-regular fa-trash-can" aria-hidden="true"></i>Supprimer mon compte</h2>
             <p class="account-copy">Toutes vos productions seront supprimees avec votre compte.</p>
             <label for="delete_current_password">Mot de passe actuel</label>
             <input id="delete_current_password" name="delete_current_password" type="password" required>

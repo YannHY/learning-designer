@@ -228,11 +228,11 @@
 
   async function saveRemoteDesign() {
     if (!authState.user) {
-      return;
+      return null;
     }
 
     const state = app()?.getState?.();
-    if (!state) return;
+    if (!state) return null;
 
     try {
       const data = await fetchJson("save_design.php", {
@@ -256,6 +256,7 @@
       );
       app()?.showNotice?.(message, "success");
       app()?.announce?.(message);
+      return data;
     } catch (error) {
       if (error?.status === 409) {
         const updatedAt = error?.data?.design?.updatedAt;
@@ -266,11 +267,12 @@
         );
         app()?.showNotice?.(message, "error");
         app()?.announce?.(message);
-        return;
+        return null;
       }
       const message = error.message || tr("Sauvegarde distante impossible.", "Remote save failed.");
       app()?.showNotice?.(message, "error");
       app()?.announce?.(message);
+      return null;
     }
   }
 
@@ -634,35 +636,32 @@
   }
 
   async function doPublish() {
-    let designId = currentDesignId();
+    const state = app()?.getState?.();
+    if (!state) return;
 
-    if (designId <= 0) {
-      const state = app()?.getState?.();
-      if (!state) return;
-      try {
-        const saved = await fetchJson("save_design.php", {
-          method: "POST",
-          body: JSON.stringify({
-            design_id: 0,
-            expected_updated_at: "",
-            title: currentDesignTitle(),
-            document: state
-          })
-        });
-        app()?.updateMeta?.({ remoteDesignId: saved.design.id, remoteUpdatedAt: saved.design.updatedAt });
-        setRemoteDesignUrl(saved.design.id);
-        designId = saved.design.id;
-      } catch (err) {
-        app()?.showNotice?.(err.message || tr("Sauvegarde impossible.", "Save failed."), "error");
-        closePublishModal();
-        return;
-      }
+    let saved = null;
+    try {
+      saved = await fetchJson("save_design.php", {
+        method: "POST",
+        body: JSON.stringify({
+          design_id: currentDesignId(),
+          expected_updated_at: currentDesignUpdatedAt(),
+          title: currentDesignTitle(),
+          document: state
+        })
+      });
+      app()?.updateMeta?.({ remoteDesignId: saved.design.id, remoteUpdatedAt: saved.design.updatedAt });
+      setRemoteDesignUrl(saved.design.id);
+    } catch (err) {
+      app()?.showNotice?.(err.message || tr("Sauvegarde impossible.", "Save failed."), "error");
+      closePublishModal();
+      return;
     }
 
     try {
       const data = await fetchJson("publish_design.php", {
         method: "POST",
-        body: JSON.stringify({ action: "publish", design_id: designId })
+        body: JSON.stringify({ action: "publish", design_id: saved.design.id })
       });
       closePublishModal();
       openPublishModal(data.share_url, true);

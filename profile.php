@@ -125,57 +125,63 @@ function e(string $value): string
     <link rel="stylesheet" href="interface.css?v=20260502-2">
     <link rel="stylesheet" href="account-ui.css?v=20260502-2">
     <link rel="stylesheet" href="account-pages.css?v=20260506">
+    <style>
+        body.profile-page,
+        [data-theme="dark"] body.profile-page {
+            background: #fff;
+        }
+    </style>
 </head>
-<body>
+<body class="profile-page">
 <?php render_site_nav('profile'); ?>
 <main class="account-shell with-nav profile-shell">
     <section class="account-card wide">
         <div class="account-topbar">
             <div>
-                <p class="account-kicker">Compte</p>
-                <h1 class="title-with-icon"><i class="fa-regular fa-user" aria-hidden="true"></i>Mon profil</h1>
+                <p id="profile-kicker" class="account-kicker">Compte</p>
+                <h1 id="profile-title" class="title-with-icon"><i class="fa-regular fa-user" aria-hidden="true"></i>Mon profil</h1>
             </div>
         </div>
-        <p class="account-copy">Rôle&nbsp;: <?= e((string)$me['role']) ?>.</p>
+        <p class="account-copy"><span id="profile-role-label">Rôle</span>&nbsp;: <?= e((string)$me['role']) ?>.</p>
 
         <?php if ($message !== ''): ?>
-            <p class="account-message success"><?= htmlspecialchars($message, ENT_QUOTES, 'UTF-8') ?></p>
+            <p class="account-message success" data-profile-flash><?= htmlspecialchars($message, ENT_QUOTES, 'UTF-8') ?></p>
         <?php endif; ?>
         <?php if ($error !== ''): ?>
-            <p class="account-message error"><?= htmlspecialchars($error, ENT_QUOTES, 'UTF-8') ?></p>
+            <p class="account-message error" data-profile-flash><?= htmlspecialchars($error, ENT_QUOTES, 'UTF-8') ?></p>
         <?php endif; ?>
 
         <div class="account-grid">
             <form method="post" class="account-form panel">
                 <input type="hidden" name="action" value="identity">
-                <h2 class="title-with-icon"><i class="fa-regular fa-address-card" aria-hidden="true"></i>Informations</h2>
+                <h2 id="profile-info-title" class="title-with-icon"><i class="fa-regular fa-address-card" aria-hidden="true"></i>Informations</h2>
                 <div class="field">
-                    <label for="username">Nom d’utilisateur</label>
-                    <input id="username" name="username" type="text" value="<?= e((string)$me[‘username’]) ?>" required>
+                    <label id="profile-username-label" for="username">Nom d’utilisateur</label>
+                    <input id="username" name="username" type="text" value="<?= e((string)$me['username']) ?>" required>
                 </div>
                 <div class="field">
                     <label for="email">Email</label>
-                    <input id="email" name="email" type="email" value="<?= e((string)$me[‘email’]) ?>" required>
+                    <input id="email" name="email" type="email" value="<?= e((string)$me['email']) ?>" required>
                 </div>
-                <button type="submit">Enregistrer</button>
+                <button id="profile-save-identity" type="submit">Enregistrer</button>
             </form>
 
             <form method="post" class="account-form panel">
                 <input type="hidden" name="action" value="password">
-                <h2 class="title-with-icon"><i class="fa-solid fa-key" aria-hidden="true"></i>Mot de passe</h2>
+                <h2 id="profile-password-title" class="title-with-icon"><i class="fa-solid fa-key" aria-hidden="true"></i>Mot de passe</h2>
                 <div class="field">
-                    <label for="current_password">Mot de passe actuel</label>
+                    <label id="profile-current-password-label" for="current_password">Mot de passe actuel</label>
                     <input id="current_password" name="current_password" type="password" required>
                 </div>
                 <div class="field">
-                    <label for="new_password">Nouveau mot de passe</label>
+                    <label id="profile-new-password-label" for="new_password">Nouveau mot de passe</label>
                     <input id="new_password" name="new_password" type="password" minlength="8" required>
                 </div>
                 <div class="field">
-                    <label for="confirm_password">Confirmation</label>
+                    <label id="profile-confirm-password-label" for="confirm_password">Confirmation</label>
                     <input id="confirm_password" name="confirm_password" type="password" minlength="8" required>
                 </div>
-                <button type="submit">Mettre à jour</button>
+                <button id="profile-update-password" type="submit">Mettre à jour</button>
             </form>
         </div>
 
@@ -183,19 +189,19 @@ function e(string $value): string
             <div class="profile-section-head">
                 <div>
                     <h2 id="profile-productions-title" class="title-with-icon"><i class="fa-solid fa-layer-group" aria-hidden="true"></i>Mes productions</h2>
-                    <p class="account-copy">Suivez vos sauvegardes et les designs publiés avec un lien web.</p>
+                    <p id="profile-productions-copy" class="account-copy">Suivez vos sauvegardes et les designs publiés avec un lien web.</p>
                 </div>
-                <a class="subtle-link profile-saves-link" href="my-designs.php">Voir les sauvegardes</a>
+                <a id="profile-saves-link" class="subtle-link profile-saves-link" href="my-designs.php">Voir les designs</a>
             </div>
 
             <div class="profile-stat">
                 <span class="profile-stat-value"><?= $designCount ?></span>
-                <span class="profile-stat-label">production<?= $designCount > 1 ? 's' : '' ?> sauvegardée<?= $designCount > 1 ? 's' : '' ?></span>
+                <span class="profile-stat-label" data-profile-design-count="<?= $designCount ?>">design<?= $designCount > 1 ? 's' : '' ?> enregistré<?= $designCount > 1 ? 's' : '' ?></span>
             </div>
 
-            <h3 class="profile-subtitle title-with-icon"><i class="fa-solid fa-share-nodes" aria-hidden="true"></i>Publications actives</h3>
+            <h3 id="profile-publications-title" class="profile-subtitle title-with-icon"><i class="fa-solid fa-share-nodes" aria-hidden="true"></i>Publications actives</h3>
             <?php if (!$publishedDesigns): ?>
-                <p class="profile-empty">Aucun design publié pour le moment.</p>
+                <p id="profile-empty-publications" class="profile-empty">Aucun design publié pour le moment.</p>
             <?php else: ?>
                 <div class="profile-publication-list">
                     <?php foreach ($publishedDesigns as $design): ?>
@@ -204,12 +210,12 @@ function e(string $value): string
                             <div class="profile-publication-main">
                                 <h4><?= e((string)$design['title']) ?></h4>
                                 <a href="<?= e($shareUrl) ?>" target="_blank" rel="noopener noreferrer"><?= e($shareUrl) ?></a>
-                                <p>Dernière mise à jour : <?= e((string)$design['updated_at']) ?></p>
+                                <p><span data-profile-updated-label>Dernière mise à jour</span> : <?= e((string)$design['updated_at']) ?></p>
                             </div>
-                            <form method="post" class="profile-publication-actions" onsubmit="return window.confirm('Supprimer cette publication et désactiver son lien public ?');">
+                            <form method="post" class="profile-publication-actions" data-confirm-fr="Supprimer cette publication et désactiver son lien public ?" data-confirm-en="Delete this publication and disable its public link?" onsubmit="return window.confirm(this.dataset.confirm || this.dataset.confirmFr);">
                                 <input type="hidden" name="action" value="unpublish_design">
                                 <input type="hidden" name="design_id" value="<?= (int)$design['id'] ?>">
-                                <button class="btn-icon-danger" type="submit" title="Supprimer la publication" aria-label="Supprimer la publication">
+                                <button class="btn-icon-danger" type="submit" title="Supprimer la publication" aria-label="Supprimer la publication" data-profile-delete-publication-btn>
                                     <i class="fa-solid fa-trash-can" aria-hidden="true"></i>
                                 </button>
                             </form>
@@ -219,18 +225,140 @@ function e(string $value): string
             <?php endif; ?>
         </section>
 
-        <form method="post" class="account-form panel danger-panel" onsubmit="return window.confirm('Supprimer definitivement votre compte ?');">
+        <form method="post" class="account-form panel danger-panel" data-confirm-fr="Supprimer définitivement votre compte ?" data-confirm-en="Permanently delete your account?" onsubmit="return window.confirm(this.dataset.confirm || this.dataset.confirmFr);">
             <input type="hidden" name="action" value="delete_account">
-            <h2 class="title-with-icon"><i class="fa-regular fa-trash-can" aria-hidden="true"></i>Supprimer mon compte</h2>
-            <p class="account-copy">Toutes vos productions seront supprimees avec votre compte.</p>
+            <h2 id="profile-delete-title" class="title-with-icon"><i class="fa-regular fa-trash-can" aria-hidden="true"></i>Supprimer mon compte</h2>
+            <p id="profile-delete-copy" class="account-copy">Toutes vos productions seront supprimées avec votre compte.</p>
             <div class="field">
-                <label for="delete_current_password">Mot de passe actuel</label>
+                <label id="profile-delete-password-label" for="delete_current_password">Mot de passe actuel</label>
                 <input id="delete_current_password" name="delete_current_password" type="password" required>
             </div>
-            <button type="submit" class="danger-button">Supprimer mon compte</button>
+            <button id="profile-delete-button" type="submit" class="danger-button">Supprimer mon compte</button>
         </form>
     </section>
 </main>
 <?php render_site_footer(); ?>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    var translations = {
+        'profile-kicker': 'Account',
+        'profile-title': 'My profile',
+        'profile-role-label': 'Role',
+        'profile-info-title': 'Information',
+        'profile-username-label': 'Username',
+        'profile-save-identity': 'Save',
+        'profile-password-title': 'Password',
+        'profile-current-password-label': 'Current password',
+        'profile-new-password-label': 'New password',
+        'profile-confirm-password-label': 'Confirmation',
+        'profile-update-password': 'Update',
+        'profile-productions-title': 'My designs',
+        'profile-productions-copy': 'Track your saved designs and designs published with a web link.',
+        'profile-saves-link': 'View designs',
+        'profile-publications-title': 'Active publications',
+        'profile-empty-publications': 'No published design yet.',
+        'profile-delete-title': 'Delete my account',
+        'profile-delete-copy': 'All your designs will be deleted with your account.',
+        'profile-delete-password-label': 'Current password',
+        'profile-delete-button': 'Delete my account'
+    };
+
+    var flashTranslations = {
+        'Nom d’utilisateur et email requis.': 'Username and email are required.',
+        'Adresse email invalide.': 'Invalid email address.',
+        'Informations mises a jour.': 'Information updated.',
+        'Nom d’utilisateur ou email deja utilise.': 'Username or email already in use.',
+        'Tous les champs mot de passe sont requis.': 'All password fields are required.',
+        'Le nouveau mot de passe doit contenir au moins 8 caracteres.': 'The new password must be at least 8 characters long.',
+        'La confirmation ne correspond pas.': 'The confirmation does not match.',
+        'Mot de passe actuel incorrect.': 'Current password is incorrect.',
+        'Mot de passe mis a jour.': 'Password updated.',
+        'Publication invalide.': 'Invalid publication.',
+        'Publication supprimée.': 'Publication deleted.',
+        'Publication introuvable ou deja supprimée.': 'Publication not found or already deleted.',
+        'Veuillez confirmer avec votre mot de passe.': 'Please confirm with your password.',
+        'Mot de passe incorrect.': 'Incorrect password.',
+        'Impossible de supprimer le dernier compte administrateur.': 'The last administrator account cannot be deleted.'
+    };
+
+    function setIconText(id, text) {
+        var el = document.getElementById(id);
+        if (!el) return;
+        var icon = el.querySelector('i');
+        el.textContent = '';
+        if (icon) {
+            el.appendChild(icon);
+            el.appendChild(document.createTextNode(text));
+        } else {
+            el.textContent = text;
+        }
+    }
+
+    Object.keys(translations).forEach(function (id) {
+        var el = document.getElementById(id);
+        if (el) {
+            el.dataset.profileFr = el.textContent.trim();
+        }
+    });
+
+    document.querySelectorAll('[data-profile-flash]').forEach(function (el) {
+        el.dataset.profileFr = el.textContent.trim();
+    });
+
+    function applyProfileLanguage(lang) {
+        document.documentElement.lang = lang === 'en' ? 'en' : 'fr';
+        document.title = lang === 'en' ? 'My profile | Learning Designer' : 'Mon profil | Learning Designer';
+
+        Object.keys(translations).forEach(function (id) {
+            var el = document.getElementById(id);
+            var text = lang === 'en' ? translations[id] : (el?.dataset.profileFr || '');
+            if (text) setIconText(id, text);
+        });
+
+        document.querySelectorAll('[data-profile-design-count]').forEach(function (el) {
+            var count = Number(el.getAttribute('data-profile-design-count') || '0');
+            if (lang === 'en') {
+                el.textContent = count === 1 ? 'saved design' : 'saved designs';
+            } else {
+                el.textContent = 'design' + (count > 1 ? 's' : '') + ' enregistré' + (count > 1 ? 's' : '');
+            }
+        });
+
+        document.querySelectorAll('[data-profile-updated-label]').forEach(function (el) {
+            el.textContent = lang === 'en' ? 'Last updated' : 'Dernière mise à jour';
+        });
+
+        document.querySelectorAll('[data-profile-delete-publication-btn]').forEach(function (button) {
+            var label = lang === 'en' ? 'Delete publication' : 'Supprimer la publication';
+            button.title = label;
+            button.setAttribute('aria-label', label);
+        });
+
+        document.querySelectorAll('[data-confirm-fr]').forEach(function (form) {
+            form.dataset.confirm = lang === 'en' ? form.dataset.confirmEn : form.dataset.confirmFr;
+        });
+
+        document.querySelectorAll('[data-profile-flash]').forEach(function (el) {
+            var text = el.dataset.profileFr || el.textContent.trim();
+            el.textContent = lang === 'en' && flashTranslations[text] ? flashTranslations[text] : text;
+        });
+    }
+
+    var lang = 'fr';
+    try {
+        lang = localStorage.getItem('learningDesignerLang') || 'fr';
+    } catch (error) {
+        lang = 'fr';
+    }
+    applyProfileLanguage(lang);
+
+    var langSelect = document.getElementById('lang-select');
+    if (langSelect) {
+        langSelect.addEventListener('change', function () {
+            applyProfileLanguage(langSelect.value);
+        });
+    }
+});
+</script>
 </body>
 </html>

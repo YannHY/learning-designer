@@ -36,7 +36,7 @@ function e(string $value): string
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Mes sauvegardes | Learning Designer</title>
+    <title>Mes designs | Learning Designer</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" referrerpolicy="no-referrer" />
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -45,15 +45,9 @@ function e(string $value): string
     <link rel="stylesheet" href="account-ui.css?v=20260502-2" />
     <link rel="stylesheet" href="account-pages.css?v=20260502-2" />
     <style>
-      body {
-        background: linear-gradient(180deg, #f8fbff 0%, #eef3f8 100%);
-      }
-
-      [data-theme="dark"] body {
-        background:
-          radial-gradient(ellipse 70% 50% at top left, rgba(56, 139, 253, 0.07), transparent),
-          radial-gradient(ellipse 60% 40% at bottom right, rgba(163, 113, 247, 0.06), transparent),
-          #1a1f2e;
+      body.designs-page,
+      [data-theme="dark"] body.designs-page {
+        background: #fff;
       }
 
       .saved-shell {
@@ -151,6 +145,12 @@ function e(string $value): string
         margin: 0;
       }
 
+      .saved-card-actions a.btn,
+      .saved-card-actions a.btn:hover,
+      .saved-card-actions a.btn:focus {
+        text-decoration: none;
+      }
+
       [data-theme="dark"] .saved-shell {
         border-color: rgba(103, 116, 145, 0.45);
         background: linear-gradient(180deg, rgba(36, 43, 64, 0.96), rgba(30, 36, 54, 0.96));
@@ -209,12 +209,12 @@ function e(string $value): string
       }
     </style>
   </head>
-  <body>
+  <body class="designs-page">
     <?php render_site_nav('saves'); ?>
     <main class="saved-shell">
       <div class="saved-header">
         <div>
-          <h1 class="saved-title">Mes sauvegardes</h1>
+          <h1 class="saved-title">Mes designs</h1>
           <p class="saved-subtitle">Retrouvez, ouvrez ou supprimez vos designs enregistrés.</p>
         </div>
       </div>
@@ -255,5 +255,6 @@ function e(string $value): string
         </section>
       <?php endif; ?>
     </main>
+    <?php render_site_footer(); ?>
   </body>
 </html>

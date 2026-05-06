@@ -60,8 +60,14 @@ $users = $usersStmt->fetchAll();
     <link rel="stylesheet" href="interface.css?v=20260502-2">
     <link rel="stylesheet" href="account-ui.css?v=20260502-2">
     <link rel="stylesheet" href="account-pages.css">
+    <style>
+        body.admin-page,
+        [data-theme="dark"] body.admin-page {
+            background: #fff;
+        }
+    </style>
 </head>
-<body>
+<body class="admin-page">
 <?php render_site_nav('admin'); ?>
 <main class="account-shell with-nav profile-shell">
     <section class="account-card wide">

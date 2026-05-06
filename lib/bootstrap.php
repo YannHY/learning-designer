@@ -44,7 +44,15 @@ function app_file_config(): array
         }
         $loaded = require $path;
         if (is_array($loaded)) {
-            $config = array_replace($config, $loaded);
+            foreach ($loaded as $key => $value) {
+                $valueString = is_scalar($value) ? trim((string)$value) : '';
+                $currentString = array_key_exists($key, $config) && is_scalar($config[$key])
+                    ? trim((string)$config[$key])
+                    : '';
+                if (!array_key_exists($key, $config) || ($currentString === '' && $valueString !== '')) {
+                    $config[$key] = $value;
+                }
+            }
         }
     }
 
@@ -79,7 +87,14 @@ function app_base_url(): string
 {
     $configured = trim((string)(app_env('APP_BASE_URL') ?? ''));
     if ($configured !== '') {
-        return rtrim($configured, '/');
+        $base = rtrim($configured, '/');
+        $configuredPath = (string)(parse_url($base, PHP_URL_PATH) ?? '');
+        if ($configuredPath !== '' && $configuredPath !== '/') {
+            return $base;
+        }
+
+        $scriptDir = app_script_base_path();
+        return $base . $scriptDir;
     }
 
     $scheme = app_is_https() ? 'https' : 'http';
@@ -88,13 +103,18 @@ function app_base_url(): string
         $host = 'localhost';
     }
 
+    return $scheme . '://' . $host . app_script_base_path();
+}
+
+function app_script_base_path(): string
+{
     $scriptDir = trim((string)dirname((string)($_SERVER['SCRIPT_NAME'] ?? '')));
     $scriptDir = str_replace('\\', '/', $scriptDir);
     if ($scriptDir === '/' || $scriptDir === '.') {
-        $scriptDir = '';
+        return '';
     }
 
-    return $scheme . '://' . $host . $scriptDir;
+    return '/' . trim($scriptDir, '/');
 }
 
 function app_origin_url(): string
@@ -320,9 +340,9 @@ function render_site_nav(string $active = ''): void
     $profileClass = $active === 'profile' ? ' nav-account-btn-active' : '';
     $adminClass = $active === 'admin' ? ' nav-account-btn-active' : '';
     ?>
-    <header class="site-nav site-nav-page" role="navigation" aria-label="Navigation principale">
+    <header class="site-nav site-nav-page" role="navigation" aria-label="Navigation principale" data-site-i18n-attr="aria-label" data-site-i18n-en="Main navigation" data-site-i18n-fr="Navigation principale">
         <div class="site-nav-brand">
-            <a class="site-nav-brand-link" href="index.html" aria-label="Accueil Learning Designer">
+            <a class="site-nav-brand-link" href="index.html" aria-label="Accueil Learning Designer" data-site-i18n-attr="aria-label" data-site-i18n-en="Learning Designer home" data-site-i18n-fr="Accueil Learning Designer">
                 <span class="site-nav-brand-mark" aria-hidden="true"></span>
                 <div class="site-nav-brand-copy">
                     <p class="site-nav-title">Learning Designer</p>
@@ -330,12 +350,12 @@ function render_site_nav(string $active = ''): void
             </a>
         </div>
         <div class="site-nav-actions">
-            <label for="lang-select" class="sr-only">Langue de l'interface</label>
-            <select id="lang-select" class="nav-lang-select" aria-label="Langue de l'interface">
+            <label for="lang-select" class="sr-only" data-site-i18n-en="Interface language" data-site-i18n-fr="Langue de l'interface">Langue de l'interface</label>
+            <select id="lang-select" class="nav-lang-select" aria-label="Langue de l'interface" data-site-i18n-attr="aria-label" data-site-i18n-en="Interface language" data-site-i18n-fr="Langue de l'interface">
                 <option value="fr">FR</option>
                 <option value="en">EN</option>
             </select>
-            <button id="theme-toggle-btn" class="theme-toggle-btn" type="button" aria-label="Basculer le thème sombre/clair" title="Thème sombre / clair">
+            <button id="theme-toggle-btn" class="theme-toggle-btn" type="button" aria-label="Basculer le thème sombre/clair" title="Thème sombre / clair" data-site-i18n-attr="aria-label,title" data-site-i18n-en="Toggle dark/light theme" data-site-i18n-fr="Basculer le thème sombre/clair">
                 <svg class="theme-icon-sun" viewBox="0 0 24 24" aria-hidden="true" width="18" height="18">
                     <path fill="currentColor" d="M12 7a5 5 0 1 0 0 10A5 5 0 0 0 12 7zm0-5a1 1 0 0 1 1 1v1a1 1 0 0 1-2 0V3a1 1 0 0 1 1-1zm0 18a1 1 0 0 1 1 1v1a1 1 0 0 1-2 0v-1a1 1 0 0 1 1-1zM5 12a1 1 0 0 1-1 1H3a1 1 0 0 1 0-2h1a1 1 0 0 1 1 1zm16 0a1 1 0 0 1-1 1h-1a1 1 0 0 1 0-2h1a1 1 0 0 1 1 1zM6.34 7.76a1 1 0 0 1 0-1.42l.7-.7a1 1 0 1 1 1.42 1.42l-.71.71a1 1 0 0 1-1.41-.01zm9.9 9.9a1 1 0 0 1 0-1.42l.7-.7a1 1 0 0 1 1.42 1.42l-.71.71a1 1 0 0 1-1.41-.01zM6.34 17.66a1 1 0 0 1-1.41.01l-.71-.71a1 1 0 0 1 1.42-1.42l.7.7a1 1 0 0 1 0 1.42zM17.66 6.34a1 1 0 0 1-1.41.01l-.71-.71a1 1 0 0 1 1.42-1.42l.7.7a1 1 0 0 1 0 1.42z"/>
                 </svg>
@@ -344,7 +364,7 @@ function render_site_nav(string $active = ''): void
                 </svg>
             </button>
             <div class="account-toolbar-cluster">
-                <a class="nav-icon-btn<?= $homeClass ?>" href="index.html" title="Editeur" aria-label="Editeur">
+                <a class="nav-icon-btn<?= $homeClass ?>" href="index.html" title="Editeur" aria-label="Editeur" data-site-i18n-attr="title,aria-label" data-site-i18n-en="Editor" data-site-i18n-fr="Editeur">
                     <i class="fa-solid fa-house" aria-hidden="true"></i>
                 </a>
                 <?php if ($user): ?>
@@ -355,24 +375,24 @@ function render_site_nav(string $active = ''): void
                     <div class="account-menu-wrap">
                         <button id="account-menu-btn" class="nav-account-btn<?= $profileClass !== '' || $adminClass !== '' ? ' nav-account-btn-active' : '' ?>" type="button" aria-expanded="false" aria-controls="account-menu">
                             <i class="fa-solid fa-user-check" aria-hidden="true"></i>
-                            <span class="nav-account-label">Compte</span>
+                            <span class="nav-account-label" data-site-i18n-en="Account" data-site-i18n-fr="Compte">Compte</span>
                         </button>
                         <div id="account-menu" class="account-menu hidden" role="menu" aria-hidden="true">
-                            <a class="account-menu-link<?= $profileClass ?>" role="menuitem" href="profile.php">Profil</a>
+                            <a class="account-menu-link<?= $profileClass ?>" role="menuitem" href="profile.php" data-site-i18n-en="Profile" data-site-i18n-fr="Profil">Profil</a>
                             <?php if ($isAdmin): ?>
-                                <a class="account-menu-link<?= $adminClass ?>" role="menuitem" href="admin.php">Administration</a>
+                                <a class="account-menu-link<?= $adminClass ?>" role="menuitem" href="admin.php" data-site-i18n-en="Administration" data-site-i18n-fr="Administration">Administration</a>
                             <?php endif; ?>
-                            <a class="account-menu-link" role="menuitem" href="logout.php">Deconnexion</a>
+                            <a class="account-menu-link" role="menuitem" href="logout.php" data-site-i18n-en="Sign out" data-site-i18n-fr="Deconnexion">Deconnexion</a>
                         </div>
                     </div>
                 <?php else: ?>
                     <a class="nav-account-btn<?= $active === 'signup' ? ' nav-account-btn-active' : '' ?>" href="signup.php">
                         <i class="fa-solid fa-user-plus" aria-hidden="true"></i>
-                        <span class="nav-account-label">Creer un compte</span>
+                        <span class="nav-account-label" data-site-i18n-en="Create account" data-site-i18n-fr="Creer un compte">Creer un compte</span>
                     </a>
                     <a class="nav-account-btn<?= $active === 'login' ? ' nav-account-btn-active' : '' ?>" href="login.php">
                         <i class="fa-regular fa-user" aria-hidden="true"></i>
-                        <span class="nav-account-label">Connexion</span>
+                        <span class="nav-account-label" data-site-i18n-en="Sign in" data-site-i18n-fr="Connexion">Connexion</span>
                     </a>
                 <?php endif; ?>
             </div>
@@ -411,6 +431,23 @@ function render_site_nav(string $active = ''): void
             });
         }
 
+        function applySiteNavLanguage(lang) {
+            document.querySelectorAll('[data-site-i18n-en]').forEach(function (el) {
+                var value = lang === 'en' ? el.dataset.siteI18nEn : el.dataset.siteI18nFr;
+                if (!value) return;
+                var attrs = (el.dataset.siteI18nAttr || '').split(',').map(function (attr) {
+                    return attr.trim();
+                }).filter(Boolean);
+                if (attrs.length) {
+                    attrs.forEach(function (attr) {
+                        el.setAttribute(attr, value);
+                    });
+                } else {
+                    el.textContent = value;
+                }
+            });
+        }
+
         var langSelect = document.getElementById('lang-select');
         if (langSelect) {
             var savedLang = 'fr';
@@ -424,8 +461,10 @@ function render_site_nav(string $active = ''): void
             }
             langSelect.value = savedLang;
             html.setAttribute('lang', savedLang);
+            applySiteNavLanguage(savedLang);
             langSelect.addEventListener('change', function () {
                 html.setAttribute('lang', langSelect.value);
+                applySiteNavLanguage(langSelect.value);
                 try {
                     localStorage.setItem('learningDesignerLang', langSelect.value);
                 } catch (error) {
@@ -559,6 +598,9 @@ function render_site_footer(): void
             <span class="site-footer-copy">Learning Designer — Yann Houry &amp; François Jourde — 2026 — <abbr title="Creative Commons Attribution - Partage dans les mêmes conditions">CC BY-SA</abbr></span>
             <span class="site-footer-copy">Inspiré de l'<a class="site-footer-link" href="https://www.ucl.ac.uk/learning-designer/" target="_blank" rel="noopener noreferrer">UCL Learning Designer</a> (UCL Knowledge Lab, UCL Institute of Education, 2013–2026).</span>
         </div>
+        <nav class="site-footer-links" aria-label="Liens du pied de page">
+            <a class="site-footer-link" href="about.php">À propos</a>
+        </nav>
     </footer>
     <?php
 }

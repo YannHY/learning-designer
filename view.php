@@ -2,6 +2,10 @@
 declare(strict_types=1);
 require_once __DIR__ . '/lib/bootstrap.php';
 
+header('Cache-Control: no-store, no-cache, must-revalidate, max-age=0');
+header('Pragma: no-cache');
+header('Expires: 0');
+
 $token = trim((string)($_GET['token'] ?? ''));
 if ($token === '') {
     http_response_code(400);
@@ -164,6 +168,137 @@ function safeEsc(mixed $v): string {
 
 function labelFor(array $map, string $key, string $fallback = ''): string {
     return $map[$key] ?? ($fallback !== '' ? $fallback : $key);
+}
+
+function normalizeCatalogSlug(string $value): string {
+    $value = trim($value);
+    $transliterated = iconv('UTF-8', 'ASCII//TRANSLIT//IGNORE', $value);
+    if (is_string($transliterated)) {
+        $value = $transliterated;
+    }
+    $value = strtolower($value);
+    $value = preg_replace('/[^a-z0-9]+/', '-', $value) ?? '';
+    $value = trim($value, '-');
+    return $value !== '' ? $value : 'general';
+}
+
+function toRomanNumeral(int $value): string {
+    if ($value <= 0) return '';
+    $map = [
+        1000 => 'M', 900 => 'CM', 500 => 'D', 400 => 'CD',
+        100 => 'C', 90 => 'XC', 50 => 'L', 40 => 'XL',
+        10 => 'X', 9 => 'IX', 5 => 'V', 4 => 'IV', 1 => 'I',
+    ];
+    $result = '';
+    foreach ($map as $amount => $symbol) {
+        while ($value >= $amount) {
+            $result .= $symbol;
+            $value -= $amount;
+        }
+    }
+    return $result;
+}
+
+function normalizeCompetencyToken(string $value): string {
+    $value = trim($value);
+    $transliterated = iconv('UTF-8', 'ASCII//TRANSLIT//IGNORE', $value);
+    if (is_string($transliterated)) {
+        $value = $transliterated;
+    }
+    return strtolower(preg_replace('/[^a-z0-9]+/', '', $value) ?? '');
+}
+
+function loadCompetencyCatalog(): array {
+    static $catalog = null;
+    if (is_array($catalog)) return $catalog;
+
+    $catalog = [];
+    $sourcePath = __DIR__ . '/interface.js';
+    $js = is_file($sourcePath) ? file_get_contents($sourcePath) : '';
+    if (!is_string($js) || !preg_match('/const\s+COMPETENCY_CATALOG_SOURCE\s*=\s*String\.raw`(.*?)`;/s', $js, $matches)) {
+        return $catalog;
+    }
+
+    $badgeByLevel = ['acquerir' => 'N1', 'approfondir' => 'N2', 'creer' => 'N3'];
+    $legacyCodeByLevel = ['acquerir' => 'A', 'approfondir' => 'P', 'creer' => 'C'];
+    $currentLevel = null;
+    $currentLevelSections = [];
+
+    foreach (preg_split('/\R/', (string)$matches[1]) ?: [] as $rawLine) {
+        $line = str_replace("\r", '', (string)$rawLine);
+        if (trim($line) === '') continue;
+
+        if (str_starts_with($line, '# ')) {
+            [$id, $labelFr, $labelEn] = array_pad(explode("\t", substr($line, 2)), 3, '');
+            $currentLevel = ['id' => $id, 'labelFr' => $labelFr, 'labelEn' => $labelEn];
+            $currentLevelSections = [];
+            continue;
+        }
+
+        if (!is_array($currentLevel)) continue;
+        $parts = explode("\t", $line);
+        [$sectionRaw, $appRaw, $numberRaw, $labelRaw] = array_pad(array_slice($parts, 0, 4), 4, '');
+        $descRaw = implode("\t", array_slice($parts, 4));
+        $section = trim($sectionRaw) !== '' ? trim($sectionRaw) : 'Général';
+        $sectionIndex = array_search($section, $currentLevelSections, true);
+        if ($sectionIndex === false) {
+            $currentLevelSections[] = $section;
+            $sectionIndex = count($currentLevelSections) - 1;
+        }
+        $sectionNumber = (int)$sectionIndex + 1;
+        $sectionRoman = toRomanNumeral($sectionNumber);
+        $competencyNumber = (int)$numberRaw;
+        $label = trim($labelRaw);
+        $description = trim($descRaw);
+        if ($competencyNumber <= 0 || $label === '' || $description === '') continue;
+
+        $id = 'competency:' . $currentLevel['id'] . ':' . trim($numberRaw);
+        $shortCode = $currentLevel['labelFr'] . '-' . $sectionRoman . '-' . $competencyNumber;
+        $legacyShortCode = ($legacyCodeByLevel[$currentLevel['id']] ?? substr($currentLevel['id'], 0, 1)) . $competencyNumber;
+        $entry = [
+            'id' => $id,
+            'platform' => $currentLevel['id'],
+            'category' => $currentLevel['id'] . ':' . normalizeCatalogSlug($section),
+            'sectionFr' => $section,
+            'sectionEn' => $section,
+            'appFr' => trim($appRaw),
+            'appEn' => trim($appRaw),
+            'levelLabelFr' => $currentLevel['labelFr'],
+            'levelLabelEn' => $currentLevel['labelEn'],
+            'levelBadge' => $badgeByLevel[$currentLevel['id']] ?? $currentLevel['id'],
+            'number' => $competencyNumber,
+            'sectionNumber' => $sectionNumber,
+            'sectionRoman' => $sectionRoman,
+            'shortCode' => $shortCode,
+            'legacyShortCode' => $legacyShortCode,
+            'labelFr' => $label,
+            'labelEn' => $label,
+            'descFr' => $description,
+            'descEn' => $description,
+        ];
+
+        foreach ([$id, $shortCode, $legacyShortCode, $label] as $token) {
+            $normalized = normalizeCompetencyToken($token);
+            if ($normalized !== '') {
+                $catalog[$normalized] = $entry;
+            }
+        }
+    }
+
+    return $catalog;
+}
+
+function competencyForReference(string $reference): ?array {
+    $catalog = loadCompetencyCatalog();
+    return $catalog[normalizeCompetencyToken($reference)] ?? null;
+}
+
+function competencyStyle(string $level): array {
+    return match ($level) {
+        'approfondir' => ['#ede9fe', '#c4b5fd', '#5b21b6'],
+        'creer' => ['#dcfce7', '#86efac', '#166534'],
+        default => ['#e0f2fe', '#7dd3fc', '#075985'],
+    };
 }
 
 function formatDuration(int $minutes): string {
@@ -372,6 +507,33 @@ foreach ($sessions as $s) {
       white-space: nowrap;
     }
     .chip-tools { background: var(--accent-soft); border-color: rgba(47,91,234,.18); color: var(--accent); }
+    .chip-competency {
+      background: var(--competency-bg);
+      border-color: var(--competency-border);
+      color: var(--competency-text);
+      font-weight: 700;
+    }
+    .activity-links-public {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 8px;
+    }
+    .activity-link-public {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      max-width: 100%;
+      padding: 4px 9px;
+      border-radius: 99px;
+      border: 1px solid rgba(47,91,234,.18);
+      background: var(--accent-soft);
+      color: var(--accent);
+      font-size: 12px;
+      font-weight: 600;
+      text-decoration: none;
+    }
+    .activity-link-public:hover { text-decoration: underline; }
     .activity-notes {
       margin-top: 8px;
       font-size: 13px;
@@ -487,6 +649,7 @@ foreach ($sessions as $s) {
         $aDesc  = safeText($act['description'] ?? '');
         $aNotes = safeText($act['notes'] ?? '');
         $aTools = is_array($act['tools'] ?? null) ? array_filter($act['tools'], 'is_string') : [];
+        $aLinks = is_array($act['links'] ?? null) ? $act['links'] : [];
 
         $chips = [];
         $gm = labelFor($GROUP_MODES, (string)($act['groupMode'] ?? ''));
@@ -514,9 +677,36 @@ foreach ($sessions as $s) {
           <span class="chip"><?= esc($chip) ?></span>
           <?php endforeach; ?>
           <?php foreach ($aTools as $toolId):
-            $toolLabel = $TOOLS_LABELS[$toolId] ?? $toolId;
+            $competency = competencyForReference($toolId);
+            if ($competency) {
+                [$competencyBg, $competencyBorder, $competencyText] = competencyStyle((string)$competency['platform']);
+                $toolLabel = (string)$competency['shortCode'];
+                $toolTitle = (string)$competency['number'] . '. ' . (string)$competency['labelFr'];
+            } else {
+                $toolLabel = $TOOLS_LABELS[$toolId] ?? $toolId;
+                $toolTitle = $toolLabel;
+                $competencyBg = '';
+                $competencyBorder = '';
+                $competencyText = '';
+            }
           ?>
-          <span class="chip chip-tools"><?= esc($toolLabel) ?></span>
+          <span
+            class="chip <?= $competency ? 'chip-competency' : 'chip-tools' ?>"
+            title="<?= esc($toolTitle) ?>"
+            <?php if ($competency): ?>style="--competency-bg:<?= esc($competencyBg) ?>;--competency-border:<?= esc($competencyBorder) ?>;--competency-text:<?= esc($competencyText) ?>"<?php endif; ?>
+          ><?= esc($toolLabel) ?></span>
+          <?php endforeach; ?>
+        </div>
+        <?php endif; ?>
+        <?php if ($aLinks): ?>
+        <div class="activity-links-public" aria-label="Liens de l'activité">
+          <?php foreach ($aLinks as $link):
+            if (!is_array($link)) continue;
+            $linkTitle = safeText($link['title'] ?? '');
+            $linkUrl = safeText($link['url'] ?? '');
+            if ($linkTitle === '' || $linkUrl === '') continue;
+          ?>
+          <a class="activity-link-public" href="<?= esc($linkUrl) ?>" target="_blank" rel="noopener noreferrer">↗ <?= esc($linkTitle) ?></a>
           <?php endforeach; ?>
         </div>
         <?php endif; ?>

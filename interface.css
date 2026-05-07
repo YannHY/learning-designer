@@ -2922,8 +2922,42 @@ main {
 }
 
 @media (max-width: 900px) {
+  .top-brand {
+    align-items: center;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 14px;
+  }
+
+  .brand-left {
+    min-width: 0;
+  }
+
+  .top-brand-actions {
+    display: contents;
+  }
+
+  .top-tabs {
+    grid-column: 1 / -1;
+    grid-row: 2;
+    max-width: 100%;
+    overflow-x: auto;
+    padding-bottom: 2px;
+  }
+
+  .top-panel-toggle {
+    grid-column: 2;
+    grid-row: 1;
+    justify-self: end;
+  }
+
+  .top-tab {
+    flex: 0 0 auto;
+  }
+
   .brand-title {
     font-size: 18px;
+    line-height: 1.25;
   }
 
   .top-tab {

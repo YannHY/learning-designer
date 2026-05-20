@@ -360,20 +360,21 @@ function require_login_page(): array
 function require_cli_token_json(): array
 {
     $header = trim((string)($_SERVER['HTTP_AUTHORIZATION'] ?? ''));
+    $token = trim((string)($_SERVER['HTTP_X_LEARNING_CLI_TOKEN'] ?? ''));
     if ($header === '' && function_exists('apache_request_headers')) {
         $headers = apache_request_headers();
         foreach ($headers as $key => $value) {
             if (strcasecmp((string)$key, 'Authorization') === 0) {
                 $header = trim((string)$value);
-                break;
+            }
+            if ($token === '' && strcasecmp((string)$key, 'X-Learning-CLI-Token') === 0) {
+                $token = trim((string)$value);
             }
         }
     }
-    if (!preg_match('/^Bearer\s+(.+)$/i', $header, $matches)) {
-        app_json_response(['success' => false, 'error' => 'Jeton CLI requis.'], 401);
+    if ($token === '' && preg_match('/^Bearer\s+(.+)$/i', $header, $matches)) {
+        $token = trim((string)$matches[1]);
     }
-
-    $token = trim((string)$matches[1]);
     if ($token === '') {
         app_json_response(['success' => false, 'error' => 'Jeton CLI requis.'], 401);
     }

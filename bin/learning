@@ -21,7 +21,7 @@ from pathlib import Path
 from typing import Any
 
 
-VERSION = "0.3.0"
+VERSION = "0.3.1"
 DEFAULT_DAY_HOURS = 7
 DEFAULT_SITE = "https://www.ralentirtravaux.com/flo/learning-designer"
 INSTALL_URL = "https://raw.githubusercontent.com/YannHY/learning-designer/main/install.sh"
@@ -573,6 +573,7 @@ def command_publish(args: argparse.Namespace) -> None:
         data=json.dumps(payload, ensure_ascii=False).encode("utf-8"),
         headers={
             "Authorization": f"Bearer {token}",
+            "X-Learning-CLI-Token": token,
             "Content-Type": "application/json; charset=UTF-8",
             "Accept": "application/json",
             "User-Agent": f"learning-cli/{VERSION}",

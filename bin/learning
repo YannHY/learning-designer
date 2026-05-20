@@ -15,12 +15,15 @@ import subprocess
 import sys
 import time
 import unicodedata
+import urllib.error
+import urllib.request
 from pathlib import Path
 from typing import Any
 
 
-VERSION = "0.1.0"
+VERSION = "0.2.0"
 DEFAULT_DAY_HOURS = 7
+CONFIG_PATH = Path(os.environ.get("LEARNING_CONFIG", "~/.learning-designer/config.json")).expanduser()
 
 LEARNING_TYPES = {
     "undefined": ("Non défini", "Undefined"),
@@ -162,6 +165,50 @@ def save_document(path: Path, document: dict[str, Any]) -> None:
         json.dumps(document, ensure_ascii=False, indent=2) + "\n",
         encoding="utf-8",
     )
+
+
+def load_config() -> dict[str, Any]:
+    if not CONFIG_PATH.exists():
+        return {"sites": {}, "default_site": ""}
+    try:
+        data = json.loads(CONFIG_PATH.read_text(encoding="utf-8"))
+    except json.JSONDecodeError:
+        return {"sites": {}, "default_site": ""}
+    if not isinstance(data, dict):
+        return {"sites": {}, "default_site": ""}
+    data.setdefault("sites", {})
+    data.setdefault("default_site", "")
+    return data
+
+
+def save_config(config: dict[str, Any]) -> None:
+    CONFIG_PATH.parent.mkdir(parents=True, exist_ok=True)
+    CONFIG_PATH.write_text(json.dumps(config, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    try:
+        CONFIG_PATH.chmod(0o600)
+    except OSError:
+        pass
+
+
+def normalize_site_url(site: str) -> str:
+    value = site.strip().rstrip("/")
+    if not value:
+        die("site URL is required")
+    if not re.match(r"^https?://", value, re.I):
+        value = f"https://{value}"
+    return value
+
+
+def configured_site(args: argparse.Namespace) -> tuple[str, str]:
+    config = load_config()
+    raw_site = args.site or config.get("default_site") or ""
+    if not raw_site:
+        die("no site configured. Run `learning login --site https://www.ralentirtravaux.com/flo/learning-designer`.")
+    site = normalize_site_url(raw_site)
+    token = str(config.get("sites", {}).get(site, {}).get("token", "")).strip()
+    if not token:
+        die(f"no token configured for {site}. Run `learning login --site {site} --token <token>`.")
+    return site, token
 
 
 def normalize(value: str | None, aliases: dict[str, str], field: str) -> str:
@@ -486,6 +533,68 @@ def command_list(args: argparse.Namespace) -> None:
         die("unknown list kind")
 
 
+def command_login(args: argparse.Namespace) -> None:
+    site = normalize_site_url(args.site)
+    token = (args.token or "").strip()
+    if not token:
+        token = input("CLI token: ").strip()
+    if not token:
+        die("token is required")
+    config = load_config()
+    config.setdefault("sites", {})[site] = {"token": token}
+    config["default_site"] = site
+    save_config(config)
+    print(f"Saved CLI token for {site}")
+
+
+def command_publish(args: argparse.Namespace) -> None:
+    path = Path(args.file)
+    document = load_document(path)
+    site, token = configured_site(args)
+    title = args.title or document.get("meta", {}).get("name") or path.stem
+    payload = {
+        "title": title,
+        "document": document,
+    }
+    if args.design_id:
+        payload["design_id"] = int(args.design_id)
+
+    request = urllib.request.Request(
+        f"{site}/cli_publish.php",
+        data=json.dumps(payload, ensure_ascii=False).encode("utf-8"),
+        headers={
+            "Authorization": f"Bearer {token}",
+            "Content-Type": "application/json; charset=UTF-8",
+            "Accept": "application/json",
+            "User-Agent": f"learning-cli/{VERSION}",
+        },
+        method="POST",
+    )
+    try:
+        with urllib.request.urlopen(request, timeout=args.timeout) as response:
+            raw = response.read().decode("utf-8")
+    except urllib.error.HTTPError as exc:
+        body = exc.read().decode("utf-8", errors="replace")
+        die(f"publish failed ({exc.code}): {body}")
+    except urllib.error.URLError as exc:
+        die(f"publish failed: {exc.reason}")
+
+    try:
+        result = json.loads(raw)
+    except json.JSONDecodeError:
+        die(f"publish returned invalid JSON: {raw}")
+    if not result.get("success"):
+        die(f"publish failed: {result.get('error') or raw}")
+
+    share_url = result.get("share_url", "")
+    design = result.get("design", {}) if isinstance(result.get("design"), dict) else {}
+    print(f"Published {design.get('title') or title}")
+    if design.get("id"):
+        print(f"Design ID: {design['id']}")
+    if share_url:
+        print(share_url)
+
+
 def add_common_design_args(parser: argparse.ArgumentParser) -> None:
     parser.add_argument("--title", "--titre", default="", help="Design title / titre du design")
     parser.add_argument("--lang", choices=["fr", "en"], default="fr", help="UI language")
@@ -573,6 +682,19 @@ def build_parser() -> argparse.ArgumentParser:
     list_cmd = sub.add_parser("list", aliases=["lister"], help="List accepted values")
     list_cmd.add_argument("kind", choices=["types", "bloom", "competencies"])
     list_cmd.set_defaults(func=command_list)
+
+    login = sub.add_parser("login", aliases=["connexion"], help="Save a CLI publishing token for a site")
+    login.add_argument("--site", required=True, help="Learning Designer site URL")
+    login.add_argument("--token", help="CLI token generated from the profile page")
+    login.set_defaults(func=command_login)
+
+    publish = sub.add_parser("publish", aliases=["publier"], help="Publish a design JSON file online")
+    publish.add_argument("file")
+    publish.add_argument("--site", help="Learning Designer site URL. Defaults to the last login site.")
+    publish.add_argument("--title", "--titre", help="Published design title")
+    publish.add_argument("--design-id", type=int, help="Update an existing online design id")
+    publish.add_argument("--timeout", type=int, default=30)
+    publish.set_defaults(func=command_publish)
     return parser
 
 

@@ -212,6 +212,20 @@ function ensure_app_tables(PDO $db): void
         )");
 
         $db->exec("CREATE INDEX IF NOT EXISTS idx_learning_designs_owner ON learning_designs(owner_user_id)");
+
+        $db->exec("CREATE TABLE IF NOT EXISTS learning_cli_tokens (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_id INTEGER NOT NULL,
+            name TEXT NOT NULL DEFAULT 'CLI',
+            token_hash TEXT NOT NULL UNIQUE,
+            token_prefix TEXT NOT NULL DEFAULT '',
+            created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            last_used_at TEXT NULL,
+            revoked_at TEXT NULL,
+            FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+        )");
+
+        $db->exec("CREATE INDEX IF NOT EXISTS idx_learning_cli_tokens_user ON learning_cli_tokens(user_id)");
         return;
     }
 
@@ -238,6 +252,21 @@ function ensure_app_tables(PDO $db): void
             FOREIGN KEY (owner_user_id) REFERENCES users(id)
             ON DELETE CASCADE
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+
+    $db->exec("CREATE TABLE IF NOT EXISTS learning_cli_tokens (
+        id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+        user_id INT UNSIGNED NOT NULL,
+        name VARCHAR(120) NOT NULL DEFAULT 'CLI',
+        token_hash CHAR(64) NOT NULL UNIQUE,
+        token_prefix VARCHAR(16) NOT NULL DEFAULT '',
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        last_used_at DATETIME NULL,
+        revoked_at DATETIME NULL,
+        INDEX idx_learning_cli_tokens_user (user_id),
+        CONSTRAINT fk_learning_cli_tokens_user
+            FOREIGN KEY (user_id) REFERENCES users(id)
+            ON DELETE CASCADE
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
 }
 
 function ensure_app_migrations(PDO $db): void
@@ -245,6 +274,19 @@ function ensure_app_migrations(PDO $db): void
     $isSqlite = $db->getAttribute(PDO::ATTR_DRIVER_NAME) === 'sqlite';
 
     if ($isSqlite) {
+        $db->exec("CREATE TABLE IF NOT EXISTS learning_cli_tokens (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_id INTEGER NOT NULL,
+            name TEXT NOT NULL DEFAULT 'CLI',
+            token_hash TEXT NOT NULL UNIQUE,
+            token_prefix TEXT NOT NULL DEFAULT '',
+            created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            last_used_at TEXT NULL,
+            revoked_at TEXT NULL,
+            FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+        )");
+        $db->exec("CREATE INDEX IF NOT EXISTS idx_learning_cli_tokens_user ON learning_cli_tokens(user_id)");
+
         $cols = $db->query("PRAGMA table_info(learning_designs)")->fetchAll();
         $colNames = array_column($cols, 'name');
         if (!in_array('share_token', $colNames, true)) {
@@ -256,6 +298,21 @@ function ensure_app_migrations(PDO $db): void
         }
         return;
     }
+
+    $db->exec("CREATE TABLE IF NOT EXISTS learning_cli_tokens (
+        id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+        user_id INT UNSIGNED NOT NULL,
+        name VARCHAR(120) NOT NULL DEFAULT 'CLI',
+        token_hash CHAR(64) NOT NULL UNIQUE,
+        token_prefix VARCHAR(16) NOT NULL DEFAULT '',
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        last_used_at DATETIME NULL,
+        revoked_at DATETIME NULL,
+        INDEX idx_learning_cli_tokens_user (user_id),
+        CONSTRAINT fk_learning_cli_tokens_user_migration
+            FOREIGN KEY (user_id) REFERENCES users(id)
+            ON DELETE CASCADE
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
 
     $stmt = $db->prepare("SELECT COUNT(*) FROM information_schema.COLUMNS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'learning_designs' AND COLUMN_NAME = 'share_token'");
     $stmt->execute();
@@ -298,6 +355,51 @@ function require_login_page(): array
         exit;
     }
     return $user;
+}
+
+function require_cli_token_json(): array
+{
+    $header = trim((string)($_SERVER['HTTP_AUTHORIZATION'] ?? ''));
+    if ($header === '' && function_exists('apache_request_headers')) {
+        $headers = apache_request_headers();
+        foreach ($headers as $key => $value) {
+            if (strcasecmp((string)$key, 'Authorization') === 0) {
+                $header = trim((string)$value);
+                break;
+            }
+        }
+    }
+    if (!preg_match('/^Bearer\s+(.+)$/i', $header, $matches)) {
+        app_json_response(['success' => false, 'error' => 'Jeton CLI requis.'], 401);
+    }
+
+    $token = trim((string)$matches[1]);
+    if ($token === '') {
+        app_json_response(['success' => false, 'error' => 'Jeton CLI requis.'], 401);
+    }
+
+    $db = app_db();
+    $hash = hash('sha256', $token);
+    $stmt = $db->prepare("SELECT t.id AS token_id, u.id, u.username, u.email, u.role, u.status
+        FROM learning_cli_tokens t
+        JOIN users u ON u.id = t.user_id
+        WHERE t.token_hash = ? AND t.revoked_at IS NULL
+        LIMIT 1");
+    $stmt->execute([$hash]);
+    $user = $stmt->fetch();
+    if (!$user || (string)($user['status'] ?? '') !== 'active') {
+        app_json_response(['success' => false, 'error' => 'Jeton CLI invalide.'], 401);
+    }
+
+    $db->prepare("UPDATE learning_cli_tokens SET last_used_at = CURRENT_TIMESTAMP WHERE id = ?")
+        ->execute([(int)$user['token_id']]);
+
+    return [
+        'id' => (int)$user['id'],
+        'username' => (string)$user['username'],
+        'email' => (string)$user['email'],
+        'role' => (string)$user['role'],
+    ];
 }
 
 function require_admin_page(): array

@@ -125,6 +125,29 @@ Commandes disponibles : `init`/`nouveau`, `add-moment`/`ajouter-moment`, `add-ac
 
 Les activités acceptent les paramètres principaux de Learning Designer : type d'apprentissage, durée, groupe, présence enseignante, rythme, modalité, évaluation, description, notes, liens et compétences numériques (`A1`, `P6`, `C14` ou identifiants complets `competency:...`). Les acquis d'apprentissage peuvent être reliés à la taxonomie de Bloom en français ou en anglais.
 
+### Publication en ligne
+
+Pour publier un fichier JSON depuis le CLI vers une instance Learning Designer :
+
+1. Se connecter au site, ouvrir le profil, puis créer un jeton dans la section `Publication depuis le CLI`.
+2. Enregistrer le jeton localement :
+
+```bash
+learning login --site https://www.ralentirtravaux.com/flo/learning-designer
+```
+
+3. Coller le jeton quand le CLI le demande, puis publier :
+
+```bash
+learning publish design.json
+```
+
+La commande renvoie l'URL publique du design publié. Pour mettre à jour une publication existante, utilisez l'identifiant renvoyé par la première publication :
+
+```bash
+learning publish design.json --design-id 123
+```
+
 ## État actuel
 
 Le projet est aujourd'hui à la fois :

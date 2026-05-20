@@ -6,6 +6,8 @@ $user = require_login_page();
 $db = app_db();
 $message = '';
 $error = '';
+$newCliToken = '';
+$newCliTokenName = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     require_same_origin_post();
@@ -64,6 +66,28 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 ? 'Publication supprimée.'
                 : 'Publication introuvable ou deja supprimée.';
         }
+    } elseif ($action === 'create_cli_token') {
+        $tokenName = trim((string)($_POST['cli_token_name'] ?? 'CLI'));
+        if ($tokenName === '') {
+            $tokenName = 'CLI';
+        }
+        $tokenName = mb_substr($tokenName, 0, 120, 'UTF-8');
+        $newCliToken = 'ld_' . bin2hex(random_bytes(32));
+        $newCliTokenName = $tokenName;
+        $stmt = $db->prepare("INSERT INTO learning_cli_tokens (user_id, name, token_hash, token_prefix) VALUES (?, ?, ?, ?)");
+        $stmt->execute([(int)$user['id'], $tokenName, hash('sha256', $newCliToken), substr($newCliToken, 0, 12)]);
+        $message = 'Jeton CLI créé. Copiez-le maintenant : il ne sera plus affiché.';
+    } elseif ($action === 'revoke_cli_token') {
+        $tokenId = (int)($_POST['cli_token_id'] ?? 0);
+        if ($tokenId <= 0) {
+            $error = 'Jeton CLI invalide.';
+        } else {
+            $stmt = $db->prepare("UPDATE learning_cli_tokens SET revoked_at = CURRENT_TIMESTAMP WHERE id = ? AND user_id = ? AND revoked_at IS NULL");
+            $stmt->execute([$tokenId, (int)$user['id']]);
+            $message = $stmt->rowCount() > 0
+                ? 'Jeton CLI révoqué.'
+                : 'Jeton CLI introuvable ou deja révoqué.';
+        }
     } elseif ($action === 'delete_account') {
         $password = (string)($_POST['delete_current_password'] ?? '');
 
@@ -106,6 +130,10 @@ $designCount = (int)$countStmt->fetchColumn();
 $publishedStmt = $db->prepare("SELECT id, title, share_token, updated_at FROM learning_designs WHERE owner_user_id = ? AND is_published = 1 AND share_token IS NOT NULL AND share_token <> '' ORDER BY updated_at DESC");
 $publishedStmt->execute([(int)$user['id']]);
 $publishedDesigns = $publishedStmt->fetchAll();
+
+$cliTokensStmt = $db->prepare("SELECT id, name, token_prefix, created_at, last_used_at FROM learning_cli_tokens WHERE user_id = ? AND revoked_at IS NULL ORDER BY created_at DESC");
+$cliTokensStmt->execute([(int)$user['id']]);
+$cliTokens = $cliTokensStmt->fetchAll();
 
 function e(string $value): string
 {
@@ -229,6 +257,59 @@ function e(string $value): string
             <?php endif; ?>
         </section>
 
+        <section class="panel profile-cli" aria-labelledby="profile-cli-title">
+            <div class="profile-section-head">
+                <div>
+                    <h2 id="profile-cli-title" class="title-with-icon"><i class="fa-solid fa-terminal" aria-hidden="true"></i>Publication depuis le CLI</h2>
+                    <p id="profile-cli-copy" class="account-copy">Créez un jeton personnel pour publier depuis la commande <code>learning publish</code>.</p>
+                </div>
+            </div>
+
+            <?php if ($newCliToken !== ''): ?>
+                <div class="account-message success" data-profile-flash>
+                    <strong>Jeton <?= e($newCliTokenName) ?> :</strong>
+                    <code><?= e($newCliToken) ?></code>
+                    <br>
+                    <span>Commande :</span>
+                    <code>learning login --site <?= e(app_base_url()) ?></code>
+                </div>
+            <?php endif; ?>
+
+            <form method="post" class="account-form">
+                <input type="hidden" name="action" value="create_cli_token">
+                <div class="field">
+                    <label id="profile-cli-token-name-label" for="cli_token_name">Nom du jeton</label>
+                    <input id="cli_token_name" name="cli_token_name" type="text" value="Mac / Claude / Codex">
+                </div>
+                <button id="profile-cli-create-button" type="submit">Créer un jeton CLI</button>
+            </form>
+
+            <h3 id="profile-cli-active-title" class="profile-subtitle title-with-icon"><i class="fa-solid fa-key" aria-hidden="true"></i>Jetons actifs</h3>
+            <?php if (!$cliTokens): ?>
+                <p id="profile-cli-empty" class="profile-empty">Aucun jeton CLI actif.</p>
+            <?php else: ?>
+                <div class="profile-publication-list">
+                    <?php foreach ($cliTokens as $token): ?>
+                        <article class="profile-publication">
+                            <div class="profile-publication-main">
+                                <h4><?= e((string)$token['name']) ?></h4>
+                                <p>Préfixe : <code><?= e((string)$token['token_prefix']) ?>…</code></p>
+                                <p>Créé : <?= e((string)$token['created_at']) ?></p>
+                                <p>Dernière utilisation : <?= e((string)($token['last_used_at'] ?? 'Jamais')) ?></p>
+                            </div>
+                            <form method="post" class="profile-publication-actions" data-confirm-fr="Révoquer ce jeton CLI ?" data-confirm-en="Revoke this CLI token?" onsubmit="return window.confirm(this.dataset.confirm || this.dataset.confirmFr);">
+                                <input type="hidden" name="action" value="revoke_cli_token">
+                                <input type="hidden" name="cli_token_id" value="<?= (int)$token['id'] ?>">
+                                <button class="btn-icon-danger" type="submit" title="Révoquer le jeton" aria-label="Révoquer le jeton">
+                                    <i class="fa-solid fa-trash-can" aria-hidden="true"></i>
+                                </button>
+                            </form>
+                        </article>
+                    <?php endforeach; ?>
+                </div>
+            <?php endif; ?>
+        </section>
+
         <form method="post" class="account-form panel danger-panel" data-confirm-fr="Supprimer définitivement votre compte ?" data-confirm-en="Permanently delete your account?" onsubmit="return window.confirm(this.dataset.confirm || this.dataset.confirmFr);">
             <input type="hidden" name="action" value="delete_account">
             <h2 id="profile-delete-title" class="title-with-icon"><i class="fa-regular fa-trash-can" aria-hidden="true"></i>Supprimer mon compte</h2>
@@ -261,6 +342,12 @@ document.addEventListener('DOMContentLoaded', function () {
         'profile-saves-link': 'View designs',
         'profile-publications-title': 'Active publications',
         'profile-empty-publications': 'No published design yet.',
+        'profile-cli-title': 'CLI publishing',
+        'profile-cli-copy': 'Create a personal token to publish with the `learning publish` command.',
+        'profile-cli-token-name-label': 'Token name',
+        'profile-cli-create-button': 'Create CLI token',
+        'profile-cli-active-title': 'Active tokens',
+        'profile-cli-empty': 'No active CLI token.',
         'profile-delete-title': 'Delete my account',
         'profile-delete-copy': 'All your designs will be deleted with your account.',
         'profile-delete-password-label': 'Current password',
@@ -280,6 +367,10 @@ document.addEventListener('DOMContentLoaded', function () {
         'Publication invalide.': 'Invalid publication.',
         'Publication supprimée.': 'Publication deleted.',
         'Publication introuvable ou deja supprimée.': 'Publication not found or already deleted.',
+        'Jeton CLI créé. Copiez-le maintenant : il ne sera plus affiché.': 'CLI token created. Copy it now: it will not be shown again.',
+        'Jeton CLI invalide.': 'Invalid CLI token.',
+        'Jeton CLI révoqué.': 'CLI token revoked.',
+        'Jeton CLI introuvable ou deja révoqué.': 'CLI token not found or already revoked.',
         'Veuillez confirmer avec votre mot de passe.': 'Please confirm with your password.',
         'Mot de passe incorrect.': 'Incorrect password.',
         'Impossible de supprimer le dernier compte administrateur.': 'The last administrator account cannot be deleted.'

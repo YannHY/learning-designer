@@ -312,8 +312,8 @@ PROMPT;
 <main class="cli-shell">
     <header class="cli-hero">
         <p class="cli-kicker"><i class="fa-solid fa-code" aria-hidden="true"></i> CLI et IA</p>
-        <h1 class="cli-title">Créer et publier un design avec Claude ou Codex</h1>
-        <p class="cli-subtitle">Cette page explique la méthode la plus simple : installer une commande, demander à une IA de préparer le fichier, puis publier en ligne avec une seule ligne.</p>
+        <h1 class="cli-title">Créer avec l’IA</h1>
+        <p class="cli-subtitle">Installez la commande, demandez à Claude ou Codex de préparer le fichier, puis publiez le design en ligne avec une seule ligne.</p>
         <nav class="cli-anchor-list" aria-label="Sections de la page">
             <a href="#express"><i class="fa-solid fa-bolt" aria-hidden="true"></i> Version courte</a>
             <a href="#detail"><i class="fa-solid fa-list-check" aria-hidden="true"></i> Guide détaillé</a>

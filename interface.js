@@ -1828,7 +1828,12 @@ function applyLocalizedUI() {
   document.getElementById("info-modal-p4").innerHTML = t("infoP4");
   document.getElementById("info-modal-p5").innerHTML = t("infoP5");
   infoModalCloseBtn.textContent = t("close");
-  document.querySelector("label[for='lang-select']").textContent = t("uiLanguage");
+  const langLabel = t("uiLanguage");
+  document.querySelector("label[for='lang-select']").textContent = langLabel;
+  if (langSelect) {
+    langSelect.setAttribute("aria-label", langLabel);
+    langSelect.dataset.tooltip = langLabel;
+  }
   document.querySelectorAll(".duration-unit").forEach((unit) => {
     unit.textContent = "min";
   });

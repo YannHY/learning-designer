@@ -285,15 +285,13 @@
     cluster.className = "account-toolbar-cluster";
     cluster.id = "account-toolbar-cluster";
     cluster.innerHTML = `
-      <a id="saved-designs-btn" class="nav-account-btn nav-saves-btn" href="my-designs.php" title="${tr("Designs", "Designs")}" aria-label="${tr("Designs", "Designs")}">
+      <a id="saved-designs-btn" class="nav-account-btn nav-account-icon-btn nav-saves-btn" href="my-designs.php" title="${tr("Designs", "Designs")}" aria-label="${tr("Designs", "Designs")}">
         <i class="fa-regular fa-folder-open" aria-hidden="true"></i>
-        <span class="nav-account-label">${tr("Designs", "Designs")}</span>
       </a>
       <span id="account-pill" class="account-pill" style="display:none"></span>
       <div class="account-menu-wrap">
-        <button id="account-menu-btn" class="nav-account-btn" type="button">
+        <button id="account-menu-btn" class="nav-account-btn nav-account-icon-btn" type="button" title="${tr("Connexion", "Sign in")}" aria-label="${tr("Connexion", "Sign in")}">
           <i class="fa-regular fa-user" aria-hidden="true"></i>
-          <span class="nav-account-label">${tr("Connexion", "Sign in")}</span>
         </button>
         <div id="account-menu" class="account-menu hidden" role="menu" aria-hidden="true"></div>
       </div>
@@ -327,14 +325,18 @@
 
     if (!authState.user) {
       pill.innerHTML = `${tr("Compte", "Account")} <strong>${tr("non connecte", "not signed in")}</strong>`;
-      button.innerHTML = `<i class="fa-regular fa-user" aria-hidden="true"></i><span class="nav-account-label">${tr("Connexion", "Sign in")}</span>`;
+      button.innerHTML = `<i class="fa-regular fa-user" aria-hidden="true"></i>`;
+      button.title = tr("Connexion", "Sign in");
+      button.setAttribute("aria-label", tr("Connexion", "Sign in"));
       menu.innerHTML = "";
       syncSaveUi();
       return;
     }
 
     pill.innerHTML = `${tr("Compte", "Account")} <strong>${escapeHtml(authState.user.username || authState.user.email)}</strong>`;
-    button.innerHTML = `<i class="fa-solid fa-user-check" aria-hidden="true"></i><span class="nav-account-label">${tr("Compte", "Account")}</span>`;
+    button.innerHTML = `<i class="fa-solid fa-user-check" aria-hidden="true"></i>`;
+    button.title = tr("Compte", "Account");
+    button.setAttribute("aria-label", tr("Compte", "Account"));
     menu.innerHTML = `
       <a class="account-menu-link" role="menuitem" href="profile.php">${tr("Profil", "Profile")}</a>
       ${String(authState.user.role) === "admin" ? `<a class="account-menu-link" role="menuitem" href="admin.php">${tr("Administration", "Admin")}</a>` : ""}

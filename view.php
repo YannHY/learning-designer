@@ -425,6 +425,7 @@ foreach ($sessions as $s) {
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title><?= esc($title) ?> — Learning Designer</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" referrerpolicy="no-referrer">
   <style>
     :root {
       --bg: #f5f7fb;
@@ -448,6 +449,43 @@ foreach ($sessions as $s) {
     }
     a { color: var(--accent); }
     .page { max-width: 1000px; margin: 0 auto; padding: 32px 20px 60px; }
+    .view-breadcrumb {
+      margin: 0 0 22px;
+      color: var(--text-2);
+      font-size: 13px;
+      font-weight: 600;
+    }
+    .view-breadcrumb ol {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+    .view-breadcrumb a {
+      color: var(--accent);
+      text-decoration: none;
+    }
+    .view-breadcrumb-home {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 20px;
+      height: 20px;
+    }
+    .view-breadcrumb a:hover,
+    .view-breadcrumb a:focus-visible {
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
+    .view-breadcrumb [aria-current="page"] {
+      color: var(--text-1);
+    }
+    .view-breadcrumb-separator {
+      color: #9aa4b2;
+    }
 
     /* Header */
     .hero { margin-bottom: 32px; }
@@ -720,6 +758,15 @@ foreach ($sessions as $s) {
 </head>
 <body>
 <main class="page">
+  <nav class="view-breadcrumb" aria-label="Fil d'Ariane">
+    <ol>
+      <li><a class="view-breadcrumb-home" href="index.html" aria-label="Accueil" title="Accueil"><i class="fa-solid fa-house" aria-hidden="true"></i></a></li>
+      <li class="view-breadcrumb-separator" aria-hidden="true">/</li>
+      <li><span>Design publié</span></li>
+      <li class="view-breadcrumb-separator" aria-hidden="true">/</li>
+      <li><span aria-current="page"><?= esc($title) ?></span></li>
+    </ol>
+  </nav>
 
   <header class="hero">
     <h1><?= esc($title) ?></h1>

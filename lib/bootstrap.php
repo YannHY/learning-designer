@@ -438,11 +438,11 @@ function render_site_nav(string $active = ''): void
     $user = current_user();
     $isAdmin = (string)($user['role'] ?? '') === 'admin';
     $username = trim((string)($user['username'] ?? $user['email'] ?? ''));
-    $homeClass = $active === 'home' ? ' nav-account-btn-active' : '';
     $savesClass = $active === 'saves' ? ' nav-account-btn-active' : '';
     $cliClass = $active === 'cli' ? ' nav-account-btn-active' : '';
     $profileClass = $active === 'profile' ? ' nav-account-btn-active' : '';
     $adminClass = $active === 'admin' ? ' nav-account-btn-active' : '';
+    $breadcrumbItems = site_breadcrumb_items($active);
     ?>
     <header class="site-nav site-nav-page" role="navigation" aria-label="Navigation principale" data-site-i18n-attr="aria-label" data-site-i18n-en="Main navigation" data-site-i18n-fr="Navigation principale">
         <div class="site-nav-brand">
@@ -455,7 +455,7 @@ function render_site_nav(string $active = ''): void
         </div>
         <div class="site-nav-actions">
             <label for="lang-select" class="sr-only" data-site-i18n-en="Interface language" data-site-i18n-fr="Langue de l'interface">Langue de l'interface</label>
-            <select id="lang-select" class="nav-lang-select" aria-label="Langue de l'interface" data-site-i18n-attr="aria-label" data-site-i18n-en="Interface language" data-site-i18n-fr="Langue de l'interface">
+            <select id="lang-select" class="nav-lang-select" aria-label="Langue de l'interface" title="Langue de l'interface" data-site-i18n-attr="aria-label,title" data-site-i18n-en="Interface language" data-site-i18n-fr="Langue de l'interface">
                 <option value="fr">FR</option>
                 <option value="en">EN</option>
             </select>
@@ -468,21 +468,16 @@ function render_site_nav(string $active = ''): void
                 </svg>
             </button>
             <div class="account-toolbar-cluster">
-                <a class="nav-icon-btn<?= $homeClass ?>" href="index.html" title="Editeur" aria-label="Editeur" data-site-i18n-attr="title,aria-label" data-site-i18n-en="Editor" data-site-i18n-fr="Editeur">
-                    <i class="fa-solid fa-house" aria-hidden="true"></i>
-                </a>
-                <a class="nav-icon-btn<?= $cliClass ?>" href="cli.php" title="CLI et IA" aria-label="CLI et IA" data-site-i18n-attr="title,aria-label" data-site-i18n-en="CLI and AI" data-site-i18n-fr="CLI et IA">
+                <a class="nav-icon-btn<?= $cliClass ?>" href="cli.php" title="CLI" aria-label="CLI" data-site-i18n-attr="title,aria-label" data-site-i18n-en="CLI" data-site-i18n-fr="CLI">
                     <i class="fa-solid fa-code" aria-hidden="true"></i>
                 </a>
                 <?php if ($user): ?>
-                    <a class="nav-account-btn<?= $savesClass ?>" href="my-designs.php">
+                    <a class="nav-account-btn nav-account-icon-btn<?= $savesClass ?>" href="my-designs.php" title="Designs" aria-label="Designs" data-site-i18n-attr="title,aria-label" data-site-i18n-en="Designs" data-site-i18n-fr="Designs">
                         <i class="fa-regular fa-folder-open" aria-hidden="true"></i>
-                        <span class="nav-account-label">Designs</span>
                     </a>
                     <div class="account-menu-wrap">
-                        <button id="account-menu-btn" class="nav-account-btn<?= $profileClass !== '' || $adminClass !== '' ? ' nav-account-btn-active' : '' ?>" type="button" aria-expanded="false" aria-controls="account-menu">
+                        <button id="account-menu-btn" class="nav-account-btn nav-account-icon-btn<?= $profileClass !== '' || $adminClass !== '' ? ' nav-account-btn-active' : '' ?>" type="button" aria-expanded="false" aria-controls="account-menu" title="Compte" aria-label="Compte" data-site-i18n-attr="title,aria-label" data-site-i18n-en="Account" data-site-i18n-fr="Compte">
                             <i class="fa-solid fa-user-check" aria-hidden="true"></i>
-                            <span class="nav-account-label" data-site-i18n-en="Account" data-site-i18n-fr="Compte">Compte</span>
                         </button>
                         <div id="account-menu" class="account-menu hidden" role="menu" aria-hidden="true">
                             <a class="account-menu-link<?= $profileClass ?>" role="menuitem" href="profile.php" data-site-i18n-en="Profile" data-site-i18n-fr="Profil">Profil</a>
@@ -493,18 +488,14 @@ function render_site_nav(string $active = ''): void
                         </div>
                     </div>
                 <?php else: ?>
-                    <a class="nav-account-btn<?= $active === 'signup' ? ' nav-account-btn-active' : '' ?>" href="signup.php">
-                        <i class="fa-solid fa-user-plus" aria-hidden="true"></i>
-                        <span class="nav-account-label" data-site-i18n-en="Create account" data-site-i18n-fr="Créer un compte">Créer un compte</span>
-                    </a>
-                    <a class="nav-account-btn<?= $active === 'login' ? ' nav-account-btn-active' : '' ?>" href="login.php">
+                    <a class="nav-account-btn nav-account-icon-btn<?= $active === 'login' ? ' nav-account-btn-active' : '' ?>" href="login.php" title="Connexion" aria-label="Connexion" data-site-i18n-attr="title,aria-label" data-site-i18n-en="Sign in" data-site-i18n-fr="Connexion">
                         <i class="fa-regular fa-user" aria-hidden="true"></i>
-                        <span class="nav-account-label" data-site-i18n-en="Sign in" data-site-i18n-fr="Connexion">Connexion</span>
                     </a>
                 <?php endif; ?>
             </div>
         </div>
     </header>
+    <?php render_site_breadcrumb($breadcrumbItems); ?>
     <script>
     document.addEventListener('DOMContentLoaded', function () {
         var html = document.documentElement;
@@ -609,6 +600,79 @@ function render_site_nav(string $active = ''): void
         });
     });
     </script>
+    <?php
+}
+
+function site_breadcrumb_items(string $active = ''): array
+{
+    $page = basename((string)($_SERVER['SCRIPT_NAME'] ?? ''));
+    $key = $active !== '' ? $active : pathinfo($page, PATHINFO_FILENAME);
+    $map = [
+        'about' => [
+            ['fr' => 'À propos', 'en' => 'About'],
+        ],
+        'admin' => [
+            ['fr' => 'Compte', 'en' => 'Account'],
+            ['fr' => 'Administration', 'en' => 'Administration'],
+        ],
+        'bloom' => [
+            ['fr' => 'Taxonomie de Bloom', 'en' => "Bloom's Taxonomy"],
+        ],
+        'cli' => [
+            ['fr' => 'CLI', 'en' => 'CLI'],
+        ],
+        'competencies' => [
+            ['fr' => 'Compétences numériques', 'en' => 'Digital Competencies'],
+        ],
+        'login' => [
+            ['fr' => 'Connexion', 'en' => 'Sign in'],
+        ],
+        'profile' => [
+            ['fr' => 'Compte', 'en' => 'Account'],
+            ['fr' => 'Profil', 'en' => 'Profile'],
+        ],
+        'saves' => [
+            ['fr' => 'Mes designs', 'en' => 'My designs'],
+        ],
+        'setup_admin' => [
+            ['fr' => 'Administration', 'en' => 'Administration'],
+            ['fr' => 'Configuration', 'en' => 'Setup'],
+        ],
+        'signup' => [
+            ['fr' => 'Créer un compte', 'en' => 'Create account'],
+        ],
+    ];
+
+    return $map[$key] ?? [
+        ['fr' => 'Page', 'en' => 'Page'],
+    ];
+}
+
+function render_site_breadcrumb(array $items): void
+{
+    if ($items === []) {
+        return;
+    }
+    ?>
+    <nav class="site-breadcrumb" aria-label="Fil d'Ariane" data-site-i18n-attr="aria-label" data-site-i18n-en="Breadcrumb" data-site-i18n-fr="Fil d'Ariane">
+        <ol>
+            <li>
+                <a class="site-breadcrumb-home" href="index.html" aria-label="Accueil" title="Accueil" data-site-i18n-attr="aria-label,title" data-site-i18n-en="Home" data-site-i18n-fr="Accueil">
+                    <i class="fa-solid fa-house" aria-hidden="true"></i>
+                </a>
+            </li>
+            <?php foreach ($items as $index => $item): ?>
+                <li class="site-breadcrumb-separator" aria-hidden="true">/</li>
+                <li>
+                    <?php if ($index === count($items) - 1): ?>
+                        <span aria-current="page" data-site-i18n-en="<?= h((string)($item['en'] ?? 'Page')) ?>" data-site-i18n-fr="<?= h((string)($item['fr'] ?? 'Page')) ?>"><?= h((string)($item['fr'] ?? 'Page')) ?></span>
+                    <?php else: ?>
+                        <span data-site-i18n-en="<?= h((string)($item['en'] ?? 'Page')) ?>" data-site-i18n-fr="<?= h((string)($item['fr'] ?? 'Page')) ?>"><?= h((string)($item['fr'] ?? 'Page')) ?></span>
+                    <?php endif; ?>
+                </li>
+            <?php endforeach; ?>
+        </ol>
+    </nav>
     <?php
 }
 

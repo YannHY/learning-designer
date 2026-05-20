@@ -1,7 +1,7 @@
 .account-toolbar-cluster {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 14px;
   flex-wrap: wrap;
   justify-content: flex-end;
 }
@@ -55,6 +55,12 @@
     background 120ms ease,
     color 120ms ease,
     border-color 120ms ease;
+}
+
+.nav-account-icon-btn {
+  width: 38px;
+  padding: 0;
+  flex-shrink: 0;
 }
 
 .nav-saves-btn {

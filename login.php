@@ -61,9 +61,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="interface.css?v=20260502-2">
-    <link rel="stylesheet" href="account-ui.css?v=20260502-2">
-    <link rel="stylesheet" href="account-pages.css">
+    <link rel="stylesheet" href="interface.css?v=20260520-2">
+    <link rel="stylesheet" href="account-ui.css?v=20260520-4">
+    <link rel="stylesheet" href="account-pages.css?v=20260520-ariane5">
 </head>
 <body class="login-page">
 <?php render_site_nav('login'); ?>

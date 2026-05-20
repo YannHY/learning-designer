@@ -31,6 +31,66 @@ body.signup-page {
   top: 0;
   z-index: 20;
 }
+.site-breadcrumb {
+  width: min(1180px, calc(100vw - 36px));
+  margin: 18px auto 0;
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 600;
+}
+body.about-page .site-breadcrumb {
+  width: min(724px, calc(100vw - 72px));
+}
+body.admin-page .site-breadcrumb,
+body.profile-page .site-breadcrumb {
+  width: min(1144px, calc(100vw - 72px));
+  padding-left: 28px;
+}
+body.bloom-page .site-breadcrumb {
+  width: min(1320px, calc(100vw - 24px));
+}
+body.cli-page .site-breadcrumb {
+  width: min(1080px, calc(100vw - 40px));
+}
+body.designs-page .site-breadcrumb {
+  width: min(980px, calc(100vw - 32px));
+}
+body.login-page .site-breadcrumb,
+body.signup-page .site-breadcrumb,
+body.setup-page .site-breadcrumb {
+  width: min(480px, calc(100vw - 36px));
+}
+.site-breadcrumb ol {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.site-breadcrumb a {
+  color: var(--primary);
+  text-decoration: none;
+}
+.site-breadcrumb-home {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+}
+.site-breadcrumb a:hover,
+.site-breadcrumb a:focus-visible {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.site-breadcrumb [aria-current="page"] {
+  color: var(--text);
+}
+.site-breadcrumb-separator {
+  color: #8b9aad;
+}
 .site-nav-brand-link {
   display: inline-flex;
   align-items: center;
@@ -61,6 +121,9 @@ body.signup-page {
   padding-top: 24px;
 }
 .site-nav-page + .saved-shell {
+  margin-top: 24px;
+}
+.site-breadcrumb + .saved-shell {
   margin-top: 24px;
 }
 .profile-shell {
@@ -368,6 +431,22 @@ th {
   color: #8cc6ff;
 }
 
+[data-theme="dark"] .site-breadcrumb {
+  color: #aeb8ca;
+}
+
+[data-theme="dark"] .site-breadcrumb a {
+  color: #8cc6ff;
+}
+
+[data-theme="dark"] .site-breadcrumb [aria-current="page"] {
+  color: #f1f5f9;
+}
+
+[data-theme="dark"] .site-breadcrumb-separator {
+  color: #7d8798;
+}
+
 [data-theme="dark"] .account-card {
   background: linear-gradient(180deg, rgba(36, 43, 64, 0.96), rgba(30, 36, 54, 0.96));
   border-color: rgba(103, 116, 145, 0.45);
@@ -461,6 +540,11 @@ th {
 }
 
 @media (max-width: 760px) {
+  body.admin-page .site-breadcrumb,
+  body.profile-page .site-breadcrumb {
+    padding-left: 0;
+  }
+
   .profile-section-head,
   .profile-publication {
     flex-direction: column;

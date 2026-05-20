@@ -16,11 +16,11 @@
     </script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" referrerpolicy="no-referrer" />
-    <link rel="stylesheet" href="account-ui.css?v=20260502-6" />
+    <link rel="stylesheet" href="account-ui.css?v=20260520-4" />
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="interface.css?v=20260507-1" />
+    <link rel="stylesheet" href="interface.css?v=20260520-2" />
   </head>
   <body>
     <a id="skip-link" class="skip-link" href="#board">Aller au contenu principal</a>
@@ -34,7 +34,7 @@
       </div>
       <div id="site-nav-actions" class="site-nav-actions">
         <label for="lang-select" class="sr-only">Langue de l'interface</label>
-        <select id="lang-select" class="nav-lang-select">
+        <select id="lang-select" class="nav-lang-select" aria-label="Langue de l'interface" title="Langue de l'interface">
           <option value="fr">FR</option>
           <option value="en">EN</option>
         </select>
@@ -48,7 +48,7 @@
             <path fill="currentColor" d="M12 3c-4.97 0-9 4.03-9 9s4.03 9 9 9 9-4.03 9-9c0-.46-.04-.92-.1-1.36a5.389 5.389 0 0 1-4.4 2.26 5.403 5.403 0 0 1-3.14-9.8c-.44-.06-.9-.1-1.36-.1z"/>
           </svg>
         </button>
-        <a class="nav-icon-btn" href="cli.php" title="CLI et IA" aria-label="CLI et IA">
+        <a class="nav-icon-btn" href="cli.php" title="CLI" aria-label="CLI">
           <i class="fa-solid fa-code" aria-hidden="true"></i>
         </a>
       </div>
@@ -595,8 +595,8 @@
         };
       })();
     </script>
-    <script src="interface.js?v=20260505-1"></script>
-    <script src="account-ui.js?v=20260502-9"></script>
+    <script src="interface.js?v=20260520-1"></script>
+    <script src="account-ui.js?v=20260520-1"></script>
     <script>
       (function() {
         var html = document.documentElement;

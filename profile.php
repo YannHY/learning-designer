@@ -145,14 +145,14 @@ function e(string $value): string
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Mon profil | Learning Designer</title>
+    <title>Profil | Learning Designer</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" referrerpolicy="no-referrer">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="interface.css?v=20260502-2">
-    <link rel="stylesheet" href="account-ui.css?v=20260502-2">
-    <link rel="stylesheet" href="account-pages.css?v=20260506">
+    <link rel="stylesheet" href="interface.css?v=20260520-2">
+    <link rel="stylesheet" href="account-ui.css?v=20260520-4">
+    <link rel="stylesheet" href="account-pages.css?v=20260520-ariane5">
     <style>
         body.profile-page {
             background: #fff;
@@ -170,8 +170,7 @@ function e(string $value): string
     <section class="account-card wide">
         <div class="account-topbar">
             <div>
-                <p id="profile-kicker" class="account-kicker">Compte</p>
-                <h1 id="profile-title" class="title-with-icon"><i class="fa-regular fa-user" aria-hidden="true"></i>Mon profil</h1>
+                <h1 id="profile-title" class="title-with-icon"><i class="fa-regular fa-user" aria-hidden="true"></i>Profil</h1>
             </div>
         </div>
         <p class="account-copy"><span id="profile-role-label">Rôle</span>&nbsp;: <?= e((string)$me['role']) ?>.</p>
@@ -331,8 +330,7 @@ function e(string $value): string
 <script>
 document.addEventListener('DOMContentLoaded', function () {
     var translations = {
-        'profile-kicker': 'Account',
-        'profile-title': 'My profile',
+        'profile-title': 'Profile',
         'profile-role-label': 'Role',
         'profile-info-title': 'Information',
         'profile-username-label': 'Username',
@@ -409,7 +407,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     function applyProfileLanguage(lang) {
         document.documentElement.lang = lang === 'en' ? 'en' : 'fr';
-        document.title = lang === 'en' ? 'My profile | Learning Designer' : 'Mon profil | Learning Designer';
+        document.title = lang === 'en' ? 'Profile | Learning Designer' : 'Profil | Learning Designer';
 
         Object.keys(translations).forEach(function (id) {
             var el = document.getElementById(id);

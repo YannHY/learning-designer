@@ -214,7 +214,7 @@ select:focus-visible,
   display: flex;
   align-items: center;
   justify-content: flex-end;
-  gap: 10px;
+  gap: 14px;
   flex-wrap: wrap;
 }
 
@@ -1557,8 +1557,9 @@ body.fullscreen-editor-open {
 .nav-lang-select {
   appearance: none;
   -webkit-appearance: none;
+  width: 38px;
   height: 38px;
-  padding: 0 14px;
+  padding: 0;
   border: 1px solid rgba(255, 255, 255, 0.12);
   border-radius: 999px;
   background: rgba(255, 255, 255, 0.08);
@@ -1567,6 +1568,8 @@ body.fullscreen-editor-open {
   font-size: 13px;
   font-weight: 600;
   letter-spacing: 0.05em;
+  text-align: center;
+  text-align-last: center;
   cursor: pointer;
   transition:
     background var(--transition-fast),

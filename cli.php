@@ -126,7 +126,7 @@ PROMPT;
             letter-spacing: 0;
         }
         .cli-subtitle {
-            max-width: 780px;
+            max-width: 1040px;
             margin: 0;
             color: var(--muted);
             font-size: 17px;

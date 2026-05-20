@@ -223,12 +223,17 @@ function e(string $value): string
                     <h2 id="profile-productions-title" class="title-with-icon"><i class="fa-solid fa-layer-group" aria-hidden="true"></i>Mes productions</h2>
                     <p id="profile-productions-copy" class="account-copy">Suivez vos sauvegardes et les designs publiés avec un lien web.</p>
                 </div>
-                <a id="profile-saves-link" class="subtle-link profile-saves-link" href="my-designs.php">Voir les designs</a>
+                <div class="profile-section-actions">
+                    <a id="profile-saves-link" class="subtle-link profile-saves-link" href="my-designs.php">Voir les designs</a>
+                </div>
             </div>
 
-            <div class="profile-stat">
-                <span class="profile-stat-value"><?= $designCount ?></span>
-                <span class="profile-stat-label" data-profile-design-count="<?= $designCount ?>">design<?= $designCount > 1 ? 's' : '' ?> enregistré<?= $designCount > 1 ? 's' : '' ?></span>
+            <div class="profile-progress-row">
+                <div class="profile-stat">
+                    <span class="profile-stat-value"><?= $designCount ?></span>
+                    <span class="profile-stat-label" data-profile-design-count="<?= $designCount ?>">design<?= $designCount > 1 ? 's' : '' ?> enregistré<?= $designCount > 1 ? 's' : '' ?></span>
+                </div>
+                <a id="profile-competencies-link" class="profile-primary-link" href="competencies.php"><i class="fa-solid fa-table-list" aria-hidden="true"></i>Voir mes compétences</a>
             </div>
 
             <h3 id="profile-publications-title" class="profile-subtitle title-with-icon"><i class="fa-solid fa-share-nodes" aria-hidden="true"></i>Publications actives</h3>
@@ -339,6 +344,7 @@ document.addEventListener('DOMContentLoaded', function () {
         'profile-update-password': 'Update',
         'profile-productions-title': 'My designs',
         'profile-productions-copy': 'Track your saved designs and designs published with a web link.',
+        'profile-competencies-link': 'View my competencies',
         'profile-saves-link': 'View designs',
         'profile-publications-title': 'Active publications',
         'profile-empty-publications': 'No published design yet.',
@@ -383,6 +389,7 @@ document.addEventListener('DOMContentLoaded', function () {
         el.textContent = '';
         if (icon) {
             el.appendChild(icon);
+            el.appendChild(document.createTextNode(' '));
             el.appendChild(document.createTextNode(text));
         } else {
             el.textContent = text;

@@ -489,13 +489,13 @@ function render_site_nav(string $active = ''): void
                             <?php if ($isAdmin): ?>
                                 <a class="account-menu-link<?= $adminClass ?>" role="menuitem" href="admin.php" data-site-i18n-en="Administration" data-site-i18n-fr="Administration">Administration</a>
                             <?php endif; ?>
-                            <a class="account-menu-link" role="menuitem" href="logout.php" data-site-i18n-en="Sign out" data-site-i18n-fr="Deconnexion">Deconnexion</a>
+                            <a class="account-menu-link" role="menuitem" href="logout.php" data-site-i18n-en="Sign out" data-site-i18n-fr="Déconnexion">Déconnexion</a>
                         </div>
                     </div>
                 <?php else: ?>
                     <a class="nav-account-btn<?= $active === 'signup' ? ' nav-account-btn-active' : '' ?>" href="signup.php">
                         <i class="fa-solid fa-user-plus" aria-hidden="true"></i>
-                        <span class="nav-account-label" data-site-i18n-en="Create account" data-site-i18n-fr="Creer un compte">Creer un compte</span>
+                        <span class="nav-account-label" data-site-i18n-en="Create account" data-site-i18n-fr="Créer un compte">Créer un compte</span>
                     </a>
                     <a class="nav-account-btn<?= $active === 'login' ? ' nav-account-btn-active' : '' ?>" href="login.php">
                         <i class="fa-regular fa-user" aria-hidden="true"></i>

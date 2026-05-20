@@ -1,4 +1,5 @@
 .DS_Store
+.claude/
 data/*.sqlite
 data/*.sqlite-*
 learning-design-secret.php

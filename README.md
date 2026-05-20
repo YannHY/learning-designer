@@ -108,7 +108,7 @@ Installation en une commande :
 curl -fsSL https://raw.githubusercontent.com/YannHY/learning-designer/main/install.sh | sh
 ```
 
-Le script installe `learning` dans un dossier déjà disponible dans le `PATH` (`/usr/local/bin` ou équivalent) afin que la commande soit utilisable immédiatement, sans modifier le profil shell.
+Le script ouvre un court dialogue d'installation : il vérifie les prérequis, propose un dossier déjà disponible dans le `PATH` (`/usr/local/bin`, `/opt/homebrew/bin` ou équivalent), puis installe `learning` afin que la commande soit utilisable immédiatement, sans modifier le profil shell.
 
 Utilisation rapide :
 

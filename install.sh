@@ -3,6 +3,84 @@ set -eu
 
 REPO="${LEARNING_DESIGNER_REPO:-YannHY/learning-designer}"
 REF="${LEARNING_DESIGNER_REF:-main}"
+TTY="/dev/tty"
+
+has_tty() {
+  ( : > "$TTY" ) >/dev/null 2>&1
+}
+
+say() {
+  if has_tty; then
+    printf '%s\n' "$*" > "$TTY"
+  else
+    printf '%s\n' "$*"
+  fi
+}
+
+ask() {
+  prompt="$1"
+  default="$2"
+  if ! has_tty; then
+    printf '%s\n' "$default"
+    return
+  fi
+  if [ -n "$default" ]; then
+    printf '%s [%s]: ' "$prompt" "$default" > "$TTY"
+  else
+    printf '%s: ' "$prompt" > "$TTY"
+  fi
+  IFS= read -r answer < "$TTY" || answer=""
+  if [ -n "$answer" ]; then
+    printf '%s\n' "$answer"
+  else
+    printf '%s\n' "$default"
+  fi
+}
+
+is_in_path() {
+  case ":$PATH:" in
+    *":$1:"*) return 0 ;;
+    *) return 1 ;;
+  esac
+}
+
+is_good_path_dir() {
+  case "$1" in
+    /usr/local/bin|/opt/homebrew/bin|"$HOME"/.local/bin|"$HOME"/bin) return 0 ;;
+    *) return 1 ;;
+  esac
+}
+
+first_suitable_dir() {
+  OLD_IFS=$IFS
+  IFS=:
+  for dir in $PATH; do
+    if is_good_path_dir "$dir" && [ -d "$dir" ] && [ -w "$dir" ]; then
+      IFS=$OLD_IFS
+      printf '%s\n' "$dir"
+      return
+    fi
+  done
+  IFS=$OLD_IFS
+
+  if is_in_path "/usr/local/bin"; then
+    printf '%s\n' "/usr/local/bin"
+    return
+  fi
+  if is_in_path "/opt/homebrew/bin"; then
+    printf '%s\n' "/opt/homebrew/bin"
+    return
+  fi
+  if is_in_path "$HOME/.local/bin"; then
+    printf '%s\n' "$HOME/.local/bin"
+    return
+  fi
+  if is_in_path "$HOME/bin"; then
+    printf '%s\n' "$HOME/bin"
+    return
+  fi
+  printf '%s\n' ""
+}
 
 choose_install_dir() {
   if [ -n "${LEARNING_INSTALL_DIR:-}" ]; then
@@ -10,25 +88,58 @@ choose_install_dir() {
     return
   fi
 
-  OLD_IFS=$IFS
-  IFS=:
-  for dir in $PATH; do
-    case "$dir" in
-      /usr/local/bin|/opt/homebrew/bin|"$HOME"/.local/bin|"$HOME"/bin)
-        if [ -d "$dir" ] && [ -w "$dir" ]; then
-          IFS=$OLD_IFS
-          printf '%s\n' "$dir"
-          return
-        fi
-        ;;
-    esac
-  done
-  IFS=$OLD_IFS
+  default_dir="$(first_suitable_dir)"
+  if [ -z "$default_dir" ]; then
+    echo "install.sh: no suitable install directory found in PATH" >&2
+    exit 1
+  fi
 
-  case ":$PATH:" in
-    *":/usr/local/bin:"*) printf '%s\n' "/usr/local/bin" ;;
-    *":/opt/homebrew/bin:"*) printf '%s\n' "/opt/homebrew/bin" ;;
-    *) echo "install.sh: no suitable install directory found in PATH" >&2; exit 1 ;;
+  if ! has_tty; then
+    printf '%s\n' "$default_dir"
+    return
+  fi
+
+  say ""
+  say "Learning Designer CLI installer"
+  say ""
+  say "This installs the command: learning"
+  say "No shell profile will be modified."
+  say ""
+  say "Choose where to install it:"
+  say "  1. $default_dir (recommended)"
+  if is_in_path "/usr/local/bin" && [ "$default_dir" != "/usr/local/bin" ]; then
+    say "  2. /usr/local/bin"
+    second_dir="/usr/local/bin"
+  elif is_in_path "/opt/homebrew/bin" && [ "$default_dir" != "/opt/homebrew/bin" ]; then
+    say "  2. /opt/homebrew/bin"
+    second_dir="/opt/homebrew/bin"
+  else
+    second_dir=""
+  fi
+  say "  c. Custom directory already in PATH"
+  say ""
+
+  choice="$(ask "Selection" "1")"
+  case "$choice" in
+    1|"") printf '%s\n' "$default_dir" ;;
+    2)
+      if [ -n "$second_dir" ]; then
+        printf '%s\n' "$second_dir"
+      else
+        printf '%s\n' "$default_dir"
+      fi
+      ;;
+    c|C|custom|Custom)
+      custom_dir="$(ask "Directory" "$default_dir")"
+      if ! is_in_path "$custom_dir"; then
+        say "That directory is not in PATH, so learning would not be available directly."
+        say "Using $default_dir instead."
+        printf '%s\n' "$default_dir"
+      else
+        printf '%s\n' "$custom_dir"
+      fi
+      ;;
+    *) printf '%s\n' "$default_dir" ;;
   esac
 }
 
@@ -39,6 +150,12 @@ cleanup() {
   rm -f "$TMP_FILE"
 }
 trap cleanup EXIT
+
+if ! command -v python3 >/dev/null 2>&1; then
+  echo "install.sh: python3 is required to run learning." >&2
+  echo "Install Python 3, then run this installer again." >&2
+  exit 1
+fi
 
 if [ -f "./bin/learning" ]; then
   cp "./bin/learning" "$TMP_FILE"
@@ -75,5 +192,6 @@ else
   exit 1
 fi
 
-echo "Installed learning to $TARGET"
-echo "Run: learning --help"
+say ""
+say "Installed learning to $TARGET"
+say "Run: learning --help"

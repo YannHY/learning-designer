@@ -203,6 +203,31 @@ PROMPT;
             font: 13px/1.55 ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
             white-space: pre;
         }
+        .cli-copy-wrap {
+            position: relative;
+        }
+        .cli-copy-wrap .cli-code {
+            padding-right: 54px;
+        }
+        .cli-copy-btn {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            display: inline-grid;
+            place-items: center;
+            width: 34px;
+            height: 34px;
+            border: 1px solid rgba(255,255,255,0.18);
+            border-radius: 8px;
+            background: rgba(255,255,255,0.08);
+            color: #e5edf8;
+            cursor: pointer;
+        }
+        .cli-copy-btn:hover,
+        .cli-copy-btn:focus-visible {
+            background: rgba(255,255,255,0.16);
+            outline: none;
+        }
         .cli-note {
             display: flex;
             gap: 10px;
@@ -234,6 +259,18 @@ PROMPT;
             color: #e5edf8;
             font: 13px/1.55 ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
             resize: vertical;
+        }
+        .cli-prompt-wrap {
+            position: relative;
+            margin-top: 12px;
+        }
+        .cli-prompt-wrap .cli-copy-btn {
+            top: 10px;
+            right: 10px;
+            z-index: 1;
+        }
+        .cli-prompt-wrap .cli-prompt {
+            padding-right: 54px;
         }
         .cli-anchor-list {
             display: flex;
@@ -346,9 +383,12 @@ PROMPT;
                 <span>Une commande publie le design et renvoie le lien public.</span>
             </div>
         </div>
-        <pre class="cli-code">curl -fsSL https://raw.githubusercontent.com/YannHY/learning-designer/main/install.sh | sh
+        <div class="cli-copy-wrap">
+            <button class="cli-copy-btn" type="button" aria-label="Copier la commande" title="Copier"><i class="fa-regular fa-copy" aria-hidden="true"></i></button>
+            <pre class="cli-code">curl -fsSL https://raw.githubusercontent.com/YannHY/learning-designer/main/install.sh | sh
 learning login
 learning publish ~/Desktop/design.json</pre>
+        </div>
         <div class="cli-note">
             <i class="fa-solid fa-circle-info" aria-hidden="true"></i>
             <div>Le jeton CLI est personnel. Il ne faut pas le donner à une IA sauf si vous voulez explicitement qu’elle publie à votre place.</div>
@@ -361,25 +401,37 @@ learning publish ~/Desktop/design.json</pre>
             <div>
                 <h3><i class="fa-solid fa-download" aria-hidden="true"></i> Installer ou mettre à jour</h3>
                 <p class="cli-copy">La commande suivante installe <code>learning</code>. Si elle est déjà installée, utilisez ensuite <code>learning upgrade</code> pour la mettre à jour.</p>
-                <pre class="cli-code">curl -fsSL https://raw.githubusercontent.com/YannHY/learning-designer/main/install.sh | sh
+                <div class="cli-copy-wrap">
+                    <button class="cli-copy-btn" type="button" aria-label="Copier la commande" title="Copier"><i class="fa-regular fa-copy" aria-hidden="true"></i></button>
+                    <pre class="cli-code">curl -fsSL https://raw.githubusercontent.com/YannHY/learning-designer/main/install.sh | sh
 learning upgrade
 learning status</pre>
+                </div>
             </div>
             <div>
                 <h3><i class="fa-solid fa-key" aria-hidden="true"></i> Créer le jeton</h3>
                 <p class="cli-copy">Dans votre profil, créez un jeton dans la section <strong>Publication depuis le CLI</strong>. Copiez-le tout de suite : il ne sera affiché qu’une seule fois.</p>
-                <pre class="cli-code">learning login</pre>
+                <div class="cli-copy-wrap">
+                    <button class="cli-copy-btn" type="button" aria-label="Copier la commande" title="Copier"><i class="fa-regular fa-copy" aria-hidden="true"></i></button>
+                    <pre class="cli-code">learning login</pre>
+                </div>
             </div>
             <div>
                 <h3><i class="fa-solid fa-file-code" aria-hidden="true"></i> Vérifier le fichier</h3>
                 <p class="cli-copy">Quand Claude ou Codex vous donne <code>design.json</code>, vérifiez-le avant la publication.</p>
-                <pre class="cli-code">learning validate ~/Desktop/design.json</pre>
+                <div class="cli-copy-wrap">
+                    <button class="cli-copy-btn" type="button" aria-label="Copier la commande" title="Copier"><i class="fa-regular fa-copy" aria-hidden="true"></i></button>
+                    <pre class="cli-code">learning validate ~/Desktop/design.json</pre>
+                </div>
             </div>
             <div>
                 <h3><i class="fa-solid fa-globe" aria-hidden="true"></i> Publier</h3>
                 <p class="cli-copy">La publication renvoie une URL publique. Gardez aussi le <strong>Design ID</strong> si vous voulez mettre à jour la même publication plus tard.</p>
-                <pre class="cli-code">learning publish ~/Desktop/design.json
+                <div class="cli-copy-wrap">
+                    <button class="cli-copy-btn" type="button" aria-label="Copier la commande" title="Copier"><i class="fa-regular fa-copy" aria-hidden="true"></i></button>
+                    <pre class="cli-code">learning publish ~/Desktop/design.json
 learning publish ~/Desktop/design.json --design-id 123</pre>
+                </div>
             </div>
         </div>
     </section>
@@ -387,29 +439,50 @@ learning publish ~/Desktop/design.json --design-id 123</pre>
     <section id="prompt" class="cli-section">
         <h2><i class="fa-solid fa-message" aria-hidden="true"></i> Prompt à donner à Claude ou Codex</h2>
         <p class="cli-copy">Copiez ce prompt dans Claude ou Codex. Il demande à l’IA d’utiliser le CLI, de poser les bonnes questions pédagogiques, puis de produire un fichier validé.</p>
-        <button class="cli-button" type="button" id="copy-prompt-btn"><i class="fa-regular fa-copy" aria-hidden="true"></i> Copier le prompt</button>
-        <textarea class="cli-prompt" id="ai-prompt" readonly><?= cli_h($prompt) ?></textarea>
+        <div class="cli-prompt-wrap">
+            <button class="cli-copy-btn" type="button" id="copy-prompt-btn" aria-label="Copier le prompt" title="Copier"><i class="fa-regular fa-copy" aria-hidden="true"></i></button>
+            <textarea class="cli-prompt" id="ai-prompt" readonly><?= cli_h($prompt) ?></textarea>
+        </div>
     </section>
 </main>
 <?php render_site_footer(); ?>
 <script>
 document.addEventListener('DOMContentLoaded', function () {
-    var button = document.getElementById('copy-prompt-btn');
-    var textarea = document.getElementById('ai-prompt');
-    if (!button || !textarea) return;
-    button.addEventListener('click', async function () {
-        textarea.select();
+    async function copyText(text, button) {
         try {
-            await navigator.clipboard.writeText(textarea.value);
-            button.textContent = 'Prompt copié';
+            await navigator.clipboard.writeText(text);
         } catch (error) {
+            var temp = document.createElement('textarea');
+            temp.value = text;
+            temp.setAttribute('readonly', '');
+            temp.style.position = 'fixed';
+            temp.style.top = '-1000px';
+            document.body.appendChild(temp);
+            temp.select();
             document.execCommand('copy');
-            button.textContent = 'Prompt copié';
+            temp.remove();
         }
+        var original = button.innerHTML;
+        button.innerHTML = '<i class="fa-solid fa-check" aria-hidden="true"></i>';
         window.setTimeout(function () {
-            button.innerHTML = '<i class="fa-regular fa-copy" aria-hidden="true"></i> Copier le prompt';
-        }, 1800);
+            button.innerHTML = original;
+        }, 1300);
+    }
+
+    document.querySelectorAll('.cli-copy-wrap .cli-copy-btn').forEach(function (button) {
+        button.addEventListener('click', function () {
+            var code = button.parentElement.querySelector('.cli-code');
+            if (code) copyText(code.textContent.trim(), button);
+        });
     });
+
+    var promptButton = document.getElementById('copy-prompt-btn');
+    var textarea = document.getElementById('ai-prompt');
+    if (promptButton && textarea) {
+        promptButton.addEventListener('click', function () {
+            copyText(textarea.value, promptButton);
+        });
+    }
 });
 </script>
 </body>

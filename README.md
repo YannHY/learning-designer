@@ -133,7 +133,7 @@ Pour publier un fichier JSON depuis le CLI vers une instance Learning Designer :
 2. Enregistrer le jeton localement :
 
 ```bash
-learning login --site https://www.ralentirtravaux.com/flo/learning-designer
+learning login
 ```
 
 3. Coller le jeton quand le CLI le demande, puis publier :
@@ -146,6 +146,13 @@ La commande renvoie l'URL publique du design publié. Pour mettre à jour une pu
 
 ```bash
 learning publish design.json --design-id 123
+```
+
+Commandes utiles :
+
+```bash
+learning status
+learning upgrade
 ```
 
 ## État actuel

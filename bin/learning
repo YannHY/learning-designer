@@ -21,8 +21,10 @@ from pathlib import Path
 from typing import Any
 
 
-VERSION = "0.2.0"
+VERSION = "0.3.0"
 DEFAULT_DAY_HOURS = 7
+DEFAULT_SITE = "https://www.ralentirtravaux.com/flo/learning-designer"
+INSTALL_URL = "https://raw.githubusercontent.com/YannHY/learning-designer/main/install.sh"
 CONFIG_PATH = Path(os.environ.get("LEARNING_CONFIG", "~/.learning-designer/config.json")).expanduser()
 
 LEARNING_TYPES = {
@@ -201,13 +203,17 @@ def normalize_site_url(site: str) -> str:
 
 def configured_site(args: argparse.Namespace) -> tuple[str, str]:
     config = load_config()
-    raw_site = args.site or config.get("default_site") or ""
-    if not raw_site:
-        die("no site configured. Run `learning login --site https://www.ralentirtravaux.com/flo/learning-designer`.")
+    raw_site = args.site or config.get("default_site") or DEFAULT_SITE
     site = normalize_site_url(raw_site)
     token = str(config.get("sites", {}).get(site, {}).get("token", "")).strip()
     if not token:
-        die(f"no token configured for {site}. Run `learning login --site {site} --token <token>`.")
+        die(
+            "publication is not configured yet.\n"
+            f"1. Open {site}/profile.php\n"
+            "2. Create a CLI token in “Publication depuis le CLI”\n"
+            "3. Run `learning login` and paste the token\n"
+            "4. Run `learning publish <file>` again"
+        )
     return site, token
 
 
@@ -534,9 +540,12 @@ def command_list(args: argparse.Namespace) -> None:
 
 
 def command_login(args: argparse.Namespace) -> None:
-    site = normalize_site_url(args.site)
+    site = normalize_site_url(args.site or DEFAULT_SITE)
+    print(f"Site: {site}")
     token = (args.token or "").strip()
     if not token:
+        print("Create a CLI token from your profile page, then paste it here.")
+        print(f"Profile: {site}/profile.php")
         token = input("CLI token: ").strip()
     if not token:
         die("token is required")
@@ -593,6 +602,32 @@ def command_publish(args: argparse.Namespace) -> None:
         print(f"Design ID: {design['id']}")
     if share_url:
         print(share_url)
+
+
+def command_status(args: argparse.Namespace) -> None:
+    config = load_config()
+    default_site = config.get("default_site") or DEFAULT_SITE
+    print(f"learning {VERSION}")
+    print(f"Default site: {default_site}")
+    site_config = config.get("sites", {}).get(default_site, {})
+    print("Publishing: configured" if site_config.get("token") else "Publishing: not configured")
+    print(f"Config: {CONFIG_PATH}")
+
+
+def command_upgrade(args: argparse.Namespace) -> None:
+    print("Downloading the latest Learning Designer CLI installer...")
+    try:
+        with urllib.request.urlopen(INSTALL_URL, timeout=args.timeout) as response:
+            script = response.read()
+    except urllib.error.HTTPError as exc:
+        die(f"upgrade failed ({exc.code}): {exc.reason}")
+    except urllib.error.URLError as exc:
+        die(f"upgrade failed: {exc.reason}")
+
+    try:
+        subprocess.run(["sh"], input=script, check=True)
+    except subprocess.CalledProcessError as exc:
+        die(f"upgrade installer failed with exit code {exc.returncode}", exc.returncode)
 
 
 def add_common_design_args(parser: argparse.ArgumentParser) -> None:
@@ -683,8 +718,8 @@ def build_parser() -> argparse.ArgumentParser:
     list_cmd.add_argument("kind", choices=["types", "bloom", "competencies"])
     list_cmd.set_defaults(func=command_list)
 
-    login = sub.add_parser("login", aliases=["connexion"], help="Save a CLI publishing token for a site")
-    login.add_argument("--site", required=True, help="Learning Designer site URL")
+    login = sub.add_parser("login", aliases=["connexion"], help="Save a CLI publishing token")
+    login.add_argument("--site", default=DEFAULT_SITE, help=f"Learning Designer site URL. Defaults to {DEFAULT_SITE}")
     login.add_argument("--token", help="CLI token generated from the profile page")
     login.set_defaults(func=command_login)
 
@@ -695,6 +730,13 @@ def build_parser() -> argparse.ArgumentParser:
     publish.add_argument("--design-id", type=int, help="Update an existing online design id")
     publish.add_argument("--timeout", type=int, default=30)
     publish.set_defaults(func=command_publish)
+
+    status = sub.add_parser("status", aliases=["etat", "état"], help="Show CLI version and publishing setup")
+    status.set_defaults(func=command_status)
+
+    upgrade = sub.add_parser("upgrade", aliases=["update", "mise-a-jour"], help="Install the latest CLI version")
+    upgrade.add_argument("--timeout", type=int, default=30)
+    upgrade.set_defaults(func=command_upgrade)
     return parser
 
 

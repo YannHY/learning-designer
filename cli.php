@@ -80,6 +80,13 @@ Règles importantes :
 - Une fois `.tools/bin/learning` créé, ne dépends plus du réseau.
 - Travaille progressivement : pose d’abord les questions nécessaires, puis exécute les commandes.
 PROMPT;
+
+$skillPrompt = <<<'PROMPT'
+Lis et applique cette skill :
+https://github.com/YannHY/learning-designer/blob/main/skills/learning-designer/SKILL.md
+
+Ta mission : m’aider à créer un fichier design.json Learning Designer avec le CLI learning, le valider, puis me donner les commandes exactes pour le publier.
+PROMPT;
 ?>
 <!doctype html>
 <html lang="fr">
@@ -354,6 +361,7 @@ PROMPT;
         <nav class="cli-anchor-list" aria-label="Sections de la page">
             <a href="#express"><i class="fa-solid fa-bolt" aria-hidden="true"></i> Version courte</a>
             <a href="#detail"><i class="fa-solid fa-list-check" aria-hidden="true"></i> Guide détaillé</a>
+            <a href="#skill"><i class="fa-solid fa-wand-magic-sparkles" aria-hidden="true"></i> Skill Claude</a>
             <a href="#prompt"><i class="fa-solid fa-message" aria-hidden="true"></i> Prompt IA</a>
         </nav>
     </header>
@@ -433,6 +441,15 @@ learning status</pre>
 learning publish ~/Desktop/design.json --design-id 123</pre>
                 </div>
             </div>
+        </div>
+    </section>
+
+    <section id="skill" class="cli-section">
+        <h2><i class="fa-solid fa-wand-magic-sparkles" aria-hidden="true"></i> Skill Claude</h2>
+        <p class="cli-copy">Pour Claude Cowork, copiez simplement ce prompt. Claude ira lire la skill et suivra la méthode complète.</p>
+        <div class="cli-prompt-wrap">
+            <button class="cli-copy-btn" type="button" id="copy-skill-prompt-btn" aria-label="Copier le prompt de skill" title="Copier"><i class="fa-regular fa-copy" aria-hidden="true"></i></button>
+            <textarea class="cli-prompt" id="skill-prompt" readonly><?= cli_h($skillPrompt) ?></textarea>
         </div>
     </section>
 
@@ -517,6 +534,14 @@ document.addEventListener('DOMContentLoaded', function () {
     if (promptButton && textarea) {
         promptButton.addEventListener('click', function () {
             copyText(textarea.value, promptButton);
+        });
+    }
+
+    var skillPromptButton = document.getElementById('copy-skill-prompt-btn');
+    var skillTextarea = document.getElementById('skill-prompt');
+    if (skillPromptButton && skillTextarea) {
+        skillPromptButton.addEventListener('click', function () {
+            copyText(skillTextarea.value, skillPromptButton);
         });
     }
 });

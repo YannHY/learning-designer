@@ -440,6 +440,7 @@ function render_site_nav(string $active = ''): void
     $username = trim((string)($user['username'] ?? $user['email'] ?? ''));
     $homeClass = $active === 'home' ? ' nav-account-btn-active' : '';
     $savesClass = $active === 'saves' ? ' nav-account-btn-active' : '';
+    $cliClass = $active === 'cli' ? ' nav-account-btn-active' : '';
     $profileClass = $active === 'profile' ? ' nav-account-btn-active' : '';
     $adminClass = $active === 'admin' ? ' nav-account-btn-active' : '';
     ?>
@@ -469,6 +470,9 @@ function render_site_nav(string $active = ''): void
             <div class="account-toolbar-cluster">
                 <a class="nav-icon-btn<?= $homeClass ?>" href="index.html" title="Editeur" aria-label="Editeur" data-site-i18n-attr="title,aria-label" data-site-i18n-en="Editor" data-site-i18n-fr="Editeur">
                     <i class="fa-solid fa-house" aria-hidden="true"></i>
+                </a>
+                <a class="nav-icon-btn<?= $cliClass ?>" href="cli.php" title="CLI et IA" aria-label="CLI et IA" data-site-i18n-attr="title,aria-label" data-site-i18n-en="CLI and AI" data-site-i18n-fr="CLI et IA">
+                    <i class="fa-solid fa-code" aria-hidden="true"></i>
                 </a>
                 <?php if ($user): ?>
                     <a class="nav-account-btn<?= $savesClass ?>" href="my-designs.php">

@@ -375,7 +375,7 @@ PROMPT;
             <div class="cli-step">
                 <i class="fa-solid fa-robot" aria-hidden="true"></i>
                 <strong>3. Créer</strong>
-                <span>Donner le prompt à Claude ou Codex pour obtenir un fichier <code>design.json</code>.</span>
+                <span>Dans Claude ou Codex, coller le prompt fourni plus bas pour obtenir un fichier <code>design.json</code>.</span>
             </div>
             <div class="cli-step">
                 <i class="fa-solid fa-share-nodes" aria-hidden="true"></i>
@@ -442,6 +442,42 @@ learning publish ~/Desktop/design.json --design-id 123</pre>
         <div class="cli-prompt-wrap">
             <button class="cli-copy-btn" type="button" id="copy-prompt-btn" aria-label="Copier le prompt" title="Copier"><i class="fa-regular fa-copy" aria-hidden="true"></i></button>
             <textarea class="cli-prompt" id="ai-prompt" readonly><?= cli_h($prompt) ?></textarea>
+        </div>
+    </section>
+
+    <section id="after-ai" class="cli-section">
+        <h2><i class="fa-solid fa-paper-plane" aria-hidden="true"></i> Après Claude ou Codex</h2>
+        <p class="cli-copy">Quand l’IA a terminé, elle doit fournir un fichier <code>design.json</code>. Téléchargez ce fichier ou copiez-le sur votre ordinateur, par exemple sur le Bureau. Ensuite, ouvrez le Terminal et lancez les commandes suivantes.</p>
+        <div class="cli-steps">
+            <div class="cli-step">
+                <i class="fa-solid fa-folder-open" aria-hidden="true"></i>
+                <strong>1. Trouver le fichier</strong>
+                <span>Placez <code>design.json</code> dans un endroit simple, par exemple le Bureau.</span>
+            </div>
+            <div class="cli-step">
+                <i class="fa-solid fa-terminal" aria-hidden="true"></i>
+                <strong>2. Ouvrir le Terminal</strong>
+                <span>Les commandes se tapent dans le Terminal de votre ordinateur.</span>
+            </div>
+            <div class="cli-step">
+                <i class="fa-solid fa-check" aria-hidden="true"></i>
+                <strong>3. Vérifier</strong>
+                <span>La validation doit répondre <code>OK</code>.</span>
+            </div>
+            <div class="cli-step">
+                <i class="fa-solid fa-globe" aria-hidden="true"></i>
+                <strong>4. Publier</strong>
+                <span>La publication renvoie un lien public à partager.</span>
+            </div>
+        </div>
+        <div class="cli-copy-wrap">
+            <button class="cli-copy-btn" type="button" aria-label="Copier la commande" title="Copier"><i class="fa-regular fa-copy" aria-hidden="true"></i></button>
+            <pre class="cli-code">learning validate ~/Desktop/design.json
+learning publish ~/Desktop/design.json</pre>
+        </div>
+        <div class="cli-note">
+            <i class="fa-solid fa-circle-info" aria-hidden="true"></i>
+            <div>Si le fichier n’est pas sur le Bureau, remplacez <code>~/Desktop/design.json</code> par son chemin exact.</div>
         </div>
     </section>
 </main>

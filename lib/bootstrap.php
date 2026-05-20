@@ -624,6 +624,9 @@ function site_breadcrumb_items(string $active = ''): array
         'competencies' => [
             ['fr' => 'Compétences numériques', 'en' => 'Digital Competencies'],
         ],
+        'learning-design' => [
+            ['fr' => 'Learning design', 'en' => 'Learning design'],
+        ],
         'login' => [
             ['fr' => 'Connexion', 'en' => 'Sign in'],
         ],

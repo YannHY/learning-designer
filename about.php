@@ -344,6 +344,9 @@ require_once __DIR__ . '/lib/bootstrap.php';
             </ul>
             <p id="about-types-description">Ce site s’appuie sur les six types d’apprentissage issus du Cadre conversationnel de Diana Laurillard, un modèle qui décrit les conditions nécessaires pour que l’apprentissage ait lieu.</p>
             <p id="about-types-mix">Ces six types sont&nbsp;: lire, écrire ou écouter, également appelé acquisition&nbsp;; investigation&nbsp;; pratique&nbsp;; production&nbsp;; discussion&nbsp;; collaboration. En principe, une bonne scénarisation pédagogique combine plusieurs de ces types d’apprentissage.</p>
+            <div class="about-link-list">
+                <a id="about-learning-design-link" class="about-resource-link" href="learning-design.php"><i class="fa-solid fa-diagram-project" aria-hidden="true"></i><span>Comprendre le learning design</span></a>
+            </div>
         </div>
 
         <div class="about-section">
@@ -508,6 +511,7 @@ document.addEventListener('DOMContentLoaded', function () {
         'about-type-6': '<span class="type-dot" style="background:#ffd966"></span>Collaborate',
         'about-types-description': "This site is based on the six learning types from Diana Laurillard’s Conversational Framework, a model that describes the conditions necessary for learning to take place.",
         'about-types-mix': 'These six types are: read, write, or listen, also called acquisition; inquiry; practice; production; discussion; collaboration. In principle, a good learning design combines several of these learning types.',
+        'about-learning-design-link': 'Understand learning design',
         'about-section-publish-title': 'Publishing a design',
         'about-publish-text': 'Once signed in, you can publish a saved design to generate a shareable read-only link. The published page presents the design in a readable format, with moments, activities, durations, digital competencies, and related links.',
         'about-publish-control': 'You stay in control of the publication: the link can be revoked from the app, and visitors cannot edit your design from the published page.',
@@ -526,7 +530,7 @@ document.addEventListener('DOMContentLoaded', function () {
             if (lang !== 'en') return;
             if (id === 'about-meta' || id === 'about-privacy-text' || id.indexOf('about-type-') === 0) {
                 el.innerHTML = translations[id];
-            } else if (id === 'about-competencies-link' || id === 'about-bloom-link') {
+            } else if (id === 'about-competencies-link' || id === 'about-bloom-link' || id === 'about-learning-design-link') {
                 var span = el.querySelector('span');
                 if (span) span.textContent = translations[id];
             } else {

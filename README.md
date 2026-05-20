@@ -98,6 +98,33 @@ Variables attendues :
 
 Les tables nécessaires sont créées automatiquement au premier accès.
 
+## CLI `learning`
+
+Le projet fournit aussi un CLI bilingue FR/EN pour préparer un design depuis le terminal, puis le confier à Codex.
+
+Installation en une commande :
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/YannHY/learning-designer/main/install.sh | sh
+```
+
+Le script installe `learning` dans un dossier déjà disponible dans le `PATH` (`/usr/local/bin` ou équivalent) afin que la commande soit utilisable immédiatement, sans modifier le profil shell.
+
+Utilisation rapide :
+
+```bash
+learning init design.json --title "Atelier IA" --lang fr --duration 120 --mode hybride --group-size 24
+learning add-moment design.json --title "Explorer" --objectives "Identifier les usages possibles"
+learning add-activity design.json --type investigate --duration 30 --group sous-groupes --teacher present --pacing sync --mode onsite --evaluation formative --competencies A6,P34 --description "Comparer trois exemples d'usages de l'IA."
+learning outcome design.json --bloom analyser --verb "Comparer" --text "Comparer des réponses générées par IA selon leur fiabilité."
+learning prompt design.json
+learning handoff design.json --dry-run
+```
+
+Commandes disponibles : `init`/`nouveau`, `add-moment`/`ajouter-moment`, `add-activity`/`ajouter-activite`, `outcome`/`acquis`, `prompt`/`codex-prompt`, `handoff`/`confier-codex`/`codex`, `validate`/`verifier`, `list`/`lister`.
+
+Les activités acceptent les paramètres principaux de Learning Designer : type d'apprentissage, durée, groupe, présence enseignante, rythme, modalité, évaluation, description, notes, liens et compétences numériques (`A1`, `P6`, `C14` ou identifiants complets `competency:...`). Les acquis d'apprentissage peuvent être reliés à la taxonomie de Bloom en français ou en anglais.
+
 ## État actuel
 
 Le projet est aujourd'hui à la fois :

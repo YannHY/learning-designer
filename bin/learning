@@ -1,0 +1,587 @@
+#!/usr/bin/env python3
+"""Learning Designer command line helper.
+
+Creates Learning Designer JSON files and Codex handoff prompts.
+"""
+
+from __future__ import annotations
+
+import argparse
+import json
+import os
+import re
+import shutil
+import subprocess
+import sys
+import time
+import unicodedata
+from pathlib import Path
+from typing import Any
+
+
+VERSION = "0.1.0"
+DEFAULT_DAY_HOURS = 7
+
+LEARNING_TYPES = {
+    "undefined": ("Non défini", "Undefined"),
+    "read": ("Lire / Regarder / Écouter", "Read / Watch / Listen"),
+    "investigate": ("Investiguer", "Investigate"),
+    "practice": ("Pratiquer", "Practice"),
+    "produce": ("Produire", "Produce"),
+    "discuss": ("Discuter", "Discuss"),
+    "collaborate": ("Collaborer", "Collaborate"),
+}
+
+ALIASES = {
+    "undefined": "undefined",
+    "non-defini": "undefined",
+    "non-défini": "undefined",
+    "undef": "undefined",
+    "read": "read",
+    "lire": "read",
+    "watch": "read",
+    "listen": "read",
+    "investigate": "investigate",
+    "investiguer": "investigate",
+    "practice": "practice",
+    "pratiquer": "practice",
+    "produce": "produce",
+    "produire": "produce",
+    "discuss": "discuss",
+    "discuter": "discuss",
+    "collaborate": "collaborate",
+    "collaborer": "collaborate",
+}
+
+GROUP_MODES = {"whole", "subgroups", "individual"}
+GROUP_ALIASES = {
+    "whole": "whole",
+    "classe": "whole",
+    "groupe-entier": "whole",
+    "all": "whole",
+    "subgroups": "subgroups",
+    "sous-groupes": "subgroups",
+    "groups": "subgroups",
+    "individual": "individual",
+    "individuel": "individual",
+    "solo": "individual",
+}
+
+PRESENCE_ALIASES = {
+    "present": "present",
+    "presente": "present",
+    "présente": "present",
+    "presentiel": "present",
+    "absent": "absent",
+    "absente": "absent",
+}
+
+SYNC_ALIASES = {
+    "sync": "sync",
+    "synchrone": "sync",
+    "synchronous": "sync",
+    "async": "async",
+    "asynchrone": "async",
+    "asynchronous": "async",
+}
+
+LOCATION_ALIASES = {
+    "onsite": "onsite",
+    "presentiel": "onsite",
+    "présentiel": "onsite",
+    "classroom": "onsite",
+    "online": "online",
+    "distanciel": "online",
+    "remote": "online",
+    "hybrid": "hybrid",
+    "hybride": "hybrid",
+    "blended": "hybrid",
+}
+
+EVAL_ALIASES = {
+    "none": "none",
+    "aucune": "none",
+    "no": "none",
+    "diagnostic": "diagnostic",
+    "diagnostique": "diagnostic",
+    "formative": "formative",
+    "summative": "summative",
+    "sommative": "summative",
+    "certificative": "certificative",
+    "certification": "certificative",
+}
+
+BLOOM = {
+    "remember": ("remember", "Remember", "Se souvenir"),
+    "souvenir": ("remember", "Remember", "Se souvenir"),
+    "comprendre": ("understand", "Understand", "Comprendre"),
+    "understand": ("understand", "Understand", "Comprendre"),
+    "apply": ("apply", "Apply", "Appliquer"),
+    "appliquer": ("apply", "Apply", "Appliquer"),
+    "analyze": ("analyze", "Analyze", "Analyser"),
+    "analyser": ("analyze", "Analyze", "Analyser"),
+    "evaluate": ("evaluate", "Evaluate", "Évaluer"),
+    "evaluer": ("evaluate", "Evaluate", "Évaluer"),
+    "évaluer": ("evaluate", "Evaluate", "Évaluer"),
+    "create": ("create", "Create", "Créer"),
+    "creer": ("create", "Create", "Créer"),
+    "créer": ("create", "Create", "Créer"),
+}
+
+
+def die(message: str, code: int = 1) -> None:
+    print(f"learning: {message}", file=sys.stderr)
+    raise SystemExit(code)
+
+
+def slug(value: str) -> str:
+    normalized = unicodedata.normalize("NFKD", value.strip().lower())
+    ascii_value = normalized.encode("ascii", "ignore").decode("ascii")
+    return re.sub(r"[^a-z0-9]+", "-", ascii_value).strip("-")
+
+
+def now_id(prefix: str) -> str:
+    return f"{prefix}-{int(time.time() * 1000)}"
+
+
+def load_document(path: Path) -> dict[str, Any]:
+    if not path.exists():
+        die(f"file not found: {path}")
+    try:
+        data = json.loads(path.read_text(encoding="utf-8"))
+    except json.JSONDecodeError as exc:
+        die(f"invalid JSON in {path}: {exc}")
+    if not isinstance(data, dict) or not isinstance(data.get("sessions"), list):
+        die(f"{path} is not a Learning Designer document")
+    return data
+
+
+def save_document(path: Path, document: dict[str, Any]) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(
+        json.dumps(document, ensure_ascii=False, indent=2) + "\n",
+        encoding="utf-8",
+    )
+
+
+def normalize(value: str | None, aliases: dict[str, str], field: str) -> str:
+    if value is None:
+        return ""
+    token = slug(value)
+    if token in aliases:
+        return aliases[token]
+    allowed = ", ".join(sorted(set(aliases.values())))
+    die(f"invalid {field}: {value}. Expected one of: {allowed}")
+    return ""
+
+
+def split_minutes(total: int, day_hours: int = DEFAULT_DAY_HOURS) -> tuple[int, int, int]:
+    total = max(0, int(total))
+    day_minutes = max(1, int(day_hours)) * 60
+    days, rest = divmod(total, day_minutes)
+    hours, minutes = divmod(rest, 60)
+    return days, hours, minutes
+
+
+def parse_links(raw_links: list[str]) -> list[dict[str, str]]:
+    links = []
+    for raw in raw_links:
+        title = ""
+        url = raw
+        if "=" in raw:
+            title, url = raw.split("=", 1)
+        elif "|" in raw:
+            title, url = raw.split("|", 1)
+        url = url.strip()
+        title = title.strip() or url
+        if url and not re.match(r"^[a-z][a-z0-9+.-]*:", url, re.I):
+            url = f"https://{url}"
+        if url:
+            links.append({"id": now_id("link"), "title": title, "url": url})
+    return links
+
+
+def competency_id(reference: str) -> str:
+    token = reference.strip()
+    if not token:
+        return ""
+    if token.startswith("competency:"):
+        return token
+    match = re.fullmatch(r"([AaPpCc])\s*-?\s*(\d{1,2})", token)
+    if match:
+        level = {"a": "acquerir", "p": "approfondir", "c": "creer"}[match.group(1).lower()]
+        return f"competency:{level}:{int(match.group(2))}"
+    return token
+
+
+def new_document(args: argparse.Namespace) -> dict[str, Any]:
+    days, hours, minutes = split_minutes(args.duration or 0, args.day_hours)
+    return {
+        "allNotesExpanded": False,
+        "intentionsCollapsed": False,
+        "topPanelCollapsed": False,
+        "meta": {
+            "name": args.title or "",
+            "uiLanguage": args.lang,
+            "dayHours": args.day_hours,
+            "learningDays": days,
+            "learningHours": hours,
+            "learningMinutes": minutes,
+            "modeDelivery": normalize(args.mode, LOCATION_ALIASES, "mode") if args.mode else "",
+            "sizeClass": args.group_size or "",
+            "designers": args.designers or "",
+            "trainers": args.trainers or "",
+            "description": args.description or "",
+            "command": args.brief or "",
+            "personas": args.objectives or "",
+            "sliders": [],
+            "activeTab": "settings",
+            "boardLayout": "columns",
+        },
+        "sessions": [],
+        "partitionLineConfig": [
+            {"type": "locationMode", "label": "Présentiel", "value": "onsite", "visible": True},
+            {"type": "locationMode", "label": "Distanciel", "value": "online", "visible": True},
+            {"type": "locationMode", "label": "Hybride", "value": "hybrid", "visible": True},
+        ],
+    }
+
+
+def find_session(document: dict[str, Any], selector: str | None) -> dict[str, Any]:
+    sessions = document["sessions"]
+    if not sessions:
+        die("no moment found. Create one with `learning add-moment ...`")
+    if not selector:
+        return sessions[-1]
+    if selector.isdigit():
+        index = int(selector) - 1
+        if 0 <= index < len(sessions):
+            return sessions[index]
+        die(f"moment index out of range: {selector}")
+    for session in sessions:
+        if slug(str(session.get("id", ""))) == slug(selector) or slug(str(session.get("title", ""))) == slug(selector):
+            return session
+    die(f"moment not found: {selector}")
+    return sessions[-1]
+
+
+def command_init(args: argparse.Namespace) -> None:
+    path = Path(args.file)
+    if path.exists() and not args.force:
+        die(f"{path} already exists. Use --force to overwrite.")
+    document = new_document(args)
+    save_document(path, document)
+    print(f"Created {path}")
+
+
+def command_add_moment(args: argparse.Namespace) -> None:
+    path = Path(args.file)
+    document = load_document(path)
+    document["sessions"].append(
+        {
+            "id": now_id("moment"),
+            "title": args.title,
+            "objectives": args.objectives or "",
+            "intentions": args.intentions or "",
+            "notes": args.notes or "",
+            "notesExpanded": False,
+            "activities": [],
+        }
+    )
+    save_document(path, document)
+    print(f"Added moment {len(document['sessions'])}: {args.title}")
+
+
+def command_add_activity(args: argparse.Namespace) -> None:
+    path = Path(args.file)
+    document = load_document(path)
+    session = find_session(document, args.moment)
+    activity_type = normalize(args.type, ALIASES, "type")
+    tools = [competency_id(item) for raw in args.competencies for item in raw.split(",")]
+    tools = [item for item in tools if item]
+    session["activities"].append(
+        {
+            "id": now_id("activity"),
+            "type": activity_type,
+            "duration": max(1, int(args.duration)),
+            "groupMode": normalize(args.group, GROUP_ALIASES, "group"),
+            "teacherPresence": normalize(args.teacher, PRESENCE_ALIASES, "teacher"),
+            "syncMode": normalize(args.pacing, SYNC_ALIASES, "pacing"),
+            "locationMode": normalize(args.mode, LOCATION_ALIASES, "mode"),
+            "evaluationMode": normalize(args.evaluation, EVAL_ALIASES, "evaluation"),
+            "description": args.description or "",
+            "notes": args.notes or "",
+            "tools": tools,
+            "links": parse_links(args.link),
+        }
+    )
+    save_document(path, document)
+    print(f"Added activity to {session.get('title')}: {LEARNING_TYPES[activity_type][0]}")
+
+
+def command_outcome(args: argparse.Namespace) -> None:
+    path = Path(args.file)
+    document = load_document(path)
+    token = slug(args.bloom)
+    if token not in BLOOM:
+        die("invalid Bloom level. Use remember/understand/apply/analyze/evaluate/create or FR equivalents.")
+    level_id, label_en, label_fr = BLOOM[token]
+    lang = document.get("meta", {}).get("uiLanguage", "fr")
+    document.setdefault("meta", {}).setdefault("sliders", []).append(
+        {
+            "id": now_id("outcome"),
+            "category": level_id,
+            "categoryLabel": label_en if lang == "en" else label_fr,
+            "verb": args.verb,
+            "text": args.text,
+        }
+    )
+    save_document(path, document)
+    print(f"Added Bloom outcome: {args.verb} - {args.text}")
+
+
+def learning_time(document: dict[str, Any]) -> str:
+    meta = document.get("meta", {})
+    parts = []
+    for key, unit in (("learningDays", "d"), ("learningHours", "h"), ("learningMinutes", "min")):
+        value = int(meta.get(key) or 0)
+        if value:
+            parts.append(f"{value}{unit}")
+    return " ".join(parts) or "0min"
+
+
+def summarize_document(document: dict[str, Any]) -> str:
+    meta = document.get("meta", {})
+    lines = [
+        f"# {meta.get('name') or 'Learning design'}",
+        "",
+        f"- Language: {meta.get('uiLanguage', 'fr')}",
+        f"- Delivery mode: {meta.get('modeDelivery') or '-'}",
+        f"- Group size: {meta.get('sizeClass') or '-'}",
+        f"- Designers: {meta.get('designers') or '-'}",
+        f"- Trainers: {meta.get('trainers') or '-'}",
+        f"- Learning time: {learning_time(document)}",
+    ]
+    if meta.get("description"):
+        lines.append(f"- Description: {meta['description']}")
+    if meta.get("command"):
+        lines.append(f"- Institutional brief: {meta['command']}")
+    if meta.get("personas"):
+        lines.append(f"- Learning objectives/personas: {meta['personas']}")
+    outcomes = meta.get("sliders") or []
+    if outcomes:
+        lines.extend(["", "## Bloom learning outcomes"])
+        for outcome in outcomes:
+            prefix = " / ".join(filter(None, [outcome.get("categoryLabel"), outcome.get("verb")]))
+            lines.append(f"- {prefix}: {outcome.get('text', '')}")
+    lines.extend(["", "## Moments"])
+    for session_index, session in enumerate(document.get("sessions", []), start=1):
+        lines.append(f"{session_index}. {session.get('title') or 'Moment'}")
+        if session.get("objectives"):
+            lines.append(f"   Objectives: {session['objectives']}")
+        if session.get("intentions"):
+            lines.append(f"   Pedagogical choices: {session['intentions']}")
+        for activity_index, activity in enumerate(session.get("activities", []), start=1):
+            type_label = LEARNING_TYPES.get(activity.get("type"), ("Undefined", "Undefined"))[1]
+            lines.append(
+                "   "
+                f"{session_index}.{activity_index} {type_label}, "
+                f"{activity.get('duration')} min, "
+                f"group={activity.get('groupMode')}, "
+                f"teacher={activity.get('teacherPresence')}, "
+                f"pacing={activity.get('syncMode')}, "
+                f"mode={activity.get('locationMode')}, "
+                f"assessment={activity.get('evaluationMode')}"
+            )
+            if activity.get("description"):
+                lines.append(f"      Description: {activity['description']}")
+            if activity.get("tools"):
+                lines.append(f"      Digital competencies: {', '.join(activity['tools'])}")
+    return "\n".join(lines)
+
+
+def build_codex_prompt(document: dict[str, Any], args: argparse.Namespace) -> str:
+    language = args.lang or document.get("meta", {}).get("uiLanguage", "fr")
+    target = "French" if language == "fr" else "English"
+    return "\n".join(
+        [
+            f"You are Codex. Create or improve a Learning Designer pedagogical design in {target}.",
+            "",
+            "Use the Learning Designer structure: moments, learning activity type, duration, group mode,",
+            "teacher presence, pacing, delivery mode, assessment mode, Bloom learning outcomes,",
+            "and digital competencies. Keep the design importable as Learning Designer JSON.",
+            "",
+            "Return:",
+            "1. A short pedagogical rationale.",
+            "2. The complete updated design as JSON.",
+            "3. Any assumptions or missing information.",
+            "",
+            "Current design:",
+            summarize_document(document),
+        ]
+    )
+
+
+def command_prompt(args: argparse.Namespace) -> None:
+    document = load_document(Path(args.file))
+    prompt = build_codex_prompt(document, args)
+    if args.output:
+        Path(args.output).write_text(prompt + "\n", encoding="utf-8")
+        print(f"Wrote {args.output}")
+    else:
+        print(prompt)
+
+
+def command_handoff(args: argparse.Namespace) -> None:
+    document = load_document(Path(args.file))
+    prompt = build_codex_prompt(document, args)
+    if args.output:
+        Path(args.output).write_text(prompt + "\n", encoding="utf-8")
+        print(f"Wrote {args.output}")
+    if args.dry_run:
+        print(prompt)
+        return
+    command = args.codex_command or os.environ.get("LEARNING_CODEX_CMD", "codex")
+    if not shutil.which(command):
+        die(f"Codex command not found: {command}. Use `learning prompt` or set LEARNING_CODEX_CMD.")
+    try:
+        subprocess.run([command], input=prompt, text=True, check=True)
+    except subprocess.CalledProcessError as exc:
+        die(f"Codex command failed with exit code {exc.returncode}", exc.returncode)
+
+
+def command_validate(args: argparse.Namespace) -> None:
+    document = load_document(Path(args.file))
+    warnings = []
+    if not document.get("meta", {}).get("name"):
+        warnings.append("missing design title")
+    for s_index, session in enumerate(document.get("sessions", []), start=1):
+        if not session.get("title"):
+            warnings.append(f"moment {s_index}: missing title")
+        for a_index, activity in enumerate(session.get("activities", []), start=1):
+            if activity.get("type") not in LEARNING_TYPES:
+                warnings.append(f"moment {s_index}, activity {a_index}: invalid learning type")
+            if int(activity.get("duration") or 0) <= 0:
+                warnings.append(f"moment {s_index}, activity {a_index}: invalid duration")
+    if warnings:
+        for warning in warnings:
+            print(f"warning: {warning}")
+        raise SystemExit(1)
+    print("OK")
+
+
+def command_list(args: argparse.Namespace) -> None:
+    if args.kind == "types":
+        for key, (fr, en) in LEARNING_TYPES.items():
+            print(f"{key:12} {fr} / {en}")
+    elif args.kind == "bloom":
+        seen = set()
+        for key, (level_id, en, fr) in BLOOM.items():
+            if level_id not in seen:
+                print(f"{level_id:12} {fr} / {en}")
+                seen.add(level_id)
+    elif args.kind == "competencies":
+        print("Use A1-A30, P1-P35, C1-C30, or full ids such as competency:acquerir:14.")
+    else:
+        die("unknown list kind")
+
+
+def add_common_design_args(parser: argparse.ArgumentParser) -> None:
+    parser.add_argument("--title", "--titre", default="", help="Design title / titre du design")
+    parser.add_argument("--lang", choices=["fr", "en"], default="fr", help="UI language")
+    parser.add_argument("--duration", "--duree", "--durée", type=int, default=0, help="Total learning duration in minutes")
+    parser.add_argument("--day-hours", "--heures-jour", type=int, default=DEFAULT_DAY_HOURS)
+    parser.add_argument("--mode", default="", help="onsite/online/hybrid or presentiel/distanciel/hybride")
+    parser.add_argument("--group-size", "--taille-groupe", default="")
+    parser.add_argument("--designers", "--concepteurs", default="")
+    parser.add_argument("--trainers", "--formateurs", default="")
+    parser.add_argument("--description", default="")
+    parser.add_argument("--brief", "--commande", default="", help="Institutional brief / commande")
+    parser.add_argument("--objectives", "--objectifs", default="", help="Overall learning objectives")
+
+
+def build_parser() -> argparse.ArgumentParser:
+    parser = argparse.ArgumentParser(
+        prog="learning",
+        description="Create Learning Designer files and Codex prompts from the terminal.",
+    )
+    parser.add_argument("--version", action="version", version=f"%(prog)s {VERSION}")
+    sub = parser.add_subparsers(dest="command", required=True)
+
+    init = sub.add_parser("init", aliases=["nouveau"], help="Create a new design JSON file")
+    init.add_argument("file", help="Output JSON file")
+    init.add_argument("--force", action="store_true")
+    add_common_design_args(init)
+    init.set_defaults(func=command_init)
+
+    moment = sub.add_parser("add-moment", aliases=["ajouter-moment"], help="Add a learning moment")
+    moment.add_argument("file")
+    moment.add_argument("--title", "--titre", required=True)
+    moment.add_argument("--objectives", "--objectifs", default="")
+    moment.add_argument("--intentions", "--choix", default="")
+    moment.add_argument("--notes", default="")
+    moment.set_defaults(func=command_add_moment)
+
+    activity = sub.add_parser("add-activity", aliases=["ajouter-activite", "ajouter-activité"], help="Add an activity to a moment")
+    activity.add_argument("file")
+    activity.add_argument("--moment", help="Moment index, id, or title. Defaults to the last moment.")
+    activity.add_argument("--type", required=True, help="read/investigate/practice/produce/discuss/collaborate")
+    activity.add_argument("--duration", "--duree", "--durée", type=int, required=True)
+    activity.add_argument("--group", "--groupe", default="whole")
+    activity.add_argument("--teacher", "--enseignant", default="present")
+    activity.add_argument("--pacing", "--rythme", default="sync")
+    activity.add_argument("--mode", default="onsite")
+    activity.add_argument("--evaluation", "--évaluation", "--assessment", default="none")
+    activity.add_argument("--description", default="")
+    activity.add_argument("--notes", default="")
+    activity.add_argument(
+        "--competencies",
+        "--competences",
+        "--compétences",
+        action="append",
+        default=[],
+        help="Comma-separated digital competencies: A1,P6,C14 or competency ids",
+    )
+    activity.add_argument("--link", "--lien", action="append", default=[], help="title=url or url")
+    activity.set_defaults(func=command_add_activity)
+
+    outcome = sub.add_parser("outcome", aliases=["acquis"], help="Add a Bloom learning outcome")
+    outcome.add_argument("file")
+    outcome.add_argument("--bloom", required=True, help="remember/understand/apply/analyze/evaluate/create")
+    outcome.add_argument("--verb", "--verbe", required=True)
+    outcome.add_argument("--text", "--texte", required=True)
+    outcome.set_defaults(func=command_outcome)
+
+    prompt = sub.add_parser("prompt", aliases=["codex-prompt"], help="Print a Codex handoff prompt")
+    prompt.add_argument("file")
+    prompt.add_argument("--lang", choices=["fr", "en"])
+    prompt.add_argument("--output", "-o")
+    prompt.set_defaults(func=command_prompt)
+
+    handoff = sub.add_parser("handoff", aliases=["confier-codex", "codex"], help="Send the design prompt to Codex")
+    handoff.add_argument("file")
+    handoff.add_argument("--lang", choices=["fr", "en"])
+    handoff.add_argument("--output", "-o")
+    handoff.add_argument("--dry-run", action="store_true")
+    handoff.add_argument("--codex-command", help="Codex executable name/path")
+    handoff.set_defaults(func=command_handoff)
+
+    validate = sub.add_parser("validate", aliases=["verifier", "vérifier"], help="Validate a design file")
+    validate.add_argument("file")
+    validate.set_defaults(func=command_validate)
+
+    list_cmd = sub.add_parser("list", aliases=["lister"], help="List accepted values")
+    list_cmd.add_argument("kind", choices=["types", "bloom", "competencies"])
+    list_cmd.set_defaults(func=command_list)
+    return parser
+
+
+def main(argv: list[str] | None = None) -> int:
+    parser = build_parser()
+    args = parser.parse_args(argv)
+    args.func(args)
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

@@ -25,10 +25,16 @@ Puis écris le fichier dans `.tools/bin/learning`, rends-le exécutable, et util
 
 ./.tools/bin/learning
 
-Mission :
-Créer un fichier `design.json` complet, structuré et importable dans Learning Designer.
+Une fois `.tools/bin/learning` créé, ne dépends plus du réseau.
 
-Commence par me poser les questions nécessaires en français :
+Mission :
+Créer un fichier `design.json` complet, structuré, détaillé et importable dans Learning Designer.
+
+Utilise le CLI autant que possible. N’écris pas le JSON à la main sauf si le CLI est impossible à utiliser après plusieurs tentatives documentées.
+
+Commence par me poser les questions nécessaires en français, sans me surcharger.
+
+Questions indispensables :
 - sujet ou thème de la séance/séquence ;
 - niveau et public cible ;
 - durée totale ;
@@ -36,10 +42,13 @@ Commence par me poser les questions nécessaires en français :
 - taille du groupe ;
 - objectifs d’enseignement : ce que je veux faire travailler, transmettre ou entraîner ;
 - acquis d’apprentissage attendus : ce que les élèves devront être capables de faire à la fin ;
-- niveau Bloom souhaité pour chaque acquis, si je le connais ;
-- compétences numériques à mobiliser, si pertinent ;
 - contraintes matérielles, pédagogiques ou institutionnelles ;
 - niveau de détail souhaité.
+
+Questions complémentaires à poser seulement si c’est utile :
+- niveau Bloom souhaité pour chaque acquis, si je le connais ;
+- compétences numériques à mobiliser, si pertinent ;
+- supports, œuvres, ressources ou outils déjà imposés.
 
 Distingue bien :
 - les objectifs d’enseignement, qui décrivent mon intention pédagogique ;
@@ -47,9 +56,53 @@ Distingue bien :
 
 Si je donne seulement des objectifs d’enseignement, transforme-les en acquis d’apprentissage observables, formulés avec des verbes d’action et reliés à la taxonomie de Bloom.
 
+Si certaines informations manquent, fais des hypothèses raisonnables au lieu de bloquer, sauf si l’hypothèse serait risquée.
+
+Cas particulier de la durée :
+- si la durée est donnée en jours, demande ou propose explicitement une durée par séance avant de générer le design ;
+- par défaut, pour le collège, interprète 1 jour comme 1 séance de 55 minutes, sauf indication contraire ;
+- annonce clairement l’hypothèse retenue.
+
+Avant d’exécuter les commandes de création complète, reformule brièvement :
+- le sujet ;
+- le public ;
+- la durée totale convertie en minutes ;
+- le nombre de moments prévu ;
+- les objectifs d’enseignement ;
+- les acquis Bloom proposés ;
+- les principales compétences numériques, si elles sont mobilisées.
+
 Ensuite utilise le CLI, pas une écriture manuelle du JSON.
 
-Commandes à utiliser :
+Avant de créer toutes les activités, vérifie les commandes utiles :
+- ./.tools/bin/learning --help
+- ./.tools/bin/learning init --help
+- ./.tools/bin/learning add-moment --help
+- ./.tools/bin/learning add-activity --help
+- ./.tools/bin/learning outcome --help
+- ./.tools/bin/learning list types
+- ./.tools/bin/learning list bloom
+- ./.tools/bin/learning list competencies
+
+Pour `add-activity`, utilise uniquement les valeurs contrôlées acceptées par le CLI.
+
+Valeurs sûres :
+- `--type` : `read`, `investigate`, `practice`, `produce`, `discuss`, `collaborate`
+- `--group` : `individual`, `subgroups`, `whole`
+- `--teacher` : `present`, `absent`
+- `--evaluation` : `diagnostic`, `formative`, `summative`, `certificative`, `none`
+
+Pour `--pacing` et `--mode`, vérifie avec le CLI ou utilise les valeurs produites par les exemples qui fonctionnent. En présentiel synchrone, `--pacing synchronous` et `--mode presentiel` sont acceptables si le CLI les valide.
+
+Ne mets jamais de phrases longues dans les champs contrôlés comme `--group`, `--teacher`, `--evaluation`, `--type` ou `--pacing`.
+
+Mets les consignes, critères, supports, rôle de l’enseignant, modalités de différenciation et détails pédagogiques dans :
+- `--description`
+- `--notes`
+- `--objectives`
+- `--intentions`
+
+Commandes à utiliser obligatoirement autant que possible :
 - ./.tools/bin/learning init
 - ./.tools/bin/learning add-moment
 - ./.tools/bin/learning add-activity
@@ -57,28 +110,71 @@ Commandes à utiliser :
 - ./.tools/bin/learning validate design.json
 - ./.tools/bin/learning prompt design.json
 
+Procédure recommandée :
+1. Crée `design.json` avec `init`.
+2. Ajoute les acquis Bloom avec `outcome`.
+3. Ajoute un premier moment et une première activité complète pour tester les valeurs CLI.
+4. Si la commande passe, ajoute le reste des moments et activités.
+5. Si une commande échoue, explique pourquoi, corrige la valeur fautive, puis recommence.
+6. Valide systématiquement avec `validate`.
+7. Exécute `prompt design.json`.
+
+Le design doit inclure :
+- des moments clairement titrés ;
+- des intentions pédagogiques explicites ;
+- des activités variées ;
+- des durées réalistes ;
+- des modalités de groupe adaptées ;
+- des évaluations diagnostiques, formatives ou sommatives selon les étapes ;
+- des acquis Bloom reliés aux activités ;
+- des compétences numériques quand c’est pertinent ;
+- des descriptions suffisamment détaillées pour être exploitables par un enseignant.
+
+Si je demande d’intégrer le numérique, propose des usages pédagogiquement utiles, par exemple :
+- recherche documentaire guidée ;
+- vérification ou sélection de sources ;
+- carte collaborative ;
+- rédaction numérique ;
+- sauvegarde et organisation des fichiers ;
+- relecture, correction et amélioration d’un texte ;
+- production ou partage contrôlé.
+
+Utilise les identifiants de compétences numériques acceptés par le CLI, par exemple :
+- A1, A2
+- P1, P6
+- C14, C15
+
 À la fin, restitue-moi :
 - le chemin du fichier `design.json` ;
+- le résultat de la validation CLI ;
 - le nombre de moments ;
 - le nombre d’activités ;
 - les objectifs d’enseignement pris en compte ;
 - les acquis Bloom créés ;
 - les compétences numériques mobilisées ;
 - la répartition des durées ;
+- les hypothèses retenues ;
 - le contenu ou le fichier `design.json`.
 
 Publication :
 Ne publie pas directement depuis ton sandbox sauf si je te donne explicitement un jeton CLI.
-Pour publier depuis mon Mac, indique-moi simplement :
+Pour publier depuis mon Mac, indique-moi simplement, si le fichier est sur le Bureau :
+
+learning publish ~/Desktop/design.json
+
+Ou, si le fichier reste dans le dossier courant :
 
 learning publish design.json
 
 Règles importantes :
-- Utilise le CLI autant que possible.
+- Travaille progressivement.
+- Pose d’abord les questions nécessaires.
 - N’écris pas le JSON à la main sauf si le CLI est impossible à utiliser après plusieurs tentatives.
+- Vérifie les valeurs acceptées avant de générer beaucoup d’activités.
+- Teste une première activité avant de produire toute la séquence.
 - Si une commande échoue, explique pourquoi, corrige-la et recommence.
 - Une fois `.tools/bin/learning` créé, ne dépends plus du réseau.
-- Travaille progressivement : pose d’abord les questions nécessaires, puis exécute les commandes.
+- Ne publie jamais sans autorisation explicite.
 PROMPT;
 
 $skillPrompt = <<<'PROMPT'

@@ -1,10 +1,6 @@
 # Learning Designer
 
-Application web de scénarisation pédagogique inspirée de l'UCL Learning Designer.
-
-Inspiré de l'[UCL Learning Designer](https://www.ucl.ac.uk/learning-designer/) (UCL Knowledge Lab, UCL Institute of Education, 2013–2026).
-
-Basé sur le travail de François Jourde : https://github.com/jourde/learning-designer-revised
+Application web de scénarisation pédagogique inspirée de l'[UCL Learning Designer](https://www.ucl.ac.uk/learning-designer/) (UCL Knowledge Lab, UCL Institute of Education, 2013–2026) et basé sur le travail de [François Jourde](https://github.com/jourde/learning-designer-revised).
 
 Le projet permet de concevoir des séquences d'apprentissage structurées en moments et activités, de les analyser visuellement, de les enrichir avec des compétences numériques, puis de les exporter, sauvegarder et partager.
 
@@ -28,7 +24,7 @@ Le projet permet de concevoir des séquences d'apprentissage structurées en mom
 
 ## Compétences numériques
 
-Les activités peuvent maintenant être liées à un référentiel de compétences numériques structuré en trois domaines :
+Les activités peuvent être liées à un référentiel de compétences numériques structuré en trois domaines :
 
 - `Acquérir`
 - `Approfondir`
@@ -100,7 +96,7 @@ Les tables nécessaires sont créées automatiquement au premier accès.
 
 ## CLI `learning`
 
-Le projet fournit aussi un CLI bilingue FR/EN pour préparer un design depuis le terminal, puis le confier à Codex.
+Le projet fournit aussi un CLI bilingue FR/EN pour préparer un design depuis le terminal, puis le confier à Codex ou Claude Code.
 
 Installation en une commande :
 
@@ -168,5 +164,5 @@ Le `README` doit donc être lu comme celui d'une application web complète, et n
 ## Crédits
 
 - Inspiré de l'UCL Learning Designer
-- Développé par Yann Houry et François Jourde
+- Développé par Yann Houry sur la base du travail de François Jourde
 - Licence : CC BY-SA

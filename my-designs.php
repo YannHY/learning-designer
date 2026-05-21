@@ -43,7 +43,7 @@ function e(string $value): string
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="interface.css?v=20260520-2" />
     <link rel="stylesheet" href="account-ui.css?v=20260520-4" />
-    <link rel="stylesheet" href="account-pages.css?v=20260520-ariane5" />
+    <link rel="stylesheet" href="account-pages.css?v=20260521-width" />
     <style>
       body.designs-page {
         background: #fff;
@@ -55,7 +55,7 @@ function e(string $value): string
       }
 
       .saved-shell {
-        width: min(980px, calc(100vw - 32px));
+        width: min(var(--content-shell-width, 1180px), calc(100vw - var(--content-shell-gutter, 36px)));
         margin: 40px auto;
         padding: 32px;
         border: 1px solid var(--line);

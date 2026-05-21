@@ -203,13 +203,13 @@ foreach ($sectionGroups as $sectionKey => $group) {
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="interface.css?v=20260520-2">
     <link rel="stylesheet" href="account-ui.css?v=20260520-4">
-    <link rel="stylesheet" href="account-pages.css?v=20260520-ariane5">
+    <link rel="stylesheet" href="account-pages.css?v=20260521-width">
     <style>
         body.competencies-page {
             background: #fff;
         }
         .competencies-shell {
-            width: min(1180px, calc(100% - 36px));
+            width: min(var(--content-shell-width, 1180px), calc(100vw - var(--content-shell-gutter, 36px)));
             margin: 32px auto 64px;
         }
         .competencies-header {
@@ -607,7 +607,6 @@ foreach ($sectionGroups as $sectionKey => $group) {
         }
         @media (max-width: 760px) {
             .competencies-shell {
-                width: min(100% - 24px, 1180px);
                 margin-top: 22px;
             }
             .competencies-controls {

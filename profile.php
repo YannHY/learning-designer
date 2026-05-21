@@ -152,7 +152,7 @@ function e(string $value): string
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="interface.css?v=20260520-2">
     <link rel="stylesheet" href="account-ui.css?v=20260520-4">
-    <link rel="stylesheet" href="account-pages.css?v=20260520-ariane5">
+    <link rel="stylesheet" href="account-pages.css?v=20260521-width">
     <style>
         body.profile-page {
             background: #fff;

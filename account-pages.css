@@ -10,6 +10,8 @@
   --shadow: 0 20px 50px rgba(24, 48, 84, 0.12);
   --radius: 22px;
   --font-family: "Inter", "Segoe UI", "Trebuchet MS", sans-serif;
+  --content-shell-width: 1180px;
+  --content-shell-gutter: 36px;
 }
 
 * { box-sizing: border-box; }
@@ -32,28 +34,11 @@ body.signup-page {
   z-index: 20;
 }
 .site-breadcrumb {
-  width: min(1180px, calc(100vw - 36px));
+  width: min(var(--content-shell-width), calc(100vw - var(--content-shell-gutter)));
   margin: 18px auto 0;
   color: var(--muted);
   font-size: 13px;
   font-weight: 600;
-}
-body.about-page .site-breadcrumb {
-  width: min(724px, calc(100vw - 72px));
-}
-body.admin-page .site-breadcrumb,
-body.profile-page .site-breadcrumb {
-  width: min(1144px, calc(100vw - 72px));
-  padding-left: 28px;
-}
-body.bloom-page .site-breadcrumb {
-  width: min(1320px, calc(100vw - 24px));
-}
-body.cli-page .site-breadcrumb {
-  width: min(1080px, calc(100vw - 40px));
-}
-body.designs-page .site-breadcrumb {
-  width: min(980px, calc(100vw - 32px));
 }
 body.login-page .site-breadcrumb,
 body.signup-page .site-breadcrumb,
@@ -128,8 +113,11 @@ body.setup-page .site-breadcrumb {
 }
 .profile-shell {
   display: block;
-  max-width: 1180px;
+  width: min(var(--content-shell-width), calc(100vw - var(--content-shell-gutter)));
+  max-width: none;
   margin: 0 auto;
+  padding-right: 0;
+  padding-left: 0;
 }
 .account-card {
   width: min(100%, 480px);
@@ -540,11 +528,6 @@ th {
 }
 
 @media (max-width: 760px) {
-  body.admin-page .site-breadcrumb,
-  body.profile-page .site-breadcrumb {
-    padding-left: 0;
-  }
-
   .profile-section-head,
   .profile-publication {
     flex-direction: column;

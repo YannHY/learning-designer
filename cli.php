@@ -387,15 +387,15 @@ PROMPT;
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="interface.css?v=20260520-2">
     <link rel="stylesheet" href="account-ui.css?v=20260520-4">
-    <link rel="stylesheet" href="account-pages.css?v=20260520-ariane5">
+    <link rel="stylesheet" href="account-pages.css?v=20260521-width">
     <style>
         body.cli-page {
             background: #fff;
         }
         .cli-shell {
-            max-width: 1120px;
+            width: min(var(--content-shell-width, 1180px), calc(100vw - var(--content-shell-gutter, 36px)));
             margin: 0 auto;
-            padding: 28px 20px 56px;
+            padding: 28px 0 56px;
         }
         .cli-hero {
             display: grid;
@@ -407,13 +407,10 @@ PROMPT;
             align-items: center;
             gap: 18px;
             margin: 0;
-            color: var(--primary);
+            color: var(--text);
             font-size: clamp(32px, 5vw, 58px);
             line-height: 1.02;
             letter-spacing: 0;
-        }
-        .cli-title span {
-            color: var(--text);
         }
         .cli-title i {
             flex: 0 0 auto;

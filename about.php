@@ -14,12 +14,11 @@ require_once __DIR__ . '/lib/bootstrap.php';
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="interface.css?v=20260520-2">
     <link rel="stylesheet" href="account-ui.css?v=20260520-4">
-    <link rel="stylesheet" href="account-pages.css?v=20260520-ariane5">
+    <link rel="stylesheet" href="account-pages.css?v=20260521-width">
     <style>
         .about-shell {
-            max-width: 760px;
+            width: min(var(--content-shell-width, 1180px), calc(100vw - var(--content-shell-gutter, 36px)));
             margin: 32px auto 64px;
-            padding: 0 18px;
         }
         .about-card {
             background: rgba(255, 255, 255, 0.94);

@@ -439,7 +439,7 @@ function render_site_nav(string $active = ''): void
     $isAdmin = (string)($user['role'] ?? '') === 'admin';
     $username = trim((string)($user['username'] ?? $user['email'] ?? ''));
     $savesClass = $active === 'saves' ? ' nav-account-btn-active' : '';
-    $cliClass = $active === 'cli' ? ' nav-account-btn-active' : '';
+    $cliClass = in_array($active, ['cli', 'cli-reference', 'skill'], true) ? ' nav-account-btn-active' : '';
     $profileClass = $active === 'profile' ? ' nav-account-btn-active' : '';
     $adminClass = $active === 'admin' ? ' nav-account-btn-active' : '';
     $breadcrumbItems = site_breadcrumb_items($active);
@@ -621,6 +621,14 @@ function site_breadcrumb_items(string $active = ''): array
         'cli' => [
             ['fr' => 'CLI', 'en' => 'CLI'],
         ],
+        'cli-reference' => [
+            ['fr' => 'CLI', 'en' => 'CLI', 'href' => 'cli.php'],
+            ['fr' => 'CLI détaillé', 'en' => 'CLI details'],
+        ],
+        'skill' => [
+            ['fr' => 'CLI', 'en' => 'CLI', 'href' => 'cli.php'],
+            ['fr' => 'Skill Claude', 'en' => 'Claude skill'],
+        ],
         'competencies' => [
             ['fr' => 'Compétences numériques', 'en' => 'Digital Competencies'],
         ],
@@ -669,6 +677,8 @@ function render_site_breadcrumb(array $items): void
                 <li>
                     <?php if ($index === count($items) - 1): ?>
                         <span aria-current="page" data-site-i18n-en="<?= h((string)($item['en'] ?? 'Page')) ?>" data-site-i18n-fr="<?= h((string)($item['fr'] ?? 'Page')) ?>"><?= h((string)($item['fr'] ?? 'Page')) ?></span>
+                    <?php elseif (!empty($item['href'])): ?>
+                        <a href="<?= h((string)$item['href']) ?>" data-site-i18n-en="<?= h((string)($item['en'] ?? 'Page')) ?>" data-site-i18n-fr="<?= h((string)($item['fr'] ?? 'Page')) ?>"><?= h((string)($item['fr'] ?? 'Page')) ?></a>
                     <?php else: ?>
                         <span data-site-i18n-en="<?= h((string)($item['en'] ?? 'Page')) ?>" data-site-i18n-fr="<?= h((string)($item['fr'] ?? 'Page')) ?>"><?= h((string)($item['fr'] ?? 'Page')) ?></span>
                     <?php endif; ?>
@@ -769,12 +779,13 @@ function render_site_footer(): void
     ?>
     <footer class="site-footer">
         <div class="site-footer-copy-stack">
-            <span class="site-footer-copy">Learning Designer — Yann Houry &amp; François Jourde — 2026 — <abbr title="Creative Commons Attribution - Partage dans les mêmes conditions">CC BY-SA</abbr></span>
+            <span class="site-footer-copy">Learning Designer — Yann Houry &amp; François Jourde</span>
             <span class="site-footer-copy">Inspiré de l'<a class="site-footer-link" href="https://www.ucl.ac.uk/learning-designer/" target="_blank" rel="noopener noreferrer">UCL Learning Designer</a> (UCL Knowledge Lab, UCL Institute of Education, 2013–2026).</span>
+            <nav class="site-footer-links" aria-label="Liens du pied de page">
+                <a class="site-footer-link" href="about.php">À propos</a>
+            </nav>
+            <span class="site-footer-copy site-footer-license">2026 — <abbr title="Creative Commons Attribution - Partage dans les mêmes conditions">CC BY-SA</abbr></span>
         </div>
-        <nav class="site-footer-links" aria-label="Liens du pied de page">
-            <a class="site-footer-link" href="about.php">À propos</a>
-        </nav>
     </footer>
     <?php
 }

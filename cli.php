@@ -361,19 +361,6 @@ Important rules:
 - Never publish without explicit authorization.
 PROMPT;
 
-$skillPrompt = <<<'PROMPT'
-Lis et applique cette skill :
-https://github.com/YannHY/learning-designer/blob/main/skills/learning-designer/SKILL.md
-
-Ta mission : m’aider à créer un fichier design.json Learning Designer avec le CLI learning, le valider, puis me donner les commandes exactes pour le publier.
-PROMPT;
-
-$skillPromptEn = <<<'PROMPT'
-Read and apply this skill:
-https://github.com/YannHY/learning-designer/blob/main/skills/learning-designer/SKILL.md
-
-Your mission: help me create a Learning Designer design.json file with the learning CLI, validate it, then give me the exact commands to publish it.
-PROMPT;
 ?>
 <!doctype html>
 <html lang="fr">
@@ -403,19 +390,11 @@ PROMPT;
             margin-bottom: 26px;
         }
         .cli-title {
-            display: flex;
-            align-items: center;
-            gap: 18px;
             margin: 0;
             color: var(--text);
             font-size: clamp(32px, 5vw, 58px);
             line-height: 1.02;
             letter-spacing: 0;
-        }
-        .cli-title i {
-            flex: 0 0 auto;
-            font-size: 0.5em;
-            line-height: 1;
         }
         .cli-subtitle {
             max-width: 1040px;
@@ -430,13 +409,10 @@ PROMPT;
             border: 1px solid var(--line);
             border-radius: 8px;
             background: var(--panel);
-            box-shadow: 0 12px 28px rgba(0,0,0,0.06);
+            box-shadow: 0 8px 18px rgba(0,0,0,0.04);
         }
         .cli-section h2,
         .cli-section h3 {
-            display: flex;
-            align-items: center;
-            gap: 10px;
             margin: 0 0 14px;
             color: var(--text);
             letter-spacing: 0;
@@ -461,21 +437,11 @@ PROMPT;
             margin-top: 18px;
         }
         .cli-step {
-            min-height: 150px;
+            min-height: 112px;
             padding: 16px;
             border: 1px solid var(--line);
             border-radius: 8px;
             background: var(--panel-2);
-        }
-        .cli-step i {
-            display: inline-grid;
-            place-items: center;
-            width: 34px;
-            height: 34px;
-            margin-bottom: 12px;
-            border-radius: 8px;
-            background: rgba(56, 139, 253, 0.12);
-            color: var(--primary);
         }
         .cli-step strong {
             display: block;
@@ -530,8 +496,8 @@ PROMPT;
             margin: 16px 0;
             padding: 14px;
             border-radius: 8px;
-            background: #eef6ff;
-            color: #17324d;
+            background: #f6f8fa;
+            color: var(--text);
             line-height: 1.55;
         }
         .cli-note i {
@@ -540,8 +506,8 @@ PROMPT;
         }
         .cli-details-grid {
             display: grid;
-            grid-template-columns: repeat(2, minmax(0, 1fr));
-            gap: 18px;
+            grid-template-columns: 1fr;
+            gap: 22px;
         }
         .cli-prompt {
             min-height: 440px;
@@ -581,7 +547,6 @@ PROMPT;
         .cli-button {
             display: inline-flex;
             align-items: center;
-            gap: 8px;
             min-height: 38px;
             padding: 0 14px;
             border: 1px solid var(--line);
@@ -601,9 +566,7 @@ PROMPT;
             color: var(--primary);
         }
         [data-theme="dark"] body.cli-page {
-            background:
-                radial-gradient(circle at top left, rgba(56, 139, 253, 0.10), transparent 28%),
-                linear-gradient(180deg, #1f2537 0%, #1a1f2e 100%);
+            background: #1a1f2e;
         }
         [data-theme="dark"] .cli-title,
         [data-theme="dark"] .cli-title span,
@@ -615,7 +578,7 @@ PROMPT;
             color: #f3f6ff;
         }
         [data-theme="dark"] .cli-section {
-            background: linear-gradient(180deg, rgba(36, 43, 64, 0.96), rgba(30, 36, 54, 0.96));
+            background: rgba(30, 36, 54, 0.96);
             border-color: rgba(103, 116, 145, 0.45);
         }
         [data-theme="dark"] .cli-step,
@@ -630,7 +593,7 @@ PROMPT;
             color: var(--text-body);
         }
         [data-theme="dark"] .cli-note {
-            background: rgba(140, 198, 255, 0.12);
+            background: rgba(255, 255, 255, 0.06);
             color: var(--text-body);
         }
         @media (max-width: 900px) {
@@ -648,157 +611,34 @@ PROMPT;
 <?php render_site_nav('cli'); ?>
 <main class="cli-shell">
     <header class="cli-hero">
-        <h1 class="cli-title"><i class="fa-solid fa-code" aria-hidden="true"></i> <span<?= cli_i18n_attrs('Créer avec l’IA', 'Create with AI') ?>>Créer avec l’IA</span></h1>
-        <p class="cli-subtitle"<?= cli_i18n_attrs('Installez la commande, demandez à Claude ou Codex de préparer le fichier, puis publiez le design en ligne avec une seule ligne.', 'Install the command, ask Claude or Codex to prepare the file, then publish the design online with one line.') ?>>Installez la commande, demandez à Claude ou Codex de préparer le fichier, puis publiez le design en ligne avec une seule ligne.</p>
-        <nav class="cli-anchor-list" aria-label="Sections de la page"<?= cli_i18n_attr_attrs('aria-label', 'Sections de la page', 'Page sections') ?>>
-            <a href="#express"><i class="fa-solid fa-bolt" aria-hidden="true"></i> <span<?= cli_i18n_attrs('Version courte', 'Short version') ?>>Version courte</span></a>
-            <a href="#detail"><i class="fa-solid fa-list-check" aria-hidden="true"></i> <span<?= cli_i18n_attrs('Guide détaillé', 'Detailed guide') ?>>Guide détaillé</span></a>
-            <a href="#skill"><i class="fa-solid fa-wand-magic-sparkles" aria-hidden="true"></i> <span<?= cli_i18n_attrs('Skill Claude', 'Claude skill') ?>>Skill Claude</span></a>
-            <a href="#prompt"><i class="fa-solid fa-message" aria-hidden="true"></i> <span<?= cli_i18n_attrs('Prompt IA', 'AI prompt') ?>>Prompt IA</span></a>
+        <h1 class="cli-title"><span<?= cli_i18n_attrs('Créer avec l’IA', 'Create with AI') ?>>Créer avec l’IA</span></h1>
+        <p class="cli-subtitle"<?= cli_i18n_attrs('Un CLI pour publier vos designs.', 'A CLI to publish your designs.') ?>>Un CLI pour publier vos designs.</p>
+        <nav class="cli-anchor-list" aria-label="Ressources"<?= cli_i18n_attr_attrs('aria-label', 'Ressources', 'Resources') ?>>
+            <a href="#detail"><span<?= cli_i18n_attrs('Guide', 'Guide') ?>>Guide</span></a>
+            <a href="#prompt"><span<?= cli_i18n_attrs('Prompt IA', 'AI prompt') ?>>Prompt IA</span></a>
+            <a href="skill.php"><span<?= cli_i18n_attrs('Créer une skill', 'Create a skill') ?>>Créer une skill</span></a>
+            <a href="cli-reference.php"><span<?= cli_i18n_attrs('CLI détaillé', 'CLI details') ?>>CLI détaillé</span></a>
         </nav>
     </header>
 
-    <section id="express" class="cli-section">
-        <h2><i class="fa-solid fa-bolt" aria-hidden="true"></i> <span<?= cli_i18n_attrs('Version courte', 'Short version') ?>>Version courte</span></h2>
-        <p class="cli-copy"<?= cli_i18n_attrs('Pour un usage normal, il suffit de suivre ces quatre étapes.', 'For normal use, these four steps are enough.') ?>>Pour un usage normal, il suffit de suivre ces quatre étapes.</p>
-        <div class="cli-steps">
-            <div class="cli-step">
-                <i class="fa-solid fa-download" aria-hidden="true"></i>
-                <strong<?= cli_i18n_attrs('1. Installer', '1. Install') ?>>1. Installer</strong>
-                <span<?= cli_i18n_attrs('À faire une seule fois sur votre ordinateur.', 'Do this once on your computer.') ?>>À faire une seule fois sur votre ordinateur.</span>
-            </div>
-            <div class="cli-step">
-                <i class="fa-solid fa-key" aria-hidden="true"></i>
-                <strong<?= cli_i18n_attrs('2. Connecter', '2. Connect') ?>>2. Connecter</strong>
-                <span<?= cli_i18n_attrs('Créer un jeton dans le profil, puis le coller dans le terminal.', 'Create a token in your profile, then paste it into the terminal.') ?>>Créer un jeton dans le profil, puis le coller dans le terminal.</span>
-            </div>
-            <div class="cli-step">
-                <i class="fa-solid fa-robot" aria-hidden="true"></i>
-                <strong<?= cli_i18n_attrs('3. Créer', '3. Create') ?>>3. Créer</strong>
-                <span<?= cli_i18n_attrs('Dans Claude ou Codex, coller le prompt fourni plus bas pour obtenir un fichier <code>design.json</code>.', 'In Claude or Codex, paste the prompt below to obtain a <code>design.json</code> file.', true) ?>>Dans Claude ou Codex, coller le prompt fourni plus bas pour obtenir un fichier <code>design.json</code>.</span>
-            </div>
-            <div class="cli-step">
-                <i class="fa-solid fa-share-nodes" aria-hidden="true"></i>
-                <strong<?= cli_i18n_attrs('4. Publier', '4. Publish') ?>>4. Publier</strong>
-                <span<?= cli_i18n_attrs('Une commande publie le design et renvoie le lien public.', 'One command publishes the design and returns the public link.') ?>>Une commande publie le design et renvoie le lien public.</span>
-            </div>
-        </div>
-        <div class="cli-copy-wrap">
-            <button class="cli-copy-btn" type="button" aria-label="Copier la commande" title="Copier"<?= cli_i18n_attr_attrs('aria-label,title', 'Copier la commande', 'Copy command') ?>><i class="fa-regular fa-copy" aria-hidden="true"></i></button>
-            <pre class="cli-code">curl -fsSL https://raw.githubusercontent.com/YannHY/learning-designer/main/install.sh | sh
-learning login
-learning publish ~/Desktop/design.json</pre>
-        </div>
-        <div class="cli-note">
-            <i class="fa-solid fa-circle-info" aria-hidden="true"></i>
-            <div<?= cli_i18n_attrs('Le jeton CLI est personnel. Il ne faut pas le donner à une IA sauf si vous voulez explicitement qu’elle publie à votre place.', 'Your CLI token is personal. Do not give it to an AI unless you explicitly want it to publish on your behalf.') ?>>Le jeton CLI est personnel. Il ne faut pas le donner à une IA sauf si vous voulez explicitement qu’elle publie à votre place.</div>
-        </div>
-    </section>
-
     <section id="detail" class="cli-section">
-        <h2><i class="fa-solid fa-list-check" aria-hidden="true"></i> <span<?= cli_i18n_attrs('Guide détaillé', 'Detailed guide') ?>>Guide détaillé</span></h2>
+        <h2><span<?= cli_i18n_attrs('Guide', 'Guide') ?>>Guide</span></h2>
         <div class="cli-details-grid">
             <div>
-                <h3><i class="fa-solid fa-download" aria-hidden="true"></i> <span<?= cli_i18n_attrs('Installer ou mettre à jour', 'Install or update') ?>>Installer ou mettre à jour</span></h3>
-                <p class="cli-copy"<?= cli_i18n_attrs('La commande suivante installe <code>learning</code>. Si elle est déjà installée, utilisez ensuite <code>learning upgrade</code> pour la mettre à jour.', 'The following command installs <code>learning</code>. If it is already installed, then use <code>learning upgrade</code> to update it.', true) ?>>La commande suivante installe <code>learning</code>. Si elle est déjà installée, utilisez ensuite <code>learning upgrade</code> pour la mettre à jour.</p>
-                <div class="cli-copy-wrap">
-                    <button class="cli-copy-btn" type="button" aria-label="Copier la commande" title="Copier"<?= cli_i18n_attr_attrs('aria-label,title', 'Copier la commande', 'Copy command') ?>><i class="fa-regular fa-copy" aria-hidden="true"></i></button>
-                    <pre class="cli-code">curl -fsSL https://raw.githubusercontent.com/YannHY/learning-designer/main/install.sh | sh
-learning upgrade
-learning status</pre>
-                </div>
+                <h3><span<?= cli_i18n_attrs('1. L’IA publie pour vous', '1. The AI publishes for you') ?>>1. L’IA publie pour vous</span></h3>
+                <p class="cli-copy"<?= cli_i18n_attrs('Copiez le prompt proposé plus bas dans Claude Code ou Codex. L’IA crée le fichier <code>design.json</code>, puis peut publier le design si vous lui donnez explicitement l’autorisation et un jeton CLI créé dans votre profil.', 'Copy the prompt below into Claude Code or Codex. The AI creates the <code>design.json</code> file, then can publish the design if you explicitly give it permission and a CLI token created in your profile.', true) ?>>Copiez le prompt proposé plus bas dans Claude Code ou Codex. L’IA crée le fichier <code>design.json</code>, puis peut publier le design si vous lui donnez explicitement l’autorisation et un jeton CLI créé dans votre profil.</p>
+                <p class="cli-copy"<?= cli_i18n_attrs('Dans ce cas, vous n’avez pas besoin d’installer le CLI dans votre terminal.', 'In this case, you do not need to install the CLI in your terminal.') ?>>Dans ce cas, vous n’avez pas besoin d’installer le CLI dans votre terminal.</p>
             </div>
             <div>
-                <h3><i class="fa-solid fa-key" aria-hidden="true"></i> <span<?= cli_i18n_attrs('Créer le jeton', 'Create the token') ?>>Créer le jeton</span></h3>
-                <p class="cli-copy"<?= cli_i18n_attrs('Dans votre profil, créez un jeton dans la section <strong>Publication depuis le CLI</strong>. Copiez-le tout de suite : il ne sera affiché qu’une seule fois.', 'In your profile, create a token in the <strong>CLI publishing</strong> section. Copy it immediately: it will only be shown once.', true) ?>>Dans votre profil, créez un jeton dans la section <strong>Publication depuis le CLI</strong>. Copiez-le tout de suite : il ne sera affiché qu’une seule fois.</p>
-                <div class="cli-copy-wrap">
-                    <button class="cli-copy-btn" type="button" aria-label="Copier la commande" title="Copier"<?= cli_i18n_attr_attrs('aria-label,title', 'Copier la commande', 'Copy command') ?>><i class="fa-regular fa-copy" aria-hidden="true"></i></button>
-                    <pre class="cli-code">learning login</pre>
-                </div>
+                <h3><span<?= cli_i18n_attrs('2. Vous publiez vous-même', '2. You publish yourself') ?>>2. Vous publiez vous-même</span></h3>
+                <p class="cli-copy"<?= cli_i18n_attrs('Copiez le prompt pour que l’IA crée le fichier <code>design.json</code>, puis téléchargez ce fichier sur votre ordinateur. Pour publier vous-même, vous devez installer le CLI, créer un jeton dans votre profil, lancer <code>learning login</code>, puis <code>learning publish</code>.', 'Copy the prompt so the AI creates the <code>design.json</code> file, then download that file to your computer. To publish yourself, you must install the CLI, create a token in your profile, run <code>learning login</code>, then <code>learning publish</code>.', true) ?>>Copiez le prompt pour que l’IA crée le fichier <code>design.json</code>, puis téléchargez ce fichier sur votre ordinateur. Pour publier vous-même, vous devez installer le CLI, créer un jeton dans votre profil, lancer <code>learning login</code>, puis <code>learning publish</code>.</p>
+                <p class="cli-copy"<?= cli_i18n_attrs('Les commandes d’installation et de publication sont expliquées dans la <a href="cli-reference.php">page CLI détaillé</a>.', 'The installation and publishing commands are explained on the <a href="cli-reference.php">CLI details page</a>.', true) ?>>Les commandes d’installation et de publication sont expliquées dans la <a href="cli-reference.php">page CLI détaillé</a>.</p>
             </div>
-            <div>
-                <h3><i class="fa-solid fa-file-code" aria-hidden="true"></i> <span<?= cli_i18n_attrs('Vérifier le fichier', 'Check the file') ?>>Vérifier le fichier</span></h3>
-                <p class="cli-copy"<?= cli_i18n_attrs('Quand Claude ou Codex vous donne <code>design.json</code>, vérifiez-le avant la publication.', 'When Claude or Codex gives you <code>design.json</code>, check it before publishing.', true) ?>>Quand Claude ou Codex vous donne <code>design.json</code>, vérifiez-le avant la publication.</p>
-                <div class="cli-copy-wrap">
-                    <button class="cli-copy-btn" type="button" aria-label="Copier la commande" title="Copier"<?= cli_i18n_attr_attrs('aria-label,title', 'Copier la commande', 'Copy command') ?>><i class="fa-regular fa-copy" aria-hidden="true"></i></button>
-                    <pre class="cli-code">learning validate ~/Desktop/design.json</pre>
-                </div>
-            </div>
-            <div>
-                <h3><i class="fa-solid fa-globe" aria-hidden="true"></i> <span<?= cli_i18n_attrs('Publier', 'Publish') ?>>Publier</span></h3>
-                <p class="cli-copy"<?= cli_i18n_attrs('La publication renvoie une URL publique. Gardez aussi le <strong>Design ID</strong> si vous voulez mettre à jour la même publication plus tard.', 'Publishing returns a public URL. Also keep the <strong>Design ID</strong> if you want to update the same publication later.', true) ?>>La publication renvoie une URL publique. Gardez aussi le <strong>Design ID</strong> si vous voulez mettre à jour la même publication plus tard.</p>
-                <div class="cli-copy-wrap">
-                    <button class="cli-copy-btn" type="button" aria-label="Copier la commande" title="Copier"<?= cli_i18n_attr_attrs('aria-label,title', 'Copier la commande', 'Copy command') ?>><i class="fa-regular fa-copy" aria-hidden="true"></i></button>
-                    <pre class="cli-code">learning publish ~/Desktop/design.json
-learning publish ~/Desktop/design.json --design-id 123</pre>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <section id="skill" class="cli-section">
-        <h2><i class="fa-solid fa-wand-magic-sparkles" aria-hidden="true"></i> <span<?= cli_i18n_attrs('Skill Claude', 'Claude skill') ?>>Skill Claude</span></h2>
-        <p class="cli-copy"<?= cli_i18n_attrs('Dans Claude Code, vous pouvez installer cette méthode comme une skill locale. Claude pourra ensuite la charger automatiquement quand elle est pertinente, ou vous pourrez la lancer manuellement avec une commande slash.', 'In Claude Code, you can install this method as a local skill. Claude can then load it automatically when relevant, or you can launch it manually with a slash command.') ?>>Dans Claude Code, vous pouvez installer cette méthode comme une skill locale. Claude pourra ensuite la charger automatiquement quand elle est pertinente, ou vous pourrez la lancer manuellement avec une commande slash.</p>
-        <h3><i class="fa-solid fa-pen-to-square" aria-hidden="true"></i> <span<?= cli_i18n_attrs('Méthode 1 : créer la skill avec le prompt', 'Method 1: create the skill with the prompt') ?>>Méthode 1 : créer la skill avec le prompt</span></h3>
-        <div class="cli-steps">
-            <div class="cli-step">
-                <i class="fa-solid fa-folder-plus" aria-hidden="true"></i>
-                <strong<?= cli_i18n_attrs('1. Créer le dossier', '1. Create the folder') ?>>1. Créer le dossier</strong>
-                <span<?= cli_i18n_attrs('Dans votre projet, créez <code>.claude/skills/learning-design</code>. Le dossier <code>skills</code> est important pour Claude Code.', 'In your project, create <code>.claude/skills/learning-design</code>. The <code>skills</code> folder matters for Claude Code.', true) ?>>Dans votre projet, créez <code>.claude/skills/learning-design</code>. Le dossier <code>skills</code> est important pour Claude Code.</span>
-            </div>
-            <div class="cli-step">
-                <i class="fa-solid fa-file-lines" aria-hidden="true"></i>
-                <strong<?= cli_i18n_attrs('2. Créer SKILL.md', '2. Create SKILL.md') ?>>2. Créer SKILL.md</strong>
-                <span<?= cli_i18n_attrs('Créez le fichier <code>SKILL.md</code>, au singulier, ajoutez le frontmatter, puis collez dessous le contenu de la section <strong>Prompt à donner à Claude ou Codex</strong>.', 'Create the <code>SKILL.md</code> file, singular, add the frontmatter, then paste the content from the <strong>Prompt to give Claude or Codex</strong> section below it.', true) ?>>Créez le fichier <code>SKILL.md</code>, au singulier, ajoutez le frontmatter, puis collez dessous le contenu de la section <strong>Prompt à donner à Claude ou Codex</strong>.</span>
-            </div>
-            <div class="cli-step">
-                <i class="fa-solid fa-terminal" aria-hidden="true"></i>
-                <strong<?= cli_i18n_attrs('3. Lancer la skill', '3. Run the skill') ?>>3. Lancer la skill</strong>
-                <span<?= cli_i18n_attrs('Dans Claude Code, tapez <code>/learning-design</code>, puis décrivez la séance ou la séquence à créer.', 'In Claude Code, type <code>/learning-design</code>, then describe the lesson or sequence you want to create.', true) ?>>Dans Claude Code, tapez <code>/learning-design</code>, puis décrivez la séance ou la séquence à créer.</span>
-            </div>
-        </div>
-        <p class="cli-copy"<?= cli_i18n_attrs('Exemple de création depuis la racine de votre projet :', 'Example creation from your project root:') ?>>Exemple de création depuis la racine de votre projet :</p>
-        <div class="cli-copy-wrap">
-            <button class="cli-copy-btn" type="button" aria-label="Copier la commande" title="Copier"<?= cli_i18n_attr_attrs('aria-label,title', 'Copier la commande', 'Copy command') ?>><i class="fa-regular fa-copy" aria-hidden="true"></i></button>
-            <pre class="cli-code">mkdir -p .claude/skills/learning-design
-code .claude/skills/learning-design/SKILL.md</pre>
-        </div>
-        <p class="cli-copy"<?= cli_i18n_attrs('Dans <code>SKILL.md</code>, commencez par ces lignes, puis ajoutez le prompt complet juste après :', 'In <code>SKILL.md</code>, start with these lines, then add the full prompt right after:', true) ?>>Dans <code>SKILL.md</code>, commencez par ces lignes, puis ajoutez le prompt complet juste après :</p>
-        <div class="cli-copy-wrap">
-            <button class="cli-copy-btn" type="button" aria-label="Copier le modèle" title="Copier"<?= cli_i18n_attr_attrs('aria-label,title', 'Copier le modèle', 'Copy template') ?>><i class="fa-regular fa-copy" aria-hidden="true"></i></button>
-            <pre class="cli-code">---
-description: Crée un fichier design.json Learning Designer avec le CLI learning, pose les questions pédagogiques utiles, valide le fichier et prépare les commandes de publication.
----
-
-# Learning Designer
-
-Collez ici le prompt complet de la section "Prompt à donner à Claude ou Codex".</pre>
-        </div>
-        <h3><i class="fa-solid fa-download" aria-hidden="true"></i> <span<?= cli_i18n_attrs('Méthode 2 : installer la skill publiée', 'Method 2: install the published skill') ?>>Méthode 2 : installer la skill publiée</span></h3>
-        <p class="cli-copy"<?= cli_i18n_attrs('Si vous voulez éviter le copier-coller, vous pouvez créer la skill locale directement depuis la version publiée sur GitHub.', 'If you want to avoid copy-paste, you can create the local skill directly from the version published on GitHub.') ?>>Si vous voulez éviter le copier-coller, vous pouvez créer la skill locale directement depuis la version publiée sur GitHub.</p>
-        <div class="cli-copy-wrap">
-            <button class="cli-copy-btn" type="button" aria-label="Copier la commande" title="Copier"<?= cli_i18n_attr_attrs('aria-label,title', 'Copier la commande', 'Copy command') ?>><i class="fa-regular fa-copy" aria-hidden="true"></i></button>
-            <pre class="cli-code">mkdir -p .claude/skills/learning-design
-curl -fsSL https://raw.githubusercontent.com/YannHY/learning-designer/main/skills/learning-designer/SKILL.md -o .claude/skills/learning-design/SKILL.md</pre>
-        </div>
-        <p class="cli-copy"<?= cli_i18n_attrs('Relancez Claude Code si la commande slash n’apparaît pas tout de suite, puis lancez la skill avec :', 'Restart Claude Code if the slash command does not appear immediately, then launch the skill with:') ?>>Relancez Claude Code si la commande slash n’apparaît pas tout de suite, puis lancez la skill avec :</p>
-        <div class="cli-copy-wrap">
-            <button class="cli-copy-btn" type="button" aria-label="Copier la commande" title="Copier"<?= cli_i18n_attr_attrs('aria-label,title', 'Copier la commande', 'Copy command') ?>><i class="fa-regular fa-copy" aria-hidden="true"></i></button>
-            <pre class="cli-code">/learning-design</pre>
-        </div>
-        <div class="cli-note">
-            <i class="fa-solid fa-circle-info" aria-hidden="true"></i>
-            <div<?= cli_i18n_attrs('Si vous aviez prévu <code>.claude/learning-design/SKILLS.md</code>, adaptez plutôt vers <code>.claude/skills/learning-design/SKILL.md</code> : c’est le format reconnu par Claude Code pour créer aussi la commande slash <code>/learning-design</code>.', 'If you planned to use <code>.claude/learning-design/SKILLS.md</code>, use <code>.claude/skills/learning-design/SKILL.md</code> instead: this is the format recognized by Claude Code and it also creates the <code>/learning-design</code> slash command.', true) ?>>Si vous aviez prévu <code>.claude/learning-design/SKILLS.md</code>, adaptez plutôt vers <code>.claude/skills/learning-design/SKILL.md</code> : c’est le format reconnu par Claude Code pour créer aussi la commande slash <code>/learning-design</code>.</div>
-        </div>
-        <p class="cli-copy"<?= cli_i18n_attrs('Pour Claude Cowork ou pour un usage ponctuel sans installation locale, copiez simplement ce prompt. Claude ira lire la skill publiée et suivra la méthode complète.', 'For Claude Cowork, or for one-off use without local installation, simply copy this prompt. Claude will read the published skill and follow the full method.') ?>>Pour Claude Cowork ou pour un usage ponctuel sans installation locale, copiez simplement ce prompt. Claude ira lire la skill publiée et suivra la méthode complète.</p>
-        <div class="cli-prompt-wrap">
-            <button class="cli-copy-btn" type="button" id="copy-skill-prompt-btn" aria-label="Copier le prompt de skill" title="Copier"<?= cli_i18n_attr_attrs('aria-label,title', 'Copier le prompt de skill', 'Copy skill prompt') ?>><i class="fa-regular fa-copy" aria-hidden="true"></i></button>
-            <textarea class="cli-prompt cli-prompt-compact" id="skill-prompt" readonly><?= cli_h($skillPrompt) ?></textarea>
         </div>
     </section>
 
     <section id="prompt" class="cli-section">
-        <h2><i class="fa-solid fa-message" aria-hidden="true"></i> <span<?= cli_i18n_attrs('Prompt à donner à Claude ou Codex', 'Prompt to give Claude or Codex') ?>>Prompt à donner à Claude ou Codex</span></h2>
+        <h2><span<?= cli_i18n_attrs('Prompt à donner à Claude Code ou Codex', 'Prompt to give Claude Code or Codex') ?>>Prompt à donner à Claude Code ou Codex</span></h2>
         <p class="cli-copy"<?= cli_i18n_attrs('Copiez ce prompt dans Claude ou Codex. Il demande à l’IA d’utiliser le CLI, de poser les bonnes questions pédagogiques, puis de produire un fichier validé.', 'Copy this prompt into Claude or Codex. It asks the AI to use the CLI, ask the right pedagogical questions, then produce a validated file.') ?>>Copiez ce prompt dans Claude ou Codex. Il demande à l’IA d’utiliser le CLI, de poser les bonnes questions pédagogiques, puis de produire un fichier validé.</p>
         <div class="cli-prompt-wrap">
             <button class="cli-copy-btn" type="button" id="copy-prompt-btn" aria-label="Copier le prompt" title="Copier"<?= cli_i18n_attr_attrs('aria-label,title', 'Copier le prompt', 'Copy prompt') ?>><i class="fa-regular fa-copy" aria-hidden="true"></i></button>
@@ -807,39 +647,9 @@ curl -fsSL https://raw.githubusercontent.com/YannHY/learning-designer/main/skill
     </section>
 
     <section id="after-ai" class="cli-section">
-        <h2><i class="fa-solid fa-paper-plane" aria-hidden="true"></i> <span<?= cli_i18n_attrs('Après Claude ou Codex', 'After Claude or Codex') ?>>Après Claude ou Codex</span></h2>
-        <p class="cli-copy"<?= cli_i18n_attrs('Quand l’IA a terminé, elle doit fournir un fichier <code>design.json</code>. Téléchargez ce fichier ou copiez-le sur votre ordinateur, par exemple sur le Bureau. Ensuite, ouvrez le Terminal et lancez les commandes suivantes.', 'When the AI has finished, it should provide a <code>design.json</code> file. Download it or copy it to your computer, for example to the Desktop. Then open Terminal and run the following commands.', true) ?>>Quand l’IA a terminé, elle doit fournir un fichier <code>design.json</code>. Téléchargez ce fichier ou copiez-le sur votre ordinateur, par exemple sur le Bureau. Ensuite, ouvrez le Terminal et lancez les commandes suivantes.</p>
-        <div class="cli-steps">
-            <div class="cli-step">
-                <i class="fa-solid fa-folder-open" aria-hidden="true"></i>
-                <strong<?= cli_i18n_attrs('1. Trouver le fichier', '1. Find the file') ?>>1. Trouver le fichier</strong>
-                <span<?= cli_i18n_attrs('Placez <code>design.json</code> dans un endroit simple, par exemple le Bureau.', 'Put <code>design.json</code> somewhere simple, for example on the Desktop.', true) ?>>Placez <code>design.json</code> dans un endroit simple, par exemple le Bureau.</span>
-            </div>
-            <div class="cli-step">
-                <i class="fa-solid fa-terminal" aria-hidden="true"></i>
-                <strong<?= cli_i18n_attrs('2. Ouvrir le Terminal', '2. Open Terminal') ?>>2. Ouvrir le Terminal</strong>
-                <span<?= cli_i18n_attrs('Les commandes se tapent dans le Terminal de votre ordinateur.', 'The commands are typed in your computer Terminal.') ?>>Les commandes se tapent dans le Terminal de votre ordinateur.</span>
-            </div>
-            <div class="cli-step">
-                <i class="fa-solid fa-check" aria-hidden="true"></i>
-                <strong<?= cli_i18n_attrs('3. Vérifier', '3. Validate') ?>>3. Vérifier</strong>
-                <span<?= cli_i18n_attrs('La validation doit répondre <code>OK</code>.', 'Validation should return <code>OK</code>.', true) ?>>La validation doit répondre <code>OK</code>.</span>
-            </div>
-            <div class="cli-step">
-                <i class="fa-solid fa-globe" aria-hidden="true"></i>
-                <strong<?= cli_i18n_attrs('4. Publier', '4. Publish') ?>>4. Publier</strong>
-                <span<?= cli_i18n_attrs('La publication renvoie un lien public à partager.', 'Publishing returns a public link to share.') ?>>La publication renvoie un lien public à partager.</span>
-            </div>
-        </div>
-        <div class="cli-copy-wrap">
-            <button class="cli-copy-btn" type="button" aria-label="Copier la commande" title="Copier"<?= cli_i18n_attr_attrs('aria-label,title', 'Copier la commande', 'Copy command') ?>><i class="fa-regular fa-copy" aria-hidden="true"></i></button>
-            <pre class="cli-code">learning validate ~/Desktop/design.json
-learning publish ~/Desktop/design.json</pre>
-        </div>
-        <div class="cli-note">
-            <i class="fa-solid fa-circle-info" aria-hidden="true"></i>
-            <div<?= cli_i18n_attrs('Si le fichier n’est pas sur le Bureau, remplacez <code>~/Desktop/design.json</code> par son chemin exact.', 'If the file is not on the Desktop, replace <code>~/Desktop/design.json</code> with its exact path.', true) ?>>Si le fichier n’est pas sur le Bureau, remplacez <code>~/Desktop/design.json</code> par son chemin exact.</div>
-        </div>
+        <h2><span<?= cli_i18n_attrs('Après Claude ou Codex', 'After Claude or Codex') ?>>Après Claude ou Codex</span></h2>
+        <p class="cli-copy"<?= cli_i18n_attrs('Demandez simplement à l’IA de publier le design qu’elle vient de créer. Pour cela, donnez-lui explicitement l’autorisation de publier et un jeton CLI créé dans votre profil.', 'Simply ask the AI to publish the design it just created. To do this, explicitly give it permission to publish and a CLI token created in your profile.') ?>>Demandez simplement à l’IA de publier le design qu’elle vient de créer. Pour cela, donnez-lui explicitement l’autorisation de publier et un jeton CLI créé dans votre profil.</p>
+        <p class="cli-copy"<?= cli_i18n_attrs('Si vous préférez publier vous-même depuis votre ordinateur, suivez la <a href="cli-reference.php">page CLI détaillé</a>.', 'If you prefer to publish yourself from your computer, follow the <a href="cli-reference.php">CLI details page</a>.', true) ?>>Si vous préférez publier vous-même depuis votre ordinateur, suivez la <a href="cli-reference.php">page CLI détaillé</a>.</p>
     </section>
 </main>
 <?php render_site_footer(); ?>
@@ -849,11 +659,6 @@ document.addEventListener('DOMContentLoaded', function () {
         fr: <?= json_encode($prompt, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) ?>,
         en: <?= json_encode($promptEn, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) ?>
     };
-    var skillPromptTexts = {
-        fr: <?= json_encode($skillPrompt, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) ?>,
-        en: <?= json_encode($skillPromptEn, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) ?>
-    };
-
     function applyCliLanguage(lang) {
         lang = lang === 'en' ? 'en' : 'fr';
         document.documentElement.lang = lang;
@@ -877,8 +682,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
         var aiPrompt = document.getElementById('ai-prompt');
         if (aiPrompt) aiPrompt.value = promptTexts[lang];
-        var skillPrompt = document.getElementById('skill-prompt');
-        if (skillPrompt) skillPrompt.value = skillPromptTexts[lang];
     }
 
     var cliLang = 'fr';
@@ -932,13 +735,6 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    var skillPromptButton = document.getElementById('copy-skill-prompt-btn');
-    var skillTextarea = document.getElementById('skill-prompt');
-    if (skillPromptButton && skillTextarea) {
-        skillPromptButton.addEventListener('click', function () {
-            copyText(skillTextarea.value, skillPromptButton);
-        });
-    }
 });
 </script>
 </body>

@@ -2654,6 +2654,11 @@ function openChoiceMenu(trigger, options, currentValue, onSelect) {
   trigger.setAttribute("aria-expanded", "true");
   trigger.setAttribute("aria-controls", menuId);
 
+  const spaceBelow = window.innerHeight - rect.bottom - 12;
+  const spaceAbove = rect.top - 12;
+  const availableHeight = Math.max(spaceBelow, spaceAbove, 160);
+  menu.style.maxHeight = `${Math.min(420, availableHeight)}px`;
+
   const menuRect = menu.getBoundingClientRect();
   let left = rect.left;
   let top = rect.bottom + 4;
@@ -2661,7 +2666,7 @@ function openChoiceMenu(trigger, options, currentValue, onSelect) {
     left = window.innerWidth - menuRect.width - 8;
   }
   if (left < 8) left = 8;
-  if (top + menuRect.height > window.innerHeight - 8) {
+  if (top + menuRect.height > window.innerHeight - 8 && spaceAbove > spaceBelow) {
     top = rect.top - menuRect.height - 4;
   }
   if (top < 8) top = 8;
@@ -6079,7 +6084,10 @@ setupFormAccessibility();
 bindTopPanelEvents();
 window.learningDesignerApp = {
   getState() {
-    return JSON.parse(JSON.stringify(state));
+    const snapshot = JSON.parse(JSON.stringify(state));
+    snapshot.meta = snapshot.meta && typeof snapshot.meta === "object" ? snapshot.meta : {};
+    snapshot.meta.designedMinutes = totalDesignedMinutes();
+    return snapshot;
   },
   getCurrentLang() {
     return currentLang();

@@ -405,12 +405,15 @@ $metaClassSize  = safeText($meta['sizeClass'] ?? '');
 $metaLearningDays= (int)($meta['learningDays'] ?? 0);
 $metaLearningH  = (int)($meta['learningHours'] ?? 0);
 $metaLearningMin= (int)($meta['learningMinutes'] ?? 0);
+$metaDayHours   = max(1, (int)($meta['dayHours'] ?? 7));
 
 $learningTimeParts = [];
 if ($metaLearningDays > 0) $learningTimeParts[] = $metaLearningDays . ' j';
 if ($metaLearningH > 0)    $learningTimeParts[] = $metaLearningH . ' h';
 if ($metaLearningMin > 0)  $learningTimeParts[] = $metaLearningMin . ' min';
 $learningTime = implode(' ', $learningTimeParts);
+$learningMinutes = (($metaLearningDays * $metaDayHours + $metaLearningH) * 60) + $metaLearningMin;
+$designedMinutes = max(0, (int)($meta['designedMinutes'] ?? 0));
 
 $totalActivities = 0;
 $totalMinutes    = 0;
@@ -418,6 +421,7 @@ foreach ($sessions as $s) {
     $totalActivities += count($s['activities'] ?? []);
     $totalMinutes    += totalSessionDuration($s);
 }
+$displayDesignedMinutes = $designedMinutes > 0 ? $designedMinutes : $totalMinutes;
 
 ?><!doctype html>
 <html lang="fr">
@@ -787,8 +791,8 @@ foreach ($sessions as $s) {
   $metaCards = [];
   if (count($sessions) > 0) $metaCards[] = ['Moments', count($sessions)];
   if ($totalActivities > 0) $metaCards[] = ['Activités', $totalActivities];
-  if ($totalMinutes > 0)    $metaCards[] = ['Durée totale', formatDuration($totalMinutes)];
-  if ($learningTime !== '')  $metaCards[] = ['Temps d\'apprentissage', $learningTime];
+  if ($displayDesignedMinutes > 0) $metaCards[] = ['Temps conçu', formatDuration($displayDesignedMinutes)];
+  if ($learningMinutes > 0)        $metaCards[] = ['Temps d\'apprentissage', $learningTime];
   if ($metaDelivery !== '')  $metaCards[] = ['Mode', labelFor($DELIVERY_MODES, $metaDelivery, $metaDelivery)];
   if ($metaClassSize !== '') $metaCards[] = ['Taille du groupe', $metaClassSize];
   ?>

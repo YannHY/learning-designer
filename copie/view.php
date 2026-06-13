@@ -405,45 +405,19 @@ $metaClassSize  = safeText($meta['sizeClass'] ?? '');
 $metaLearningDays= (int)($meta['learningDays'] ?? 0);
 $metaLearningH  = (int)($meta['learningHours'] ?? 0);
 $metaLearningMin= (int)($meta['learningMinutes'] ?? 0);
-$metaDayHours   = max(1, (int)($meta['dayHours'] ?? 7));
 
 $learningTimeParts = [];
 if ($metaLearningDays > 0) $learningTimeParts[] = $metaLearningDays . ' j';
 if ($metaLearningH > 0)    $learningTimeParts[] = $metaLearningH . ' h';
 if ($metaLearningMin > 0)  $learningTimeParts[] = $metaLearningMin . ' min';
 $learningTime = implode(' ', $learningTimeParts);
-$learningMinutes = (($metaLearningDays * $metaDayHours + $metaLearningH) * 60) + $metaLearningMin;
-$designedMinutes = max(0, (int)($meta['designedMinutes'] ?? 0));
 
 $totalActivities = 0;
 $totalMinutes    = 0;
-$hasActivityContextData = false;
 foreach ($sessions as $s) {
     $totalActivities += count($s['activities'] ?? []);
     $totalMinutes    += totalSessionDuration($s);
-    foreach (($s['activities'] ?? []) as $act) {
-        if (!is_array($act)) continue;
-        $hasContext = labelFor($GROUP_MODES, (string)($act['groupMode'] ?? '')) !== ''
-            || labelFor($TRAINER_MODES, (string)($act['teacherPresence'] ?? '')) !== ''
-            || labelFor($SYNC_MODES, (string)($act['syncMode'] ?? '')) !== ''
-            || labelFor($LOCATION_MODES, (string)($act['locationMode'] ?? '')) !== ''
-            || (($EVAL_MODES[(string)($act['evaluationMode'] ?? 'none')] ?? null) !== null);
-        if (!$hasContext) {
-            $tools = is_array($act['tools'] ?? null) ? array_filter($act['tools'], 'is_string') : [];
-            foreach ($tools as $toolId) {
-                if (competencyForReference($toolId)) {
-                    $hasContext = true;
-                    break;
-                }
-            }
-        }
-        if ($hasContext) {
-            $hasActivityContextData = true;
-            break 2;
-        }
-    }
 }
-$displayDesignedMinutes = $designedMinutes > 0 ? $designedMinutes : $totalMinutes;
 
 ?><!doctype html>
 <html lang="fr">
@@ -475,6 +449,44 @@ $displayDesignedMinutes = $designedMinutes > 0 ? $designedMinutes : $totalMinute
     }
     a { color: var(--accent); }
     .page { max-width: 1000px; margin: 0 auto; padding: 32px 20px 60px; }
+    .view-breadcrumb {
+      margin: 0 0 22px;
+      color: var(--text-2);
+      font-size: 13px;
+      font-weight: 600;
+    }
+    .view-breadcrumb ol {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+    .view-breadcrumb a {
+      color: var(--accent);
+      text-decoration: none;
+    }
+    .view-breadcrumb-home {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 20px;
+      height: 20px;
+    }
+    .view-breadcrumb a:hover,
+    .view-breadcrumb a:focus-visible {
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
+    .view-breadcrumb [aria-current="page"] {
+      color: var(--text-1);
+    }
+    .view-breadcrumb-separator {
+      color: #9aa4b2;
+    }
+
     /* Header */
     .hero { margin-bottom: 32px; }
     .hero h1 {
@@ -526,46 +538,6 @@ $displayDesignedMinutes = $designedMinutes > 0 ? $designedMinutes : $totalMinute
       font-size: 14px;
       color: var(--text-1);
       line-height: 1.65;
-    }
-    .sessions-toolbar {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-      margin: 0 0 14px;
-      padding-bottom: 10px;
-      border-bottom: 1px solid var(--border);
-    }
-    .sessions-toolbar-title {
-      margin: 0;
-      font-size: 14px;
-      font-weight: 800;
-      color: var(--text-1);
-    }
-    .activity-data-toggle-btn {
-      display: inline-flex;
-      align-items: center;
-      gap: 7px;
-      border: 0;
-      border-radius: 8px;
-      background: transparent;
-      color: var(--text-2);
-      padding: 6px 8px;
-      font: inherit;
-      font-size: 12px;
-      font-weight: 700;
-      line-height: 1.2;
-      cursor: pointer;
-    }
-    .activity-data-toggle-btn:hover,
-    .activity-data-toggle-btn:focus-visible {
-      background: var(--accent-soft);
-      color: var(--accent);
-      outline: none;
-    }
-    body.activity-context-hidden .activity-context-chip,
-    body.activity-context-hidden .chip-competency {
-      display: none;
     }
 
     /* Sessions */
@@ -786,6 +758,16 @@ $displayDesignedMinutes = $designedMinutes > 0 ? $designedMinutes : $totalMinute
 </head>
 <body>
 <main class="page">
+  <nav class="view-breadcrumb" aria-label="Fil d'Ariane">
+    <ol>
+      <li><a class="view-breadcrumb-home" href="index.html" aria-label="Accueil" title="Accueil"><i class="fa-solid fa-house" aria-hidden="true"></i></a></li>
+      <li class="view-breadcrumb-separator" aria-hidden="true">/</li>
+      <li><span>Design publié</span></li>
+      <li class="view-breadcrumb-separator" aria-hidden="true">/</li>
+      <li><span aria-current="page"><?= esc($title) ?></span></li>
+    </ol>
+  </nav>
+
   <header class="hero">
     <h1><?= esc($title) ?></h1>
     <div class="hero-meta">
@@ -805,8 +787,8 @@ $displayDesignedMinutes = $designedMinutes > 0 ? $designedMinutes : $totalMinute
   $metaCards = [];
   if (count($sessions) > 0) $metaCards[] = ['Moments', count($sessions)];
   if ($totalActivities > 0) $metaCards[] = ['Activités', $totalActivities];
-  if ($displayDesignedMinutes > 0) $metaCards[] = ['Temps conçu', formatDuration($displayDesignedMinutes)];
-  if ($learningMinutes > 0)        $metaCards[] = ['Temps d\'apprentissage', $learningTime];
+  if ($totalMinutes > 0)    $metaCards[] = ['Durée totale', formatDuration($totalMinutes)];
+  if ($learningTime !== '')  $metaCards[] = ['Temps d\'apprentissage', $learningTime];
   if ($metaDelivery !== '')  $metaCards[] = ['Mode', labelFor($DELIVERY_MODES, $metaDelivery, $metaDelivery)];
   if ($metaClassSize !== '') $metaCards[] = ['Taille du groupe', $metaClassSize];
   ?>
@@ -824,23 +806,6 @@ $displayDesignedMinutes = $designedMinutes > 0 ? $designedMinutes : $totalMinute
   <?php if ($metaDescription !== ''): ?>
   <div class="meta-description markdown-content"><?= markdownHtml($metaDescription) ?></div>
   <?php endif; ?>
-
-  <div class="sessions-toolbar">
-    <h2 class="sessions-toolbar-title">Moments</h2>
-    <?php if ($hasActivityContextData): ?>
-    <button
-      id="activity-context-toggle"
-      class="activity-data-toggle-btn"
-      type="button"
-      aria-pressed="false"
-      data-show-label="Afficher les données"
-      data-hide-label="Masquer les données"
-    >
-      <i class="fa-solid fa-eye-slash" aria-hidden="true"></i>
-      <span>Masquer les données</span>
-    </button>
-    <?php endif; ?>
-  </div>
 
   <div class="sessions">
   <?php foreach ($sessions as $si => $session):
@@ -915,7 +880,7 @@ $displayDesignedMinutes = $designedMinutes > 0 ? $designedMinutes : $totalMinute
         <?php if ($chips || $aTools): ?>
         <div class="activity-chips">
           <?php foreach ($chips as $chip): ?>
-          <span class="chip activity-context-chip"><?= esc($chip) ?></span>
+          <span class="chip"><?= esc($chip) ?></span>
           <?php endforeach; ?>
           <?php foreach ($aTools as $toolId):
             $competency = competencyForReference($toolId);
@@ -974,39 +939,6 @@ $displayDesignedMinutes = $designedMinutes > 0 ? $designedMinutes : $totalMinute
 </main>
 <script>
 (() => {
-  const contextToggle = document.getElementById('activity-context-toggle');
-  const contextStorageKey = 'learning-designer-public-activity-context-hidden';
-
-  function setContextVisibility(hidden) {
-    document.body.classList.toggle('activity-context-hidden', hidden);
-    if (!contextToggle) return;
-    const label = contextToggle.querySelector('span');
-    const icon = contextToggle.querySelector('i');
-    contextToggle.setAttribute('aria-pressed', hidden ? 'true' : 'false');
-    if (label) {
-      label.textContent = hidden ? contextToggle.dataset.showLabel : contextToggle.dataset.hideLabel;
-    }
-    if (icon) {
-      icon.classList.toggle('fa-eye', hidden);
-      icon.classList.toggle('fa-eye-slash', !hidden);
-    }
-  }
-
-  if (contextToggle) {
-    let savedHidden = false;
-    try {
-      savedHidden = localStorage.getItem(contextStorageKey) === '1';
-    } catch (error) {}
-    setContextVisibility(savedHidden);
-    contextToggle.addEventListener('click', () => {
-      const hidden = !document.body.classList.contains('activity-context-hidden');
-      setContextVisibility(hidden);
-      try {
-        localStorage.setItem(contextStorageKey, hidden ? '1' : '0');
-      } catch (error) {}
-    });
-  }
-
   const tip = document.createElement('div');
   tip.id = 'app-tooltip';
   tip.setAttribute('role', 'tooltip');

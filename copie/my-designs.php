@@ -43,12 +43,25 @@ function e(string $value): string
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="interface.css?v=20260520-2" />
     <link rel="stylesheet" href="account-ui.css?v=20260520-4" />
-    <link rel="stylesheet" href="account-pages.css?v=20260613-common" />
+    <link rel="stylesheet" href="account-pages.css?v=20260521-width" />
     <style>
+      body.designs-page {
+        background: #fff;
+      }
+      [data-theme="dark"] body.designs-page {
+        background:
+          radial-gradient(circle at top left, rgba(56, 139, 253, 0.10), transparent 28%),
+          linear-gradient(180deg, #1f2537 0%, #1a1f2e 100%);
+      }
+
       .saved-shell {
-        padding: 0;
-        border: 0;
-        border-radius: 0;
+        width: min(var(--content-shell-width, 1180px), calc(100vw - var(--content-shell-gutter, 36px)));
+        margin: 40px auto;
+        padding: 32px;
+        border: 1px solid var(--line);
+        border-radius: 24px;
+        background: rgba(255, 255, 255, 0.96);
+        box-shadow: var(--shadow-soft);
       }
 
       .saved-header {
@@ -57,6 +70,12 @@ function e(string $value): string
         justify-content: space-between;
         gap: 16px;
         margin-bottom: 24px;
+      }
+
+      .saved-title {
+        margin: 0;
+        font-size: clamp(28px, 4vw, 38px);
+        color: var(--text-strong);
       }
 
       .saved-subtitle {
@@ -134,7 +153,7 @@ function e(string $value): string
 
       .saved-card-actions {
         display: inline-flex;
-        gap: 8px;
+        gap: 10px;
         flex-wrap: wrap;
         align-items: center;
       }
@@ -149,18 +168,10 @@ function e(string $value): string
         text-decoration: none;
       }
 
-      .saved-action-btn {
-        width: 40px;
-        min-width: 40px;
-        height: 40px;
-        padding: 0;
-      }
-
-      .saved-action-delete:hover,
-      .saved-action-delete:focus-visible {
-        border-color: rgba(184, 54, 69, 0.28);
-        color: var(--danger);
-        background: rgba(184, 54, 69, 0.08);
+      [data-theme="dark"] .saved-shell {
+        border-color: rgba(103, 116, 145, 0.45);
+        background: linear-gradient(180deg, rgba(36, 43, 64, 0.96), rgba(30, 36, 54, 0.96));
+        box-shadow: 0 18px 42px rgba(0, 0, 0, 0.35);
       }
 
       [data-theme="dark"] .saved-title {
@@ -175,8 +186,8 @@ function e(string $value): string
       }
 
       [data-theme="dark"] .saved-flash {
-        border-color: var(--line);
-        background: var(--surface-light);
+        border-color: rgba(103, 116, 145, 0.4);
+        background: rgba(30, 36, 54, 0.94);
         color: #e8edf5;
       }
 
@@ -190,18 +201,18 @@ function e(string $value): string
       }
 
       [data-theme="dark"] .saved-empty {
-        border-color: var(--line);
-        background: var(--surface-light);
+        border-color: rgba(103, 116, 145, 0.38);
+        background: rgba(30, 36, 54, 0.78);
       }
 
       [data-theme="dark"] .saved-card {
-        border-color: var(--line);
-        background: var(--panel-2);
+        border-color: rgba(103, 116, 145, 0.38);
+        background: rgba(30, 36, 54, 0.78);
       }
 
       [data-theme="dark"] .saved-status {
-        border-color: var(--line);
-        background: var(--surface-light);
+        border-color: rgba(103, 116, 145, 0.38);
+        background: rgba(21, 26, 39, 0.72);
       }
 
       [data-theme="dark"] .saved-card-title {
@@ -210,7 +221,7 @@ function e(string $value): string
 
       @media (max-width: 760px) {
         .saved-shell {
-          padding: 0;
+          padding: 22px;
         }
 
         .saved-header,
@@ -258,19 +269,19 @@ function e(string $value): string
                 <span class="saved-status"><i class="<?= e($statusIcon) ?>" aria-hidden="true"></i><?= e($statusText) ?></span>
               </div>
               <div class="saved-card-actions">
-                <a class="btn btn-primary saved-action-btn" href="index.html?remote_design_id=<?= (int)$item['id'] ?>" aria-label="Ouvrir" title="Ouvrir">
-                  <i class="fa-regular fa-folder-open" aria-hidden="true"></i>
+                <a class="btn btn-primary" href="index.html?remote_design_id=<?= (int)$item['id'] ?>">
+                  <span class="btn-label"><i class="fa-regular fa-folder-open btn-icon-inline" aria-hidden="true"></i>Ouvrir</span>
                 </a>
                 <?php if ($isPublished && trim((string)$item['share_token']) !== ''): ?>
-                  <a class="btn btn-light saved-action-btn" href="view.php?token=<?= urlencode((string)$item['share_token']) ?>" target="_blank" rel="noopener noreferrer" aria-label="Voir" title="Voir">
-                    <i class="fa-regular fa-eye" aria-hidden="true"></i>
+                  <a class="btn btn-light" href="view.php?token=<?= urlencode((string)$item['share_token']) ?>">
+                    <span class="btn-label"><i class="fa-regular fa-eye btn-icon-inline" aria-hidden="true"></i>Voir</span>
                   </a>
                 <?php endif; ?>
                 <form method="post" action="my-designs.php">
                   <input type="hidden" name="action" value="delete" />
                   <input type="hidden" name="design_id" value="<?= (int)$item['id'] ?>" />
-                  <button class="btn btn-light saved-action-btn saved-action-delete" type="submit" aria-label="Supprimer" title="Supprimer">
-                    <i class="fa-regular fa-trash-can" aria-hidden="true"></i>
+                  <button class="btn btn-light" type="submit">
+                    <span class="btn-label"><i class="fa-regular fa-trash-can btn-icon-inline" aria-hidden="true"></i>Supprimer</span>
                   </button>
                 </form>
               </div>

@@ -47,7 +47,6 @@ foreach ($stmt->fetchAll() as $row) {
     }
 
     $mode = trim((string)($meta['modeDelivery'] ?? ''));
-    $designedDuration = share_designed_minutes($meta);
     $items[] = [
         'title' => $title,
         'description' => $description,
@@ -56,14 +55,9 @@ foreach ($stmt->fetchAll() as $row) {
         'updated_at' => (string)$row['updated_at'],
         'session_count' => count($sessions),
         'activity_count' => $activityCount,
-        'duration' => $designedDuration > 0 ? $designedDuration : $duration,
+        'duration' => $duration,
         'mode' => $mode,
     ];
-}
-
-function share_designed_minutes(array $meta): int
-{
-    return max(0, (int)($meta['designedMinutes'] ?? 0));
 }
 
 function share_format_minutes(int $minutes): string
@@ -91,11 +85,6 @@ function share_mode_label(string $mode): string
         default => 'Mode non précisé',
     };
 }
-
-function share_count_label(int $count, string $singular): string
-{
-    return $count . ' ' . $singular . ($count > 1 ? 's' : '');
-}
 ?>
 <!doctype html>
 <html lang="fr">
@@ -109,14 +98,29 @@ function share_count_label(int $count, string $singular): string
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="interface.css?v=20260520-2" />
     <link rel="stylesheet" href="account-ui.css?v=20260520-4" />
-    <link rel="stylesheet" href="account-pages.css?v=20260613-common" />
+    <link rel="stylesheet" href="account-pages.css?v=20260521-width" />
     <style>
+      body.shared-page {
+        background: #fff;
+      }
+
+      .shared-shell {
+        width: min(var(--content-shell-width, 1180px), calc(100vw - var(--content-shell-gutter, 36px)));
+        margin: 40px auto;
+      }
+
       .shared-header {
         display: flex;
         align-items: flex-end;
         justify-content: space-between;
         gap: 18px;
         margin-bottom: 24px;
+      }
+
+      .shared-title {
+        margin: 0;
+        font-size: clamp(28px, 4vw, 38px);
+        color: var(--text-strong);
       }
 
       .shared-subtitle {
@@ -172,13 +176,13 @@ function share_count_label(int $count, string $singular): string
         border-radius: 999px;
         color: var(--muted);
         font-size: 13px;
-        background: #fff;
+        background: rgba(255, 255, 255, 0.68);
       }
 
       .shared-actions {
         display: flex;
         flex-wrap: wrap;
-        gap: 8px;
+        gap: 10px;
         align-items: center;
       }
 
@@ -201,6 +205,10 @@ function share_count_label(int $count, string $singular): string
         background: var(--surface-light);
       }
 
+      [data-theme="dark"] body.shared-page {
+        background: linear-gradient(180deg, #1f2537 0%, #1a1f2e 100%);
+      }
+
       [data-theme="dark"] .shared-title,
       [data-theme="dark"] .shared-card-title {
         color: #eef3ff;
@@ -215,13 +223,13 @@ function share_count_label(int $count, string $singular): string
 
       [data-theme="dark"] .shared-card,
       [data-theme="dark"] .shared-empty {
-        border-color: var(--line);
-        background: var(--panel-2);
+        border-color: rgba(103, 116, 145, 0.38);
+        background: rgba(30, 36, 54, 0.78);
       }
 
       [data-theme="dark"] .shared-pill {
-        border-color: var(--line);
-        background: var(--surface-light);
+        border-color: rgba(103, 116, 145, 0.38);
+        background: rgba(21, 26, 39, 0.72);
       }
 
       @media (max-width: 760px) {
@@ -238,7 +246,7 @@ function share_count_label(int $count, string $singular): string
       <div class="shared-header">
         <div>
           <h1 class="shared-title">Designs partagés</h1>
-          <p class="shared-subtitle">Explorez les designs partagés et importez ceux que vous souhaitez adapter.</p>
+          <p class="shared-subtitle">Explorez les designs rendus visibles par leurs auteurs. Vous pouvez consulter chaque scénario puis l’importer dans votre compte pour l’adapter à votre contexte.</p>
         </div>
       </div>
 
@@ -256,8 +264,8 @@ function share_count_label(int $count, string $singular): string
                 <p class="shared-card-copy"><?= h($item['description']) ?></p>
               <?php endif; ?>
               <div class="shared-meta" aria-label="Résumé du design">
-                <span class="shared-pill"><i class="fa-regular fa-folder" aria-hidden="true"></i><?= h(share_count_label((int)$item['session_count'], 'séance')) ?></span>
-                <span class="shared-pill"><i class="fa-solid fa-list-check" aria-hidden="true"></i><?= h(share_count_label((int)$item['activity_count'], 'activité')) ?></span>
+                <span class="shared-pill"><i class="fa-regular fa-folder" aria-hidden="true"></i><?= (int)$item['session_count'] ?> séance(s)</span>
+                <span class="shared-pill"><i class="fa-solid fa-list-check" aria-hidden="true"></i><?= (int)$item['activity_count'] ?> activité(s)</span>
                 <span class="shared-pill"><i class="fa-regular fa-clock" aria-hidden="true"></i><?= h(share_format_minutes((int)$item['duration'])) ?></span>
                 <span class="shared-pill"><i class="fa-solid fa-location-dot" aria-hidden="true"></i><?= h(share_mode_label($item['mode'])) ?></span>
               </div>

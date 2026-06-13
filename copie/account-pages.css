@@ -28,130 +28,6 @@ body.login-page,
 body.signup-page {
   background: #fff;
 }
-
-html:has(body.designs-page),
-html:has(body.shared-page),
-html:has(body.cli-page),
-html:has(body.skill-page),
-html:has(body.cli-ref-page),
-html:has(body.profile-page),
-html:has(body.admin-page),
-body.designs-page,
-body.shared-page,
-body.cli-page,
-body.skill-page,
-body.cli-ref-page,
-body.profile-page,
-body.admin-page {
-  background: #fff !important;
-}
-
-body.designs-page,
-body.shared-page,
-body.cli-page,
-body.skill-page,
-body.cli-ref-page,
-body.profile-page,
-body.admin-page {
-  --bg: #fff;
-  --line: #e5e7eb;
-  --panel: #fff;
-  --panel-2: #fff;
-  --surface-light: #fff;
-  --hover-bg: #f6f6f6;
-  --hover-bg-mid: #eeeeee;
-  --shadow: none;
-  --shadow-soft: none;
-}
-
-[data-theme="dark"] html:has(body.designs-page),
-[data-theme="dark"] html:has(body.shared-page),
-[data-theme="dark"] html:has(body.cli-page),
-[data-theme="dark"] html:has(body.skill-page),
-[data-theme="dark"] html:has(body.cli-ref-page),
-[data-theme="dark"] html:has(body.profile-page),
-[data-theme="dark"] html:has(body.admin-page),
-[data-theme="dark"] body.designs-page,
-[data-theme="dark"] body.shared-page,
-[data-theme="dark"] body.cli-page,
-[data-theme="dark"] body.skill-page,
-[data-theme="dark"] body.cli-ref-page,
-[data-theme="dark"] body.profile-page,
-[data-theme="dark"] body.admin-page {
-  background: #181816 !important;
-}
-
-[data-theme="dark"] body.designs-page,
-[data-theme="dark"] body.shared-page,
-[data-theme="dark"] body.cli-page,
-[data-theme="dark"] body.skill-page,
-[data-theme="dark"] body.cli-ref-page,
-[data-theme="dark"] body.profile-page,
-[data-theme="dark"] body.admin-page {
-  --line: rgba(129, 124, 112, 0.42);
-  --panel: #24231f;
-  --panel-2: #24231f;
-  --surface-light: #2a2823;
-  --hover-bg: #302e28;
-  --hover-bg-mid: #38352e;
-}
-
-.saved-shell,
-.shared-shell,
-.cli-shell,
-.skill-shell,
-.cli-ref-shell {
-  width: min(var(--content-shell-width, 1180px), calc(100vw - var(--content-shell-gutter, 36px)));
-  margin: 40px auto 0;
-}
-
-.cli-shell,
-.skill-shell,
-.cli-ref-shell {
-  padding: 0 0 56px;
-}
-
-.saved-title,
-.shared-title,
-.cli-title,
-.skill-title,
-.cli-ref-title {
-  margin: 0;
-  color: var(--text-strong);
-  font-size: clamp(28px, 4vw, 38px);
-  line-height: 1.2;
-  letter-spacing: 0;
-}
-
-body.profile-page .account-card,
-body.admin-page .account-card {
-  box-shadow: none;
-}
-
-body.profile-page .account-card,
-body.profile-page .panel,
-body.profile-page .profile-stat,
-body.profile-page .profile-empty,
-body.profile-page .profile-publication,
-body.admin-page .account-card,
-body.admin-page .panel {
-  background: #fff;
-}
-
-body.profile-page #profile-cli-active-title {
-  margin-top: 24px;
-}
-
-body.admin-page .account-form.panel {
-  margin-bottom: 24px;
-}
-
-body.admin-page .inline-grid > div {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
 .site-nav-page {
   position: sticky;
   top: 0;
@@ -159,7 +35,7 @@ body.admin-page .inline-grid > div {
 }
 .site-breadcrumb {
   width: min(var(--content-shell-width), calc(100vw - var(--content-shell-gutter)));
-  margin: 30px auto 0;
+  margin: 18px auto 0;
   color: var(--muted);
   font-size: 13px;
   font-weight: 600;
@@ -229,19 +105,11 @@ body.setup-page .site-breadcrumb {
   min-height: auto;
   padding-top: 24px;
 }
-.site-nav-page + .saved-shell,
-.site-nav-page + .shared-shell,
-.site-nav-page + .cli-shell,
-.site-nav-page + .skill-shell,
-.site-nav-page + .cli-ref-shell {
-  margin-top: 40px;
+.site-nav-page + .saved-shell {
+  margin-top: 24px;
 }
-.site-breadcrumb + .saved-shell,
-.site-breadcrumb + .shared-shell,
-.site-breadcrumb + .cli-shell,
-.site-breadcrumb + .skill-shell,
-.site-breadcrumb + .cli-ref-shell {
-  margin-top: 40px;
+.site-breadcrumb + .saved-shell {
+  margin-top: 24px;
 }
 .profile-shell {
   display: block;

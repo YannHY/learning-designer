@@ -20,14 +20,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($username === '' || $email === '' || $password === '') {
         $error = 'Nom d’utilisateur, email et mot de passe requis.';
     } elseif (strlen($password) < 8) {
-        $error = 'Le mot de passe doit contenir au moins 8 caractères.';
+        $error = 'Le mot de passe doit contenir au moins 8 caracteres.';
     } else {
         try {
             $stmt = $db->prepare("INSERT INTO users (username, email, password_hash, role, status) VALUES (?, ?, ?, ?, 'active')");
             $stmt->execute([$username, $email, password_hash($password, PASSWORD_DEFAULT), $role]);
-            $message = 'Compte créé avec succès.';
+            $message = 'Compte cree avec succes.';
         } catch (PDOException $e) {
-            $error = 'Impossible de créer ce compte (email ou nom déjà utilisé ?).';
+            $error = 'Impossible de creer ce compte (email ou nom deja utilise ?).';
         }
     }
 }
@@ -59,7 +59,17 @@ $users = $usersStmt->fetchAll();
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="interface.css?v=20260520-2">
     <link rel="stylesheet" href="account-ui.css?v=20260520-4">
-    <link rel="stylesheet" href="account-pages.css?v=20260613-common">
+    <link rel="stylesheet" href="account-pages.css?v=20260521-width">
+    <style>
+        body.admin-page {
+            background: #fff;
+        }
+        [data-theme="dark"] body.admin-page {
+            background:
+                radial-gradient(circle at top left, rgba(56, 139, 253, 0.10), transparent 28%),
+                linear-gradient(180deg, #1f2537 0%, #1a1f2e 100%);
+        }
+    </style>
 </head>
 <body class="admin-page">
 <?php render_site_nav('admin'); ?>
@@ -80,7 +90,7 @@ $users = $usersStmt->fetchAll();
         <?php endif; ?>
 
         <form method="post" class="account-form panel">
-            <h2>Créer un compte</h2>
+            <h2>Creer un compte</h2>
             <div class="inline-grid">
                 <div>
                     <label for="username">Nom d’utilisateur</label>
@@ -95,14 +105,14 @@ $users = $usersStmt->fetchAll();
                     <input id="password" name="password" type="password" minlength="8" required>
                 </div>
                 <div>
-                    <label for="role">Rôle</label>
+                    <label for="role">Role</label>
                     <select id="role" name="role">
                         <option value="designer">Designer</option>
                         <option value="admin">Admin</option>
                     </select>
                 </div>
             </div>
-            <button type="submit">Créer le compte</button>
+            <button type="submit">Creer le compte</button>
         </form>
 
         <section class="panel">
@@ -113,11 +123,11 @@ $users = $usersStmt->fetchAll();
                     <tr>
                         <th>Nom</th>
                         <th>Email</th>
-                        <th>Rôle</th>
+                        <th>Role</th>
                         <th>Productions</th>
                         <th>Statut</th>
-                        <th>Créé le</th>
-                        <th>Dernière connexion</th>
+                        <th>Cree le</th>
+                        <th>Derniere connexion</th>
                     </tr>
                     </thead>
                     <tbody>

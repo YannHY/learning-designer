@@ -2284,7 +2284,7 @@ main {
   position: fixed;
   min-width: 190px;
   max-width: 240px;
-  max-height: min(420px, calc(100vh - 16px));
+  max-height: 260px;
   overflow: auto;
   border: 1px solid var(--line);
   border-radius: 12px;

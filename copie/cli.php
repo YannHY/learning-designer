@@ -374,19 +374,27 @@ PROMPT;
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="interface.css?v=20260520-2">
     <link rel="stylesheet" href="account-ui.css?v=20260520-4">
-    <link rel="stylesheet" href="account-pages.css?v=20260613-common">
+    <link rel="stylesheet" href="account-pages.css?v=20260521-width">
     <style>
+        body.cli-page {
+            background: #fff;
+        }
+        .cli-shell {
+            width: min(var(--content-shell-width, 1180px), calc(100vw - var(--content-shell-gutter, 36px)));
+            margin: 0 auto;
+            padding: 28px 0 56px;
+        }
         .cli-hero {
             display: grid;
             gap: 14px;
             margin-bottom: 26px;
         }
-        .cli-shell {
-            padding: 28px;
-            border: 1px solid var(--line);
-            border-radius: 8px;
-            background: var(--panel);
-            margin-bottom: 56px;
+        .cli-title {
+            margin: 0;
+            color: var(--text);
+            font-size: clamp(32px, 5vw, 58px);
+            line-height: 1.02;
+            letter-spacing: 0;
         }
         .cli-subtitle {
             max-width: 1040px;
@@ -397,25 +405,11 @@ PROMPT;
         }
         .cli-section {
             margin-top: 24px;
-            padding: 0;
-            border: 0;
-            border-radius: 0;
-            background: transparent;
-            box-shadow: none;
-        }
-        .cli-panel .skill-section,
-        .cli-panel .cli-ref-section {
-            padding: 0;
-            border: 0;
-            border-radius: 0;
-            background: transparent;
-            box-shadow: none;
-        }
-        .cli-panel .cli-section + .cli-section,
-        .cli-panel .skill-section + .skill-section,
-        .cli-panel .cli-ref-section + .cli-ref-section {
-            padding-top: 24px;
-            border-top: 1px solid var(--line);
+            padding: 24px;
+            border: 1px solid var(--line);
+            border-radius: 8px;
+            background: var(--panel);
+            box-shadow: 0 8px 18px rgba(0,0,0,0.04);
         }
         .cli-section h2,
         .cli-section h3 {
@@ -549,9 +543,8 @@ PROMPT;
             gap: 10px;
             margin: 18px 0 0;
         }
-        .cli-anchor-list button,
+        .cli-anchor-list a,
         .cli-button {
-            appearance: none;
             display: inline-flex;
             align-items: center;
             min-height: 38px;
@@ -560,8 +553,6 @@ PROMPT;
             border-radius: 8px;
             background: var(--panel);
             color: var(--text);
-            cursor: pointer;
-            font-family: inherit;
             font-size: 13px;
             font-weight: 800;
             text-decoration: none;
@@ -569,34 +560,10 @@ PROMPT;
         .cli-button {
             cursor: pointer;
         }
-        .cli-anchor-list button:hover,
+        .cli-anchor-list a:hover,
         .cli-button:hover {
             border-color: rgba(56, 139, 253, 0.35);
             color: var(--primary);
-        }
-        .cli-anchor-list button[aria-pressed="true"] {
-            border-color: rgba(56, 139, 253, 0.45);
-            color: var(--primary);
-            background: var(--hover-bg);
-        }
-        .cli-panel[hidden] {
-            display: none;
-        }
-        .cli-panel .skill-title,
-        .cli-panel .cli-ref-title {
-            color: var(--text);
-            font-size: 24px;
-            line-height: 1.25;
-            margin: 0;
-        }
-        .cli-panel .skill-hero,
-        .cli-panel .cli-ref-hero {
-            margin-bottom: 24px;
-        }
-        .cli-panel .skill-title i,
-        .cli-panel .skill-section h2 i,
-        .cli-panel .skill-section h3 i {
-            display: none;
         }
         [data-theme="dark"] body.cli-page {
             background: #1a1f2e;
@@ -606,20 +573,16 @@ PROMPT;
         [data-theme="dark"] .cli-section h2,
         [data-theme="dark"] .cli-section h3,
         [data-theme="dark"] .cli-step strong,
-        [data-theme="dark"] .cli-anchor-list button,
+        [data-theme="dark"] .cli-anchor-list a,
         [data-theme="dark"] .cli-button {
             color: #f3f6ff;
         }
         [data-theme="dark"] .cli-section {
-            background: transparent;
-            border-color: transparent;
-        }
-        [data-theme="dark"] .cli-shell {
-            background: var(--panel);
-            border-color: var(--line);
+            background: rgba(30, 36, 54, 0.96);
+            border-color: rgba(103, 116, 145, 0.45);
         }
         [data-theme="dark"] .cli-step,
-        [data-theme="dark"] .cli-anchor-list button,
+        [data-theme="dark"] .cli-anchor-list a,
         [data-theme="dark"] .cli-button {
             background: rgba(26, 31, 46, 0.78);
             border-color: rgba(103, 116, 145, 0.38);
@@ -638,6 +601,9 @@ PROMPT;
             .cli-details-grid {
                 grid-template-columns: 1fr;
             }
+            .cli-shell {
+                padding-top: 24px;
+            }
         }
     </style>
 </head>
@@ -648,56 +614,43 @@ PROMPT;
         <h1 class="cli-title"><span<?= cli_i18n_attrs('Créer avec l’IA', 'Create with AI') ?>>Créer avec l’IA</span></h1>
         <p class="cli-subtitle"<?= cli_i18n_attrs('Un CLI pour publier vos designs.', 'A CLI to publish your designs.') ?>>Un CLI pour publier vos designs.</p>
         <nav class="cli-anchor-list" aria-label="Ressources"<?= cli_i18n_attr_attrs('aria-label', 'Ressources', 'Resources') ?>>
-            <button type="button" data-cli-tab="guide" aria-controls="guide" aria-pressed="true"><span<?= cli_i18n_attrs('Guide', 'Guide') ?>>Guide</span></button>
-            <button type="button" data-cli-tab="skill" aria-controls="skill" aria-pressed="false"><span<?= cli_i18n_attrs('Créer une skill', 'Create a skill') ?>>Créer une skill</span></button>
-            <button type="button" data-cli-tab="cli-reference" aria-controls="cli-reference" aria-pressed="false"><span<?= cli_i18n_attrs('CLI détaillé', 'CLI details') ?>>CLI détaillé</span></button>
+            <a href="#detail"><span<?= cli_i18n_attrs('Guide', 'Guide') ?>>Guide</span></a>
+            <a href="#prompt"><span<?= cli_i18n_attrs('Prompt IA', 'AI prompt') ?>>Prompt IA</span></a>
+            <a href="skill.php"><span<?= cli_i18n_attrs('Créer une skill', 'Create a skill') ?>>Créer une skill</span></a>
+            <a href="cli-reference.php"><span<?= cli_i18n_attrs('CLI détaillé', 'CLI details') ?>>CLI détaillé</span></a>
         </nav>
     </header>
 
-    <div id="guide" class="cli-panel" data-cli-panel="guide">
-        <section id="detail" class="cli-section">
-            <h2><span<?= cli_i18n_attrs('Guide', 'Guide') ?>>Guide</span></h2>
-            <div class="cli-details-grid">
-                <div>
-                    <h3><span<?= cli_i18n_attrs('1. L’IA publie pour vous', '1. The AI publishes for you') ?>>1. L’IA publie pour vous</span></h3>
-                    <p class="cli-copy"<?= cli_i18n_attrs('Copiez le prompt proposé plus bas dans Claude Code ou Codex. L’IA crée le fichier <code>design.json</code>, puis peut publier le design si vous lui donnez explicitement l’autorisation et un jeton CLI créé dans votre profil.', 'Copy the prompt below into Claude Code or Codex. The AI creates the <code>design.json</code> file, then can publish the design if you explicitly give it permission and a CLI token created in your profile.', true) ?>>Copiez le prompt proposé plus bas dans Claude Code ou Codex. L’IA crée le fichier <code>design.json</code>, puis peut publier le design si vous lui donnez explicitement l’autorisation et un jeton CLI créé dans votre profil.</p>
-                    <p class="cli-copy"<?= cli_i18n_attrs('Dans ce cas, vous n’avez pas besoin d’installer le CLI dans votre terminal.', 'In this case, you do not need to install the CLI in your terminal.') ?>>Dans ce cas, vous n’avez pas besoin d’installer le CLI dans votre terminal.</p>
-                </div>
-                <div>
-                    <h3><span<?= cli_i18n_attrs('2. Vous publiez vous-même', '2. You publish yourself') ?>>2. Vous publiez vous-même</span></h3>
-                    <p class="cli-copy"<?= cli_i18n_attrs('Copiez le prompt pour que l’IA crée le fichier <code>design.json</code>, puis téléchargez ce fichier sur votre ordinateur. Pour publier vous-même, vous devez installer le CLI, créer un jeton dans votre profil, lancer <code>learning login</code>, puis <code>learning publish</code>.', 'Copy the prompt so the AI creates the <code>design.json</code> file, then download that file to your computer. To publish yourself, you must install the CLI, create a token in your profile, run <code>learning login</code>, then <code>learning publish</code>.', true) ?>>Copiez le prompt pour que l’IA crée le fichier <code>design.json</code>, puis téléchargez ce fichier sur votre ordinateur. Pour publier vous-même, vous devez installer le CLI, créer un jeton dans votre profil, lancer <code>learning login</code>, puis <code>learning publish</code>.</p>
-                    <p class="cli-copy"<?= cli_i18n_attrs('Les commandes d’installation et de publication sont expliquées dans l’onglet CLI détaillé.', 'The installation and publishing commands are explained in the CLI details tab.') ?>>Les commandes d’installation et de publication sont expliquées dans l’onglet CLI détaillé.</p>
-                </div>
+    <section id="detail" class="cli-section">
+        <h2><span<?= cli_i18n_attrs('Guide', 'Guide') ?>>Guide</span></h2>
+        <div class="cli-details-grid">
+            <div>
+                <h3><span<?= cli_i18n_attrs('1. L’IA publie pour vous', '1. The AI publishes for you') ?>>1. L’IA publie pour vous</span></h3>
+                <p class="cli-copy"<?= cli_i18n_attrs('Copiez le prompt proposé plus bas dans Claude Code ou Codex. L’IA crée le fichier <code>design.json</code>, puis peut publier le design si vous lui donnez explicitement l’autorisation et un jeton CLI créé dans votre profil.', 'Copy the prompt below into Claude Code or Codex. The AI creates the <code>design.json</code> file, then can publish the design if you explicitly give it permission and a CLI token created in your profile.', true) ?>>Copiez le prompt proposé plus bas dans Claude Code ou Codex. L’IA crée le fichier <code>design.json</code>, puis peut publier le design si vous lui donnez explicitement l’autorisation et un jeton CLI créé dans votre profil.</p>
+                <p class="cli-copy"<?= cli_i18n_attrs('Dans ce cas, vous n’avez pas besoin d’installer le CLI dans votre terminal.', 'In this case, you do not need to install the CLI in your terminal.') ?>>Dans ce cas, vous n’avez pas besoin d’installer le CLI dans votre terminal.</p>
             </div>
-        </section>
-
-        <section id="prompt" class="cli-section">
-            <h2><span<?= cli_i18n_attrs('Prompt à donner à Claude Code ou Codex', 'Prompt to give Claude Code or Codex') ?>>Prompt à donner à Claude Code ou Codex</span></h2>
-            <p class="cli-copy"<?= cli_i18n_attrs('Copiez ce prompt dans Claude ou Codex. Il demande à l’IA d’utiliser le CLI, de poser les bonnes questions pédagogiques, puis de produire un fichier validé.', 'Copy this prompt into Claude or Codex. It asks the AI to use the CLI, ask the right pedagogical questions, then produce a validated file.') ?>>Copiez ce prompt dans Claude ou Codex. Il demande à l’IA d’utiliser le CLI, de poser les bonnes questions pédagogiques, puis de produire un fichier validé.</p>
-            <div class="cli-prompt-wrap">
-                <button class="cli-copy-btn" type="button" id="copy-prompt-btn" aria-label="Copier le prompt" title="Copier"<?= cli_i18n_attr_attrs('aria-label,title', 'Copier le prompt', 'Copy prompt') ?>><i class="fa-regular fa-copy" aria-hidden="true"></i></button>
-                <textarea class="cli-prompt" id="ai-prompt" readonly><?= cli_h($prompt) ?></textarea>
+            <div>
+                <h3><span<?= cli_i18n_attrs('2. Vous publiez vous-même', '2. You publish yourself') ?>>2. Vous publiez vous-même</span></h3>
+                <p class="cli-copy"<?= cli_i18n_attrs('Copiez le prompt pour que l’IA crée le fichier <code>design.json</code>, puis téléchargez ce fichier sur votre ordinateur. Pour publier vous-même, vous devez installer le CLI, créer un jeton dans votre profil, lancer <code>learning login</code>, puis <code>learning publish</code>.', 'Copy the prompt so the AI creates the <code>design.json</code> file, then download that file to your computer. To publish yourself, you must install the CLI, create a token in your profile, run <code>learning login</code>, then <code>learning publish</code>.', true) ?>>Copiez le prompt pour que l’IA crée le fichier <code>design.json</code>, puis téléchargez ce fichier sur votre ordinateur. Pour publier vous-même, vous devez installer le CLI, créer un jeton dans votre profil, lancer <code>learning login</code>, puis <code>learning publish</code>.</p>
+                <p class="cli-copy"<?= cli_i18n_attrs('Les commandes d’installation et de publication sont expliquées dans la <a href="cli-reference.php">page CLI détaillé</a>.', 'The installation and publishing commands are explained on the <a href="cli-reference.php">CLI details page</a>.', true) ?>>Les commandes d’installation et de publication sont expliquées dans la <a href="cli-reference.php">page CLI détaillé</a>.</p>
             </div>
-        </section>
+        </div>
+    </section>
 
-        <section id="after-ai" class="cli-section">
-            <h2><span<?= cli_i18n_attrs('À la fin', 'At the end') ?>>À la fin</span></h2>
-            <p class="cli-copy"<?= cli_i18n_attrs('Demandez simplement à l’IA de publier le design qu’elle vient de créer. Pour cela, donnez-lui explicitement l’autorisation de publier et un jeton CLI créé dans votre profil.', 'Simply ask the AI to publish the design it just created. To do this, explicitly give it permission to publish and a CLI token created in your profile.') ?>>Demandez simplement à l’IA de publier le design qu’elle vient de créer. Pour cela, donnez-lui explicitement l’autorisation de publier et un jeton CLI créé dans votre profil.</p>
-            <p class="cli-copy"<?= cli_i18n_attrs('Si vous préférez publier vous-même depuis votre ordinateur, ouvrez l’onglet CLI détaillé.', 'If you prefer to publish yourself from your computer, open the CLI details tab.') ?>>Si vous préférez publier vous-même depuis votre ordinateur, ouvrez l’onglet CLI détaillé.</p>
-        </section>
-    </div>
+    <section id="prompt" class="cli-section">
+        <h2><span<?= cli_i18n_attrs('Prompt à donner à Claude Code ou Codex', 'Prompt to give Claude Code or Codex') ?>>Prompt à donner à Claude Code ou Codex</span></h2>
+        <p class="cli-copy"<?= cli_i18n_attrs('Copiez ce prompt dans Claude ou Codex. Il demande à l’IA d’utiliser le CLI, de poser les bonnes questions pédagogiques, puis de produire un fichier validé.', 'Copy this prompt into Claude or Codex. It asks the AI to use the CLI, ask the right pedagogical questions, then produce a validated file.') ?>>Copiez ce prompt dans Claude ou Codex. Il demande à l’IA d’utiliser le CLI, de poser les bonnes questions pédagogiques, puis de produire un fichier validé.</p>
+        <div class="cli-prompt-wrap">
+            <button class="cli-copy-btn" type="button" id="copy-prompt-btn" aria-label="Copier le prompt" title="Copier"<?= cli_i18n_attr_attrs('aria-label,title', 'Copier le prompt', 'Copy prompt') ?>><i class="fa-regular fa-copy" aria-hidden="true"></i></button>
+            <textarea class="cli-prompt" id="ai-prompt" readonly><?= cli_h($prompt) ?></textarea>
+        </div>
+    </section>
 
-    <div id="skill" class="cli-panel" data-cli-panel="skill" data-cli-source="skill.php" hidden>
-        <section class="cli-section">
-            <p class="cli-copy">Chargement de la section…</p>
-        </section>
-    </div>
-
-    <div id="cli-reference" class="cli-panel" data-cli-panel="cli-reference" data-cli-source="cli-reference.php" hidden>
-        <section class="cli-section">
-            <p class="cli-copy">Chargement de la section…</p>
-        </section>
-    </div>
+    <section id="after-ai" class="cli-section">
+        <h2><span<?= cli_i18n_attrs('Après Claude ou Codex', 'After Claude or Codex') ?>>Après Claude ou Codex</span></h2>
+        <p class="cli-copy"<?= cli_i18n_attrs('Demandez simplement à l’IA de publier le design qu’elle vient de créer. Pour cela, donnez-lui explicitement l’autorisation de publier et un jeton CLI créé dans votre profil.', 'Simply ask the AI to publish the design it just created. To do this, explicitly give it permission to publish and a CLI token created in your profile.') ?>>Demandez simplement à l’IA de publier le design qu’elle vient de créer. Pour cela, donnez-lui explicitement l’autorisation de publier et un jeton CLI créé dans votre profil.</p>
+        <p class="cli-copy"<?= cli_i18n_attrs('Si vous préférez publier vous-même depuis votre ordinateur, suivez la <a href="cli-reference.php">page CLI détaillé</a>.', 'If you prefer to publish yourself from your computer, follow the <a href="cli-reference.php">CLI details page</a>.', true) ?>>Si vous préférez publier vous-même depuis votre ordinateur, suivez la <a href="cli-reference.php">page CLI détaillé</a>.</p>
+    </section>
 </main>
 <?php render_site_footer(); ?>
 <script>
@@ -710,18 +663,17 @@ document.addEventListener('DOMContentLoaded', function () {
         lang = lang === 'en' ? 'en' : 'fr';
         document.documentElement.lang = lang;
         document.title = 'CLI | Learning Designer';
-        document.querySelectorAll('[data-cli-i18n-en], [data-skill-i18n-en], [data-cli-ref-i18n-en]').forEach(function (el) {
-            var prefix = el.dataset.cliI18nEn !== undefined ? 'cli' : (el.dataset.skillI18nEn !== undefined ? 'skill' : 'cliRef');
-            var value = lang === 'en' ? el.dataset[prefix + 'I18nEn'] : el.dataset[prefix + 'I18nFr'];
+        document.querySelectorAll('[data-cli-i18n-en]').forEach(function (el) {
+            var value = lang === 'en' ? el.dataset.cliI18nEn : el.dataset.cliI18nFr;
             if (!value) return;
-            var attrList = (el.dataset[prefix + 'I18nAttr'] || '').split(',').map(function (attr) {
+            var attrList = (el.dataset.cliI18nAttr || '').split(',').map(function (attr) {
                 return attr.trim();
             }).filter(Boolean);
             if (attrList.length) {
                 attrList.forEach(function (attr) {
                     el.setAttribute(attr, value);
                 });
-            } else if (el.dataset[prefix + 'I18nHtml'] === '1') {
+            } else if (el.dataset.cliI18nHtml === '1') {
                 el.innerHTML = value;
             } else {
                 el.textContent = value;
@@ -747,76 +699,6 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    var cliTabs = Array.prototype.slice.call(document.querySelectorAll('[data-cli-tab]'));
-    var cliPanels = Array.prototype.slice.call(document.querySelectorAll('[data-cli-panel]'));
-
-    function loadRemotePanel(panel) {
-        if (!panel.dataset.cliSource || panel.dataset.loaded === 'true') return;
-        fetch(panel.dataset.cliSource, { credentials: 'same-origin' })
-            .then(function (response) {
-                if (!response.ok) throw new Error('Unable to load ' + panel.dataset.cliSource);
-                return response.text();
-            })
-            .then(function (html) {
-                var doc = new DOMParser().parseFromString(html, 'text/html');
-                doc.querySelectorAll('style').forEach(function (style, index) {
-                    var styleId = 'embedded-style-' + panel.dataset.cliPanel + '-' + index;
-                    if (!document.getElementById(styleId)) {
-                        var clone = document.createElement('style');
-                        clone.id = styleId;
-                        clone.textContent = style.textContent;
-                        document.head.appendChild(clone);
-                    }
-                });
-                var overrideId = 'embedded-style-' + panel.dataset.cliPanel + '-cli-overrides';
-                if (!document.getElementById(overrideId)) {
-                    var override = document.createElement('style');
-                    override.id = overrideId;
-                    override.textContent = '.cli-panel .skill-section,.cli-panel .cli-ref-section{padding:0;border:0;border-radius:0;background:transparent;box-shadow:none}.cli-panel .skill-section+.skill-section,.cli-panel .cli-ref-section+.cli-ref-section{padding-top:24px;border-top:1px solid var(--line)}';
-                    document.head.appendChild(override);
-                }
-                var main = doc.querySelector('main');
-                panel.innerHTML = main ? main.innerHTML : '<section class="cli-section"><p class="cli-copy">Contenu indisponible.</p></section>';
-                panel.dataset.loaded = 'true';
-                applyCliLanguage(cliLang);
-            })
-            .catch(function () {
-                panel.innerHTML = '<section class="cli-section"><p class="cli-copy">Impossible de charger cette section.</p></section>';
-            });
-    }
-
-    function showCliPanel(panelId, updateHash) {
-        var knownPanel = cliPanels.some(function (panel) {
-            return panel.dataset.cliPanel === panelId;
-        });
-        if (!knownPanel) panelId = 'guide';
-
-        cliPanels.forEach(function (panel) {
-            panel.hidden = panel.dataset.cliPanel !== panelId;
-        });
-        cliTabs.forEach(function (tab) {
-            var selected = tab.dataset.cliTab === panelId;
-            tab.setAttribute('aria-pressed', selected ? 'true' : 'false');
-        });
-        var activePanel = cliPanels.find(function (panel) {
-            return panel.dataset.cliPanel === panelId;
-        });
-        if (activePanel) loadRemotePanel(activePanel);
-
-        if (updateHash) {
-            history.replaceState(null, '', '#' + panelId);
-        }
-    }
-
-    cliTabs.forEach(function (tab) {
-        tab.addEventListener('click', function (event) {
-            event.preventDefault();
-            showCliPanel(tab.dataset.cliTab || 'guide', true);
-        });
-    });
-
-    showCliPanel((window.location.hash || '#guide').slice(1), false);
-
     async function copyText(text, button) {
         try {
             await navigator.clipboard.writeText(text);
@@ -838,15 +720,20 @@ document.addEventListener('DOMContentLoaded', function () {
         }, 1300);
     }
 
-    document.addEventListener('click', function (event) {
-        var button = event.target.closest('.cli-copy-btn, .skill-copy-btn, .cli-ref-copy-btn');
-        if (!button) return;
-        var wrap = button.closest('.cli-copy-wrap, .cli-prompt-wrap, .skill-copy-wrap, .skill-prompt-wrap, .cli-ref-copy-wrap');
-        if (!wrap) return;
-        var source = wrap.querySelector('.cli-code, .cli-prompt, .skill-code, .skill-prompt, .cli-ref-code, textarea, pre');
-        if (!source) return;
-        copyText(('value' in source ? source.value : source.textContent).trim(), button);
+    document.querySelectorAll('.cli-copy-wrap .cli-copy-btn').forEach(function (button) {
+        button.addEventListener('click', function () {
+            var code = button.parentElement.querySelector('.cli-code');
+            if (code) copyText(code.textContent.trim(), button);
+        });
     });
+
+    var promptButton = document.getElementById('copy-prompt-btn');
+    var textarea = document.getElementById('ai-prompt');
+    if (promptButton && textarea) {
+        promptButton.addEventListener('click', function () {
+            copyText(textarea.value, promptButton);
+        });
+    }
 
 });
 </script>

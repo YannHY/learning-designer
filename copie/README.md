@@ -1,6 +1,10 @@
 # Learning Designer
 
-Application web de scénarisation pédagogique inspirée de l'[UCL Learning Designer](https://www.ucl.ac.uk/learning-designer/) (UCL Knowledge Lab, UCL Institute of Education, 2013–2026) et basé sur le travail de [François Jourde](https://github.com/jourde/learning-designer-revised).
+Application web de scénarisation pédagogique inspirée de l'UCL Learning Designer.
+
+Inspiré de l'[UCL Learning Designer](https://www.ucl.ac.uk/learning-designer/) (UCL Knowledge Lab, UCL Institute of Education, 2013–2026).
+
+Basé sur le travail de François Jourde : https://github.com/jourde/learning-designer-revised
 
 Le projet permet de concevoir des séquences d'apprentissage structurées en moments et activités, de les analyser visuellement, de les enrichir avec des compétences numériques, puis de les exporter, sauvegarder et partager.
 
@@ -24,7 +28,7 @@ Le projet permet de concevoir des séquences d'apprentissage structurées en mom
 
 ## Compétences numériques
 
-Les activités peuvent être liées à un référentiel de compétences numériques structuré en trois domaines :
+Les activités peuvent maintenant être liées à un référentiel de compétences numériques structuré en trois domaines :
 
 - `Acquérir`
 - `Approfondir`
@@ -56,9 +60,6 @@ Quand le backend PHP est activé, le projet prend en charge :
 - [interface.js](/Users/rene/Documents/claude/learning-designer/interface.js) : logique applicative côté client
 - [interface.css](/Users/rene/Documents/claude/learning-designer/interface.css) : styles principaux
 - [about.php](/Users/rene/Documents/claude/learning-designer/about.php) : page de présentation
-- [cli.php](/Users/rene/Documents/claude/learning-designer/cli.php) : guide d'utilisation avec Claude Code ou Codex
-- [cli-reference.php](/Users/rene/Documents/claude/learning-designer/cli-reference.php) : documentation détaillée du CLI `learning`
-- [skill.php](/Users/rene/Documents/claude/learning-designer/skill.php) : installation ou création d'une skill Claude Code
 - [view.php](/Users/rene/Documents/claude/learning-designer/view.php) : vue publique d'un design publié
 - [save_design.php](/Users/rene/Documents/claude/learning-designer/save_design.php), [get_design.php](/Users/rene/Documents/claude/learning-designer/get_design.php), [list_designs.php](/Users/rene/Documents/claude/learning-designer/list_designs.php), [delete_design.php](/Users/rene/Documents/claude/learning-designer/delete_design.php) : API de persistance
 - [lib/bootstrap.php](/Users/rene/Documents/claude/learning-designer/lib/bootstrap.php) : bootstrap PHP et fonctions communes
@@ -97,40 +98,19 @@ Variables attendues :
 
 Les tables nécessaires sont créées automatiquement au premier accès.
 
-## IA, CLI `learning` et publication
+## CLI `learning`
 
-Le projet fournit un CLI bilingue FR/EN nommé `learning`. Il sert à créer, compléter, valider et publier un fichier `design.json` Learning Designer.
+Le projet fournit aussi un CLI bilingue FR/EN pour préparer un design depuis le terminal, puis le confier à Codex.
 
-La page [cli.php](/Users/rene/Documents/claude/learning-designer/cli.php) présente le parcours recommandé : copier un prompt dans Claude Code ou Codex, laisser l'IA créer le fichier `design.json`, puis lui demander de publier le design avec un jeton CLI créé dans le profil utilisateur.
-
-Dans ce parcours, l'utilisateur n'a pas besoin d'installer le CLI dans son propre terminal si l'IA publie à sa place. Le jeton reste toutefois indispensable pour publier sur le compte de l'utilisateur.
-
-### Publier avec l'IA
-
-1. Ouvrir [cli.php](/Users/rene/Documents/claude/learning-designer/cli.php).
-2. Copier le prompt dans Claude Code ou Codex.
-3. Laisser l'IA créer le fichier `design.json`.
-4. Créer un jeton dans le profil utilisateur, section `Publication depuis le CLI`.
-5. Donner explicitement à l'IA l'autorisation de publier et lui fournir le jeton.
-
-Le jeton CLI est personnel. Il ne doit être donné à l'IA que si l'utilisateur veut explicitement qu'elle publie à sa place.
-
-### Publier soi-même
-
-Si l'utilisateur préfère publier depuis son ordinateur, il doit installer le CLI localement, connecter son jeton, puis lancer la commande de publication.
+Installation en une commande :
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/YannHY/learning-designer/main/install.sh | sh
-learning status
-learning login
-learning publish design.json
 ```
 
-La page [cli-reference.php](/Users/rene/Documents/claude/learning-designer/cli-reference.php) détaille l'installation, la création du jeton, `learning login`, `learning publish` et les commandes utiles.
+Le script ouvre un court dialogue d'installation : il vérifie les prérequis, propose un dossier déjà disponible dans le `PATH` (`/usr/local/bin`, `/opt/homebrew/bin` ou équivalent), puis installe `learning` afin que la commande soit utilisable immédiatement, sans modifier le profil shell.
 
-### Utiliser le CLI directement
-
-Le CLI peut aussi être utilisé sans IA pour construire un design depuis le terminal :
+Utilisation rapide :
 
 ```bash
 learning init design.json --title "Atelier IA" --lang fr --duration 120 --mode hybride --group-size 24
@@ -141,15 +121,39 @@ learning prompt design.json
 learning handoff design.json --dry-run
 ```
 
-Commandes disponibles : `init`/`nouveau`, `add-moment`/`ajouter-moment`, `add-activity`/`ajouter-activite`, `outcome`/`acquis`, `prompt`/`codex-prompt`, `handoff`/`confier-codex`/`codex`, `validate`/`verifier`, `list`/`lister`, `login`/`connexion`, `publish`/`publier`, `status`/`etat`, `upgrade`/`update`.
+Commandes disponibles : `init`/`nouveau`, `add-moment`/`ajouter-moment`, `add-activity`/`ajouter-activite`, `outcome`/`acquis`, `prompt`/`codex-prompt`, `handoff`/`confier-codex`/`codex`, `validate`/`verifier`, `list`/`lister`.
 
 Les activités acceptent les paramètres principaux de Learning Designer : type d'apprentissage, durée, groupe, présence enseignante, rythme, modalité, évaluation, description, notes, liens et compétences numériques (`A1`, `P6`, `C14` ou identifiants complets `competency:...`). Les acquis d'apprentissage peuvent être reliés à la taxonomie de Bloom en français ou en anglais.
 
-### Skill Claude Code
+### Publication en ligne
 
-La page [skill.php](/Users/rene/Documents/claude/learning-designer/skill.php) explique comment installer ou créer une skill Claude Code pour réutiliser automatiquement la méthode Learning Designer.
+Pour publier un fichier JSON depuis le CLI vers une instance Learning Designer :
 
-Elle propose deux usages : installer la skill publiée depuis le dépôt, ou copier un prompt ponctuel qui demande à Claude Code ou Codex de lire la méthode publiée.
+1. Se connecter au site, ouvrir le profil, puis créer un jeton dans la section `Publication depuis le CLI`.
+2. Enregistrer le jeton localement :
+
+```bash
+learning login
+```
+
+3. Coller le jeton quand le CLI le demande, puis publier :
+
+```bash
+learning publish design.json
+```
+
+La commande renvoie l'URL publique du design publié. Pour mettre à jour une publication existante, utilisez l'identifiant renvoyé par la première publication :
+
+```bash
+learning publish design.json --design-id 123
+```
+
+Commandes utiles :
+
+```bash
+learning status
+learning upgrade
+```
 
 ## État actuel
 
@@ -164,5 +168,5 @@ Le `README` doit donc être lu comme celui d'une application web complète, et n
 ## Crédits
 
 - Inspiré de l'UCL Learning Designer
-- Développé par Yann Houry sur la base du travail de François Jourde
+- Développé par Yann Houry et François Jourde
 - Licence : CC BY-SA

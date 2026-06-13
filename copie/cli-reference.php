@@ -33,12 +33,27 @@ function cli_ref_i18n_attr_attrs(string $attr, string $fr, string $en): string
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="interface.css?v=20260520-2">
     <link rel="stylesheet" href="account-ui.css?v=20260520-4">
-    <link rel="stylesheet" href="account-pages.css?v=20260613-common">
+    <link rel="stylesheet" href="account-pages.css?v=20260521-width">
     <style>
+        body.cli-ref-page {
+            background: #fff;
+        }
+        .cli-ref-shell {
+            width: min(var(--content-shell-width, 1180px), calc(100vw - var(--content-shell-gutter, 36px)));
+            margin: 0 auto;
+            padding: 28px 0 56px;
+        }
         .cli-ref-hero {
             display: grid;
             gap: 14px;
             margin-bottom: 26px;
+        }
+        .cli-ref-title {
+            margin: 0;
+            color: var(--text);
+            font-size: clamp(32px, 5vw, 58px);
+            line-height: 1.02;
+            letter-spacing: 0;
         }
         .cli-ref-subtitle {
             max-width: 980px;
@@ -134,6 +149,9 @@ function cli_ref_i18n_attr_attrs(string $attr, string $fr, string $en): string
             background: #f6f8fa;
             color: var(--text);
             line-height: 1.55;
+        }
+        [data-theme="dark"] body.cli-ref-page {
+            background: #1a1f2e;
         }
         [data-theme="dark"] .cli-ref-title,
         [data-theme="dark"] .cli-ref-section h2,

@@ -47,12 +47,35 @@ PROMPT;
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="interface.css?v=20260520-2">
     <link rel="stylesheet" href="account-ui.css?v=20260520-4">
-    <link rel="stylesheet" href="account-pages.css?v=20260613-common">
+    <link rel="stylesheet" href="account-pages.css?v=20260521-width">
     <style>
+        body.skill-page {
+            background: #fff;
+        }
+        .skill-shell {
+            width: min(var(--content-shell-width, 1180px), calc(100vw - var(--content-shell-gutter, 36px)));
+            margin: 0 auto;
+            padding: 28px 0 56px;
+        }
         .skill-hero {
             display: grid;
             gap: 14px;
             margin-bottom: 26px;
+        }
+        .skill-title {
+            display: flex;
+            align-items: center;
+            gap: 18px;
+            margin: 0;
+            color: var(--text);
+            font-size: clamp(32px, 5vw, 58px);
+            line-height: 1.02;
+            letter-spacing: 0;
+        }
+        .skill-title i {
+            flex: 0 0 auto;
+            font-size: 0.5em;
+            line-height: 1;
         }
         .skill-subtitle {
             max-width: 980px;
@@ -185,6 +208,11 @@ PROMPT;
             color: var(--primary);
             margin-top: 3px;
         }
+        [data-theme="dark"] body.skill-page {
+            background:
+                radial-gradient(circle at top left, rgba(56, 139, 253, 0.10), transparent 28%),
+                linear-gradient(180deg, #1f2537 0%, #1a1f2e 100%);
+        }
         [data-theme="dark"] .skill-title,
         [data-theme="dark"] .skill-title span,
         [data-theme="dark"] .skill-section h2,
@@ -213,6 +241,9 @@ PROMPT;
             .skill-steps {
                 grid-template-columns: 1fr;
             }
+            .skill-shell {
+                padding-top: 24px;
+            }
         }
     </style>
 </head>
@@ -220,7 +251,7 @@ PROMPT;
 <?php render_site_nav('skill'); ?>
 <main class="skill-shell">
     <header class="skill-hero">
-        <h1 class="skill-title"><span<?= skill_i18n_attrs('Créer une skill Claude', 'Create a Claude skill') ?>>Créer une skill Claude</span></h1>
+        <h1 class="skill-title"><i class="fa-solid fa-wand-magic-sparkles" aria-hidden="true"></i> <span<?= skill_i18n_attrs('Créer une skill Claude', 'Create a Claude skill') ?>>Créer une skill Claude</span></h1>
         <p class="skill-subtitle"<?= skill_i18n_attrs('Une skill permet de donner à Claude Code une méthode réutilisable. Pour Learning Designer, elle lui explique comment créer un design avec le CLI, le valider, puis préparer la publication.', 'A skill gives Claude Code a reusable method. For Learning Designer, it explains how to create a design with the CLI, validate it, then prepare publishing.') ?>>Une skill permet de donner à Claude Code une méthode réutilisable. Pour Learning Designer, elle lui explique comment créer un design avec le CLI, le valider, puis préparer la publication.</p>
     </header>
 

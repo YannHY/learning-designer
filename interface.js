@@ -3544,6 +3544,15 @@ function escapeHtmlWithBreaks(value) {
   return escapeHtml(value).replaceAll("\n", "<br />");
 }
 
+function escapeXml(value) {
+  return String(value ?? "")
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&apos;");
+}
+
 function formatPedagogicalTime(days, hours, minutes) {
   return `${Math.max(0, Number(days) || 0)} j ${Math.max(0, Number(hours) || 0)} h ${Math.max(
     0,
@@ -3751,6 +3760,331 @@ function buildHtmlExportDocument() {
 </html>`;
 }
 
+function createCrc32Table() {
+  const table = new Uint32Array(256);
+  for (let i = 0; i < 256; i += 1) {
+    let c = i;
+    for (let k = 0; k < 8; k += 1) {
+      c = (c & 1) ? (0xedb88320 ^ (c >>> 1)) : (c >>> 1);
+    }
+    table[i] = c >>> 0;
+  }
+  return table;
+}
+
+const CRC32_TABLE = createCrc32Table();
+
+function crc32(bytes) {
+  let crc = 0xffffffff;
+  bytes.forEach((byte) => {
+    crc = CRC32_TABLE[(crc ^ byte) & 0xff] ^ (crc >>> 8);
+  });
+  return (crc ^ 0xffffffff) >>> 0;
+}
+
+function writeUint16(target, offset, value) {
+  target[offset] = value & 0xff;
+  target[offset + 1] = (value >>> 8) & 0xff;
+}
+
+function writeUint32(target, offset, value) {
+  target[offset] = value & 0xff;
+  target[offset + 1] = (value >>> 8) & 0xff;
+  target[offset + 2] = (value >>> 16) & 0xff;
+  target[offset + 3] = (value >>> 24) & 0xff;
+}
+
+function concatUint8Arrays(parts) {
+  const totalLength = parts.reduce((sum, part) => sum + part.length, 0);
+  const output = new Uint8Array(totalLength);
+  let offset = 0;
+  parts.forEach((part) => {
+    output.set(part, offset);
+    offset += part.length;
+  });
+  return output;
+}
+
+function createZipArchive(files) {
+  const encoder = new TextEncoder();
+  const localParts = [];
+  const centralParts = [];
+  let offset = 0;
+
+  files.forEach((file) => {
+    const nameBytes = encoder.encode(file.name);
+    const dataBytes = typeof file.content === "string" ? encoder.encode(file.content) : file.content;
+    const checksum = crc32(dataBytes);
+
+    const localHeader = new Uint8Array(30 + nameBytes.length);
+    writeUint32(localHeader, 0, 0x04034b50);
+    writeUint16(localHeader, 4, 20);
+    writeUint16(localHeader, 6, 0);
+    writeUint16(localHeader, 8, 0);
+    writeUint16(localHeader, 10, 0);
+    writeUint16(localHeader, 12, 0);
+    writeUint32(localHeader, 14, checksum);
+    writeUint32(localHeader, 18, dataBytes.length);
+    writeUint32(localHeader, 22, dataBytes.length);
+    writeUint16(localHeader, 26, nameBytes.length);
+    writeUint16(localHeader, 28, 0);
+    localHeader.set(nameBytes, 30);
+    localParts.push(localHeader, dataBytes);
+
+    const centralHeader = new Uint8Array(46 + nameBytes.length);
+    writeUint32(centralHeader, 0, 0x02014b50);
+    writeUint16(centralHeader, 4, 20);
+    writeUint16(centralHeader, 6, 20);
+    writeUint16(centralHeader, 8, 0);
+    writeUint16(centralHeader, 10, 0);
+    writeUint16(centralHeader, 12, 0);
+    writeUint16(centralHeader, 14, 0);
+    writeUint32(centralHeader, 16, checksum);
+    writeUint32(centralHeader, 20, dataBytes.length);
+    writeUint32(centralHeader, 24, dataBytes.length);
+    writeUint16(centralHeader, 28, nameBytes.length);
+    writeUint16(centralHeader, 30, 0);
+    writeUint16(centralHeader, 32, 0);
+    writeUint16(centralHeader, 34, 0);
+    writeUint16(centralHeader, 36, 0);
+    writeUint32(centralHeader, 38, 0);
+    writeUint32(centralHeader, 42, offset);
+    centralHeader.set(nameBytes, 46);
+    centralParts.push(centralHeader);
+
+    offset += localHeader.length + dataBytes.length;
+  });
+
+  const centralDirectory = concatUint8Arrays(centralParts);
+  const endRecord = new Uint8Array(22);
+  writeUint32(endRecord, 0, 0x06054b50);
+  writeUint16(endRecord, 8, files.length);
+  writeUint16(endRecord, 10, files.length);
+  writeUint32(endRecord, 12, centralDirectory.length);
+  writeUint32(endRecord, 16, offset);
+  writeUint16(endRecord, 20, 0);
+
+  return concatUint8Arrays([...localParts, centralDirectory, endRecord]);
+}
+
+function wordTextRuns(value) {
+  const lines = String(value ?? "").split("\n");
+  return lines
+    .map((line, index) => `${index ? "<w:br/>" : ""}<w:t xml:space="preserve">${escapeXml(line)}</w:t>`)
+    .join("");
+}
+
+function wordParagraph(text, style = "", options = {}) {
+  const properties = [];
+  if (style) properties.push(`<w:pStyle w:val="${style}"/>`);
+  if (options.spacingBefore || options.spacingAfter) {
+    properties.push(
+      `<w:spacing${options.spacingBefore ? ` w:before="${options.spacingBefore}"` : ""}${options.spacingAfter ? ` w:after="${options.spacingAfter}"` : ""}/>`
+    );
+  }
+  if (options.indentLeft) properties.push(`<w:ind w:left="${options.indentLeft}"/>`);
+  if (options.align) properties.push(`<w:jc w:val="${options.align}"/>`);
+  const paragraphProperties = properties.length ? `<w:pPr>${properties.join("")}</w:pPr>` : "";
+  const runProperties = options.bold ? "<w:rPr><w:b/></w:rPr>" : "";
+  return `<w:p>${paragraphProperties}<w:r>${runProperties}${wordTextRuns(text)}</w:r></w:p>`;
+}
+
+function wordSpacer(size = 160) {
+  return `<w:p><w:pPr><w:spacing w:after="${size}"/></w:pPr></w:p>`;
+}
+
+function wordTableCell(content, options = {}) {
+  const width = options.width || 4500;
+  const shading = options.shading ? `<w:shd w:fill="${options.shading}"/>` : "";
+  const text = Array.isArray(content) ? content.join("\n") : content;
+  return `<w:tc><w:tcPr><w:tcW w:w="${width}" w:type="dxa"/>${shading}</w:tcPr>${wordParagraph(text, options.style || "TableText", { bold: Boolean(options.bold) })}</w:tc>`;
+}
+
+function wordTable(rows, widths = []) {
+  const tableRows = rows
+    .map((row) => {
+      const cells = row
+        .map((cell, cellIndex) =>
+          wordTableCell(cell.text ?? cell, {
+            width: widths[cellIndex] || 4500,
+            shading: cell.shading,
+            bold: cell.bold,
+            style: cell.style
+          })
+        )
+        .join("");
+      return `<w:tr>${cells}</w:tr>`;
+    })
+    .join("");
+  return `<w:tbl>
+    <w:tblPr>
+      <w:tblW w:w="0" w:type="auto"/>
+      <w:tblBorders>
+        <w:top w:val="single" w:sz="6" w:space="0" w:color="D8DEE9"/>
+        <w:left w:val="single" w:sz="6" w:space="0" w:color="D8DEE9"/>
+        <w:bottom w:val="single" w:sz="6" w:space="0" w:color="D8DEE9"/>
+        <w:right w:val="single" w:sz="6" w:space="0" w:color="D8DEE9"/>
+        <w:insideH w:val="single" w:sz="6" w:space="0" w:color="D8DEE9"/>
+        <w:insideV w:val="single" w:sz="6" w:space="0" w:color="D8DEE9"/>
+      </w:tblBorders>
+      <w:tblCellMar>
+        <w:top w:w="90" w:type="dxa"/>
+        <w:left w:w="120" w:type="dxa"/>
+        <w:bottom w:w="90" w:type="dxa"/>
+        <w:right w:w="120" w:type="dxa"/>
+      </w:tblCellMar>
+    </w:tblPr>
+    ${tableRows}
+  </w:tbl>`;
+}
+
+function wordFieldTable(rows) {
+  return wordTable(
+    rows.map(([label, value]) => [
+      { text: label, bold: true, shading: "EEF2F7" },
+      { text: value || "-" }
+    ]),
+    [3000, 6300]
+  );
+}
+
+function buildWordExportDocument() {
+  const designed = splitMinutesToPedagogicalTime(totalDesignedMinutes(), getDayHours());
+  const body = [];
+  body.push(wordParagraph(state.meta.name || "Design Learning", "Title"));
+  body.push(wordParagraph("Paramètres", "Heading1"));
+  body.push(wordFieldTable([
+    ["Mode", labelForLocationMode(state.meta.modeDelivery)],
+    ["Taille du groupe", state.meta.sizeClass || "-"],
+    ["Concepteur(s)", state.meta.designers || "-"],
+    ["Enseignant(s)", state.meta.trainers || "-"],
+    [
+      "Temps d'apprentissage",
+      formatPedagogicalTime(
+        state.meta.learningDays,
+        state.meta.learningHours,
+        state.meta.learningMinutes
+      )
+    ],
+    ["Temps conçu", formatPedagogicalTime(designed.days, designed.hours, designed.minutes)],
+    ["1 jour", `${getDayHours()} heures`]
+  ]));
+  body.push(wordSpacer(120));
+  if (state.meta.description) {
+    body.push(wordParagraph("Description", "Heading2"));
+    body.push(wordParagraph(state.meta.description, "BodyText"));
+    body.push(wordSpacer(80));
+  }
+  if (state.meta.command) {
+    body.push(wordParagraph("Commande institutionnelle", "Heading2"));
+    body.push(wordParagraph(state.meta.command, "BodyText"));
+    body.push(wordSpacer(80));
+  }
+  if (state.meta.personas) {
+    body.push(wordParagraph("Objectifs", "Heading2"));
+    body.push(wordParagraph(state.meta.personas, "BodyText"));
+    body.push(wordSpacer(80));
+  }
+  if (Array.isArray(state.meta.sliders) && state.meta.sliders.length) {
+    body.push(wordParagraph("Acquis d'apprentissage", "Heading2"));
+    state.meta.sliders.forEach((outcome) => {
+      const label = outcome.verb || outcome.categoryLabel || "";
+      body.push(wordParagraph(`${label}${label && outcome.text ? " : " : ""}${outcome.text || ""}`, "ListParagraph", { indentLeft: 360 }));
+    });
+    body.push(wordSpacer(100));
+  }
+  body.push(wordParagraph("Séances", "Heading1"));
+
+  state.sessions.forEach((session, sessionIndex) => {
+    body.push(wordParagraph(`${sessionIndex + 1}. ${session.title || defaultSessionTitle(sessionIndex + 1)}`, "Heading2"));
+    const sessionRows = [];
+    if (session.objectives) sessionRows.push(["Objectifs", session.objectives]);
+    if (session.intentions) sessionRows.push(["Choix pédagogiques", session.intentions]);
+    if (session.notes) sessionRows.push(["Notes", session.notes]);
+    if (sessionRows.length) {
+      body.push(wordFieldTable(sessionRows));
+      body.push(wordSpacer(80));
+    }
+    session.activities.forEach((activity, activityIndex) => {
+      const links = activity.links && activity.links.length
+        ? activity.links.map((link) => `${link.title} (${link.url})`).join("\n")
+        : "";
+      let toolLabels = "";
+      if (activity.tools && activity.tools.length) {
+        toolLabels = activity.tools
+          .map((id) => SELECTABLE_TOOLS_DATA.find((tool) => tool.id === id))
+          .filter(Boolean)
+          .map((tool) => formatCompetencyLabel(tool, "fr"))
+          .join(", ");
+      }
+      body.push(wordParagraph(`${sessionIndex + 1}.${activityIndex + 1} ${labelForType(activity.type)}`, "Heading3"));
+      body.push(wordFieldTable([
+        ["Durée", `${activity.duration} min`],
+        ["Groupe", labelForGroupMode(activity.groupMode)],
+        ["Enseignant", labelForTrainerMode(activity.teacherPresence)],
+        ["Rythme", labelForSyncMode(activity.syncMode)],
+        ["Modalité", labelForLocationMode(activity.locationMode)],
+        ["Évaluation", labelForEvaluationMode(activity.evaluationMode)],
+        ["Description", activity.description || "-"],
+        ["Liens", links || "-"],
+        ["Compétences", toolLabels || "-"]
+      ]));
+      body.push(wordSpacer(activityIndex === session.activities.length - 1 ? 150 : 70));
+    });
+  });
+
+  const documentXml = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">
+  <w:body>
+    ${body.join("\n    ")}
+    <w:sectPr><w:pgSz w:w="11906" w:h="16838"/><w:pgMar w:top="1440" w:right="1440" w:bottom="1440" w:left="1440"/></w:sectPr>
+  </w:body>
+</w:document>`;
+
+  const stylesXml = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<w:styles xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">
+  <w:docDefaults>
+    <w:rPrDefault><w:rPr><w:rFonts w:ascii="Arial" w:hAnsi="Arial"/><w:sz w:val="21"/><w:color w:val="1F2937"/></w:rPr></w:rPrDefault>
+    <w:pPrDefault><w:pPr><w:spacing w:after="120" w:line="276" w:lineRule="auto"/></w:pPr></w:pPrDefault>
+  </w:docDefaults>
+  <w:style w:type="paragraph" w:default="1" w:styleId="Normal"><w:name w:val="Normal"/><w:qFormat/></w:style>
+  <w:style w:type="paragraph" w:styleId="Title"><w:name w:val="Title"/><w:basedOn w:val="Normal"/><w:next w:val="BodyText"/><w:qFormat/><w:pPr><w:spacing w:after="340"/></w:pPr><w:rPr><w:b/><w:color w:val="123B6D"/><w:sz w:val="36"/></w:rPr></w:style>
+  <w:style w:type="paragraph" w:styleId="Heading1"><w:name w:val="heading 1"/><w:basedOn w:val="Normal"/><w:next w:val="BodyText"/><w:uiPriority w:val="9"/><w:qFormat/><w:pPr><w:keepNext/><w:spacing w:before="420" w:after="180"/><w:outlineLvl w:val="0"/></w:pPr><w:rPr><w:b/><w:color w:val="145BB4"/><w:sz w:val="30"/></w:rPr></w:style>
+  <w:style w:type="paragraph" w:styleId="Heading2"><w:name w:val="heading 2"/><w:basedOn w:val="Normal"/><w:next w:val="BodyText"/><w:uiPriority w:val="9"/><w:qFormat/><w:pPr><w:keepNext/><w:spacing w:before="300" w:after="140"/><w:outlineLvl w:val="1"/></w:pPr><w:rPr><w:b/><w:color w:val="1F4D7A"/><w:sz w:val="25"/></w:rPr></w:style>
+  <w:style w:type="paragraph" w:styleId="Heading3"><w:name w:val="heading 3"/><w:basedOn w:val="Normal"/><w:next w:val="BodyText"/><w:uiPriority w:val="9"/><w:qFormat/><w:pPr><w:keepNext/><w:spacing w:before="220" w:after="100"/><w:outlineLvl w:val="2"/></w:pPr><w:rPr><w:b/><w:color w:val="243B53"/><w:sz w:val="22"/></w:rPr></w:style>
+  <w:style w:type="paragraph" w:styleId="BodyText"><w:name w:val="Body Text"/><w:basedOn w:val="Normal"/><w:pPr><w:spacing w:after="140"/></w:pPr><w:rPr><w:sz w:val="21"/></w:rPr></w:style>
+  <w:style w:type="paragraph" w:styleId="TableText"><w:name w:val="Table Text"/><w:basedOn w:val="Normal"/><w:pPr><w:spacing w:after="0"/></w:pPr><w:rPr><w:sz w:val="19"/></w:rPr></w:style>
+  <w:style w:type="paragraph" w:styleId="ListParagraph"><w:name w:val="List Paragraph"/><w:basedOn w:val="Normal"/><w:pPr><w:spacing w:after="90"/><w:ind w:left="720"/></w:pPr><w:rPr><w:sz w:val="21"/></w:rPr></w:style>
+</w:styles>`;
+
+  return createZipArchive([
+    {
+      name: "[Content_Types].xml",
+      content: `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types">
+  <Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/>
+  <Default Extension="xml" ContentType="application/xml"/>
+  <Override PartName="/word/document.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml"/>
+  <Override PartName="/word/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.styles+xml"/>
+</Types>`
+    },
+    {
+      name: "_rels/.rels",
+      content: `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">
+  <Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="word/document.xml"/>
+</Relationships>`
+    },
+    {
+      name: "word/_rels/document.xml.rels",
+      content: `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"/>`
+    },
+    { name: "word/document.xml", content: documentXml },
+    { name: "word/styles.xml", content: stylesXml }
+  ]);
+}
+
 function sanitizeCsvFormula(value) {
   const text = String(value ?? "");
   if (/^[=+\-@]/.test(text)) return `'${text}`;
@@ -3771,37 +4105,7 @@ function buildSpreadsheetRows() {
   );
   const metaDesignedTime = formatPedagogicalTime(designed.days, designed.hours, designed.minutes);
   const rows = [];
-  const headers = [
-    "session_index",
-    "session_title",
-    "session_objectives",
-    "session_intentions",
-    "session_notes",
-    "activity_index",
-    "learning_type",
-    "duration_minutes",
-    "group_size",
-    "trainer_presence",
-    "pacing",
-    "delivery_mode",
-    "assessment",
-    "activity_description",
-    "activity_notes",
-    "activity_competencies",
-    "design_title",
-    "design_mode",
-    "design_group_size",
-    "design_designers",
-    "design_trainers",
-    "design_learning_time",
-    "design_designed_time",
-    "design_day_hours",
-    "design_description",
-    "design_institutional_brief",
-    "design_personas",
-    "design_sliders"
-  ];
-  rows.push(headers);
+  rows.push(SPREADSHEET_COLUMNS.map((column) => column.label));
 
   state.sessions.forEach((session, sessionIndex) => {
     if (!session.activities.length) {
@@ -3881,6 +4185,37 @@ function buildSpreadsheetRows() {
   return rows;
 }
 
+const SPREADSHEET_COLUMNS = [
+  { key: "session_index", label: "N° de séance", width: 12 },
+  { key: "session_title", label: "Titre de la séance", width: 20 },
+  { key: "session_objectives", label: "Objectifs de la séance", width: 34 },
+  { key: "session_intentions", label: "Choix pédagogiques de la séance", width: 34 },
+  { key: "session_notes", label: "Notes de la séance", width: 24 },
+  { key: "activity_index", label: "N° d'activité", width: 12 },
+  { key: "learning_type", label: "Type d'apprentissage", width: 18 },
+  { key: "duration_minutes", label: "Durée (minutes)", width: 16 },
+  { key: "group_size", label: "Organisation du groupe", width: 18 },
+  { key: "trainer_presence", label: "Présence de l'enseignant", width: 20 },
+  { key: "pacing", label: "Rythme", width: 14 },
+  { key: "delivery_mode", label: "Modalité", width: 14 },
+  { key: "assessment", label: "Évaluation", width: 18 },
+  { key: "activity_description", label: "Description de l'activité", width: 34 },
+  { key: "activity_notes", label: "Notes de l'activité", width: 24 },
+  { key: "activity_competencies", label: "Compétences", width: 22 },
+  { key: "design_title", label: "Titre du design", width: 22 },
+  { key: "design_mode", label: "Mode du design", width: 16 },
+  { key: "design_group_size", label: "Taille du groupe", width: 16 },
+  { key: "design_designers", label: "Concepteur(s)", width: 18 },
+  { key: "design_trainers", label: "Enseignant(s)", width: 18 },
+  { key: "design_learning_time", label: "Temps d'apprentissage prévu", width: 22 },
+  { key: "design_designed_time", label: "Temps conçu", width: 16 },
+  { key: "design_day_hours", label: "Heures par jour", width: 14 },
+  { key: "design_description", label: "Description du design", width: 30 },
+  { key: "design_institutional_brief", label: "Commande institutionnelle", width: 30 },
+  { key: "design_personas", label: "Personas", width: 26 },
+  { key: "design_sliders", label: "Objectifs / curseurs", width: 26 }
+];
+
 function buildCsvExport() {
   return buildSpreadsheetRows()
     .map((row) => row.map(escapeCsvCell).join(","))
@@ -3889,34 +4224,78 @@ function buildCsvExport() {
 
 function buildExcelExportDocument() {
   const rows = buildSpreadsheetRows();
-  const tableRows = rows
+  const columnsXml = SPREADSHEET_COLUMNS
+    .map((column, index) => {
+      const columnIndex = index + 1;
+      return `<col min="${columnIndex}" max="${columnIndex}" width="${column.width}" customWidth="1"/>`;
+    })
+    .join("");
+  const sheetRows = rows
     .map((row, rowIndex) => {
-      const cellTag = rowIndex === 0 ? "th" : "td";
       const cells = row
-        .map((cell) => `<${cellTag}>${escapeHtml(cell)}</${cellTag}>`)
+        .map((cell, cellIndex) => {
+          const reference = `${excelColumnName(cellIndex + 1)}${rowIndex + 1}`;
+          return `<c r="${reference}" t="inlineStr"><is><t xml:space="preserve">${escapeXml(cell)}</t></is></c>`;
+        })
         .join("");
-      return `<tr>${cells}</tr>`;
+      return `<row r="${rowIndex + 1}">${cells}</row>`;
     })
     .join("");
 
-  return `<!doctype html>
-<html lang="fr">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Export Excel Learning Designer</title>
-  <style>
-    body { font-family: Arial, sans-serif; margin: 16px; }
-    table { border-collapse: collapse; width: 100%; }
-    th, td { border: 1px solid #b9b9b9; padding: 6px 8px; text-align: left; vertical-align: top; }
-    th { background: #e9edf2; font-weight: 700; }
-    td { white-space: pre-wrap; }
-  </style>
-</head>
-<body>
-  <table>${tableRows}</table>
-</body>
-</html>`;
+  const sheetXml = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main">
+  <sheetViews><sheetView workbookViewId="0"/></sheetViews>
+  <sheetFormatPr defaultRowHeight="15"/>
+  <cols>${columnsXml}</cols>
+  <sheetData>${sheetRows}</sheetData>
+</worksheet>`;
+
+  const workbookXml = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<workbook xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships">
+  <sheets>
+    <sheet name="Design" sheetId="1" r:id="rId1"/>
+  </sheets>
+</workbook>`;
+
+  return createZipArchive([
+    {
+      name: "[Content_Types].xml",
+      content: `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types">
+  <Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/>
+  <Default Extension="xml" ContentType="application/xml"/>
+  <Override PartName="/xl/workbook.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml"/>
+  <Override PartName="/xl/worksheets/sheet1.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/>
+</Types>`
+    },
+    {
+      name: "_rels/.rels",
+      content: `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">
+  <Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="xl/workbook.xml"/>
+</Relationships>`
+    },
+    {
+      name: "xl/_rels/workbook.xml.rels",
+      content: `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">
+  <Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet" Target="worksheets/sheet1.xml"/>
+</Relationships>`
+    },
+    { name: "xl/workbook.xml", content: workbookXml },
+    { name: "xl/worksheets/sheet1.xml", content: sheetXml }
+  ]);
+}
+
+function excelColumnName(index) {
+  let column = "";
+  let value = Math.max(1, Number(index) || 1);
+  while (value > 0) {
+    value -= 1;
+    column = String.fromCharCode(65 + (value % 26)) + column;
+    value = Math.floor(value / 26);
+  }
+  return column;
 }
 
 function normalizeToken(value) {
@@ -3985,6 +4364,26 @@ function buildLookup(entries) {
     });
   });
   return map;
+}
+
+function buildSpreadsheetHeaderIndex(headerRow) {
+  const headerIndex = {};
+  headerRow.forEach((header, index) => {
+    const token = normalizeToken(header);
+    if (!token) return;
+    headerIndex[token] = index;
+  });
+
+  SPREADSHEET_COLUMNS.forEach(({ key, label }) => {
+    [key, label].forEach((header) => {
+      const token = normalizeToken(header);
+      if (token && headerIndex[token] != null && headerIndex[key] == null) {
+        headerIndex[key] = headerIndex[token];
+      }
+    });
+  });
+
+  return headerIndex;
 }
 
 const CSV_TYPE_LOOKUP = buildLookup([
@@ -4171,8 +4570,7 @@ function buildStateFromCsv(csvText) {
   const rows = parseCsvRows(csvText);
   if (rows.length < 2) return null;
 
-  const headers = rows[0].map(normalizeToken);
-  const headerIndex = Object.fromEntries(headers.map((header, index) => [header, index]));
+  const headerIndex = buildSpreadsheetHeaderIndex(rows[0]);
   if (headerIndex.session_index == null || headerIndex.session_title == null) return null;
 
   const dataRows = rows.slice(1).filter((row) => row.some((cell) => String(cell || "").trim() !== ""));
@@ -4213,6 +4611,8 @@ function buildStateFromCsv(csvText) {
 
     const sessionOrder = parseCsvInteger(read("session_index"), rowIndex + 1);
     const sessionTitle = read("session_title").trim() || defaultSessionTitle(sessionOrder || sessions.length + 1);
+    const sessionObjectives = read("session_objectives");
+    const sessionIntentions = read("session_intentions");
     const sessionNotes = read("session_notes");
     const sessionKey = `${sessionOrder}`;
     let session = sessionsByIndex.get(sessionKey);
@@ -4220,8 +4620,8 @@ function buildStateFromCsv(csvText) {
       session = {
         id: nextId(),
         title: sessionTitle,
-        objectives: "",
-        intentions: "",
+        objectives: sessionObjectives,
+        intentions: sessionIntentions,
         notes: sessionNotes,
         notesExpanded: false,
         activities: []
@@ -4230,6 +4630,8 @@ function buildStateFromCsv(csvText) {
       sessions.push(session);
     } else {
       if (!session.title && sessionTitle) session.title = sessionTitle;
+      if (!session.objectives && sessionObjectives) session.objectives = sessionObjectives;
+      if (!session.intentions && sessionIntentions) session.intentions = sessionIntentions;
       if (!session.notes && sessionNotes) session.notes = sessionNotes;
     }
 
@@ -4601,11 +5003,11 @@ function isCopyableExportFormat(format = "json") {
 function updateExportPreview(format = exportFormatSelect?.value || "json") {
   const { content, type } = getExportPayload(format);
   const filename = getExportFilename(format);
-  const text = typeof content === "string" ? content : String(content ?? "");
+  const text = typeof content === "string" ? content : "";
   const isCopyable = isCopyableExportFormat(format);
   const exportPreviewCopy = document.getElementById("export-result-modal-copy");
   clearExportPreviewUrl();
-  exportPreviewObjectUrl = URL.createObjectURL(new Blob([text], { type }));
+  exportPreviewObjectUrl = URL.createObjectURL(new Blob([content], { type }));
   if (exportPreviewCopy) {
     exportPreviewCopy.textContent = isCopyable ? t("exportPreviewCopy") : t("exportDownloadOnly");
   }
@@ -4616,7 +5018,7 @@ function updateExportPreview(format = exportFormatSelect?.value || "json") {
   if (exportResultCopyBtn) {
     exportResultCopyBtn.classList.toggle("hidden", !isCopyable);
   }
-  return { content: text, type, filename };
+  return { content, type, filename };
 }
 
 function getFocusableElements(container) {
@@ -6040,11 +6442,11 @@ newDesignModalBackdrop.addEventListener("click", (e) => {
 
 function getExportPayload(format = "json") {
   const chosen = String(format).toLowerCase();
-  if (chosen === "excel" || chosen === "xls") {
+  if (chosen === "excel" || chosen === "xls" || chosen === "xlsx") {
     return {
       content: buildExcelExportDocument(),
-      type: "application/vnd.ms-excel;charset=utf-8",
-      filename: "design-learning-designer-fr.xls"
+      type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      filename: "design-learning-designer-fr.xlsx"
     };
   }
   if (chosen === "md" || chosen === "markdown") {
@@ -6063,9 +6465,9 @@ function getExportPayload(format = "json") {
   }
   if (chosen === "word" || chosen === "doc" || chosen === "docx") {
     return {
-      content: buildHtmlExportDocument(),
-      type: "application/msword",
-      filename: "design-learning-designer-fr.doc"
+      content: buildWordExportDocument(),
+      type: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+      filename: "design-learning-designer-fr.docx"
     };
   }
   return {

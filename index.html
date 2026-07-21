@@ -20,7 +20,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="interface.css?v=20260520-2" />
+    <link rel="stylesheet" href="interface.css?v=20260721-export-preview-flex" />
   </head>
   <body>
     <a id="skip-link" class="skip-link" href="#board">Aller au contenu principal</a>
@@ -279,7 +279,7 @@
         <div class="toolbar-cluster">
           <button id="save-btn" class="btn btn-light" type="button" hidden aria-live="polite" aria-atomic="true"><span class="btn-label"><i class="fa-regular fa-floppy-disk btn-icon-inline" aria-hidden="true"></i>Enregistrer</span></button>
           <button id="publish-btn" class="btn btn-light" type="button" hidden><span class="btn-label"><i class="fa-solid fa-share-nodes btn-icon-inline" aria-hidden="true"></i>Partager</span></button>
-          <button id="export-design-btn" class="btn btn-primary" type="button" onclick="window.learningDesignerOpenExport && window.learningDesignerOpenExport()"><span class="btn-label"><i class="fa-solid fa-file-export btn-icon-inline" aria-hidden="true"></i>Exporter</span></button>
+          <button id="export-design-btn" class="btn btn-primary" type="button"><span class="btn-label"><i class="fa-solid fa-file-export btn-icon-inline" aria-hidden="true"></i>Exporter</span></button>
         </div>
       </div>
       <input id="import-file-input" type="file" accept=".json,.ldj,.csv,.xlsx,.md,.markdown,application/json,text/csv,text/markdown" hidden />
@@ -399,34 +399,24 @@
     </div>
 
     <div id="export-modal-backdrop" class="modal-backdrop hidden" role="dialog" aria-modal="true" aria-hidden="true" aria-labelledby="export-modal-title">
-      <div class="modal">
+      <div class="modal export-modal">
         <h2 id="export-modal-title" class="modal-title">Exporter le design</h2>
         <label for="export-format-select">Format</label>
         <select id="export-format-select" class="panel-select">
-          <option value="json">JSON</option>
           <option value="markdown">Markdown</option>
-          <option value="word">Word</option>
           <option value="html">HTML</option>
+          <option value="json">JSON</option>
           <option value="excel">Excel</option>
+          <option value="word">Word</option>
         </select>
         <label for="export-filename-input">Nom du fichier</label>
         <input id="export-filename-input" class="panel-input" type="text" maxlength="160" autocomplete="off" />
-        <div class="modal-actions">
-          <button id="export-modal-cancel-btn" class="btn btn-light" type="button">Annuler</button>
-          <button id="export-modal-confirm-btn" class="btn btn-primary" type="button" onclick="window.learningDesignerRunExport && window.learningDesignerRunExport()">Exporter</button>
-        </div>
-      </div>
-    </div>
-
-    <div id="export-result-modal-backdrop" class="modal-backdrop hidden" role="dialog" aria-modal="true" aria-hidden="true" aria-labelledby="export-result-modal-title">
-      <div class="modal">
-        <h2 id="export-result-modal-title" class="modal-title">Contenu exporté</h2>
-        <p id="export-result-modal-copy">Si le téléchargement ne démarre pas, copiez le contenu ci-dessous.</p>
-        <a id="export-result-download-link" class="site-footer-link" href="#" download>Ouvrir le fichier exporté</a>
-        <textarea id="export-result-text" class="panel-textarea" rows="12" readonly></textarea>
+        <p id="export-result-modal-copy">Le contenu exporté est lisible ci-dessous. Vous pouvez le copier ou télécharger le fichier.</p>
+        <textarea id="export-result-text" class="panel-textarea" rows="14" readonly></textarea>
         <div class="modal-actions">
           <button id="export-result-copy-btn" class="btn btn-light" type="button">Copier</button>
-          <button id="export-result-close-btn" class="btn btn-primary" type="button">Fermer</button>
+          <button id="export-modal-cancel-btn" class="btn btn-light" type="button">Fermer</button>
+          <button id="export-modal-confirm-btn" class="btn btn-primary" type="button">Télécharger</button>
         </div>
       </div>
     </div>
@@ -531,7 +521,7 @@
           var select = document.getElementById("export-format-select");
           var filenameInput = document.getElementById("export-filename-input");
           if (!backdrop) return;
-          if (select && !select.value) select.value = "json";
+          if (select && !select.value) select.value = "markdown";
           if (filenameInput && !filenameInput.value) filenameInput.value = fallbackDefaultExportName(select ? select.value : "json");
           backdrop.classList.remove("hidden");
           backdrop.setAttribute("aria-hidden", "false");
@@ -558,6 +548,7 @@
             .replace(/^\.+|\.+$/g, "")
             .trim();
           if (!cleaned) return defaultFilename || ("export" + extension);
+          cleaned = cleaned.replace(/\.(json|md|markdown|html|doc|docx|xls|xlsx)$/i, "");
           if (cleaned.toLowerCase().slice(-extension.length) !== extension.toLowerCase()) {
             cleaned += extension;
           }
@@ -571,22 +562,10 @@
           backdrop.setAttribute("aria-hidden", "true");
         }
 
-        function fallbackOpenExportResult(content, filename, mimeType) {
-          var resultBackdrop = document.getElementById("export-result-modal-backdrop");
+        function fallbackUpdateExportPreview(content) {
           var resultText = document.getElementById("export-result-text");
-          var resultLink = document.getElementById("export-result-download-link");
-          var blob, url;
-          if (!resultBackdrop || !resultText || !resultLink) return;
+          if (!resultText) return;
           resultText.value = String(content || "");
-          blob = new Blob([content], { type: mimeType || "text/plain;charset=utf-8" });
-          url = URL.createObjectURL(blob);
-          resultLink.href = url;
-          resultLink.download = filename || "export.txt";
-          resultBackdrop.classList.remove("hidden");
-          resultBackdrop.setAttribute("aria-hidden", "false");
-          window.setTimeout(function () {
-            URL.revokeObjectURL(url);
-          }, 60000);
         }
 
         function fallbackDownload(content, filename, mimeType) {
@@ -626,13 +605,12 @@
             };
           }
           payload.filename = fallbackBuildCustomFilename(payload.filename);
-          fallbackOpenExportResult(payload.content, payload.filename, payload.type);
+          fallbackUpdateExportPreview(payload.content);
           fallbackDownload(payload.content, payload.filename, payload.type);
-          fallbackCloseExportModal();
         };
       })();
     </script>
-    <script src="interface.js?v=20260520-1"></script>
+    <script src="interface.js?v=20260721-export-default-markdown"></script>
     <script src="account-ui.js?v=20260520-1"></script>
     <script>
       (function() {

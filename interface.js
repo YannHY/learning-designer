@@ -937,11 +937,8 @@ const exportFormatSelect = document.getElementById("export-format-select");
 const exportFilenameInput = document.getElementById("export-filename-input");
 const exportModalCancelBtn = document.getElementById("export-modal-cancel-btn");
 const exportModalConfirmBtn = document.getElementById("export-modal-confirm-btn");
-const exportResultModalBackdrop = document.getElementById("export-result-modal-backdrop");
-const exportResultDownloadLink = document.getElementById("export-result-download-link");
 const exportResultText = document.getElementById("export-result-text");
 const exportResultCopyBtn = document.getElementById("export-result-copy-btn");
-const exportResultCloseBtn = document.getElementById("export-result-close-btn");
 const importModalBackdrop = document.getElementById("import-modal-backdrop");
 const importFormatSelect = document.getElementById("import-format-select");
 const importModalCancelBtn = document.getElementById("import-modal-cancel-btn");
@@ -968,6 +965,7 @@ let state = (() => {
 let dragState = null;
 let activeModalBackdrop = null;
 let previousFocusedElement = null;
+let exportPreviewObjectUrl = "";
 
 const I18N = {
   fr: {
@@ -1024,6 +1022,10 @@ const I18N = {
     exportTitle: "Exporter le design",
     format: "Format",
     exportFilename: "Nom du fichier",
+    exportPreviewCopy: "Le contenu exporté est lisible ci-dessous. Vous pouvez le copier ou télécharger le fichier.",
+    exportDownloadOnly: "Ce format est destiné au téléchargement. Le contenu brut n'est pas affiché ni copiable.",
+    copy: "Copier",
+    download: "Télécharger",
     cancel: "Annuler",
     validate: "Valider",
     close: "Fermer",
@@ -1236,6 +1238,10 @@ const I18N = {
     exportTitle: "Export design",
     format: "Format",
     exportFilename: "File name",
+    exportPreviewCopy: "The exported content is shown below. You can copy it or download the file.",
+    exportDownloadOnly: "This format is meant to be downloaded. Raw content is not shown or copyable.",
+    copy: "Copy",
+    download: "Download",
     cancel: "Cancel",
     validate: "Validate",
     close: "Close",
@@ -1812,8 +1818,11 @@ function applyLocalizedUI() {
   exportModalBackdrop.querySelector("#export-modal-title").textContent = t("exportTitle");
   exportModalBackdrop.querySelector("label[for='export-format-select']").textContent = t("format");
   exportModalBackdrop.querySelector("label[for='export-filename-input']").textContent = t("exportFilename");
-  exportModalCancelBtn.textContent = t("cancel");
-  exportModalConfirmBtn.textContent = t("export");
+  const exportPreviewCopy = document.getElementById("export-result-modal-copy");
+  if (exportPreviewCopy) exportPreviewCopy.textContent = t("exportPreviewCopy");
+  if (exportResultCopyBtn) exportResultCopyBtn.textContent = t("copy");
+  exportModalCancelBtn.textContent = t("close");
+  exportModalConfirmBtn.textContent = t("download");
   const activityLinkTitle = document.getElementById("activity-link-modal-title");
   if (activityLinkTitle) activityLinkTitle.textContent = t("activityLinksTitle");
   const activityLinkTitleLabel = document.getElementById("activity-link-title-label");
@@ -4578,15 +4587,36 @@ async function downloadBlob(content, type, filename) {
   window.setTimeout(() => URL.revokeObjectURL(url), 1000);
 }
 
-function openExportResultModal(content, type, filename) {
+function clearExportPreviewUrl() {
+  if (!exportPreviewObjectUrl) return;
+  URL.revokeObjectURL(exportPreviewObjectUrl);
+  exportPreviewObjectUrl = "";
+}
+
+function isCopyableExportFormat(format = "json") {
+  const chosen = String(format).toLowerCase();
+  return chosen === "json" || chosen === "md" || chosen === "markdown" || chosen === "html";
+}
+
+function updateExportPreview(format = exportFormatSelect?.value || "json") {
+  const { content, type } = getExportPayload(format);
+  const filename = getExportFilename(format);
   const text = typeof content === "string" ? content : String(content ?? "");
-  const blob = new Blob([text], { type });
-  const url = URL.createObjectURL(blob);
-  exportResultDownloadLink.href = url;
-  exportResultDownloadLink.download = filename;
-  exportResultText.value = text;
-  openModal(exportResultModalBackdrop, "#export-result-copy-btn");
-  window.setTimeout(() => URL.revokeObjectURL(url), 60_000);
+  const isCopyable = isCopyableExportFormat(format);
+  const exportPreviewCopy = document.getElementById("export-result-modal-copy");
+  clearExportPreviewUrl();
+  exportPreviewObjectUrl = URL.createObjectURL(new Blob([text], { type }));
+  if (exportPreviewCopy) {
+    exportPreviewCopy.textContent = isCopyable ? t("exportPreviewCopy") : t("exportDownloadOnly");
+  }
+  if (exportResultText) {
+    exportResultText.value = isCopyable ? text : "";
+    exportResultText.classList.toggle("hidden", !isCopyable);
+  }
+  if (exportResultCopyBtn) {
+    exportResultCopyBtn.classList.toggle("hidden", !isCopyable);
+  }
+  return { content: text, type, filename };
 }
 
 function getFocusableElements(container) {
@@ -4618,14 +4648,16 @@ function closeModal(backdrop) {
 }
 
 function openExportModal() {
-  exportFormatSelect.value = "json";
+  exportFormatSelect.value = "markdown";
   if (exportFilenameInput) {
     exportFilenameInput.value = getDefaultExportName(exportFormatSelect.value);
   }
+  updateExportPreview(exportFormatSelect.value);
   openModal(exportModalBackdrop, "#export-format-select");
 }
 
 function closeExportModal() {
+  clearExportPreviewUrl();
   closeModal(exportModalBackdrop);
 }
 
@@ -6063,7 +6095,7 @@ function sanitizeExportFilename(rawName, defaultFilename) {
     .replace(/\s+/g, " ")
     .replace(/^\.+|\.+$/g, "")
     .trim();
-  const baseName = cleaned || fallbackBase;
+  const baseName = (cleaned || fallbackBase).replace(/\.(json|md|markdown|html|doc|docx|xls|xlsx)$/i, "") || fallbackBase;
   if (baseName.toLowerCase().endsWith(extension.toLowerCase())) {
     return baseName;
   }
@@ -6078,9 +6110,7 @@ function getExportFilename(format = "json") {
 window.learningDesignerGetExportPayload = getExportPayload;
 
 async function exportDesign(format = "json") {
-  const { content, type } = getExportPayload(format);
-  const filename = getExportFilename(format);
-  openExportResultModal(content, type, filename);
+  const { content, type, filename } = updateExportPreview(format);
   try {
     await downloadBlob(content, type, filename);
   } catch (error) {
@@ -6095,7 +6125,6 @@ window.learningDesignerOpenExport = () => {
 
 window.learningDesignerRunExport = async () => {
   await exportDesign(exportFormatSelect?.value || "json");
-  closeExportModal();
 };
 
 exportDesignBtn.addEventListener("click", () => {
@@ -6124,6 +6153,17 @@ exportModalConfirmBtn.addEventListener("click", async () => {
   await window.learningDesignerRunExport();
 });
 
+exportFormatSelect?.addEventListener("change", () => {
+  if (exportFilenameInput) {
+    exportFilenameInput.value = getDefaultExportName(exportFormatSelect.value);
+  }
+  updateExportPreview(exportFormatSelect.value);
+});
+
+exportFilenameInput?.addEventListener("input", () => {
+  updateExportPreview(exportFormatSelect?.value || "json");
+});
+
 exportModalBackdrop.addEventListener("click", (event) => {
   if (event.target === exportModalBackdrop) {
     closeExportModal();
@@ -6131,22 +6171,13 @@ exportModalBackdrop.addEventListener("click", (event) => {
 });
 
 exportResultCopyBtn?.addEventListener("click", async () => {
+  if (!isCopyableExportFormat(exportFormatSelect?.value || "json")) return;
   try {
     await navigator.clipboard.writeText(exportResultText.value);
     showNotice(currentLang() === "en" ? "Export copied." : "Export copié.", "success");
   } catch {
     exportResultText.focus();
     exportResultText.select();
-  }
-});
-
-exportResultCloseBtn?.addEventListener("click", () => {
-  closeModal(exportResultModalBackdrop);
-});
-
-exportResultModalBackdrop?.addEventListener("click", (event) => {
-  if (event.target === exportResultModalBackdrop) {
-    closeModal(exportResultModalBackdrop);
   }
 });
 

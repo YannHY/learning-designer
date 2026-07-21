@@ -1129,6 +1129,35 @@ body.fullscreen-editor-open {
   gap: 10px;
 }
 
+#export-modal-backdrop {
+  padding: 24px;
+}
+
+#export-modal-backdrop .modal {
+  width: min(920px, 96vw);
+  height: min(760px, calc(100vh - 48px));
+  max-height: calc(100vh - 48px);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+#export-result-text.panel-textarea {
+  flex: 1 1 auto;
+  min-height: 320px;
+  height: auto;
+  max-height: none;
+  overflow: auto;
+  resize: vertical;
+  font-family: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+  line-height: 1.45;
+  white-space: pre;
+}
+
+#export-modal-backdrop .modal-actions {
+  align-self: end;
+}
+
 .partition-config-modal {
   width: min(520px, 92vw);
   max-height: 85vh;
@@ -4231,4 +4260,37 @@ html[data-theme="dark"] body {
 
 .top-tab:active {
   transform: scale(0.96);
+}
+
+.modal.export-modal {
+  width: min(1040px, calc(100vw - 48px)) !important;
+  height: min(780px, calc(100vh - 48px));
+  max-height: calc(100vh - 48px);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.modal.export-modal #export-result-text.panel-textarea {
+  flex: 1 1 auto;
+  min-height: 320px;
+  height: auto;
+  max-height: none;
+  overflow: auto;
+  resize: vertical;
+  font-family: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+  line-height: 1.45;
+  white-space: pre;
+}
+
+.modal.export-modal .modal-actions {
+  align-self: end;
+}
+
+@media (max-width: 640px) {
+  .modal.export-modal {
+    width: calc(100vw - 24px) !important;
+    height: calc(100vh - 24px);
+    max-height: calc(100vh - 24px);
+  }
 }

@@ -282,7 +282,7 @@
           <button id="export-design-btn" class="btn btn-primary" type="button" onclick="window.learningDesignerOpenExport && window.learningDesignerOpenExport()"><span class="btn-label"><i class="fa-solid fa-file-export btn-icon-inline" aria-hidden="true"></i>Exporter</span></button>
         </div>
       </div>
-      <input id="import-file-input" type="file" accept=".json,.ldj,.csv,application/json,text/csv" hidden />
+      <input id="import-file-input" type="file" accept=".json,.ldj,.csv,.xlsx,.md,.markdown,application/json,text/csv,text/markdown" hidden />
       <button id="info-btn" hidden></button>
     </header>
 
@@ -438,6 +438,7 @@
           <option value="json">JSON</option>
           <option value="csv">CSV</option>
           <option value="xlsx">Excel (.xlsx)</option>
+          <option value="markdown">Markdown</option>
         </select>
         <div class="modal-actions">
           <button id="import-modal-cancel-btn" class="btn btn-light" type="button">Annuler</button>

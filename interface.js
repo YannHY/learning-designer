@@ -1077,7 +1077,7 @@ const I18N = {
     newDesignModalTitle: "Nouveau design",
     newDesignModalMsg: "Vous allez créer un nouveau design vierge. Si vous n'avez pas enregistré le design actuel, il sera perdu.",
     newDesignModalConfirm: "Créer un nouveau design",
-    importInvalid: "Fichier invalide. Importez un LDJ, JSON, CSV ou Excel exporté depuis cette application.",
+    importInvalid: "Fichier invalide. Importez un LDJ, JSON, CSV, Excel ou Markdown exporté depuis cette application.",
     commandPlaceholder: "Collez ici la commande institutionnelle déjà définie...",
     personasPlaceholder: "Décrivez les objectifs de la formation...",
     slidersPlaceholder: "Décrivez les résultats attendus...",
@@ -1288,7 +1288,7 @@ const I18N = {
     newDesignModalTitle: "New design",
     newDesignModalMsg: "You are about to create a blank new design. If you have not saved the current design, it will be lost.",
     newDesignModalConfirm: "Create a new design",
-    importInvalid: "Invalid file. Import an LDJ, JSON, CSV or Excel file exported by this application.",
+    importInvalid: "Invalid file. Import an LDJ, JSON, CSV, Excel or Markdown file exported by this application.",
     commandPlaceholder: "Paste the previously defined institutional brief here...",
     personasPlaceholder: "Describe the learning objectives...",
     slidersPlaceholder: "Describe the expected results...",
@@ -4264,6 +4264,255 @@ function buildStateFromCsv(csvText) {
   return hydrateState(imported, null);
 }
 
+function cleanMarkdownExportValue(value) {
+  const trimmed = String(value ?? "").trim();
+  return trimmed === "-" ? "" : trimmed;
+}
+
+function parseMarkdownFieldLine(line) {
+  const match = String(line || "").match(/^-\s*([^:]+):\s*(.*)$/);
+  if (!match) return null;
+  return {
+    key: normalizeToken(match[1]),
+    value: cleanMarkdownExportValue(match[2])
+  };
+}
+
+function readMarkdownBlock(lines, startIndex) {
+  const block = [];
+  let index = startIndex;
+  while (index < lines.length && !/^#{2,3}\s+/.test(lines[index])) {
+    block.push(lines[index]);
+    index += 1;
+  }
+  return {
+    value: cleanMarkdownExportValue(block.join("\n").trim()),
+    nextIndex: index
+  };
+}
+
+function parseMarkdownLinks(value) {
+  const links = [];
+  const pattern = /([^(),]+?)\s*\((https?:\/\/[^)]+)\)/g;
+  let match;
+  while ((match = pattern.exec(String(value || ""))) !== null) {
+    const title = match[1].trim();
+    const url = match[2].trim();
+    if (title && url) links.push({ id: nextId(), title, url });
+  }
+  return links;
+}
+
+function buildStateFromMarkdown(markdownText) {
+  const lines = String(markdownText ?? "").replace(/^\uFEFF/, "").replace(/\r\n?/g, "\n").split("\n");
+  const firstTitle = lines.find((line) => /^#\s+/.test(line));
+  if (
+    !firstTitle ||
+    !lines.some((line) => /^##\s+Paramètres\s*$/i.test(line)) ||
+    !lines.some((line) => /^##\s+Séances\s*$/i.test(line))
+  ) {
+    return null;
+  }
+
+  const imported = createNewDesignState();
+  imported.meta.uiLanguage = currentLang();
+  imported.meta.name = cleanMarkdownExportValue(firstTitle.replace(/^#\s+/, ""));
+
+  let index = 0;
+  let inSettings = false;
+  let inSessions = false;
+  let currentSession = null;
+  let currentActivity = null;
+
+  const pushCurrentActivity = () => {
+    if (currentSession && currentActivity) {
+      normalizeActivity(currentActivity);
+      currentSession.activities.push(currentActivity);
+    }
+    currentActivity = null;
+  };
+
+  const pushCurrentSession = () => {
+    pushCurrentActivity();
+    if (currentSession) imported.sessions.push(currentSession);
+    currentSession = null;
+  };
+
+  while (index < lines.length) {
+    const line = lines[index];
+
+    if (/^##\s+Paramètres\s*$/i.test(line)) {
+      pushCurrentSession();
+      inSettings = true;
+      inSessions = false;
+      index += 1;
+      continue;
+    }
+
+    if (/^##\s+Séances\s*$/i.test(line)) {
+      inSettings = false;
+      inSessions = true;
+      index += 1;
+      continue;
+    }
+
+    if (inSettings) {
+      const dayHoursMatch = line.match(/^-\s*1 jour\s*=\s*(\d+)/i);
+      if (dayHoursMatch) {
+        imported.meta.dayHours = Math.max(1, parseCsvInteger(dayHoursMatch[1], DEFAULT_DAY_HOURS));
+        index += 1;
+        continue;
+      }
+
+      const field = parseMarkdownFieldLine(line);
+      if (field) {
+        if (field.key === "mode") imported.meta.modeDelivery = lookupValue(field.value, CSV_LOCATION_LOOKUP, "");
+        if (field.key === "taille du groupe") imported.meta.sizeClass = field.value;
+        if (field.key === "concepteur(s)") imported.meta.designers = field.value;
+        if (field.key === "enseignant(s)") imported.meta.trainers = field.value;
+        if (field.key === "temps d'apprentissage") {
+          const learningTime = parseCsvPedagogicalTime(field.value, imported.meta.dayHours);
+          imported.meta.learningDays = learningTime.days;
+          imported.meta.learningHours = learningTime.hours;
+          imported.meta.learningMinutes = learningTime.minutes;
+        }
+        index += 1;
+        continue;
+      }
+
+      const settingSection = line.match(/^###\s+(.+)$/);
+      if (settingSection) {
+        const title = normalizeToken(settingSection[1]);
+        if (title === "description" || title === "commande institutionnelle" || title === "objectifs") {
+          const block = readMarkdownBlock(lines, index + 1);
+          if (title === "description") imported.meta.description = block.value;
+          if (title === "commande institutionnelle") imported.meta.command = block.value;
+          if (title === "objectifs") imported.meta.personas = block.value;
+          index = block.nextIndex;
+          continue;
+        }
+        if (title === "acquis d'apprentissage") {
+          const outcomes = [];
+          index += 1;
+          while (index < lines.length && !/^#{2,3}\s+/.test(lines[index])) {
+            const outcome = String(lines[index] || "").match(/^-\s*(.*)$/);
+            if (outcome) {
+              const text = outcome[1].trim();
+              const parts = text.split(/\s+:\s+/);
+              outcomes.push({
+                id: nextId(),
+                category: "",
+                categoryLabel: "",
+                verb: parts.length > 1 ? parts.shift().trim() : "",
+                text: parts.join(" : ").trim() || text
+              });
+            }
+            index += 1;
+          }
+          imported.meta.sliders = outcomes.filter((outcome) => outcome.verb || outcome.text);
+          continue;
+        }
+      }
+    }
+
+    if (inSessions) {
+      const sessionHeading = line.match(/^##\s+\d+\.\s*(.*)$/);
+      if (sessionHeading) {
+        pushCurrentSession();
+        currentSession = {
+          id: nextId(),
+          title: cleanMarkdownExportValue(sessionHeading[1]) || defaultSessionTitle(imported.sessions.length + 1),
+          objectives: "",
+          intentions: "",
+          notes: "",
+          notesExpanded: false,
+          activities: []
+        };
+        index += 1;
+        continue;
+      }
+
+      const activityHeading = line.match(/^###\s+\d+\.\d+\s*(.*)$/);
+      if (activityHeading && currentSession) {
+        pushCurrentActivity();
+        currentActivity = {
+          id: nextId(),
+          type: lookupValue(activityHeading[1], CSV_TYPE_LOOKUP, "undefined"),
+          duration: 1,
+          groupMode: "whole",
+          teacherPresence: "present",
+          syncMode: "sync",
+          locationMode: "onsite",
+          evaluationMode: "none",
+          description: "",
+          notes: "",
+          tools: [],
+          links: []
+        };
+        index += 1;
+        continue;
+      }
+
+      if (currentSession && /^>\s*/.test(line)) {
+        const label = normalizeToken(line.replace(/^>\s*/, "").replace(/:$/, ""));
+        if (["objectifs", "choix pedagogiques", "notes"].includes(label)) {
+          const quoteLines = [];
+          index += 1;
+          while (index < lines.length && /^>\s*/.test(lines[index])) {
+            const nextQuoteLabel = normalizeToken(lines[index].replace(/^>\s*/, "").replace(/:$/, ""));
+            if (["objectifs", "choix pedagogiques", "notes"].includes(nextQuoteLabel)) break;
+            quoteLines.push(lines[index].replace(/^>\s?/, ""));
+            index += 1;
+          }
+          const value = cleanMarkdownExportValue(quoteLines.join("\n"));
+          if (label === "objectifs") currentSession.objectives = value;
+          if (label === "choix pedagogiques") currentSession.intentions = value;
+          if (label === "notes") currentSession.notes = value;
+          continue;
+        }
+      }
+
+      if (currentActivity) {
+        const field = parseMarkdownFieldLine(line);
+        if (field) {
+          if (field.key === "duree") currentActivity.duration = Math.max(1, parseCsvInteger(field.value, 1));
+          if (field.key === "groupe") currentActivity.groupMode = lookupValue(field.value, CSV_GROUP_LOOKUP, "whole");
+          if (field.key === "enseignant") currentActivity.teacherPresence = lookupValue(field.value, CSV_TRAINER_LOOKUP, "present");
+          if (field.key === "rythme") currentActivity.syncMode = lookupValue(field.value, CSV_SYNC_LOOKUP, "sync");
+          if (field.key === "modalite") currentActivity.locationMode = lookupValue(field.value, CSV_LOCATION_LOOKUP, "onsite");
+          if (field.key === "evaluation") currentActivity.evaluationMode = lookupValue(field.value, CSV_EVAL_LOOKUP, "none");
+          if (field.key === "description") {
+            const descriptionLines = [field.value];
+            index += 1;
+            while (
+              index < lines.length &&
+              !/^- [^:]+:/.test(lines[index]) &&
+              !/^#{2,3}\s+/.test(lines[index])
+            ) {
+              descriptionLines.push(lines[index]);
+              index += 1;
+            }
+            currentActivity.description = cleanMarkdownExportValue(descriptionLines.join("\n"));
+            continue;
+          }
+          if (field.key === "liens") currentActivity.links = parseMarkdownLinks(field.value);
+          if (field.key === "competences") {
+            currentActivity.tools = field.value.split(",").map((item) => item.trim()).filter(Boolean);
+          }
+          index += 1;
+          continue;
+        }
+      }
+    }
+
+    index += 1;
+  }
+
+  pushCurrentSession();
+  if (!imported.sessions.length) return null;
+  return hydrateState(imported, null);
+}
+
 async function downloadBlob(content, type, filename) {
   const blob = new Blob([content], { type });
   if (typeof navigator !== "undefined" && typeof navigator.msSaveOrOpenBlob === "function") {
@@ -4389,6 +4638,7 @@ function openImportPicker(format = "") {
     normalized === "csv" ? ".csv,text/csv,text/plain"
     : normalized === "xlsx" ? ".xlsx,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
     : normalized === "ldj" ? ".ldj,.json,application/json,text/json,text/plain"
+    : normalized === "markdown" || normalized === "md" ? ".md,.markdown,text/markdown,text/plain"
     : "";
   importFileInput.value = "";
   importFileInput.click();
@@ -5876,6 +6126,7 @@ importModalConfirmBtn.addEventListener("click", () => {
   const format = importFormatSelect.value === "csv" ? "csv"
                : importFormatSelect.value === "xlsx" ? "xlsx"
                : importFormatSelect.value === "ldj" ? "ldj"
+               : importFormatSelect.value === "markdown" ? "markdown"
                : "json";
   openImportPicker(format);
   closeImportModal();
@@ -5901,6 +6152,7 @@ importFileInput.addEventListener("change", async (e) => {
   const selectedFormat =
     forcedFormat === "xlsx" || filename.endsWith(".xlsx") ? "xlsx"
     : forcedFormat === "csv" || filename.endsWith(".csv") ? "csv"
+    : forcedFormat === "markdown" || forcedFormat === "md" || filename.endsWith(".md") || filename.endsWith(".markdown") ? "markdown"
     : forcedFormat === "ldj" || filename.endsWith(".ldj") ? "ldj"
     : "json";
   try {
@@ -5914,6 +6166,9 @@ importFileInput.addEventListener("change", async (e) => {
     } else if (selectedFormat === "csv") {
       const text = await file.text();
       hydrated = buildStateFromCsv(text);
+    } else if (selectedFormat === "markdown") {
+      const text = await file.text();
+      hydrated = buildStateFromMarkdown(text);
     } else {
       const text = await file.text();
       const parsed = JSON.parse(text);
@@ -5932,7 +6187,7 @@ importFileInput.addEventListener("change", async (e) => {
     alert(t("importInvalid"));
   } finally {
     importFileInput.value = "";
-    importFileInput.accept = ".json,.ldj,.csv,.xlsx,application/json,text/csv";
+    importFileInput.accept = ".json,.ldj,.csv,.xlsx,.md,.markdown,application/json,text/csv,text/markdown";
     delete importFileInput.dataset.format;
   }
 });

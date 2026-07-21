@@ -488,7 +488,7 @@ function render_site_nav(string $active = ''): void
                 </div>
             </a>
         </div>
-        <div class="site-nav-actions">
+        <div id="site-nav-actions" class="site-nav-actions">
             <label for="lang-select" class="sr-only" data-site-i18n-en="Interface language" data-site-i18n-fr="Langue de l'interface">Langue de l'interface</label>
             <select id="lang-select" class="nav-lang-select" aria-label="Langue de l'interface" title="Langue de l'interface" data-site-i18n-attr="aria-label,title" data-site-i18n-en="Interface language" data-site-i18n-fr="Langue de l'interface">
                 <option value="fr">FR</option>
@@ -532,6 +532,11 @@ function render_site_nav(string $active = ''): void
                 <?php endif; ?>
             </div>
         </div>
+        <button id="nav-hamburger" class="nav-hamburger" type="button" aria-label="Ouvrir le menu" aria-expanded="false" aria-controls="site-nav-actions" data-site-i18n-attr="aria-label" data-site-i18n-en="Open menu" data-site-i18n-fr="Ouvrir le menu">
+            <span class="hamburger-bar"></span>
+            <span class="hamburger-bar"></span>
+            <span class="hamburger-bar"></span>
+        </button>
     </header>
     <?php render_site_breadcrumb($breadcrumbItems); ?>
     <script>
@@ -604,6 +609,22 @@ function render_site_nav(string $active = ''): void
                 try {
                     localStorage.setItem('learningDesignerLang', langSelect.value);
                 } catch (error) {
+                }
+            });
+        }
+
+        var hamburger = document.getElementById('nav-hamburger');
+        var navActions = document.getElementById('site-nav-actions');
+        if (hamburger && navActions) {
+            hamburger.addEventListener('click', function () {
+                var open = navActions.classList.toggle('nav-open');
+                hamburger.setAttribute('aria-expanded', open ? 'true' : 'false');
+            });
+
+            document.addEventListener('click', function (event) {
+                if (!hamburger.contains(event.target) && !navActions.contains(event.target)) {
+                    navActions.classList.remove('nav-open');
+                    hamburger.setAttribute('aria-expanded', 'false');
                 }
             });
         }

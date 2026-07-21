@@ -105,8 +105,9 @@ L'application peut importer :
 - `LDJ`
 - `CSV`
 - `XLSX`
+- `Markdown`
 
-Les imports `CSV` et `XLSX` servent notamment à réhydrater des exports issus de l'application.
+Les imports `CSV`, `XLSX` et `Markdown` servent notamment à réhydrater des exports issus de l'application.
 
 ### Export
 

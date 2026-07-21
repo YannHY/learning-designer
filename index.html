@@ -409,6 +409,8 @@
           <option value="html">HTML</option>
           <option value="excel">Excel</option>
         </select>
+        <label for="export-filename-input">Nom du fichier</label>
+        <input id="export-filename-input" class="panel-input" type="text" maxlength="160" autocomplete="off" />
         <div class="modal-actions">
           <button id="export-modal-cancel-btn" class="btn btn-light" type="button">Annuler</button>
           <button id="export-modal-confirm-btn" class="btn btn-primary" type="button" onclick="window.learningDesignerRunExport && window.learningDesignerRunExport()">Exporter</button>
@@ -527,10 +529,39 @@
         function fallbackOpenExportModal() {
           var backdrop = document.getElementById("export-modal-backdrop");
           var select = document.getElementById("export-format-select");
+          var filenameInput = document.getElementById("export-filename-input");
           if (!backdrop) return;
           if (select && !select.value) select.value = "json";
+          if (filenameInput && !filenameInput.value) filenameInput.value = fallbackDefaultExportName(select ? select.value : "json");
           backdrop.classList.remove("hidden");
           backdrop.setAttribute("aria-hidden", "false");
+        }
+
+        function fallbackDefaultExportName(format) {
+          var titleInput = document.getElementById("meta-name");
+          var title = titleInput ? String(titleInput.value || "").trim() : "";
+          return title || "design-learning-designer-fr";
+        }
+
+        function fallbackFilenameExtension(filename) {
+          var match = String(filename || "").match(/(\.[^.]+)$/);
+          return match ? match[1] : "";
+        }
+
+        function fallbackBuildCustomFilename(defaultFilename) {
+          var filenameInput = document.getElementById("export-filename-input");
+          var extension = fallbackFilenameExtension(defaultFilename) || ".txt";
+          var rawName = filenameInput ? String(filenameInput.value || "").trim() : "";
+          var cleaned = rawName
+            .replace(/[\\/:*?"<>|]+/g, "-")
+            .replace(/\s+/g, " ")
+            .replace(/^\.+|\.+$/g, "")
+            .trim();
+          if (!cleaned) return defaultFilename || ("export" + extension);
+          if (cleaned.toLowerCase().slice(-extension.length) !== extension.toLowerCase()) {
+            cleaned += extension;
+          }
+          return cleaned;
         }
 
         function fallbackCloseExportModal() {
@@ -594,6 +625,7 @@
               filename: "design-learning-designer-fr.json"
             };
           }
+          payload.filename = fallbackBuildCustomFilename(payload.filename);
           fallbackOpenExportResult(payload.content, payload.filename, payload.type);
           fallbackDownload(payload.content, payload.filename, payload.type);
           fallbackCloseExportModal();

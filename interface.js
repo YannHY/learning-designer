@@ -934,6 +934,7 @@ const infoModalBackdrop = document.getElementById("info-modal-backdrop");
 const infoModalCloseBtn = document.getElementById("info-modal-close-btn");
 const exportModalBackdrop = document.getElementById("export-modal-backdrop");
 const exportFormatSelect = document.getElementById("export-format-select");
+const exportFilenameInput = document.getElementById("export-filename-input");
 const exportModalCancelBtn = document.getElementById("export-modal-cancel-btn");
 const exportModalConfirmBtn = document.getElementById("export-modal-confirm-btn");
 const exportResultModalBackdrop = document.getElementById("export-result-modal-backdrop");
@@ -1022,6 +1023,7 @@ const I18N = {
     importTitle: "Importer le design",
     exportTitle: "Exporter le design",
     format: "Format",
+    exportFilename: "Nom du fichier",
     cancel: "Annuler",
     validate: "Valider",
     close: "Fermer",
@@ -1233,6 +1235,7 @@ const I18N = {
     importTitle: "Import design",
     exportTitle: "Export design",
     format: "Format",
+    exportFilename: "File name",
     cancel: "Cancel",
     validate: "Validate",
     close: "Close",
@@ -1808,6 +1811,7 @@ function applyLocalizedUI() {
   importModalConfirmBtn.textContent = t("import");
   exportModalBackdrop.querySelector("#export-modal-title").textContent = t("exportTitle");
   exportModalBackdrop.querySelector("label[for='export-format-select']").textContent = t("format");
+  exportModalBackdrop.querySelector("label[for='export-filename-input']").textContent = t("exportFilename");
   exportModalCancelBtn.textContent = t("cancel");
   exportModalConfirmBtn.textContent = t("export");
   const activityLinkTitle = document.getElementById("activity-link-modal-title");
@@ -4615,6 +4619,9 @@ function closeModal(backdrop) {
 
 function openExportModal() {
   exportFormatSelect.value = "json";
+  if (exportFilenameInput) {
+    exportFilenameInput.value = getDefaultExportName(exportFormatSelect.value);
+  }
   openModal(exportModalBackdrop, "#export-format-select");
 }
 
@@ -6036,10 +6043,43 @@ function getExportPayload(format = "json") {
   };
 }
 
+function getFilenameExtension(filename = "") {
+  const match = String(filename).match(/(\.[^.]+)$/);
+  return match ? match[1] : "";
+}
+
+function getDefaultExportName(format = "json") {
+  const payload = getExportPayload(format);
+  const extension = getFilenameExtension(payload.filename);
+  const title = String(state?.meta?.name || "").trim();
+  return title || String(payload.filename || "").slice(0, -extension.length) || "export";
+}
+
+function sanitizeExportFilename(rawName, defaultFilename) {
+  const extension = getFilenameExtension(defaultFilename) || ".txt";
+  const fallbackBase = String(defaultFilename || `export${extension}`).slice(0, -extension.length) || "export";
+  const cleaned = String(rawName || fallbackBase)
+    .replace(/[\\/:*?"<>|]+/g, "-")
+    .replace(/\s+/g, " ")
+    .replace(/^\.+|\.+$/g, "")
+    .trim();
+  const baseName = cleaned || fallbackBase;
+  if (baseName.toLowerCase().endsWith(extension.toLowerCase())) {
+    return baseName;
+  }
+  return `${baseName}${extension}`;
+}
+
+function getExportFilename(format = "json") {
+  const defaultFilename = getExportPayload(format).filename;
+  return sanitizeExportFilename(exportFilenameInput?.value, defaultFilename);
+}
+
 window.learningDesignerGetExportPayload = getExportPayload;
 
 async function exportDesign(format = "json") {
-  const { content, type, filename } = getExportPayload(format);
+  const { content, type } = getExportPayload(format);
+  const filename = getExportFilename(format);
   openExportResultModal(content, type, filename);
   try {
     await downloadBlob(content, type, filename);
@@ -6049,18 +6089,14 @@ async function exportDesign(format = "json") {
   }
 }
 
-if (typeof window.learningDesignerOpenExport !== "function") {
-  window.learningDesignerOpenExport = () => {
-    openExportModal();
-  };
-}
+window.learningDesignerOpenExport = () => {
+  openExportModal();
+};
 
-if (typeof window.learningDesignerRunExport !== "function") {
-  window.learningDesignerRunExport = async () => {
-    await exportDesign(exportFormatSelect?.value || "json");
-    closeExportModal();
-  };
-}
+window.learningDesignerRunExport = async () => {
+  await exportDesign(exportFormatSelect?.value || "json");
+  closeExportModal();
+};
 
 exportDesignBtn.addEventListener("click", () => {
   openExportModal();

@@ -3394,6 +3394,16 @@ main {
   margin-top: 10px;
 }
 
+body.designs-page .saved-shell {
+  padding-bottom: 56px;
+}
+
+@media (max-width: 760px) {
+  body.designs-page .saved-shell {
+    padding-bottom: 40px;
+  }
+}
+
 @media (max-width: 640px) {
   .site-footer {
     padding: 24px 12px 28px;

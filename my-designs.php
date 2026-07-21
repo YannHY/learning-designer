@@ -46,7 +46,6 @@ function e(string $value): string
     <link rel="stylesheet" href="account-pages.css?v=20260613-common" />
     <style>
       .saved-shell {
-        padding: 0;
         border: 0;
         border-radius: 0;
       }
@@ -209,10 +208,6 @@ function e(string $value): string
       }
 
       @media (max-width: 760px) {
-        .saved-shell {
-          padding: 0;
-        }
-
         .saved-header,
         .saved-card {
           flex-direction: column;

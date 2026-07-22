@@ -489,7 +489,11 @@ function render_site_nav(string $active = ''): void
         </div>
         <div id="site-nav-actions" class="site-nav-actions">
             <label for="lang-select" class="sr-only" data-site-i18n-en="Interface language" data-site-i18n-fr="Langue de l'interface">Langue de l'interface</label>
-            <select id="lang-select" class="nav-lang-select" aria-label="Langue de l'interface" title="Langue de l'interface" data-site-i18n-attr="aria-label,title" data-site-i18n-en="Interface language" data-site-i18n-fr="Langue de l'interface">
+            <div class="nav-language-switch" role="group" aria-label="Langue de l'interface" data-site-i18n-attr="aria-label" data-site-i18n-en="Interface language" data-site-i18n-fr="Langue de l'interface">
+                <button class="nav-language-option" type="button" data-language="fr" aria-pressed="true">FR</button>
+                <button class="nav-language-option" type="button" data-language="en" aria-pressed="false">EN</button>
+            </div>
+            <select id="lang-select" hidden tabindex="-1" aria-hidden="true">
                 <option value="fr">FR</option>
                 <option value="en">EN</option>
             </select>
@@ -505,10 +509,10 @@ function render_site_nav(string $active = ''): void
                 <a class="nav-icon-btn<?= $shareClass ?>" href="share.php" title="Partages" aria-label="Partages" data-site-i18n-attr="title,aria-label" data-site-i18n-en="Shared designs" data-site-i18n-fr="Partages">
                     <i class="fa-solid fa-share-nodes" aria-hidden="true"></i>
                 </a>
+                <a class="nav-account-btn nav-account-icon-btn<?= $savesClass ?>" href="my-designs.php" title="Designs" aria-label="Designs" data-site-i18n-attr="title,aria-label" data-site-i18n-en="Designs" data-site-i18n-fr="Designs">
+                    <i class="fa-regular fa-folder-open" aria-hidden="true"></i>
+                </a>
                 <?php if ($user): ?>
-                    <a class="nav-account-btn nav-account-icon-btn<?= $savesClass ?>" href="my-designs.php" title="Designs" aria-label="Designs" data-site-i18n-attr="title,aria-label" data-site-i18n-en="Designs" data-site-i18n-fr="Designs">
-                        <i class="fa-regular fa-folder-open" aria-hidden="true"></i>
-                    </a>
                     <div class="account-menu-wrap">
                         <button id="account-menu-btn" class="nav-account-btn nav-account-icon-btn<?= $profileClass !== '' || $adminClass !== '' ? ' nav-account-btn-active' : '' ?>" type="button" aria-expanded="false" aria-controls="account-menu" title="Compte" aria-label="Compte" data-site-i18n-attr="title,aria-label" data-site-i18n-en="Account" data-site-i18n-fr="Compte">
                             <i class="fa-solid fa-user-check" aria-hidden="true"></i>
@@ -586,6 +590,13 @@ function render_site_nav(string $active = ''): void
         }
 
         var langSelect = document.getElementById('lang-select');
+        var languageButtons = Array.prototype.slice.call(document.querySelectorAll('.nav-language-option'));
+        function syncLanguageSwitch(lang) {
+            languageButtons.forEach(function (button) {
+                var isActive = button.dataset.language === lang;
+                button.setAttribute('aria-pressed', isActive ? 'true' : 'false');
+            });
+        }
         if (langSelect) {
             var savedLang = 'fr';
             try {
@@ -597,15 +608,25 @@ function render_site_nav(string $active = ''): void
                 savedLang = 'fr';
             }
             langSelect.value = savedLang;
+            syncLanguageSwitch(savedLang);
             html.setAttribute('lang', savedLang);
             applySiteNavLanguage(savedLang);
             langSelect.addEventListener('change', function () {
+                syncLanguageSwitch(langSelect.value);
                 html.setAttribute('lang', langSelect.value);
                 applySiteNavLanguage(langSelect.value);
                 try {
                     localStorage.setItem('learningDesignerLang', langSelect.value);
                 } catch (error) {
                 }
+            });
+            languageButtons.forEach(function (button) {
+                button.addEventListener('click', function () {
+                    var nextLang = button.dataset.language === 'en' ? 'en' : 'fr';
+                    if (langSelect.value === nextLang) return;
+                    langSelect.value = nextLang;
+                    langSelect.dispatchEvent(new Event('change', { bubbles: true }));
+                });
             });
         }
 

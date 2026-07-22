@@ -31,9 +31,9 @@ function cli_ref_i18n_attr_attrs(string $attr, string $fr, string $en): string
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="interface.css?v=20260520-2">
+    <link rel="stylesheet" href="interface.css?v=20260722-mobile-tab-spacing">
     <link rel="stylesheet" href="account-ui.css?v=20260520-4">
-    <link rel="stylesheet" href="account-pages.css?v=20260613-common">
+    <link rel="stylesheet" href="account-pages.css?v=20260722-neutral-theme">
     <style>
         .cli-ref-hero {
             display: grid;

@@ -372,9 +372,9 @@ PROMPT;
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="interface.css?v=20260520-2">
+    <link rel="stylesheet" href="interface.css?v=20260722-mobile-tab-spacing">
     <link rel="stylesheet" href="account-ui.css?v=20260520-4">
-    <link rel="stylesheet" href="account-pages.css?v=20260613-common">
+    <link rel="stylesheet" href="account-pages.css?v=20260722-neutral-theme">
     <style>
         .cli-hero {
             display: grid;
@@ -599,7 +599,7 @@ PROMPT;
             display: none;
         }
         [data-theme="dark"] body.cli-page {
-            background: #1a1f2e;
+            background: #181816;
         }
         [data-theme="dark"] .cli-title,
         [data-theme="dark"] .cli-title span,
@@ -621,8 +621,8 @@ PROMPT;
         [data-theme="dark"] .cli-step,
         [data-theme="dark"] .cli-anchor-list button,
         [data-theme="dark"] .cli-button {
-            background: rgba(26, 31, 46, 0.78);
-            border-color: rgba(103, 116, 145, 0.38);
+            background: rgba(36, 35, 31, 0.82);
+            border-color: rgba(129, 124, 112, 0.42);
         }
         [data-theme="dark"] .cli-subtitle,
         [data-theme="dark"] .cli-copy,

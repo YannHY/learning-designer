@@ -870,6 +870,7 @@ const infoBtn = document.getElementById("info-btn");
 const saveBtn = document.getElementById("save-btn");
 const importFileInput = document.getElementById("import-file-input");
 const langSelect = document.getElementById("lang-select");
+const languageButtons = Array.from(document.querySelectorAll(".nav-language-option"));
 const srStatus = document.getElementById("sr-status");
 const appTitle = document.getElementById("app-title");
 const topPanel = document.getElementById("top-panel");
@@ -985,6 +986,7 @@ const I18N = {
     import: "Importer",
     export: "Exporter",
     save: "Enregistrer",
+    share: "Partager",
     saved: "Enregistré",
     savedLocal: "Modifications mises à jour.",
     info: "Information",
@@ -1202,6 +1204,7 @@ const I18N = {
     import: "Import",
     export: "Export",
     save: "Save",
+    share: "Share",
     saved: "Saved",
     savedLocal: "Changes updated.",
     info: "About",
@@ -1722,6 +1725,9 @@ function applyLocalizedUI() {
   } catch (_) {}
   document.title = t("docTitle");
   if (langSelect) langSelect.value = currentLang();
+  languageButtons.forEach((button) => {
+    button.setAttribute("aria-pressed", button.dataset.language === currentLang() ? "true" : "false");
+  });
   document.getElementById("skip-link").textContent = t("skipLink");
   document.querySelector(".toolbar").setAttribute("aria-label", t("toolbarRegion"));
   appTitle.textContent = t("appTitle");
@@ -1791,7 +1797,18 @@ function applyLocalizedUI() {
   setButtonLabel(importDesignBtn, "fa-solid fa-file-arrow-up", t("import"));
   setButtonLabel(exportDesignBtn, "fa-solid fa-file-export", t("export"));
   setButtonLabel(saveBtn, "fa-regular fa-floppy-disk", t("save"));
-  saveBtn.setAttribute("aria-label", t("save"));
+  [
+    [addSessionBtn, t("addMoment")],
+    [newDesignBtn, t("new")],
+    [importDesignBtn, t("import")],
+    [saveBtn, t("save")],
+    [document.getElementById("publish-btn"), t("share")],
+    [exportDesignBtn, t("export")]
+  ].forEach(([button, label]) => {
+    if (!button) return;
+    button.setAttribute("aria-label", label);
+    button.setAttribute("title", label);
+  });
   infoBtn.setAttribute("aria-label", t("info"));
   infoBtn.setAttribute("title", t("info"));
   infoBtn.setAttribute("aria-haspopup", "dialog");
@@ -1851,6 +1868,7 @@ function applyLocalizedUI() {
     langSelect.setAttribute("aria-label", langLabel);
     langSelect.dataset.tooltip = langLabel;
   }
+  document.querySelector(".nav-language-switch")?.setAttribute("aria-label", langLabel);
   document.querySelectorAll(".duration-unit").forEach((unit) => {
     unit.textContent = "min";
   });
@@ -5836,6 +5854,18 @@ function render() {
   board.classList.toggle("layout-columns", boardLayout === "columns");
   board.classList.toggle("layout-grid",    boardLayout === "grid");
   board.classList.toggle("intentions-collapsed", Boolean(state.intentionsCollapsed));
+  const toggleIntentionsBtn = document.getElementById("toggle-intentions-btn");
+  if (toggleIntentionsBtn) {
+    const intentionsVisible = !state.intentionsCollapsed;
+    setButtonLabel(
+      toggleIntentionsBtn,
+      intentionsVisible ? "fa-solid fa-eye" : "fa-solid fa-eye-slash",
+      intentionsVisible ? t("hideIntentions") : t("showIntentions")
+    );
+    const intentionsLabel = intentionsVisible ? t("hideIntentions") : t("showIntentions");
+    toggleIntentionsBtn.setAttribute("aria-label", intentionsLabel);
+    toggleIntentionsBtn.setAttribute("title", intentionsLabel);
+  }
 
   if (boardLayout === "grid") {
     renderGridView();
@@ -6234,14 +6264,6 @@ function render() {
   ensureMarkdownPreviews(board);
   localizeExpandableFieldControls(board);
   initAutoResizeTextareas();
-  const toggleIntentionsBtn = document.getElementById("toggle-intentions-btn");
-  if (toggleIntentionsBtn) {
-    setButtonLabel(
-      toggleIntentionsBtn,
-      "fa-solid fa-bullseye",
-      state.intentionsCollapsed ? t("showIntentions") : t("hideIntentions")
-    );
-  }
 }
 
 function bindTopPanelEvents() {
@@ -6382,6 +6404,14 @@ function bindTopPanelEvents() {
     } catch (_) {}
     saveState();
     render();
+  });
+  languageButtons.forEach((button) => {
+    button.addEventListener("click", () => {
+      const nextLang = button.dataset.language === "en" ? "en" : "fr";
+      if (langSelect.value === nextLang) return;
+      langSelect.value = nextLang;
+      langSelect.dispatchEvent(new Event("change", { bubbles: true }));
+    });
   });
 }
 

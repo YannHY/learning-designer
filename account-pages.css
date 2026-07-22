@@ -1,7 +1,7 @@
 :root {
-  --bg: #eef3f8;
+  --bg: #ffffff;
   --panel: #ffffff;
-  --line: #d5dfeb;
+  --line: #e5e7eb;
   --text: #203143;
   --muted: #5a6a7e;
   --primary: #145bb4;
@@ -20,9 +20,7 @@ body {
   min-height: 100vh;
   font-family: var(--font-family);
   color: var(--text);
-  background:
-    radial-gradient(circle at top left, rgba(20, 91, 180, 0.12), transparent 28%),
-    linear-gradient(180deg, #f8fbff 0%, var(--bg) 100%);
+  background: #fff;
 }
 body.login-page,
 body.signup-page {
@@ -540,15 +538,19 @@ th {
 }
 
 [data-theme="dark"] body {
-  color: #e8edf5;
-  background:
-    radial-gradient(circle at top left, rgba(56, 139, 253, 0.10), transparent 28%),
-    linear-gradient(180deg, #1f2537 0%, #1a1f2e 100%);
+  color: #f1efe9;
+  background: #181816;
 }
 
 [data-theme="dark"] .account-menu-link.nav-account-btn-active {
   background: rgba(106, 176, 255, 0.14);
   color: #8cc6ff;
+}
+
+[data-theme="dark"] .site-nav-actions .nav-account-btn-active {
+  background: rgba(88, 166, 255, 0.1);
+  color: #ffffff;
+  border-color: rgba(88, 166, 255, 0.3);
 }
 
 [data-theme="dark"] .site-breadcrumb {
@@ -568,8 +570,8 @@ th {
 }
 
 [data-theme="dark"] .account-card {
-  background: linear-gradient(180deg, rgba(36, 43, 64, 0.96), rgba(30, 36, 54, 0.96));
-  border-color: rgba(103, 116, 145, 0.45);
+  background: linear-gradient(180deg, rgba(42, 40, 35, 0.96), rgba(32, 31, 28, 0.96));
+  border-color: rgba(129, 124, 112, 0.42);
   box-shadow: 0 18px 42px rgba(0, 0, 0, 0.35);
 }
 
@@ -600,9 +602,9 @@ th {
 
 [data-theme="dark"] .account-form input,
 [data-theme="dark"] .account-form select {
-  background: #1e2436;
-  color: #e8edf5;
-  border-color: rgba(103, 116, 145, 0.5);
+  background: #201f1c;
+  color: #f1efe9;
+  border-color: rgba(129, 124, 112, 0.48);
 }
 
 [data-theme="dark"] .account-form input::placeholder {
@@ -612,8 +614,8 @@ th {
 [data-theme="dark"] .profile-stat,
 [data-theme="dark"] .profile-empty,
 [data-theme="dark"] .profile-publication {
-  background: rgba(30, 36, 54, 0.78);
-  border-color: rgba(103, 116, 145, 0.38);
+  background: rgba(36, 35, 31, 0.82);
+  border-color: rgba(129, 124, 112, 0.42);
 }
 
 [data-theme="dark"] .profile-stat-label,
@@ -633,17 +635,17 @@ th {
 }
 
 [data-theme="dark"] .account-message {
-  border: 1px solid rgba(103, 116, 145, 0.4);
+  border: 1px solid rgba(129, 124, 112, 0.42);
 }
 
 [data-theme="dark"] .account-message.success {
-  background: rgba(30, 36, 54, 0.94);
-  color: #e8edf5;
+  background: rgba(36, 35, 31, 0.94);
+  color: #f1efe9;
   border-color: rgba(106, 176, 255, 0.28);
 }
 
 [data-theme="dark"] .account-message.error {
-  background: rgba(30, 36, 54, 0.94);
+  background: rgba(36, 35, 31, 0.94);
   color: #fecaca;
   border-color: rgba(248, 113, 113, 0.24);
 }
@@ -680,8 +682,8 @@ th {
 }
 
 [data-theme="dark"] .panel {
-  background: rgba(30, 36, 54, 0.78);
-  border-color: rgba(103, 116, 145, 0.38);
+  background: rgba(36, 35, 31, 0.82);
+  border-color: rgba(129, 124, 112, 0.42);
 }
 
 [data-theme="dark"] .danger-panel {
@@ -689,8 +691,8 @@ th {
 }
 
 [data-theme="dark"] td {
-  color: #e8edf5;
-  border-bottom-color: rgba(103, 116, 145, 0.32);
+  color: #f1efe9;
+  border-bottom-color: rgba(129, 124, 112, 0.34);
 }
 @media (max-width: 720px) {
   .account-card {

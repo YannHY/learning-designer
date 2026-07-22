@@ -12,9 +12,9 @@ require_once __DIR__ . '/lib/bootstrap.php';
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="interface.css?v=20260722-pages-2">
+    <link rel="stylesheet" href="interface.css?v=20260722-mobile-tab-spacing">
     <link rel="stylesheet" href="account-ui.css?v=20260520-4">
-    <link rel="stylesheet" href="account-pages.css?v=20260521-width">
+    <link rel="stylesheet" href="account-pages.css?v=20260722-neutral-theme">
 </head>
 <body class="about-page">
 <?php render_site_nav('about'); ?>

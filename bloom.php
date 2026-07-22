@@ -69,9 +69,9 @@ $levels = [
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="interface.css?v=20260520-2">
+    <link rel="stylesheet" href="interface.css?v=20260722-mobile-tab-spacing">
     <link rel="stylesheet" href="account-ui.css?v=20260520-4">
-    <link rel="stylesheet" href="account-pages.css?v=20260521-width">
+    <link rel="stylesheet" href="account-pages.css?v=20260722-neutral-theme">
     <style>
         body.bloom-page { background: #fff; }
         .bloom-shell {
@@ -182,9 +182,7 @@ $levels = [
             font-weight: 650;
         }
         [data-theme="dark"] body.bloom-page {
-            background:
-                radial-gradient(circle at top left, rgba(56, 139, 253, 0.10), transparent 28%),
-                linear-gradient(180deg, #1f2537 0%, #1a1f2e 100%);
+            background: #181816;
         }
         [data-theme="dark"] .bloom-title {
             color: #eef3ff;

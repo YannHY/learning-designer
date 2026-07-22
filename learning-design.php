@@ -12,9 +12,9 @@ require_once __DIR__ . '/lib/bootstrap.php';
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="interface.css?v=20260520-2">
+    <link rel="stylesheet" href="interface.css?v=20260722-mobile-tab-spacing">
     <link rel="stylesheet" href="account-ui.css?v=20260520-4">
-    <link rel="stylesheet" href="account-pages.css?v=20260521-width">
+    <link rel="stylesheet" href="account-pages.css?v=20260722-neutral-theme">
     <style>
         body.learning-design-page {
             background: #fff;
@@ -37,14 +37,12 @@ require_once __DIR__ . '/lib/bootstrap.php';
             font-weight: 800;
         }
         .ld-title {
-            max-width: 760px;
             margin: 0 0 12px;
             color: var(--text);
             font-size: clamp(28px, 4vw, 42px);
             line-height: 1.08;
         }
         .ld-lead {
-            max-width: 820px;
             margin: 0;
             color: var(--muted);
             font-size: 16px;
@@ -62,7 +60,6 @@ require_once __DIR__ . '/lib/bootstrap.php';
             text-transform: uppercase;
         }
         .ld-section p {
-            max-width: 840px;
             margin: 0 0 14px;
             color: var(--muted);
             font-size: 14px;
@@ -72,7 +69,6 @@ require_once __DIR__ . '/lib/bootstrap.php';
             margin-bottom: 0;
         }
         .ld-quote {
-            max-width: 860px;
             margin: 0 0 34px;
             padding: 22px 24px;
             border-left: 4px solid var(--primary);
@@ -143,7 +139,6 @@ require_once __DIR__ . '/lib/bootstrap.php';
             display: flex;
             align-items: flex-start;
             gap: 13px;
-            max-width: 860px;
             margin-top: 18px;
             padding: 16px 18px;
             border: 1px solid rgba(20, 91, 180, 0.20);
@@ -168,9 +163,7 @@ require_once __DIR__ . '/lib/bootstrap.php';
             text-underline-offset: 2px;
         }
         [data-theme="dark"] body.learning-design-page {
-            background:
-                radial-gradient(circle at top left, rgba(56, 139, 253, 0.10), transparent 28%),
-                linear-gradient(180deg, #1f2537 0%, #1a1f2e 100%);
+            background: #181816;
         }
         [data-theme="dark"] .ld-title {
             color: #eef3ff;
@@ -189,13 +182,13 @@ require_once __DIR__ . '/lib/bootstrap.php';
             color: #8cc6ff;
         }
         [data-theme="dark"] .ld-hero {
-            border-bottom-color: rgba(103, 116, 145, 0.38);
+            border-bottom-color: rgba(129, 124, 112, 0.42);
         }
         [data-theme="dark"] .ld-quote,
         [data-theme="dark"] .ld-type-card,
         [data-theme="dark"] .ld-step-card {
-            background: rgba(26, 31, 46, 0.78);
-            border-color: rgba(103, 116, 145, 0.38);
+            background: rgba(36, 35, 31, 0.82);
+            border-color: rgba(129, 124, 112, 0.42);
             box-shadow: 0 18px 42px rgba(0, 0, 0, 0.25);
         }
         [data-theme="dark"] .ld-quote p,

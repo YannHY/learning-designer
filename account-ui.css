@@ -1,19 +1,19 @@
 .account-toolbar-cluster {
   display: flex;
   align-items: center;
-  gap: 14px;
+  gap: 10px;
   flex-wrap: wrap;
   justify-content: flex-end;
 }
 
 /* Boutons icône (Aide, Sauvegardes) */
 .nav-icon-btn {
-  width: 38px;
-  height: 38px;
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  width: 36px;
+  height: 36px;
+  border: 1px solid transparent;
   border-radius: 999px;
-  background: rgba(255, 255, 255, 0.08);
-  color: #94a3b8;
+  background: transparent;
+  color: #ffffff;
   font-size: 16px;
   cursor: pointer;
   display: inline-flex;
@@ -27,7 +27,8 @@
     border-color 120ms ease;
 }
 
-.nav-icon-btn:hover {
+.nav-icon-btn:hover,
+.nav-icon-btn:focus-visible {
   background: rgba(255, 255, 255, 0.14);
   color: #f1f5f9;
   border-color: rgba(255, 255, 255, 0.22);
@@ -35,12 +36,12 @@
 
 /* Bouton compte / connexion */
 .nav-account-btn {
-  height: 38px;
+  height: 36px;
   padding: 0 14px;
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  border: 1px solid transparent;
   border-radius: 999px;
-  background: rgba(255, 255, 255, 0.08);
-  color: #94a3b8;
+  background: transparent;
+  color: #ffffff;
   font-family: var(--font-family);
   font-size: 13px;
   font-weight: 600;
@@ -58,7 +59,7 @@
 }
 
 .nav-account-icon-btn {
-  width: 38px;
+  width: 36px;
   padding: 0;
   flex-shrink: 0;
 }
@@ -67,7 +68,9 @@
   text-decoration: none;
 }
 
-.nav-account-btn:hover {
+.nav-account-btn:hover,
+.nav-account-btn:focus-visible,
+.nav-account-btn[aria-expanded="true"] {
   background: rgba(255, 255, 255, 0.14);
   color: #f1f5f9;
   border-color: rgba(255, 255, 255, 0.22);
@@ -80,15 +83,18 @@
 /* Dark mode */
 [data-theme="dark"] .nav-icon-btn,
 [data-theme="dark"] .nav-account-btn {
-  background: #161b22;
-  border-color: var(--line);
-  color: var(--muted);
+  background: transparent;
+  border-color: transparent;
+  color: #ffffff;
 }
 
 [data-theme="dark"] .nav-icon-btn:hover,
-[data-theme="dark"] .nav-account-btn:hover {
+[data-theme="dark"] .nav-icon-btn:focus-visible,
+[data-theme="dark"] .nav-account-btn:hover,
+[data-theme="dark"] .nav-account-btn:focus-visible,
+[data-theme="dark"] .nav-account-btn[aria-expanded="true"] {
   background: rgba(88, 166, 255, 0.1);
-  color: #58a6ff;
+  color: #ffffff;
   border-color: rgba(88, 166, 255, 0.3);
 }
 
@@ -201,13 +207,6 @@
   margin-top: 14px;
   color: var(--muted);
   font-size: 14px;
-}
-
-@media (max-width: 960px) {
-  .account-toolbar-cluster {
-    width: 100%;
-    justify-content: flex-start;
-  }
 }
 
 @media (max-width: 720px) {

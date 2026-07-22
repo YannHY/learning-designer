@@ -20,7 +20,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="interface.css?v=20260721-export-preview-flex" />
+    <link rel="stylesheet" href="interface.css?v=20260722-mobile-tab-spacing" />
   </head>
   <body>
     <a id="skip-link" class="skip-link" href="#board">Aller au contenu principal</a>
@@ -34,7 +34,11 @@
       </div>
       <div id="site-nav-actions" class="site-nav-actions">
         <label for="lang-select" class="sr-only">Langue de l'interface</label>
-        <select id="lang-select" class="nav-lang-select" aria-label="Langue de l'interface" title="Langue de l'interface">
+        <div class="nav-language-switch" role="group" aria-label="Langue de l'interface">
+          <button class="nav-language-option" type="button" data-language="fr" aria-pressed="true">FR</button>
+          <button class="nav-language-option" type="button" data-language="en" aria-pressed="false">EN</button>
+        </div>
+        <select id="lang-select" hidden tabindex="-1" aria-hidden="true">
           <option value="fr">FR</option>
           <option value="en">EN</option>
         </select>
@@ -223,7 +227,7 @@
         </div>
         <span class="toolbar-sep" aria-hidden="true"></span>
         <div class="toolbar-cluster">
-          <button id="toggle-intentions-btn" class="btn btn-light" type="button"><span class="btn-label"><i class="fa-solid fa-bullseye btn-icon-inline" aria-hidden="true"></i>Intentions</span></button>
+          <button id="toggle-intentions-btn" class="btn btn-light" type="button"><span class="btn-label"><i class="fa-solid fa-eye btn-icon-inline" aria-hidden="true"></i>Intentions</span></button>
           <div id="board-layout-toggle" class="layout-toggle" role="group" aria-label="Mode d'affichage des séances">
           <button
             id="board-layout-list-btn"
@@ -618,7 +622,7 @@
         };
       })();
     </script>
-    <script src="interface.js?v=20260721-export-default-markdown"></script>
+    <script src="interface.js?v=20260722-language-switch"></script>
     <script src="account-ui.js?v=20260520-1"></script>
     <script>
       (function() {

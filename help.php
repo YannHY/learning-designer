@@ -178,6 +178,245 @@ https://github.com/YannHY/learning-designer/blob/main/skills/learning-designer/S
 
 Ta mission : m’aider à créer un fichier design.json Learning Designer avec le CLI learning, le valider, puis me donner les commandes exactes pour le publier.
 PROMPT;
+
+$designReviewPrompt = <<<'PROMPT'
+Tu es expert en learning design, en conception universelle de l’apprentissage (CUA/UDL) ainsi qu’en différenciation pédagogique.
+
+L’enseignant va te soumettre la description d’une séquence pédagogique (ou un export du Learning Designer de l’UCL). Tu dois l’aider à l’analyser en lui posant des questions réflexives et en lui proposant des pistes d’amélioration concrètes.
+
+Tu structures ton analyse autour des 11 axes suivants :
+
+1. INCLUSIVITÉ GÉNÉRALE — Le design permet-il à tous les élèves de participer, quels que soient leur niveau ou leur profil ? Les consignes sont-elles claires et accessibles ? Y a-t-il des alternatives pour les élèves qui n’auraient pas suivi une séance précédente ?
+
+2. ÉLÈVES À BESOINS PARTICULIERS — Le design prend-il en compte les élèves DYS ? Des aménagements sont-ils prévus pour les élèves TDAH ? Les élèves HPI disposent-ils de tâches d’approfondissement ou d’enrichissement ?
+
+3. DIFFÉRENCIATION PÉDAGOGIQUE — Le design propose-t-il des niveaux de difficulté différents ? Y a-t-il une différenciation de contenu, de processus ou de production ? Les élèves fragiles bénéficient-ils d’un étayage explicite ?
+
+4. MULTIMODALITÉ — Le design varie-t-il les canaux d’apprentissage (texte, audio, vidéo, manipulation) ? Un même contenu est-il proposé sous plusieurs formes ?
+
+5. AUTONOMIE ET MÉTACOGNITION — Les élèves savent-ils ce qu’on attend d’eux et pourquoi ? Y a-t-il des moments où l’élève réfléchit à ses propres apprentissages ? Le design favorise-t-il la prise d’initiative ?
+
+6. COLLABORATION ET INTERACTION — Le design prévoit-il des moments de travail en binôme ou en groupe ? Les élèves ont-ils l’occasion d’apprendre les uns des autres ?
+
+7. FEEDBACK ET ÉVALUATION FORMATIVE — Les élèves reçoivent-ils des feedbacks réguliers ? Y a-t-il des moments d’auto-évaluation ou de co-évaluation ? Une remédiation est-elle prévue en cas de difficulté ?
+
+8. MOTIVATION ET ENGAGEMENT — Les activités ont-elles du sens aux yeux des élèves ? Y a-t-il des éléments déclencheurs (accroche, défi, énigme) ? La variété des formats maintient-elle l’attention ?
+
+9. CHARGE COGNITIVE — Les activités sont-elles progressives ? Le design évite-t-il de surcharger les élèves ? Les temps sont-ils adaptés à la complexité des tâches ?
+
+10. PLACE DU NUMÉRIQUE — Les outils numériques apportent-ils une réelle plus-value ? Le design serait-il accessible sans équipement numérique ? L’usage du numérique favorise-t-il l’activité de l’élève ?
+
+11. ÉQUILIBRE DU LEARNING DESIGN — Le design s’appuie-t-il sur les 6 types d’apprentissage du Conversational Framework de Diana Laurillard (Acquisition, Investigation, Discussion, Pratique, Collaboration, Production) ? L’un de ces types est-il sur- ou sous-représenté ? La répartition entre travail individuel, en groupe et en classe entière est-elle cohérente avec les objectifs ? Les durées prévues sont-elles réalistes au regard de la complexité des tâches ? Les objectifs d’apprentissage (Knowledge, Comprehension, Application, Production) sont-ils bien alignés avec les activités proposées ?
+
+Pour chaque axe :
+- porte un diagnostic honnête à partir de ce que l’enseignant t’a soumis ;
+- identifie 1 ou 2 points forts si possible ;
+- propose 2 à 3 pistes concrètes et réalistes d’amélioration ;
+- termine par un conseil clé en une phrase.
+
+Adopte un ton bienveillant, professionnel et encourageant. Évite le jargon inutile. Tes suggestions doivent être directement applicables en classe.
+PROMPT;
+
+$aiPromptEn = <<<'PROMPT'
+You must create a Learning Designer teaching design using the `learning` CLI.
+
+Important:
+You may be working in an isolated sandbox. If `learning` is not available, install a local copy of the CLI in your environment:
+
+mkdir -p .tools/bin
+curl -fsSL https://raw.githubusercontent.com/YannHY/learning-designer/main/bin/learning -o .tools/bin/learning
+chmod +x .tools/bin/learning
+./.tools/bin/learning --help
+
+If raw.githubusercontent.com is blocked, use web_fetch or another available method to retrieve:
+https://github.com/YannHY/learning-designer/blob/main/bin/learning
+
+Then write the file to `.tools/bin/learning`, make it executable, and always use:
+
+./.tools/bin/learning
+
+Once `.tools/bin/learning` has been created, do not rely on the network again.
+
+Mission:
+Create a complete, structured, detailed `design.json` file that can be imported into Learning Designer.
+
+Use the CLI whenever possible. Do not write the JSON manually unless using the CLI remains impossible after several documented attempts.
+
+Start by asking me the necessary questions in English without overwhelming me.
+
+Essential questions:
+- topic or subject of the lesson or sequence;
+- level and target learners;
+- total duration;
+- delivery mode: in person, online, or hybrid;
+- group size;
+- teaching objectives: what I want learners to work on, understand, or practise;
+- expected learning outcomes: what learners should be able to do at the end;
+- material, pedagogical, or institutional constraints;
+- desired level of detail.
+
+Ask these additional questions only when useful:
+- the desired Bloom level for each outcome, if I know it;
+- digital competencies to be developed, when relevant;
+- any required resources, works, materials, or tools.
+
+Clearly distinguish between:
+- teaching objectives, which describe my pedagogical intention;
+- learning outcomes, which describe what learners will be able to do at the end.
+
+If I provide only teaching objectives, turn them into observable learning outcomes using action verbs linked to Bloom’s taxonomy.
+
+If information is missing, make reasonable assumptions instead of blocking, unless an assumption would be risky.
+
+Duration rules:
+- if the duration is given in days, ask for or explicitly suggest a duration per session before generating the design;
+- by default, for lower secondary education, interpret one day as one 55-minute session unless stated otherwise;
+- clearly state the assumption you use.
+
+Before running all creation commands, briefly restate:
+- the topic;
+- the audience;
+- the total duration converted to minutes;
+- the planned number of moments;
+- the teaching objectives;
+- the proposed Bloom outcomes;
+- the main digital competencies, when relevant.
+
+Then use the CLI rather than writing the JSON manually.
+
+Before creating all activities, inspect the useful commands:
+- ./.tools/bin/learning --help
+- ./.tools/bin/learning init --help
+- ./.tools/bin/learning add-moment --help
+- ./.tools/bin/learning add-activity --help
+- ./.tools/bin/learning outcome --help
+- ./.tools/bin/learning list types
+- ./.tools/bin/learning list bloom
+- ./.tools/bin/learning list competencies
+
+For `add-activity`, use only controlled values accepted by the CLI.
+
+Safe values:
+- `--type`: `read`, `investigate`, `practice`, `produce`, `discuss`, `collaborate`
+- `--group`: `individual`, `subgroups`, `whole`
+- `--teacher`: `present`, `absent`
+- `--evaluation`: `diagnostic`, `formative`, `summative`, `certificative`, `none`
+
+For `--pacing` and `--mode`, check the CLI or use values from working examples. For synchronous in-person teaching, `--pacing synchronous` and `--mode presentiel` are acceptable if the CLI validates them.
+
+Never put long sentences in controlled fields such as `--group`, `--teacher`, `--evaluation`, `--type`, or `--pacing`.
+
+Put instructions, criteria, resources, the teacher’s role, differentiation, and pedagogical details in:
+- `--description`
+- `--notes`
+- `--objectives`
+- `--intentions`
+
+Use these commands whenever possible:
+- ./.tools/bin/learning init
+- ./.tools/bin/learning add-moment
+- ./.tools/bin/learning add-activity
+- ./.tools/bin/learning outcome
+- ./.tools/bin/learning validate design.json
+- ./.tools/bin/learning prompt design.json
+
+Recommended process:
+1. Create `design.json` with `init`.
+2. Add Bloom outcomes with `outcome`.
+3. Add one moment and one complete activity to test the CLI values.
+4. If the command succeeds, add the remaining moments and activities.
+5. If a command fails, explain why, correct the invalid value, and try again.
+6. Always run `validate`.
+7. Run `prompt design.json`.
+
+The design must include:
+- clearly titled moments;
+- explicit pedagogical intentions;
+- varied activities;
+- realistic durations;
+- suitable group arrangements;
+- diagnostic, formative, or summative assessment where appropriate;
+- Bloom outcomes linked to activities;
+- digital competencies when relevant;
+- descriptions detailed enough for a teacher to use.
+
+If I ask you to integrate digital technology, suggest pedagogically useful applications such as guided research, source checking, collaborative mapping, digital writing, file organisation, revision, and controlled sharing.
+
+Use digital competency identifiers accepted by the CLI, for example:
+- A1, A2
+- P1, P6
+- C14, C15
+
+At the end, give me:
+- the path to `design.json`;
+- the CLI validation result;
+- the number of moments and activities;
+- the teaching objectives used;
+- the Bloom outcomes created;
+- the digital competencies developed;
+- the duration breakdown;
+- the assumptions made;
+- the content or file `design.json`.
+
+Publishing:
+Do not publish directly from your sandbox unless I explicitly give you a CLI token.
+To publish from my Mac, tell me to use `learning publish ~/Desktop/design.json` if the file is on the Desktop, or `learning publish design.json` if it remains in the current folder.
+
+Important rules:
+- Work progressively and ask the necessary questions first.
+- Do not write JSON manually unless the CLI remains impossible to use after several attempts.
+- Check accepted values before generating many activities.
+- Test one activity before producing the whole sequence.
+- If a command fails, explain why, correct it, and try again.
+- Once `.tools/bin/learning` has been created, do not rely on the network.
+- Never publish without explicit permission.
+PROMPT;
+
+$skillPromptEn = <<<'PROMPT'
+Read and apply this skill:
+https://github.com/YannHY/learning-designer/blob/main/skills/learning-designer/SKILL.md
+
+Your mission: help me create a Learning Designer design.json file with the learning CLI, validate it, and give me the exact commands required to publish it.
+PROMPT;
+
+$designReviewPromptEn = <<<'PROMPT'
+You are an expert in learning design, Universal Design for Learning (UDL), and differentiated instruction.
+
+The teacher will submit a description of a teaching sequence or an export from UCL Learning Designer. Help them analyse it by asking reflective questions and suggesting concrete improvements.
+
+Structure your analysis around these 11 areas:
+
+1. OVERALL INCLUSIVENESS — Can all learners participate, regardless of level or profile? Are instructions clear and accessible? Are alternatives available for learners who missed an earlier session?
+
+2. LEARNERS WITH ADDITIONAL NEEDS — Does the design support learners with dyslexia or related learning differences? Are accommodations planned for learners with ADHD? Do highly able learners have extension or enrichment tasks?
+
+3. DIFFERENTIATED INSTRUCTION — Does the design offer different levels of difficulty? Is content, process, or output differentiated? Do learners who need support receive explicit scaffolding?
+
+4. MULTIMODALITY — Does the design vary learning channels such as text, audio, video, and hands-on work? Is the same content available in more than one form?
+
+5. AUTONOMY AND METACOGNITION — Do learners know what is expected and why? Are there moments when they reflect on their own learning? Does the design encourage initiative?
+
+6. COLLABORATION AND INTERACTION — Does the design include pair or group work? Can learners learn from one another?
+
+7. FEEDBACK AND FORMATIVE ASSESSMENT — Do learners receive regular feedback? Are self-assessment and peer assessment included? Is remediation planned when difficulties arise?
+
+8. MOTIVATION AND ENGAGEMENT — Are the activities meaningful to learners? Is there a hook, challenge, or puzzle? Does variety help sustain attention?
+
+9. COGNITIVE LOAD — Do activities progress gradually? Does the design avoid overloading learners? Are timings appropriate for task complexity?
+
+10. ROLE OF DIGITAL TECHNOLOGY — Do digital tools add genuine value? Would the design remain accessible without digital equipment? Does technology support active learning?
+
+11. LEARNING DESIGN BALANCE — Does the design use the six learning types from Diana Laurillard’s Conversational Framework: Acquisition, Investigation, Discussion, Practice, Collaboration, and Production? Is any type over- or under-represented? Is the balance between individual, group, and whole-class work consistent with the objectives? Are planned durations realistic for the complexity of the tasks? Are the learning objectives (Knowledge, Comprehension, Application, Production) aligned with the proposed activities?
+
+For each area:
+- give an honest diagnosis based on the submitted material;
+- identify one or two strengths where possible;
+- suggest two or three concrete, realistic improvements;
+- finish with one key recommendation in a single sentence.
+
+Use a supportive, professional, and encouraging tone. Avoid unnecessary jargon. Your suggestions must be directly applicable in the classroom.
+PROMPT;
+
 ?>
 <!doctype html>
 <html lang="fr">
@@ -189,9 +428,9 @@ PROMPT;
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="interface.css?v=20260722-pages-2">
+    <link rel="stylesheet" href="interface.css?v=20260722-mobile-tab-spacing">
     <link rel="stylesheet" href="account-ui.css?v=20260520-4">
-    <link rel="stylesheet" href="account-pages.css?v=20260721-help">
+    <link rel="stylesheet" href="account-pages.css?v=20260722-neutral-theme">
 </head>
 <body class="help-page">
 <?php render_site_nav('help'); ?>
@@ -223,13 +462,13 @@ PROMPT;
         </aside>
 
         <div class="help-content">
-            <article class="help-section" id="premiers-pas" data-toc-title="Prise en main">
-                <p class="help-eyebrow"><i class="fa-solid fa-rocket" aria-hidden="true"></i> Fondements et prise en main</p>
+            <article class="help-section" id="premiers-pas">
+                <p class="help-eyebrow"><i class="fa-solid fa-rocket" aria-hidden="true"></i> Prise en main</p>
                 <h2>Comprendre le learning design</h2>
-                <p>Le <em>learning design</em> consiste à organiser ce que les apprenants vont faire pour atteindre les acquis visés, plutôt qu’à simplement ordonner des contenus.</p>
+                <p>Le <em>learning design</em> consiste à organiser ce que les apprenants vont faire pour atteindre les acquis visés.</p>
                 <div class="help-callout">
                     <i class="fa-solid fa-compass" aria-hidden="true"></i>
-                    <p><strong>Question de départ : que doivent faire les apprenants pour atteindre les acquis visés ?</strong> Le design rend cette succession d’activités explicite afin qu’elle puisse être examinée, testée et améliorée.</p>
+                    <p><strong>Question de départ : que doivent faire les apprenants pour atteindre les acquis visés&nbsp;?</strong>Le design rend cette succession d’activités explicite.</p>
                 </div>
                 <div class="help-grid three">
                     <div class="help-card">
@@ -245,11 +484,11 @@ PROMPT;
                         <span>Comparer l’intention initiale avec ce qui se passe réellement, puis redessiner la séquence à partir des retours.</span>
                     </div>
                 </div>
-                <p class="help-spaced">Les six types d’apprentissage ne constituent pas une répartition idéale à reproduire mécaniquement. Ils forment un vocabulaire commun pour décrire l’expérience proposée et vérifier qu’elle ne repose pas uniquement sur la transmission. La section <a href="#types-apprentissage">Les six types d’apprentissage</a> les présente en détail.</p>
+                <p class="help-spaced">Les types d’apprentissage ne constituent pas une répartition idéale à reproduire mécaniquement. Ils forment un vocabulaire commun pour décrire l’expérience proposée et vérifier qu’elle ne repose pas uniquement sur la transmission. La section <a href="#types-apprentissage">Les six types d’apprentissage</a> les présente en détail.</p>
 
                 <h3 id="learning-designer-scenario-visible">Learning Designer : rendre le scénario visible</h3>
-                <p>Le Learning Designer original a été développé à l’University College London par l’équipe de Diana Laurillard pour aider les enseignants à concevoir des activités pédagogiques, à analyser leur équilibre et à partager leurs projets. L’application présentée ici s’inscrit dans cette filiation : elle transforme un scénario pédagogique en une structure lisible, calculable et réutilisable.</p>
-                <p>L’outil ne conçoit pas le cours à votre place et ne délivre pas de note de qualité. Il rend vos choix explicites afin que vous puissiez les interroger : le temps prévu correspond-il au temps effectivement scénarisé ? Quelle place est accordée à chaque type d’apprentissage ? Les élèves pratiquent-ils, discutent-ils et produisent-ils, ou restent-ils surtout en situation d’acquisition ? Les modalités de groupe, le rythme, la présence enseignante et les évaluations sont-ils cohérents avec les acquis visés ?</p>
+                <p>Le Learning Designer original a été développé à l’University College London par l’équipe de Diana Laurillard pour aider les enseignants à concevoir des activités pédagogiques, à analyser leur équilibre et à partager leurs projets. L’application présentée ici s’inscrit dans cette filiation : elle transforme un scénario pédagogique en une structure lisible, analysable et réutilisable.</p>
+                <p>L’outil rend vos choix explicites afin que vous puissiez les interroger : le temps prévu correspond-il au temps effectivement scénarisé&nbsp;? Quelle place est accordée à chaque type d’apprentissage&nbsp;? Les élèves pratiquent-ils, discutent-ils et produisent-ils, ou restent-ils surtout en situation d’acquisition&nbsp;? Les modalités de groupe, le rythme, la présence enseignante et les évaluations sont-ils cohérents avec les acquis visés&nbsp;?</p>
                 <div class="help-grid">
                     <div class="help-card">
                         <strong><span class="help-card-icon"><i class="fa-solid fa-pen-ruler" aria-hidden="true"></i></span>Un outil de conception</strong>
@@ -284,7 +523,7 @@ PROMPT;
                 <p>Pour une présentation plus développée du cadre pédagogique, consultez également <a href="learning-design.php">Comprendre le learning design</a>.</p>
             </article>
 
-            <article class="help-section" id="moments-activites" data-toc-title="Moments et activités">
+            <article class="help-section" id="moments-activites">
                 <p class="help-eyebrow"><i class="fa-solid fa-layer-group" aria-hidden="true"></i> Scénarisation</p>
                 <h2>Organiser les moments et les activités</h2>
                 <p>Chaque moment correspond à une phase cohérente de la séance ou de la séquence : lancement, exploration, mise en commun, entraînement, production, évaluation, etc. Un moment possède un titre, des objectifs, des choix pédagogiques et des notes. Les moments et les activités peuvent être réordonnés.</p>
@@ -308,7 +547,7 @@ PROMPT;
                 <p>Les descriptions et les notes acceptent une mise en forme Markdown légère. Une barre d’outils et un aperçu permettent de structurer plus facilement le texte. Des liens nommés peuvent être ajoutés à chaque activité pour associer consignes, documents, vidéos ou outils.</p>
             </article>
 
-            <article class="help-section" id="types-apprentissage" data-toc-title="Six types d’apprentissage">
+            <article class="help-section" id="types-apprentissage">
                 <p class="help-eyebrow"><i class="fa-solid fa-shapes" aria-hidden="true"></i> Cadre pédagogique</p>
                 <h2>Les six types d’apprentissage</h2>
                 <p>Learning Designer s’appuie sur les six types d’apprentissage associés au Cadre conversationnel de Diana Laurillard. Une séquence n’a pas besoin de les utiliser à parts égales, mais leur combinaison aide à varier l’expérience de l’apprenant.</p>
@@ -323,7 +562,7 @@ PROMPT;
                 <p class="help-spaced">Le panneau d’analyse calcule la part de temps consacrée à chaque type. Cette visualisation sert d’indicateur de conception : elle aide à repérer une séquence très transmissive, un manque de pratique ou l’absence d’une production finale, sans imposer de répartition idéale.</p>
             </article>
 
-            <article class="help-section" id="acquis-competences" data-toc-title="Acquis et compétences">
+            <article class="help-section" id="acquis-competences">
                 <p class="help-eyebrow"><i class="fa-solid fa-graduation-cap" aria-hidden="true"></i> Résultats attendus</p>
                 <h2>Formuler les acquis et suivre les compétences</h2>
                 <h3 id="taxonomie-bloom">Taxonomie révisée de Bloom</h3>
@@ -338,7 +577,7 @@ PROMPT;
                 </div>
                 <p class="help-spaced">La page <a href="bloom.php">Taxonomie de Bloom</a> donne accès au tableau complet des verbes. Dans l’éditeur, chaque acquis reste modifiable et peut être supprimé.</p>
                 <h3 id="competences-numeriques">Référentiel de compétences numériques</h3>
-                <p>Le site intègre un référentiel de 95 compétences organisé selon trois niveaux progressifs. Chaque activité peut être reliée à une ou plusieurs compétences, ce qui rend la progression numérique visible dans le scénario.</p>
+                <p>Le site intègre le référentiel de compétences numériques utilisé à l’Institut Florimont. Il rassemble 95 compétences organisées selon trois niveaux progressifs. Chaque activité peut être reliée à une ou plusieurs compétences, ce qui rend la progression numérique visible dans le scénario.</p>
                 <div class="help-grid three">
                     <div class="help-card"><strong><span class="help-card-icon"><i class="fa-solid fa-seedling" aria-hidden="true"></i></span>Acquérir</strong><span>Bases de la vie numérique scolaire : appareil, recherche, organisation, communication et premiers usages créatifs.</span></div>
                     <div class="help-card"><strong><span class="help-card-icon"><i class="fa-solid fa-trowel" aria-hidden="true"></i></span>Approfondir</strong><span>Veille, collaboration, données simples, programmation visuelle, IA et création multimédia plus autonome.</span></div>
@@ -347,11 +586,11 @@ PROMPT;
                 <p class="help-spaced">La page <a href="competencies.php">Compétences numériques</a> présente l’ensemble du référentiel. Lorsque vous êtes connecté, elle peut signaler les compétences déjà mobilisées dans vos designs enregistrés.</p>
             </article>
 
-            <article class="help-section" id="vues-analyses" data-toc-title="Vues et analyses">
+            <article class="help-section" id="vues-analyses">
                 <p class="help-eyebrow"><i class="fa-solid fa-chart-column" aria-hidden="true"></i> Lecture du scénario</p>
-                <h2>Changer de vue et analyser l’équilibre</h2>
-                <p>Trois vues sont disponibles pour travailler selon la taille du design et votre préférence : la <strong>liste</strong> pour une lecture linéaire, les <strong>colonnes</strong> pour comparer les moments et la <strong>grille</strong> pour obtenir une vue plus compacte.</p>
-                <p>Le panneau « Expérience d’apprentissage » synthétise le scénario sous forme de graphiques. Il compare notamment :</p>
+                <h2>Afficher et analyser le scénario</h2>
+                <h3>Analyser l’expérience d’apprentissage</h3>
+                <p>Dans le panneau supérieur de l’éditeur, juste sous la barre de navigation, cliquez sur l’onglet <strong>Analyse</strong>, à côté de <strong>Paramètres</strong> et <strong>Chronologie</strong>. Si le panneau est replié, ce clic le déploie. La vue <strong>Expérience d’apprentissage</strong> synthétise alors le scénario sous forme de graphiques. Elle compare notamment :</p>
                 <ul>
                     <li>les six types d’apprentissage ;</li>
                     <li>le travail individuel, en sous-groupes et en groupe entier ;</li>
@@ -360,10 +599,14 @@ PROMPT;
                     <li>les modalités présentielle, distancielle et hybride ;</li>
                     <li>les formes d’évaluation.</li>
                 </ul>
-                <p>La chronologie des activités donne une autre lecture de la séquence : chaque activité est positionnée selon sa durée et son ordre. Les avertissements d’analyse signalent les données manquantes ou incohérentes — par exemple une activité sans durée ou sans type — qui pourraient fausser les graphiques.</p>
+                <p>Les avertissements affichés dans cette vue signalent les données manquantes ou incohérentes — par exemple une activité sans durée ou sans type — qui pourraient fausser les graphiques.</p>
+                <h3>Consulter la chronologie des activités</h3>
+                <p>Dans ce même panneau supérieur, cliquez sur l’onglet <strong>Chronologie</strong>. Chaque activité y est positionnée selon sa durée et son ordre afin de donner une autre lecture de la séquence.</p>
+                <h3>Choisir l’affichage du scénario</h3>
+                <p>Plus bas dans l’éditeur, la barre d’outils située au-dessus du scénario permet de choisir <strong>Liste</strong> pour une lecture linéaire, <strong>Colonnes</strong> pour comparer les moments ou <strong>Grille</strong> pour obtenir une vue plus compacte. Ces trois boutons modifient uniquement la présentation des moments et des activités.</p>
             </article>
 
-            <article class="help-section" id="sauvegarde-partage" data-toc-title="Sauvegarde et partage">
+            <article class="help-section" id="sauvegarde-partage">
                 <p class="help-eyebrow"><i class="fa-solid fa-cloud-arrow-up" aria-hidden="true"></i> Compte et publication</p>
                 <h2>Sauvegarder, publier et réutiliser</h2>
                 <h3 id="sauvegarde-sans-compte">Sans compte</h3>
@@ -383,7 +626,7 @@ PROMPT;
                 </div>
             </article>
 
-            <article class="help-section" id="import-export" data-toc-title="Importer et exporter">
+            <article class="help-section" id="import-export">
                 <p class="help-eyebrow"><i class="fa-solid fa-arrow-right-arrow-left" aria-hidden="true"></i> Formats d’échange</p>
                 <h2>Importer et exporter dans plusieurs formats</h2>
                 <h3 id="formats-export">Formats d’export</h3>
@@ -415,7 +658,7 @@ PROMPT;
                 </div>
             </article>
 
-            <article class="help-section" id="markdown" data-toc-title="Guide Markdown">
+            <article class="help-section" id="markdown">
                 <p class="help-eyebrow"><i class="fa-brands fa-markdown" aria-hidden="true"></i> Format éditable</p>
                 <h2>Importer un design en Markdown</h2>
                 <p>Le plus sûr est de partir d’un fichier Markdown exporté depuis Learning Designer, puis de le modifier sans changer sa structure. Le fichier doit contenir les sections <code>## Paramètres</code> et <code>## Séances</code>, qui permettent à l’application de reconnaître le document.</p>
@@ -502,7 +745,7 @@ Objectifs généraux de la formation.
                 <p>Si l’import échoue, exportez un design simple en Markdown depuis l’application et comparez sa structure avec votre fichier.</p>
             </article>
 
-            <article class="help-section" id="cli" data-toc-title="Créer avec l’IA et le CLI">
+            <article class="help-section" id="cli">
                 <h2>Créer avec l’IA</h2>
                 <p>Un CLI pour publier vos designs.</p>
 
@@ -524,7 +767,7 @@ Objectifs généraux de la formation.
                 <p>Copiez ce prompt dans Claude ou Codex. Il demande à l’IA d’utiliser le CLI, de poser les bonnes questions pédagogiques, puis de produire un fichier validé.</p>
                 <div class="help-prompt-wrap">
                     <button class="help-copy-btn" type="button" aria-label="Copier le prompt" title="Copier"><i class="fa-regular fa-copy" aria-hidden="true"></i></button>
-                    <textarea class="help-prompt" readonly><?= h($aiPrompt) ?></textarea>
+                    <textarea class="help-prompt" data-help-prompt="ai" readonly><?= h($aiPrompt) ?></textarea>
                 </div>
 
                 <h4>À la fin</h4>
@@ -588,7 +831,7 @@ Collez ici les consignes complètes que Claude doit suivre.</pre>
                 <p>Si vous ne voulez pas installer de skill locale, copiez simplement ce prompt dans Claude ou Codex. L’IA ira lire la méthode publiée.</p>
                 <div class="help-prompt-wrap">
                     <button class="help-copy-btn" type="button" aria-label="Copier le prompt" title="Copier"><i class="fa-regular fa-copy" aria-hidden="true"></i></button>
-                    <textarea class="help-prompt help-prompt-compact" readonly><?= h($skillPrompt) ?></textarea>
+                    <textarea class="help-prompt help-prompt-compact" data-help-prompt="skill" readonly><?= h($skillPrompt) ?></textarea>
                 </div>
 
                 <h3 id="cli-detaille">CLI détaillé</h3>
@@ -694,20 +937,60 @@ learning status
 learning upgrade</pre>
                 </div>
             </article>
-            <article class="help-section" id="bonnes-pratiques" data-toc-title="Bonnes pratiques">
-                <p class="help-eyebrow"><i class="fa-solid fa-circle-check" aria-hidden="true"></i> Avant de terminer</p>
-                <h2>Vérifier la qualité du design</h2>
-                <div class="help-footer-note">
-                    <p><strong>Avant d’enregistrer ou de partager :</strong></p>
-                    <ul>
-                        <li>vérifiez que le temps conçu correspond au temps d’apprentissage prévu ;</li>
-                        <li>assurez-vous que chaque activité possède une durée et un type ;</li>
-                        <li>formulez des acquis observables avec des verbes d’action ;</li>
-                        <li>explicitez les consignes, les supports, les critères et les modalités de retour ;</li>
-                        <li>contrôlez l’équilibre entre acquisition, pratique, discussion et production ;</li>
-                        <li>ouvrez les liens et vérifiez les compétences associées ;</li>
-                        <li>choisissez le format de partage en fonction du destinataire : lien, Word, Excel, HTML, Markdown ou JSON.</li>
-                    </ul>
+            <article class="help-section" id="enrichir-design-ia">
+                <p class="help-eyebrow"><i class="fa-solid fa-wand-magic-sparkles" aria-hidden="true"></i> Réflexion pédagogique</p>
+                <h2>Interroger et enrichir son design avec l’IA</h2>
+                <h3 id="analyser-design-ia">Analyser son design</h3>
+                <p>Une IA peut vous aider à questionner votre séquence, repérer ses points forts et envisager des améliorations directement applicables en classe. Son analyse nourrit votre réflexion : vous restez maître des choix pédagogiques et de leur adaptation à vos élèves.</p>
+
+                <div class="help-grid three">
+                    <div class="help-card">
+                        <strong><span class="help-card-icon"><i class="fa-solid fa-file-export" aria-hidden="true"></i></span>1. Préparer le design</strong>
+                        <span>Exportez votre design au format JSON depuis Learning Designer, ou préparez une description précise de votre séquence.</span>
+                    </div>
+                    <div class="help-card">
+                        <strong><span class="help-card-icon"><i class="fa-solid fa-robot" aria-hidden="true"></i></span>2. Configurer l’IA</strong>
+                        <span>Créez un Gem dans Gemini ou un projet dans ChatGPT ou Claude, puis copiez le prompt ci-dessous dans ses instructions.</span>
+                    </div>
+                    <div class="help-card">
+                        <strong><span class="help-card-icon"><i class="fa-solid fa-comments" aria-hidden="true"></i></span>3. Engager le dialogue</strong>
+                        <span>Joignez l’export ou collez votre description. Répondez aux questions réflexives, puis retenez et adaptez les pistes pertinentes.</span>
+                    </div>
+                </div>
+
+                <h4>Prompt d’analyse du design</h4>
+                <p>Copiez ce prompt dans les instructions de votre Gem ou de votre projet. Vous pourrez ensuite lui soumettre autant de designs que vous le souhaitez.</p>
+                <div class="help-prompt-wrap">
+                    <button class="help-copy-btn" type="button" aria-label="Copier le prompt d’analyse du design" title="Copier"><i class="fa-regular fa-copy" aria-hidden="true"></i></button>
+                    <textarea class="help-prompt" data-help-prompt="review" readonly><?= h($designReviewPrompt) ?></textarea>
+                </div>
+
+                <div class="help-callout">
+                    <i class="fa-solid fa-lightbulb" aria-hidden="true"></i>
+                    <p><strong>Pour aller plus loin :</strong> demandez à l’IA de prioriser trois améliorations réalistes pour votre prochaine séance, puis de vous aider à reformuler concrètement les activités concernées.</p>
+                </div>
+
+                <h3 id="creer-contenus-ia">Créer les contenus nécessaires au scénario</h3>
+                <p>Le design décrit les activités à mener ; l’IA peut ensuite vous aider à fabriquer les ressources dont vous avez besoin pour les mettre en œuvre : consignes, fiches élèves, textes adaptés, études de cas, exercices, quiz, corrigés, grilles d’évaluation, supports de présentation ou variantes différenciées.</p>
+
+                <div class="help-grid three">
+                    <div class="help-card">
+                        <strong><span class="help-card-icon"><i class="fa-solid fa-crosshairs" aria-hidden="true"></i></span>1. Cibler une activité</strong>
+                        <span>Partagez le scénario complet ou l’activité concernée afin que l’IA comprenne le public, les acquis visés, la durée et le contexte.</span>
+                    </div>
+                    <div class="help-card">
+                        <strong><span class="help-card-icon"><i class="fa-solid fa-file-circle-plus" aria-hidden="true"></i></span>2. Définir le livrable</strong>
+                        <span>Précisez le contenu attendu, son format, son niveau de détail et ses contraintes. L’IA peut aussi vous aider à choisir le support pertinent.</span>
+                    </div>
+                    <div class="help-card">
+                        <strong><span class="help-card-icon"><i class="fa-solid fa-pen-to-square" aria-hidden="true"></i></span>3. Relire et adapter</strong>
+                        <span>Vérifiez les informations, les sources, le niveau de difficulté et l’accessibilité, puis ajustez la proposition à votre classe.</span>
+                    </div>
+                </div>
+
+                <div class="help-callout warning">
+                    <i class="fa-solid fa-shield-halved" aria-hidden="true"></i>
+                    <p><strong>Avant d’utiliser un contenu en classe :</strong> relisez-le, contrôlez les faits et les sources, vérifiez les droits d’usage et ne transmettez aucune donnée personnelle ou sensible concernant vos élèves.</p>
                 </div>
             </article>
         </div>
@@ -715,7 +998,28 @@ learning upgrade</pre>
 </main>
 <?php render_site_footer(); ?>
 <script>
+window.helpPromptTranslations = <?= json_encode([
+    'en' => [
+        'ai' => $aiPromptEn,
+        'skill' => $skillPromptEn,
+        'review' => $designReviewPromptEn,
+    ],
+], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) ?>;
+</script>
+<script src="help-i18n.js?v=20260722-3"></script>
+<script>
+var initialHelpLanguage = 'fr';
+try {
+    initialHelpLanguage = localStorage.getItem('learningDesignerLang') || 'fr';
+} catch (error) {
+    initialHelpLanguage = 'fr';
+}
+if (window.HelpPageI18n) {
+    window.HelpPageI18n.apply(initialHelpLanguage, window.helpPromptTranslations);
+}
+
 document.addEventListener('DOMContentLoaded', function () {
+    var isEnglish = initialHelpLanguage === 'en';
     var sections = Array.from(document.querySelectorAll('.help-section[id]'));
     var toc = document.getElementById('help-toc');
     var sidebar = document.getElementById('help-sidebar');
@@ -747,6 +1051,17 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     sections.forEach(function (section, index) {
+        var sectionNumber = String(index + 1).padStart(2, '0');
+        var sectionHeading = section.querySelector(':scope > h2');
+        var sectionTitle = sectionHeading ? sectionHeading.textContent.trim() : '';
+        if (sectionHeading) {
+            var headingIndex = document.createElement('span');
+            headingIndex.className = 'help-heading-index';
+            headingIndex.setAttribute('aria-hidden', 'true');
+            headingIndex.textContent = sectionNumber + '.';
+            sectionHeading.prepend(headingIndex);
+        }
+
         var group = document.createElement('div');
         group.className = 'help-toc-group';
         group.dataset.sectionId = section.id;
@@ -755,7 +1070,7 @@ document.addEventListener('DOMContentLoaded', function () {
         link.className = 'help-toc-link';
         link.href = '#' + section.id;
         link.dataset.sectionId = section.id;
-        link.innerHTML = '<span class="help-toc-index">' + String(index + 1).padStart(2, '0') + '</span><span>' + section.dataset.tocTitle + '</span>';
+        link.innerHTML = '<span class="help-toc-index">' + sectionNumber + '</span><span>' + sectionTitle + '</span>';
         link.addEventListener('click', function (event) {
             event.preventDefault();
             navigateTo(section);
@@ -773,7 +1088,7 @@ document.addEventListener('DOMContentLoaded', function () {
             submenuToggle.type = 'button';
             submenuToggle.setAttribute('aria-expanded', 'false');
             submenuToggle.setAttribute('aria-controls', submenuId);
-            submenuToggle.setAttribute('aria-label', 'Afficher les sous-sections de ' + section.dataset.tocTitle);
+            submenuToggle.setAttribute('aria-label', (isEnglish ? 'Show subsections for ' : 'Afficher les sous-sections de ') + sectionTitle);
             submenuToggle.innerHTML = '<i class="fa-solid fa-chevron-down" aria-hidden="true"></i>';
             submenuToggle.addEventListener('click', function () {
                 setSubmenuExpanded(group, submenuToggle.getAttribute('aria-expanded') !== 'true');
@@ -845,25 +1160,49 @@ document.addEventListener('DOMContentLoaded', function () {
     window.addEventListener('scroll', requestScrollUpdate, { passive: true });
     window.addEventListener('resize', requestScrollUpdate);
 
-    function expandSubmenuForHash() {
+    function getHashTarget() {
         var targetId = window.location.hash.slice(1);
-        if (!targetId) return;
+        if (!targetId) return null;
         try {
             targetId = decodeURIComponent(targetId);
         } catch (error) {
-            return;
+            return null;
         }
-        var target = document.getElementById(targetId);
+        if (targetId === 'bonnes-pratiques') {
+            targetId = 'enrichir-design-ia';
+            if (window.history && window.history.replaceState) {
+                window.history.replaceState(null, '', '#enrichir-design-ia');
+            }
+        }
+        return document.getElementById(targetId);
+    }
+
+    function expandSubmenuForHash() {
+        var target = getHashTarget();
         if (!target || target.tagName !== 'H3') return;
         var section = target.closest('.help-section');
         var group = section ? toc.querySelector('.help-toc-group[data-section-id="' + section.id + '"]') : null;
         if (group) setSubmenuExpanded(group, true);
     }
 
-    window.addEventListener('popstate', function () {
+    function alignAndActivateHashTarget() {
+        var target = getHashTarget();
+        if (!target) return;
+        target.scrollIntoView({ behavior: 'instant', block: 'start' });
+
+        var section = target.classList.contains('help-section') ? target : target.closest('.help-section');
+        if (!section) return;
+        setActiveSection(section.id, target.tagName === 'H3' ? target.id : '');
+    }
+
+    function syncHashNavigation() {
         expandSubmenuForHash();
-        requestScrollUpdate();
-    });
+        window.requestAnimationFrame(alignAndActivateHashTarget);
+    }
+
+    window.addEventListener('popstate', syncHashNavigation);
+    window.addEventListener('hashchange', syncHashNavigation);
+    window.addEventListener('load', syncHashNavigation);
     expandSubmenuForHash();
     updateActiveFromScroll();
 
@@ -888,10 +1227,10 @@ document.addEventListener('DOMContentLoaded', function () {
         }
         var original = button.innerHTML;
         button.innerHTML = '<i class="fa-solid fa-check" aria-hidden="true"></i>';
-        button.setAttribute('title', 'Copié');
+        button.setAttribute('title', isEnglish ? 'Copied' : 'Copié');
         window.setTimeout(function () {
             button.innerHTML = original;
-            button.setAttribute('title', 'Copier');
+            button.setAttribute('title', isEnglish ? 'Copy' : 'Copier');
         }, 1300);
     }
 
@@ -903,6 +1242,13 @@ document.addEventListener('DOMContentLoaded', function () {
             copyText(('value' in source ? source.value : source.textContent).trim(), button);
         });
     });
+
+    var helpLangSelect = document.getElementById('lang-select');
+    if (helpLangSelect) {
+        helpLangSelect.addEventListener('change', function () {
+            window.setTimeout(function () { window.location.reload(); }, 0);
+        });
+    }
 
 });
 </script>

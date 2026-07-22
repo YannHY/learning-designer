@@ -201,9 +201,9 @@ foreach ($sectionGroups as $sectionKey => $group) {
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="interface.css?v=20260520-2">
+    <link rel="stylesheet" href="interface.css?v=20260722-mobile-tab-spacing">
     <link rel="stylesheet" href="account-ui.css?v=20260520-4">
-    <link rel="stylesheet" href="account-pages.css?v=20260521-width">
+    <link rel="stylesheet" href="account-pages.css?v=20260722-neutral-theme">
     <style>
         body.competencies-page {
             background: #fff;
@@ -531,9 +531,7 @@ foreach ($sectionGroups as $sectionKey => $group) {
             display: block;
         }
         [data-theme="dark"] body.competencies-page {
-            background:
-                radial-gradient(circle at top left, rgba(56, 139, 253, 0.10), transparent 28%),
-                linear-gradient(180deg, #1f2537 0%, #1a1f2e 100%);
+            background: #181816;
         }
         [data-theme="dark"] .competencies-title,
         [data-theme="dark"] .competencies-level-heading,
@@ -559,25 +557,25 @@ foreach ($sectionGroups as $sectionKey => $group) {
         [data-theme="dark"] .competencies-search,
         [data-theme="dark"] .competencies-stat,
         [data-theme="dark"] .competencies-filter-btn {
-            background: rgba(30, 36, 54, 0.96);
-            border-color: rgba(103, 116, 145, 0.45);
+            background: rgba(36, 35, 31, 0.96);
+            border-color: rgba(129, 124, 112, 0.42);
         }
         [data-theme="dark"] .competencies-column-row th {
-            background: rgba(30, 36, 54, 0.98);
-            border-bottom-color: rgba(126, 145, 178, 0.55);
+            background: rgba(36, 35, 31, 0.98);
+            border-bottom-color: rgba(129, 124, 112, 0.48);
         }
         [data-theme="dark"] .competencies-table th,
         [data-theme="dark"] .competencies-table td {
-            border-right-color: rgba(103, 116, 145, 0.42);
-            border-bottom-color: rgba(103, 116, 145, 0.42);
+            border-right-color: rgba(129, 124, 112, 0.42);
+            border-bottom-color: rgba(129, 124, 112, 0.42);
         }
         [data-theme="dark"] .competencies-level-row td {
-            background: rgba(50, 59, 80, 0.98);
-            border-bottom-color: rgba(103, 116, 145, 0.45);
+            background: rgba(48, 46, 40, 0.98);
+            border-bottom-color: rgba(129, 124, 112, 0.42);
         }
         [data-theme="dark"] .competencies-section-row td {
-            background: rgba(34, 41, 59, 0.98);
-            border-bottom-color: rgba(103, 116, 145, 0.45);
+            background: rgba(42, 40, 35, 0.98);
+            border-bottom-color: rgba(129, 124, 112, 0.42);
         }
         [data-theme="dark"] .competencies-item-row[data-level="acquerir"] td {
             background: rgba(14, 165, 233, 0.055);

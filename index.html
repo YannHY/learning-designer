@@ -48,9 +48,6 @@
             <path fill="currentColor" d="M12 3c-4.97 0-9 4.03-9 9s4.03 9 9 9 9-4.03 9-9c0-.46-.04-.92-.1-1.36a5.389 5.389 0 0 1-4.4 2.26 5.403 5.403 0 0 1-3.14-9.8c-.44-.06-.9-.1-1.36-.1z"/>
           </svg>
         </button>
-        <a class="nav-icon-btn" href="cli.php" title="CLI" aria-label="CLI">
-          <i class="fa-solid fa-code" aria-hidden="true"></i>
-        </a>
         <a class="nav-icon-btn" href="share.php" title="Designs partagés" aria-label="Designs partagés">
           <i class="fa-solid fa-share-nodes" aria-hidden="true"></i>
         </a>
@@ -290,18 +287,27 @@
       <section id="board" class="board" aria-label="Séquences de séances"></section>
     </main>
 
-    <footer class="site-footer">
-      <div class="site-footer-copy-stack">
-        <span class="site-footer-copy">Learning Designer — Yann Houry &amp; François Jourde</span>
-        <span class="site-footer-copy">Inspiré de l'<a class="site-footer-link" href="https://www.ucl.ac.uk/learning-designer/" target="_blank" rel="noopener noreferrer">UCL Learning Designer</a> (UCL Knowledge Lab, UCL Institute of Education, 2013–2026).</span>
-        <nav class="site-footer-links" aria-label="Liens du pied de page">
-          <a class="site-footer-link" id="footer-about-btn" href="about.php">À propos</a>
-          <span class="site-footer-separator" aria-hidden="true">|</span>
-          <a class="site-footer-link" href="share.php">Designs partagés</a>
-        </nav>
-        <span class="site-footer-copy site-footer-license">2026 — <abbr title="Creative Commons Attribution - Partage dans les mêmes conditions">CC BY-SA</abbr></span>
-      </div>
-    </footer>
+    <div id="site-footer-slot"></div>
+    <script>
+      (function loadSharedFooter() {
+        var slot = document.getElementById('site-footer-slot');
+        if (!slot) return;
+        fetch('partials/site-footer.php', { credentials: 'same-origin' })
+          .then(function(response) {
+            if (!response.ok) throw new Error('Footer unavailable');
+            return response.text();
+          })
+          .then(function(markup) {
+            var template = document.createElement('template');
+            template.innerHTML = markup.trim();
+            slot.replaceWith(template.content);
+            document.dispatchEvent(new CustomEvent('site-footer-ready'));
+          })
+          .catch(function() {
+            slot.remove();
+          });
+      })();
+    </script>
 
 
     <template id="session-template">

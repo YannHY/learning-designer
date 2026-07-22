@@ -867,7 +867,6 @@ const newDesignBtn = document.getElementById("new-design-btn");
 const importDesignBtn = document.getElementById("import-design-btn");
 const exportDesignBtn = document.getElementById("export-design-btn");
 const infoBtn = document.getElementById("info-btn");
-const footerAboutBtn = document.getElementById("footer-about-btn");
 const saveBtn = document.getElementById("save-btn");
 const importFileInput = document.getElementById("import-file-input");
 const langSelect = document.getElementById("lang-select");
@@ -1139,6 +1138,7 @@ const I18N = {
     eval_summative: "Sommative",
     eval_certificative: "Certificative",
     infoTitle: "À propos",
+    footerHelp: "Aide",
     infoP1: "Cette application web monopage s’inspire de l’UCL Learning Designer :",
     infoP2: "(UCL Knowledge Lab, UCL Institute of Education, 2013-2026).",
     infoP3: "Traitement local par défaut : les données restent dans votre navigateur, sauf si vous vous connectez et enregistrez explicitement une production sur votre compte.",
@@ -1355,6 +1355,7 @@ const I18N = {
     eval_summative: "Summative",
     eval_certificative: "Certifying",
     infoTitle: "About",
+    footerHelp: "Help",
     infoP1: "This single-page web app is inspired by the UCL Learning Designer:",
     infoP2: "(UCL Knowledge Lab, UCL Institute of Education, 2013-2026).",
     infoP3: "Local processing by default: data stays in your browser unless you sign in and explicitly save a design to your account.",
@@ -1794,7 +1795,10 @@ function applyLocalizedUI() {
   infoBtn.setAttribute("aria-label", t("info"));
   infoBtn.setAttribute("title", t("info"));
   infoBtn.setAttribute("aria-haspopup", "dialog");
+  const footerAboutBtn = document.getElementById("footer-about-btn");
+  const footerHelpBtn = document.getElementById("footer-help-btn");
   if (footerAboutBtn) footerAboutBtn.textContent = t("infoTitle");
+  if (footerHelpBtn) footerHelpBtn.textContent = t("footerHelp");
   const helpBtn = document.getElementById("help-btn");
   if (helpBtn) {
     helpBtn.setAttribute("aria-label", t("help") || "Aide");
@@ -1868,6 +1872,13 @@ function applyLocalizedUI() {
   );
   localizeExpandableFieldControls();
 }
+
+document.addEventListener("site-footer-ready", () => {
+  const footerAboutBtn = document.getElementById("footer-about-btn");
+  const footerHelpBtn = document.getElementById("footer-help-btn");
+  if (footerAboutBtn) footerAboutBtn.textContent = t("infoTitle");
+  if (footerHelpBtn) footerHelpBtn.textContent = t("footerHelp");
+});
 
 function updateResponsiveButtonLabels() {
   const compactToolbar = window.innerWidth <= 640;

@@ -474,7 +474,6 @@ function render_site_nav(string $active = ''): void
     $username = trim((string)($user['username'] ?? $user['email'] ?? ''));
     $savesClass = $active === 'saves' ? ' nav-account-btn-active' : '';
     $shareClass = $active === 'share' ? ' nav-account-btn-active' : '';
-    $cliClass = in_array($active, ['cli', 'cli-reference', 'skill'], true) ? ' nav-account-btn-active' : '';
     $profileClass = $active === 'profile' ? ' nav-account-btn-active' : '';
     $adminClass = $active === 'admin' ? ' nav-account-btn-active' : '';
     $breadcrumbItems = site_breadcrumb_items($active);
@@ -503,9 +502,6 @@ function render_site_nav(string $active = ''): void
                 </svg>
             </button>
             <div class="account-toolbar-cluster">
-                <a class="nav-icon-btn<?= $cliClass ?>" href="cli.php" title="CLI" aria-label="CLI" data-site-i18n-attr="title,aria-label" data-site-i18n-en="CLI" data-site-i18n-fr="CLI">
-                    <i class="fa-solid fa-code" aria-hidden="true"></i>
-                </a>
                 <a class="nav-icon-btn<?= $shareClass ?>" href="share.php" title="Partages" aria-label="Partages" data-site-i18n-attr="title,aria-label" data-site-i18n-en="Shared designs" data-site-i18n-fr="Partages">
                     <i class="fa-solid fa-share-nodes" aria-hidden="true"></i>
                 </a>
@@ -691,6 +687,9 @@ function site_breadcrumb_items(string $active = ''): array
         'competencies' => [
             ['fr' => 'Compétences numériques', 'en' => 'Digital Competencies'],
         ],
+        'help' => [
+            ['fr' => 'Aide', 'en' => 'Help'],
+        ],
         'learning-design' => [
             ['fr' => 'Learning design', 'en' => 'Learning design'],
         ],
@@ -838,18 +837,5 @@ function app_design_title_from_document(array $document): string
 
 function render_site_footer(): void
 {
-    ?>
-    <footer class="site-footer">
-        <div class="site-footer-copy-stack">
-            <span class="site-footer-copy">Learning Designer — Yann Houry &amp; François Jourde</span>
-            <span class="site-footer-copy">Inspiré de l'<a class="site-footer-link" href="https://www.ucl.ac.uk/learning-designer/" target="_blank" rel="noopener noreferrer">UCL Learning Designer</a> (UCL Knowledge Lab, UCL Institute of Education, 2013–2026).</span>
-            <nav class="site-footer-links" aria-label="Liens du pied de page">
-                <a class="site-footer-link" href="about.php">À propos</a>
-                <span class="site-footer-separator" aria-hidden="true">|</span>
-                <a class="site-footer-link" href="share.php">Designs partagés</a>
-            </nav>
-            <span class="site-footer-copy site-footer-license">2026 — <abbr title="Creative Commons Attribution - Partage dans les mêmes conditions">CC BY-SA</abbr></span>
-        </div>
-    </footer>
-    <?php
+    require __DIR__ . '/../partials/site-footer.php';
 }

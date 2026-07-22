@@ -1,168 +1,55 @@
 # Learning Designer
 
-Application web de scénarisation pédagogique inspirée de l'[UCL Learning Designer](https://www.ucl.ac.uk/learning-designer/) (UCL Knowledge Lab, UCL Institute of Education, 2013–2026) et basé sur le travail de [François Jourde](https://github.com/jourde/learning-designer-revised).
+Application web de scénarisation pédagogique inspirée de l'[UCL Learning Designer](https://www.ucl.ac.uk/learning-designer/) et basée sur le travail de [François Jourde](https://github.com/jourde/learning-designer-revised).
 
-Le projet permet de concevoir des séquences d'apprentissage structurées en moments et activités, de les analyser visuellement, de les enrichir avec des compétences numériques, puis de les exporter, sauvegarder et partager.
+Elle permet de structurer une séquence en moments et activités, d'en analyser l'équilibre, puis de la sauvegarder, l'exporter ou la partager. Les designs peuvent aussi être créés et publiés avec une IA grâce au CLI `learning`.
 
-- Dépôt : [https://github.com/YannHY/learning-designer](https://github.com/YannHY/learning-designer)
-- Guide d'utilisation : [guide-fr.md](./guide-fr.md)
+## Documentation
 
-## Fonctionnalités principales
+- [Aide complète](./help.php) : prise en main, activités, analyses, sauvegarde, partage, import/export, Markdown, IA et CLI
+- [Comprendre le learning design](./learning-design.php) : principes et cadre pédagogique
+- [Référence du CLI](./cli-reference.php) : commandes du CLI `learning`
 
-- création de scénarios composés de moments, objectifs, choix pédagogiques et activités
-- typage des activités selon les catégories d'apprentissage
-- paramétrage de la durée, du groupe, de la synchronicité, de la modalité et de l'évaluation
-- association de compétences numériques via un sélecteur dédié
-- formulation d'acquis d'apprentissage à partir de la taxonomie révisée de Bloom
-- vues multiples : liste, colonnes, grille
-- panneau d'analyse avec graphiques de répartition
-- partition chronologique configurable
-- export en JSON/LDJ, CSV, HTML, Markdown et feuille de calcul
-- mode plein écran pour certains champs d'édition
-- interface bilingue FR / EN
-- thème clair / sombre
+## Fonctionnalités
 
-## Compétences numériques
+- conception de moments, d'activités et d'acquis d'apprentissage reliés à la taxonomie de Bloom ;
+- six types d'apprentissage, compétences numériques et paramètres pédagogiques détaillés ;
+- vues liste, colonnes et grille, graphiques d'analyse et chronologie ;
+- import et export en plusieurs formats, dont JSON, LDJ, Markdown, Excel et Word ;
+- comptes, sauvegarde en ligne et publication par lien ;
+- interface bilingue français/anglais et thèmes clair/sombre ;
+- création, validation et publication depuis le terminal avec le CLI `learning`.
 
-Les activités peuvent être liées à un référentiel de compétences numériques structuré en trois domaines :
+## Installation locale
 
-- `Acquérir`
-- `Approfondir`
-- `Créer`
-
-Chaque compétence est affichée avec un code court du type `A1`, `P6` ou `C14`, avec une couleur propre à son domaine et une infobulle détaillée au survol.
-
-## Sauvegarde, comptes et partage
-
-L'application peut fonctionner :
-
-- en mode local dans le navigateur pour un usage ponctuel
-- en mode connecté sur un hébergement PHP/MySQL pour sauvegarder les productions
-
-Quand le backend PHP est activé, le projet prend en charge :
-
-- création du premier administrateur via `setup_admin.php`
-- inscription via `signup.php`
-- connexion / déconnexion via `login.php` et `logout.php`
-- gestion du profil utilisateur via `profile.php`
-- administration des comptes via `admin.php`
-- sauvegarde, chargement et suppression des productions
-- publication d'un design via un lien partageable avec `publish_design.php`
-- consultation d'une version publiée via `view.php`
-
-## Structure du projet
-
-- [index.html](/Users/rene/Documents/claude/learning-designer/index.html) : interface principale
-- [interface.js](/Users/rene/Documents/claude/learning-designer/interface.js) : logique applicative côté client
-- [interface.css](/Users/rene/Documents/claude/learning-designer/interface.css) : styles principaux
-- [about.php](/Users/rene/Documents/claude/learning-designer/about.php) : page de présentation
-- [cli.php](/Users/rene/Documents/claude/learning-designer/cli.php) : guide d'utilisation avec Claude Code ou Codex
-- [cli-reference.php](/Users/rene/Documents/claude/learning-designer/cli-reference.php) : documentation détaillée du CLI `learning`
-- [skill.php](/Users/rene/Documents/claude/learning-designer/skill.php) : installation ou création d'une skill Claude Code
-- [view.php](/Users/rene/Documents/claude/learning-designer/view.php) : vue publique d'un design publié
-- [save_design.php](/Users/rene/Documents/claude/learning-designer/save_design.php), [get_design.php](/Users/rene/Documents/claude/learning-designer/get_design.php), [list_designs.php](/Users/rene/Documents/claude/learning-designer/list_designs.php), [delete_design.php](/Users/rene/Documents/claude/learning-designer/delete_design.php) : API de persistance
-- [lib/bootstrap.php](/Users/rene/Documents/claude/learning-designer/lib/bootstrap.php) : bootstrap PHP et fonctions communes
-
-## Installation
-
-### Utilisation statique
-
-Pour tester l'interface seule, il suffit de servir le dossier avec un serveur web statique.
-
-Exemple :
+Le projet ne nécessite pas d'étape de compilation. PHP avec PDO SQLite suffit pour le lancer :
 
 ```bash
+git clone https://github.com/YannHY/learning-designer.git
+cd learning-designer
 php -S localhost:8000
 ```
 
-Puis ouvrir `http://localhost:8000/index.html`.
+Ouvrez ensuite [http://localhost:8000](http://localhost:8000). La base SQLite locale et ses tables sont créées automatiquement. Pour activer les comptes, ouvrez `setup_admin.php` et créez le premier administrateur.
 
-### Utilisation avec backend PHP/MySQL
+### Configuration d'un déploiement
 
-1. Déployer le projet sur un hébergement PHP.
-2. Configurer les accès applicatifs et base de données.
-3. Ouvrir `setup_admin.php` lors du premier démarrage.
+La configuration peut être fournie par variables d'environnement ou à partir du gabarit [app-config.php](./app-config.php). Les principales variables reconnues sont :
 
-### Configuration
+- `APP_DB_DSN`, `APP_DB_USER` et `APP_DB_PASS` pour utiliser MySQL ou une autre base PDO ;
+- `APP_DB_SQLITE_PATH` pour choisir l'emplacement de la base SQLite ;
+- `APP_BASE_URL` pour définir l'URL publique de l'application.
 
-Le fichier [app-config.php](/Users/rene/Documents/claude/learning-designer/app-config.php) sert de gabarit.  
-Les secrets réels doivent être définis dans un fichier local non versionné, typiquement `learning-design-secret.php`.
+Conservez les secrets dans un fichier local non versionné, par exemple `learning-design-secret.php`, ou dans des variables d'environnement.
 
-Variables attendues :
+## Fichiers principaux
 
-- `APP_DB_DSN`
-- `APP_DB_USER`
-- `APP_DB_PASS`
-- `APP_BASE_URL`
+- [index.html](./index.html) : interface de conception ;
+- [interface.js](./interface.js) et [interface.css](./interface.css) : logique et styles de l'application ;
+- [help.php](./help.php) : documentation utilisateur ;
+- [lib/bootstrap.php](./lib/bootstrap.php) : configuration, base de données et fonctions PHP communes ;
+- [bin/learning](./bin/learning) : CLI de création et de publication.
 
-Les tables nécessaires sont créées automatiquement au premier accès.
+## Crédits et licence
 
-## IA, CLI `learning` et publication
-
-Le projet fournit un CLI bilingue FR/EN nommé `learning`. Il sert à créer, compléter, valider et publier un fichier `design.json` Learning Designer.
-
-La page [cli.php](/Users/rene/Documents/claude/learning-designer/cli.php) présente le parcours recommandé : copier un prompt dans Claude Code ou Codex, laisser l'IA créer le fichier `design.json`, puis lui demander de publier le design avec un jeton CLI créé dans le profil utilisateur.
-
-Dans ce parcours, l'utilisateur n'a pas besoin d'installer le CLI dans son propre terminal si l'IA publie à sa place. Le jeton reste toutefois indispensable pour publier sur le compte de l'utilisateur.
-
-### Publier avec l'IA
-
-1. Ouvrir [cli.php](/Users/rene/Documents/claude/learning-designer/cli.php).
-2. Copier le prompt dans Claude Code ou Codex.
-3. Laisser l'IA créer le fichier `design.json`.
-4. Créer un jeton dans le profil utilisateur, section `Publication depuis le CLI`.
-5. Donner explicitement à l'IA l'autorisation de publier et lui fournir le jeton.
-
-Le jeton CLI est personnel. Il ne doit être donné à l'IA que si l'utilisateur veut explicitement qu'elle publie à sa place.
-
-### Publier soi-même
-
-Si l'utilisateur préfère publier depuis son ordinateur, il doit installer le CLI localement, connecter son jeton, puis lancer la commande de publication.
-
-```bash
-curl -fsSL https://raw.githubusercontent.com/YannHY/learning-designer/main/install.sh | sh
-learning status
-learning login
-learning publish design.json
-```
-
-La page [cli-reference.php](/Users/rene/Documents/claude/learning-designer/cli-reference.php) détaille l'installation, la création du jeton, `learning login`, `learning publish` et les commandes utiles.
-
-### Utiliser le CLI directement
-
-Le CLI peut aussi être utilisé sans IA pour construire un design depuis le terminal :
-
-```bash
-learning init design.json --title "Atelier IA" --lang fr --duration 120 --mode hybride --group-size 24
-learning add-moment design.json --title "Explorer" --objectives "Identifier les usages possibles"
-learning add-activity design.json --type investigate --duration 30 --group sous-groupes --teacher present --pacing sync --mode onsite --evaluation formative --competencies A6,P34 --description "Comparer trois exemples d'usages de l'IA."
-learning outcome design.json --bloom analyser --verb "Comparer" --text "Comparer des réponses générées par IA selon leur fiabilité."
-learning prompt design.json
-learning handoff design.json --dry-run
-```
-
-Commandes disponibles : `init`/`nouveau`, `add-moment`/`ajouter-moment`, `add-activity`/`ajouter-activite`, `outcome`/`acquis`, `prompt`/`codex-prompt`, `handoff`/`confier-codex`/`codex`, `validate`/`verifier`, `list`/`lister`, `login`/`connexion`, `publish`/`publier`, `status`/`etat`, `upgrade`/`update`.
-
-Les activités acceptent les paramètres principaux de Learning Designer : type d'apprentissage, durée, groupe, présence enseignante, rythme, modalité, évaluation, description, notes, liens et compétences numériques (`A1`, `P6`, `C14` ou identifiants complets `competency:...`). Les acquis d'apprentissage peuvent être reliés à la taxonomie de Bloom en français ou en anglais.
-
-### Skill Claude Code
-
-La page [skill.php](/Users/rene/Documents/claude/learning-designer/skill.php) explique comment installer ou créer une skill Claude Code pour réutiliser automatiquement la méthode Learning Designer.
-
-Elle propose deux usages : installer la skill publiée depuis le dépôt, ou copier un prompt ponctuel qui demande à Claude Code ou Codex de lire la méthode publiée.
-
-## État actuel
-
-Le projet est aujourd'hui à la fois :
-
-- un outil de conception pédagogique
-- un espace personnel de sauvegarde de scénarios
-- un outil de publication et de consultation de designs partagés
-
-Le `README` doit donc être lu comme celui d'une application web complète, et non plus comme celui d'un simple prototype front-end.
-
-## Crédits
-
-- Inspiré de l'UCL Learning Designer
-- Développé par Yann Houry sur la base du travail de François Jourde
-- Licence : CC BY-SA
+Développé par Yann Houry sur la base du travail de François Jourde et inspiré de l'UCL Learning Designer. Le projet est distribué sous licence [CC BY-SA](./LICENSE).

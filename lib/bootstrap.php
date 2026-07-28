@@ -721,6 +721,10 @@ function site_breadcrumb_items(string $active = ''): array
             ['fr' => 'Compte', 'en' => 'Account'],
             ['fr' => 'Profil', 'en' => 'Profile'],
         ],
+        'prompts' => [
+            ['fr' => 'Aide', 'en' => 'Help', 'href' => 'help.php'],
+            ['fr' => 'Prompts pédagogiques', 'en' => 'Teaching prompts'],
+        ],
         'share' => [
             ['fr' => 'Designs partagés', 'en' => 'Shared designs'],
         ],

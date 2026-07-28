@@ -428,7 +428,7 @@ PROMPT;
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="interface.css?v=20260722-mobile-tab-spacing">
+    <link rel="stylesheet" href="interface.css?v=20260728-numbered-subsections">
     <link rel="stylesheet" href="account-ui.css?v=20260520-4">
     <link rel="stylesheet" href="account-pages.css?v=20260722-neutral-theme">
 </head>
@@ -468,7 +468,7 @@ PROMPT;
                 <p>Le <em>learning design</em> consiste à organiser ce que les apprenants vont faire pour atteindre les acquis visés.</p>
                 <div class="help-callout">
                     <i class="fa-solid fa-compass" aria-hidden="true"></i>
-                    <p><strong>Question de départ : que doivent faire les apprenants pour atteindre les acquis visés&nbsp;?</strong>Le design rend cette succession d’activités explicite.</p>
+                    <p><strong>Question de départ : que doivent faire les apprenants pour atteindre les acquis visés&nbsp;?</strong> Le design rend cette succession d’activités explicite.</p>
                 </div>
                 <div class="help-grid three">
                     <div class="help-card">
@@ -487,8 +487,8 @@ PROMPT;
                 <p class="help-spaced">Les types d’apprentissage ne constituent pas une répartition idéale à reproduire mécaniquement. Ils forment un vocabulaire commun pour décrire l’expérience proposée et vérifier qu’elle ne repose pas uniquement sur la transmission. La section <a href="#types-apprentissage">Les six types d’apprentissage</a> les présente en détail.</p>
 
                 <h3 id="learning-designer-scenario-visible">Learning Designer : rendre le scénario visible</h3>
-                <p>Le Learning Designer original a été développé à l’University College London par l’équipe de Diana Laurillard pour aider les enseignants à concevoir des activités pédagogiques, à analyser leur équilibre et à partager leurs projets. L’application présentée ici s’inscrit dans cette filiation : elle transforme un scénario pédagogique en une structure lisible, analysable et réutilisable.</p>
-                <p>L’outil rend vos choix explicites afin que vous puissiez les interroger : le temps prévu correspond-il au temps effectivement scénarisé&nbsp;? Quelle place est accordée à chaque type d’apprentissage&nbsp;? Les élèves pratiquent-ils, discutent-ils et produisent-ils, ou restent-ils surtout en situation d’acquisition&nbsp;? Les modalités de groupe, le rythme, la présence enseignante et les évaluations sont-ils cohérents avec les acquis visés&nbsp;?</p>
+                <p>Le <a href="https://www.ucl.ac.uk/learning-designer/" title="Learning Designer">Learning Designer</a> original a été développé à l’University College London par l’équipe de Diana Laurillard pour aider les enseignants à concevoir des activités pédagogiques, à analyser leur équilibre et à partager leurs scénarisations. L’application présentée ici s’inscrit dans cette filiation : elle transforme un scénario pédagogique en une structure lisible, analysable et réutilisable.</p>
+                <p>L’outil rend vos choix explicites afin que vous puissiez les interroger&nbsp;:&nbsp;le temps prévu correspond-il au temps effectivement scénarisé&nbsp;? Quelle place est accordée à chaque type d’apprentissage&nbsp;? Les élèves pratiquent-ils, discutent-ils et produisent-ils, ou restent-ils surtout en situation d’acquisition&nbsp;? Les modalités de groupe, le rythme, la présence enseignante et les évaluations sont-ils cohérents avec les acquis visés&nbsp;?</p>
                 <div class="help-grid">
                     <div class="help-card">
                         <strong><span class="help-card-icon"><i class="fa-solid fa-pen-ruler" aria-hidden="true"></i></span>Un outil de conception</strong>
@@ -544,13 +544,13 @@ PROMPT;
                         </tbody>
                     </table>
                 </div>
-                <p>Les descriptions et les notes acceptent une mise en forme Markdown légère. Une barre d’outils et un aperçu permettent de structurer plus facilement le texte. Des liens nommés peuvent être ajoutés à chaque activité pour associer consignes, documents, vidéos ou outils.</p>
+                <p>Les descriptions et les notes acceptent une mise en forme <a href="https://github.com/YannHY/cours/blob/master/Tech/Markdown/Apprendre%20le%20Markdown.md" title="Markdown">Markdown</a> légère. Une barre d’outils et un aperçu permettent de structurer plus facilement le texte. Des liens nommés peuvent être ajoutés à chaque activité pour associer consignes, documents, vidéos ou outils.</p>
             </article>
 
             <article class="help-section" id="types-apprentissage">
                 <p class="help-eyebrow"><i class="fa-solid fa-shapes" aria-hidden="true"></i> Cadre pédagogique</p>
                 <h2>Les six types d’apprentissage</h2>
-                <p>Learning Designer s’appuie sur les six types d’apprentissage associés au Cadre conversationnel de Diana Laurillard. Une séquence n’a pas besoin de les utiliser à parts égales, mais leur combinaison aide à varier l’expérience de l’apprenant.</p>
+                <p>Le Learning Designer s’appuie sur les six types d’apprentissage associés au Cadre conversationnel de Diana Laurillard. Une séquence n’a pas besoin de les utiliser à parts égales, mais leur combinaison aide à varier l’expérience de l’apprenant.</p>
                 <div class="help-types">
                     <div class="help-type help-type-read"><span class="help-type-dot"></span><div><strong>Lire / Regarder / Écouter</strong><span>Acquérir des informations par un exposé, un texte, une vidéo ou un enregistrement.</span></div></div>
                     <div class="help-type help-type-investigate"><span class="help-type-dot"></span><div><strong>Investiguer</strong><span>Rechercher, sélectionner, comparer et évaluer des informations ou des données.</span></div></div>
@@ -970,6 +970,12 @@ learning upgrade</pre>
                     <p><strong>Pour aller plus loin :</strong> demandez à l’IA de prioriser trois améliorations réalistes pour votre prochaine séance, puis de vous aider à reformuler concrètement les activités concernées.</p>
                 </div>
 
+                <h3 id="prompts-prets-emploi">Utiliser des prompts prêts à l’emploi</h3>
+                <div class="help-callout">
+                    <i class="fa-solid fa-wand-magic-sparkles" aria-hidden="true"></i>
+                    <p><strong>Une bibliothèque de prompts pédagogiques est en préparation.</strong> Vous pourrez y choisir des prompts conçus pour interroger, enrichir ou compléter votre scénario. Les deux premiers sont consacrés à la conception universelle de l’apprentissage et à la différenciation pédagogique.<br><br><a href="prompts.php">Découvrir la page des prompts</a>.</p>
+                </div>
+
                 <h3 id="creer-contenus-ia">Créer les contenus nécessaires au scénario</h3>
                 <p>Le design décrit les activités à mener ; l’IA peut ensuite vous aider à fabriquer les ressources dont vous avez besoin pour les mettre en œuvre : consignes, fiches élèves, textes adaptés, études de cas, exercices, quiz, corrigés, grilles d’évaluation, supports de présentation ou variantes différenciées.</p>
 
@@ -1006,7 +1012,7 @@ window.helpPromptTranslations = <?= json_encode([
     ],
 ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) ?>;
 </script>
-<script src="help-i18n.js?v=20260722-3"></script>
+<script src="help-i18n.js?v=20260728-3"></script>
 <script>
 var initialHelpLanguage = 'fr';
 try {
@@ -1062,6 +1068,15 @@ document.addEventListener('DOMContentLoaded', function () {
             sectionHeading.prepend(headingIndex);
         }
 
+        var allSubsections = Array.from(section.querySelectorAll(':scope > h3'));
+        allSubsections.forEach(function (subsection, subsectionIndex) {
+            var subheadingIndex = document.createElement('span');
+            subheadingIndex.className = 'help-subheading-index';
+            subheadingIndex.setAttribute('aria-hidden', 'true');
+            subheadingIndex.textContent = sectionNumber + '.' + (subsectionIndex + 1) + ' ';
+            subsection.prepend(subheadingIndex);
+        });
+
         var group = document.createElement('div');
         group.className = 'help-toc-group';
         group.dataset.sectionId = section.id;
@@ -1076,7 +1091,9 @@ document.addEventListener('DOMContentLoaded', function () {
             navigateTo(section);
         });
 
-        var subsections = Array.from(section.querySelectorAll(':scope > h3[id]'));
+        var subsections = allSubsections.filter(function (subsection) {
+            return subsection.id;
+        });
         if (subsections.length > 1) {
             var row = document.createElement('div');
             row.className = 'help-toc-row';

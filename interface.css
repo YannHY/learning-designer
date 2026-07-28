@@ -4642,6 +4642,55 @@ body.help-page {
 .help-content {
     min-width: 0;
 }
+.prompt-library-content {
+    width: 100%;
+    margin: 24px 0 0;
+}
+.prompt-page-header {
+    padding-top: 8px;
+}
+.prompt-library-content #prompts-intro,
+.prompt-library-content #prompts-intro-followup {
+    max-width: none;
+}
+.help-card .prompt-title-text {
+    color: inherit;
+    font-size: inherit;
+    line-height: inherit;
+}
+.prompt-card {
+    margin-top: 24px;
+    padding: clamp(18px, 3vw, 26px);
+}
+.prompt-card-heading {
+    display: flex;
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 6px;
+}
+.prompt-card-heading > strong {
+    margin: 0;
+    font-size: 16px;
+}
+.help-card .prompt-author {
+    flex: 0 0 auto;
+    color: var(--muted);
+    font-size: 12px;
+    font-weight: 700;
+}
+.prompt-card .prompt-library-wrap {
+    box-sizing: border-box;
+    width: 100%;
+    max-width: none;
+    margin: 20px 0 0;
+}
+.help-card .prompt-library-text {
+    box-sizing: border-box;
+    min-height: 0;
+    overflow-x: hidden;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+}
 .help-section {
     padding: 0 0 48px;
     border-bottom: 1px solid var(--line);
@@ -4679,13 +4728,18 @@ body.help-page {
     font-variant-numeric: tabular-nums;
 }
 .help-section h3 {
-    margin: 30px 0 10px;
+    margin: 48px 0 14px;
     color: var(--text-strong);
     font-size: 18px;
     line-height: 1.35;
 }
+.help-subheading-index {
+    margin-right: 9px;
+    color: var(--help-accent);
+    font-variant-numeric: tabular-nums;
+}
 .help-section h4 {
-    margin: 22px 0 8px;
+    margin: 32px 0 10px;
     color: var(--text-strong);
     font-size: 15px;
 }

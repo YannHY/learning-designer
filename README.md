@@ -7,6 +7,7 @@ Elle permet de structurer une séquence en moments et activités, d'en analyser 
 ## Documentation
 
 - [Aide complète](./help.php) : prise en main, activités, analyses, sauvegarde, partage, import/export, Markdown, IA et CLI
+- [Prompts pédagogiques](./prompts.php) : prompts bilingues prêts à copier pour enrichir un scénario avec une IA
 - [Comprendre le learning design](./learning-design.php) : principes et cadre pédagogique
 - [Référence du CLI](./cli-reference.php) : commandes du CLI `learning`
 
@@ -18,7 +19,19 @@ Elle permet de structurer une séquence en moments et activités, d'en analyser 
 - import et export en plusieurs formats, dont JSON, LDJ, Markdown, Excel et Word ;
 - comptes, sauvegarde en ligne et publication par lien ;
 - interface bilingue français/anglais et thèmes clair/sombre ;
+- bibliothèque bilingue de prompts pédagogiques avec copie en un clic ;
 - création, validation et publication depuis le terminal avec le CLI `learning`.
+
+## Enrichissement avec une IA
+
+Une fois le scénario pédagogique généré, il peut être exporté, notamment au format Markdown, puis transmis à Claude, ChatGPT, Gemini ou une autre IA afin de l'enrichir, de l'améliorer, de le compléter ou de l'adapter.
+
+La page [Prompts pédagogiques](./prompts.php) propose actuellement :
+
+- un prompt de révision d'un plan de cours basé sur la conception universelle de l'apprentissage (CUA), proposé par François Jourde ;
+- un prompt d'enrichissement par la différenciation pédagogique, proposé par Yann Houry.
+
+Chaque prompt est disponible en français et en anglais. Le bouton de copie utilise automatiquement la langue active de l'interface.
 
 ## Installation locale
 
@@ -47,6 +60,7 @@ Conservez les secrets dans un fichier local non versionné, par exemple `learnin
 - [index.html](./index.html) : interface de conception ;
 - [interface.js](./interface.js) et [interface.css](./interface.css) : logique et styles de l'application ;
 - [help.php](./help.php) : documentation utilisateur ;
+- [prompts.php](./prompts.php) : bibliothèque bilingue de prompts pédagogiques ;
 - [lib/bootstrap.php](./lib/bootstrap.php) : configuration, base de données et fonctions PHP communes ;
 - [bin/learning](./bin/learning) : CLI de création et de publication.
 

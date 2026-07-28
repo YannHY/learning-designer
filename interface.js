@@ -1,13 +1,16 @@
 (() => {
 "use strict";
+/* Keep in sync with the --read…--collaborate tokens in interface.css and with
+   $LEARNING_TYPES in view.php. Duplicated because exports and canvas work
+   need literal values, not computed styles. */
 const LEARNING_TYPES = [
   { id: "undefined", label: "Non défini", color: "#d1d5db" },
-  { id: "read", label: "Lire / Regarder / Écouter", color: "#a1f5ed" },
-  { id: "investigate", label: "Investiguer", color: "#f8807f" },
-  { id: "practice", label: "Pratiquer", color: "#bb98dc" },
-  { id: "produce", label: "Produire", color: "#bdea75" },
-  { id: "discuss", label: "Discuter", color: "#7aaeea" },
-  { id: "collaborate", label: "Collaborer", color: "#ffd966" }
+  { id: "read", label: "Lire / Regarder / Écouter", color: "#5bddd3" },
+  { id: "investigate", label: "Investiguer", color: "#f19492" },
+  { id: "practice", label: "Pratiquer", color: "#c498ec" },
+  { id: "produce", label: "Produire", color: "#a2d681" },
+  { id: "discuss", label: "Discuter", color: "#85b6f0" },
+  { id: "collaborate", label: "Collaborer", color: "#e7b959" }
 ];
 
 const MATERIAL_ICON_PATHS = {
@@ -1627,9 +1630,14 @@ function ensureMarkdownPreviews(root = document) {
 
 const AUTO_RESIZE_SELECTOR = ".session-title, .session-objectives, .session-intentions, .activity-description, .session-notes-input, .panel-textarea, .outcome-text";
 
+/* scrollHeight excludes the border, but these textareas are border-box, so
+   assigning it directly left the last line clipped by the border width. */
 function autoResizeTextarea(el) {
   el.style.height = "auto";
-  el.style.height = el.scrollHeight + "px";
+  const styles = getComputedStyle(el);
+  const border =
+    parseFloat(styles.borderTopWidth) + parseFloat(styles.borderBottomWidth);
+  el.style.height = el.scrollHeight + border + "px";
 }
 
 function initAutoResizeTextareas(root = document) {
@@ -2910,15 +2918,27 @@ function chartSummary(data, emptyLabel = t("noData")) {
 function renderConic(el, data) {
   el.setAttribute("role", "img");
   if (data.sum <= 0) {
-    el.style.background = "conic-gradient(#d2d2d2 0% 100%)";
+    el.classList.add("is-empty");
+    el.style.background = "";
+    el.style.removeProperty("--undefined-end");
     el.setAttribute("aria-label", t("noData"));
     return;
   }
+  el.classList.remove("is-empty");
   const parts = data.segments
     .filter((segment) => segment.pct > 0)
     .map((segment) => `${segment.color} ${segment.start}% ${segment.end}%`);
   el.style.background = `conic-gradient(${parts.join(", ")})`;
+  const undefinedSegment = data.segments.find((segment) => segment.key === "undefined");
+  el.style.setProperty("--undefined-end", `${undefinedSegment ? undefinedSegment.end : 0}%`);
   el.setAttribute("aria-label", chartSummary(data));
+}
+
+/* "Non défini" is an unfilled ring, not a coloured dot: at 8px a hatch would
+   be illegible, but an outline still reads as "nothing chosen yet". */
+function legendDot(key, color) {
+  if (key === "undefined") return `<span class="legend-dot legend-dot--undefined"></span>`;
+  return `<span class="legend-dot" style="background:${color}"></span>`;
 }
 
 function renderLegend(container, data, showPct = true) {
@@ -2926,7 +2946,7 @@ function renderLegend(container, data, showPct = true) {
     .filter((segment) => segment.pct > 0)
     .map((segment) => {
       const pct = showPct ? ` ${Math.round(segment.pct)}%` : "";
-      return `<span class="legend-item"><span class="legend-dot" style="background:${segment.color}"></span>${segment.label}${pct}</span>`;
+      return `<span class="legend-item">${legendDot(segment.key, segment.color)}${segment.label}${pct}</span>`;
     })
     .join("");
 }
@@ -3141,10 +3161,12 @@ function renderPieOuterLabels(wrapEl, pieEl, labelsEl, tooltipEl, data, codeForS
 function renderGroupBar(data) {
   analysisGroupBar.setAttribute("role", "img");
   if (data.sum <= 0) {
-    analysisGroupBar.style.background = "linear-gradient(90deg, #d2d2d2 0% 100%)";
+    analysisGroupBar.classList.add("is-empty");
+    analysisGroupBar.style.background = "";
     analysisGroupBar.setAttribute("aria-label", t("noData"));
     return;
   }
+  analysisGroupBar.classList.remove("is-empty");
   const parts = data.segments
     .filter((segment) => segment.pct > 0)
     .map((segment) => `${segment.color} ${segment.start}% ${segment.end}%`);
@@ -3493,7 +3515,7 @@ function renderTopPanel() {
 
   topLegend.innerHTML = LEARNING_TYPES.map((type) => {
     const pct = topData.sum > 0 ? Math.round((totals[type.id] / topData.sum) * 100) : 0;
-    return `<span class="legend-item"><span class="legend-dot" style="background:${type.color}"></span>${type.label} ${pct}%</span>`;
+    return `<span class="legend-item">${legendDot(type.id, type.color)}${type.label} ${pct}%</span>`;
   }).join("");
 
   renderAnalysisPanel();

@@ -118,8 +118,13 @@ require_once __DIR__ . '/lib/bootstrap.php';
             flex: 0 0 auto;
             border-radius: 8px;
             color: #172033;
-            background: var(--type-bg);
+            background: color-mix(in srgb, var(--ld-type) 33%, transparent);
             border: 1px solid rgba(15, 23, 42, 0.08);
+        }
+        /* On the dark card a 33% tint leaves the dark glyph at ~2:1. Full
+           strength keeps the same ink legible at ~7:1 or better. */
+        [data-theme="dark"] .ld-icon {
+            background: var(--ld-type);
         }
         .ld-type-card h3,
         .ld-step-card h3 {
@@ -226,42 +231,42 @@ require_once __DIR__ . '/lib/bootstrap.php';
         <h2 data-i18n-fr="Les six types d'apprentissage" data-i18n-en="The Six Learning Types">Les six types d'apprentissage</h2>
         <p data-i18n-fr="Le modèle utilisé ici reprend les six types d'apprentissage associés au Cadre conversationnel de Diana Laurillard. Une séquence solide ne les mobilise pas forcément tous au même niveau, mais elle gagne à combiner plusieurs formes d'activité." data-i18n-en="The model used here follows the six learning types associated with Diana Laurillard’s Conversational Framework. A strong sequence does not necessarily use them all equally, but it benefits from combining several kinds of activity.">Le modèle utilisé ici reprend les six types d'apprentissage associés au Cadre conversationnel de Diana Laurillard. Une séquence solide ne les mobilise pas forcément tous au même niveau, mais elle gagne à combiner plusieurs formes d'activité.</p>
         <div class="ld-type-grid">
-            <article class="ld-type-card" style="--type-bg:#a1f5ed55">
+            <article class="ld-type-card" style="--ld-type:var(--read)">
                 <div class="ld-card-head">
                     <span class="ld-icon"><i class="fa-solid fa-book-open" aria-hidden="true"></i></span>
                     <h3 data-i18n-fr="Acquisition" data-i18n-en="Acquisition">Acquisition</h3>
                 </div>
                 <p data-i18n-fr="Écouter un enseignant, lire un livre ou une page web, regarder une vidéo." data-i18n-en="Listening to a teacher, reading a book or web page, watching a video.">Écouter un enseignant, lire un livre ou une page web, regarder une vidéo.</p>
             </article>
-            <article class="ld-type-card" style="--type-bg:#ffd96655">
+            <article class="ld-type-card" style="--ld-type:var(--collaborate)">
                 <div class="ld-card-head">
                     <span class="ld-icon"><i class="fa-solid fa-people-group" aria-hidden="true"></i></span>
                     <h3 data-i18n-fr="Collaboration" data-i18n-en="Collaboration">Collaboration</h3>
                 </div>
                 <p data-i18n-fr="Réaliser un projet en petit groupe, discuter avec d'autres élèves, développer de nouvelles idées." data-i18n-en="Carrying out a small-group project, discussing with other students, developing new ideas.">Réaliser un projet en petit groupe, discuter avec d'autres élèves, développer de nouvelles idées.</p>
             </article>
-            <article class="ld-type-card" style="--type-bg:#7aaeea55">
+            <article class="ld-type-card" style="--ld-type:var(--discuss)">
                 <div class="ld-card-head">
                     <span class="ld-icon"><i class="fa-solid fa-comments" aria-hidden="true"></i></span>
                     <h3 data-i18n-fr="Discussion" data-i18n-en="Discussion">Discussion</h3>
                 </div>
                 <p data-i18n-fr="Partager ses connaissances, tenir compte du point de vue des autres, défendre une opinion." data-i18n-en="Sharing knowledge, considering other viewpoints, defending an opinion.">Partager ses connaissances, tenir compte du point de vue des autres, défendre une opinion.</p>
             </article>
-            <article class="ld-type-card" style="--type-bg:#f8807f55">
+            <article class="ld-type-card" style="--ld-type:var(--investigate)">
                 <div class="ld-card-head">
                     <span class="ld-icon"><i class="fa-solid fa-magnifying-glass-chart" aria-hidden="true"></i></span>
                     <h3 data-i18n-fr="Investigation" data-i18n-en="Investigation">Investigation</h3>
                 </div>
                 <p data-i18n-fr="Rechercher et sélectionner des informations, les comprendre, puis évaluer la qualité des résultats." data-i18n-en="Searching for and selecting information, understanding it, then evaluating the quality of the results.">Rechercher et sélectionner des informations, les comprendre, puis évaluer la qualité des résultats.</p>
             </article>
-            <article class="ld-type-card" style="--type-bg:#bb98dc55">
+            <article class="ld-type-card" style="--ld-type:var(--practice)">
                 <div class="ld-card-head">
                     <span class="ld-icon"><i class="fa-solid fa-rotate-right" aria-hidden="true"></i></span>
                     <h3 data-i18n-fr="Pratique" data-i18n-en="Practice">Pratique</h3>
                 </div>
                 <p data-i18n-fr="Exprimer ce qui a été appris, recevoir des commentaires, revoir son approche et essayer à nouveau." data-i18n-en="Expressing what has been learned, receiving comments, reviewing the approach, and trying again.">Exprimer ce qui a été appris, recevoir des commentaires, revoir son approche et essayer à nouveau.</p>
             </article>
-            <article class="ld-type-card" style="--type-bg:#bdea7555">
+            <article class="ld-type-card" style="--ld-type:var(--produce)">
                 <div class="ld-card-head">
                     <span class="ld-icon"><i class="fa-solid fa-hammer" aria-hidden="true"></i></span>
                     <h3 data-i18n-fr="Production" data-i18n-en="Production">Production</h3>

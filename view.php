@@ -47,12 +47,14 @@ try {
 // ── Label maps ───────────────────────────────────────────────
 $LEARNING_TYPES = [
     'undefined'   => ['label' => 'Non défini',               'color' => '#d1d5db'],
-    'read'        => ['label' => 'Lire / Regarder / Écouter', 'color' => '#a1f5ed'],
-    'investigate' => ['label' => 'Investiguer',              'color' => '#f8807f'],
-    'practice'    => ['label' => 'Pratiquer',                'color' => '#bb98dc'],
-    'produce'     => ['label' => 'Produire',                 'color' => '#bdea75'],
-    'discuss'     => ['label' => 'Discuter',                 'color' => '#7aaeea'],
-    'collaborate' => ['label' => 'Collaborer',               'color' => '#ffd966'],
+    // This page is self-contained and cannot read interface.css tokens;
+    // keep these in sync with --read…--collaborate there.
+    'read'        => ['label' => 'Lire / Regarder / Écouter', 'color' => '#5bddd3'],
+    'investigate' => ['label' => 'Investiguer',              'color' => '#f19492'],
+    'practice'    => ['label' => 'Pratiquer',                'color' => '#c498ec'],
+    'produce'     => ['label' => 'Produire',                 'color' => '#a2d681'],
+    'discuss'     => ['label' => 'Discuter',                 'color' => '#85b6f0'],
+    'collaborate' => ['label' => 'Collaborer',               'color' => '#e7b959'],
 ];
 $GROUP_MODES    = ['whole' => 'Groupe entier', 'subgroups' => 'Sous-groupes', 'individual' => 'Individuel'];
 $TRAINER_MODES  = ['present' => 'Enseignant présent', 'absent' => 'Enseignant absent'];

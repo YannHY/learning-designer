@@ -10,12 +10,17 @@
   --focus: #0a58ca;
   --shadow-soft: 0 12px 32px rgba(19, 39, 68, 0.08);
   --shadow-card: 0 8px 24px rgba(15, 23, 42, 0.08);
-  --read: #a1f5ed;
-  --investigate: #f8807f;
-  --practice: #bb98dc;
-  --produce: #bdea75;
-  --discuss: #7aaeea;
-  --collaborate: #ffd966;
+  /* Six learning types, normalised in OKLCH: equal perceived weight, with
+     lightness allowed to follow each hue's own gamut so yellow stays yellow
+     instead of turning to mustard. CIE L* spread is 11 (was 24).
+     Mirrored in interface.js (LEARNING_TYPES) and view.php, which is
+     self-contained and cannot read these tokens. */
+  --read: #5bddd3;
+  --investigate: #f19492;
+  --practice: #c498ec;
+  --produce: #a2d681;
+  --discuss: #85b6f0;
+  --collaborate: #e7b959;
 
   /* ── Typographie ─────────────────────────────────── */
   --font-family: "Inter", "Segoe UI", "Trebuchet MS", sans-serif;
@@ -174,12 +179,12 @@ select:focus-visible,
   justify-content: center;
   border-radius: 50%;
   background: conic-gradient(
-    #a1f5ed   0deg  100deg,
-    #f8807f 100deg  130deg,
-    #bb98dc 130deg  200deg,
-    #bdea75 200deg  235deg,
-    #7aaeea 235deg  325deg,
-    #ffd966 310deg  360deg
+    var(--read)          0deg  100deg,
+    var(--investigate) 100deg  130deg,
+    var(--practice)    130deg  200deg,
+    var(--produce)     200deg  235deg,
+    var(--discuss)     235deg  310deg,
+    var(--collaborate) 310deg  360deg
   );
   color: #fff;
   font-size: 13px;
@@ -408,6 +413,7 @@ select:focus-visible,
   min-height: 64px;
   resize: none;
   overflow: hidden;
+  line-height: 1.6;
 }
 
 .expandable-field {
@@ -491,7 +497,10 @@ select:focus-visible,
   background: #fff;
   color: var(--text);
   font-size: 14px;
-  line-height: 1.35;
+  /* Matches the textarea underneath: the preview replaces it when the field
+     loses focus, so a different line-height would make the field jump height
+     between reading and editing. */
+  line-height: 1.6;
   white-space: normal;
   cursor: text;
   box-shadow: inset 0 1px 2px rgba(15, 23, 42, 0.03);
@@ -622,8 +631,8 @@ body.fullscreen-editor-open {
   width: 290px;
   height: 290px;
   border-radius: 50%;
-  border: 1px solid #bfc5cb;
-  background: conic-gradient(#d2d2d2 0% 100%);
+  border: 1px solid var(--line);
+  background: transparent;
 }
 
 .pie-with-labels {
@@ -722,6 +731,11 @@ body.fullscreen-editor-open {
   border-radius: 50%;
 }
 
+.legend-dot--undefined {
+  background: transparent;
+  box-shadow: inset 0 0 0 1.5px color-mix(in srgb, var(--muted) 60%, transparent);
+}
+
 .analysis-view {
   display: grid;
   gap: 12px;
@@ -788,9 +802,52 @@ body.fullscreen-editor-open {
 .analysis-big-pie,
 .analysis-small-pie {
   border-radius: 50%;
-  border: 1px solid #c8c8c8;
-  background: conic-gradient(#d2d2d2 0% 100%);
+  border: 1px solid var(--line);
+  background: transparent;
+}
+
+.analysis-big-pie:not(.is-empty),
+.analysis-small-pie:not(.is-empty) {
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
+}
+
+/* Empty charts read as an outline, never as a filled grey slice. */
+.top-pie.is-empty,
+.analysis-big-pie.is-empty,
+.analysis-small-pie.is-empty {
+  border: 2px dashed color-mix(in srgb, var(--muted) 40%, transparent);
+}
+
+/* The "Non défini" share is hatched so it cannot be mistaken for a real
+   category. --undefined-end is set by renderConic; it stays 0% on charts
+   that have no undefined bucket, which hides the overlay entirely. */
+.top-pie,
+.analysis-big-pie,
+.analysis-small-pie {
+  position: relative;
+}
+
+.top-pie::after,
+.analysis-big-pie::after,
+.analysis-small-pie::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  pointer-events: none;
+  background: repeating-linear-gradient(
+    45deg,
+    transparent 0 4px,
+    rgba(71, 85, 105, 0.4) 4px 6px
+  );
+  -webkit-mask-image: conic-gradient(
+    #000 0 var(--undefined-end, 0%),
+    transparent var(--undefined-end, 0%) 100%
+  );
+  mask-image: conic-gradient(
+    #000 0 var(--undefined-end, 0%),
+    transparent var(--undefined-end, 0%) 100%
+  );
 }
 
 .analysis-big-pie {
@@ -817,7 +874,7 @@ body.fullscreen-editor-open {
 }
 
 .analysis-learning-block .analysis-legend {
-  display: none;
+  max-width: 320px;
 }
 
 .analysis-group-section {
@@ -829,10 +886,17 @@ body.fullscreen-editor-open {
 .analysis-group-bar {
   width: min(760px, 100%);
   height: 36px;
-  border: 1px solid #bfc5cb;
+  border: 1px solid var(--line);
   border-radius: 3px;
-  background: linear-gradient(90deg, #d2d2d2 0% 100%);
+  background: transparent;
+}
+
+.analysis-group-bar:not(.is-empty) {
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
+}
+
+.analysis-group-bar.is-empty {
+  border: 2px dashed color-mix(in srgb, var(--muted) 40%, transparent);
 }
 
 /* Partition musicale (Musical timeline view) */
@@ -1135,6 +1199,11 @@ body.fullscreen-editor-open {
   padding: 24px;
 }
 
+/* Careful: this outranks .modal.export-modal further down (id+class beats two
+   classes), so the height below is the one that actually applies and the 780px
+   stated there never takes effect. That is also why the width there needs
+   !important. Sizing the export modal means editing this block, or removing it
+   and dropping the !important. */
 #export-modal-backdrop .modal {
   width: min(920px, 96vw);
   height: min(760px, calc(100vh - 48px));
@@ -1144,21 +1213,8 @@ body.fullscreen-editor-open {
   overflow: hidden;
 }
 
-#export-result-text.panel-textarea {
-  flex: 1 1 auto;
-  min-height: 320px;
-  height: auto;
-  max-height: none;
-  overflow: auto;
-  resize: vertical;
-  font-family: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
-  line-height: 1.45;
-  white-space: pre;
-}
-
-#export-modal-backdrop .modal-actions {
-  align-self: end;
-}
+/* The export result textarea and the actions row are styled once, further
+   down, under .modal.export-modal — do not restate them here. */
 
 .partition-config-modal {
   width: min(520px, 92vw);
@@ -1797,6 +1853,20 @@ body.fullscreen-editor-open {
   z-index: 1;
 }
 
+/* Prominent but not primary. The toolbar gets exactly one filled action —
+   the one that creates — so Exporter carries the accent as an outline
+   rather than a second solid blue competing for the same role. */
+.btn-outline {
+  border-color: color-mix(in srgb, var(--primary) 40%, var(--line));
+  color: var(--primary);
+  font-weight: 600;
+}
+
+.btn-outline:hover {
+  background: color-mix(in srgb, var(--primary) 8%, var(--panel));
+  border-color: var(--primary);
+}
+
 .btn-light {
   background: #fff;
 }
@@ -2106,7 +2176,23 @@ main {
   font-size: 13px;
   background: #fff;
   min-height: 44px;
+  line-height: 1.6;
   transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+/* A textarea is two rows tall by default, so a one-line placeholder sat
+   against the top edge and left the field looking top-heavy. Scoped to
+   :placeholder-shown on purpose: centring a field that holds real text makes
+   the content overflow both edges, and scrollHeight only measures downwards,
+   so autoResizeTextarea would under-size the field and clip the last lines. */
+.panel-textarea:placeholder-shown,
+.session-title:placeholder-shown,
+.session-objectives:placeholder-shown,
+.session-intentions:placeholder-shown,
+.activity-description:placeholder-shown,
+.session-notes-input:placeholder-shown,
+.activity-notes-input:placeholder-shown {
+  align-content: center;
 }
 
 .session-title {
@@ -3247,28 +3333,6 @@ main {
     justify-content: center;
   }
 
-  #export-design-btn {
-    background: var(--panel);
-    border-color: var(--line);
-    color: var(--text-body);
-    font-weight: 400;
-    -webkit-text-fill-color: currentColor;
-    box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
-    filter: none;
-  }
-
-  #export-design-btn::after {
-    display: none;
-  }
-
-  #export-design-btn:hover,
-  #export-design-btn:focus-visible {
-    background: var(--hover-bg);
-    border-color: var(--line);
-    color: var(--text-body);
-    -webkit-text-fill-color: currentColor;
-    filter: none;
-  }
 
   #toggle-intentions-btn,
   #new-design-btn,
@@ -3804,9 +3868,12 @@ html[data-theme="dark"] body {
   --danger-bg:     rgba(248, 81, 73, 0.12);
   --danger-border: rgba(248, 81, 73, 0.28);
 
-  /* ── Primary button ── */
-  --btn-primary-from:   #388bfd;
-  --btn-primary-to:     #1f6feb;
+  /* ── Primary button ──
+     Shifted one step darker than the original #388bfd/#1f6feb: white label
+     only reached 3.34:1 on the light end of that gradient. Now 4.63:1 at the
+     top and 6.39:1 at the bottom. */
+  --btn-primary-from:   #1f6feb;
+  --btn-primary-to:     #1559c7;
   --btn-primary-border: #1158c7;
 
   /* ── Warnings / tooltips ── */
@@ -3927,6 +3994,29 @@ html[data-theme="dark"] body {
 }
 [data-theme="dark"] .btn:hover {
   background: rgba(255, 255, 255, 0.10);
+}
+/* [data-theme="dark"] .btn outranks .btn-primary, so the dark
+   --btn-primary-* tokens above could never actually paint and every primary
+   action fell back to a plain dark button. Restore the fill at matching
+   specificity. */
+[data-theme="dark"] .btn-primary {
+  background: linear-gradient(180deg, var(--btn-primary-from), var(--btn-primary-to));
+  border-color: var(--btn-primary-border);
+  color: #fff;
+}
+[data-theme="dark"] .btn-primary:hover {
+  background: linear-gradient(180deg, var(--btn-primary-from), var(--btn-primary-to));
+  filter: brightness(1.08);
+}
+/* Must sit after [data-theme="dark"] .btn, which matches .btn-outline too and
+   would otherwise strip the accent back to neutral body text. */
+[data-theme="dark"] .btn-outline {
+  color: var(--primary);
+  border-color: color-mix(in srgb, var(--primary) 55%, var(--line));
+}
+[data-theme="dark"] .btn-outline:hover {
+  background: color-mix(in srgb, var(--primary) 16%, var(--panel));
+  border-color: var(--primary);
 }
 [data-theme="dark"] .btn-light {
   background: rgba(36, 35, 31, 0.92);
@@ -4091,15 +4181,8 @@ html[data-theme="dark"] body {
 }
 
 /* ── Misc ── */
-[data-theme="dark"] .analysis-big-pie,
-[data-theme="dark"] .analysis-small-pie {
-  border-color: rgba(129, 124, 112, 0.42);
-}
 [data-theme="dark"] .pie-outer-label {
   color: var(--text-strong);
-}
-[data-theme="dark"] .analysis-group-bar {
-  border-color: rgba(129, 124, 112, 0.42);
 }
 [data-theme="dark"] .toolbar-sep {
   background: var(--line);
@@ -4428,7 +4511,7 @@ body.help-page {
     width: clamp(300px, 31vw, 420px);
     height: clamp(300px, 31vw, 420px);
     border-radius: 50%;
-    background: conic-gradient(#a1f5ed 0 28%, #f8807f 28% 38%, #bb98dc 38% 57%, #bdea75 57% 68%, #7aaeea 68% 88%, #ffd966 88%);
+    background: conic-gradient(var(--read) 0 28%, var(--investigate) 28% 38%, var(--practice) 38% 57%, var(--produce) 57% 68%, var(--discuss) 68% 88%, var(--collaborate) 88%);
     content: "";
     opacity: .82;
     filter: saturate(.82);
@@ -5160,12 +5243,12 @@ body.help-page {
   margin-top: 18px;
 }
 
-.help-type-read { --type-color: #a1f5ed; }
-.help-type-investigate { --type-color: #f8807f; }
-.help-type-practice { --type-color: #bb98dc; }
-.help-type-produce { --type-color: #bdea75; }
-.help-type-discuss { --type-color: #7aaeea; }
-.help-type-collaborate { --type-color: #ffd966; }
+.help-type-read { --type-color: var(--read); }
+.help-type-investigate { --type-color: var(--investigate); }
+.help-type-practice { --type-color: var(--practice); }
+.help-type-produce { --type-color: var(--produce); }
+.help-type-discuss { --type-color: var(--discuss); }
+.help-type-collaborate { --type-color: var(--collaborate); }
 
 /* About page */
 body.about-page {

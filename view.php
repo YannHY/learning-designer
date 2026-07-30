@@ -455,6 +455,7 @@ $displayDesignedMinutes = $designedMinutes > 0 ? $designedMinutes : $totalMinute
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title><?= esc($title) ?> — Learning Designer</title>
+  <link rel="stylesheet" href="interface.css?v=20260730-heading-spacing-h3">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" referrerpolicy="no-referrer">
   <style>
     :root {
@@ -483,9 +484,6 @@ $displayDesignedMinutes = $designedMinutes > 0 ? $designedMinutes : $totalMinute
     .hero { margin-bottom: 32px; }
     .hero h1 {
       margin: 0 0 8px;
-      font-size: clamp(26px, 4vw, 40px);
-      line-height: 1.1;
-      letter-spacing: -.03em;
     }
     .hero-meta { color: var(--text-2); font-size: 13px; display: flex; flex-wrap: wrap; gap: 6px 16px; }
     .hero-meta span { white-space: nowrap; }
@@ -542,9 +540,6 @@ $displayDesignedMinutes = $designedMinutes > 0 ? $designedMinutes : $totalMinute
     }
     .sessions-toolbar-title {
       margin: 0;
-      font-size: 14px;
-      font-weight: 800;
-      color: var(--text-1);
     }
     .activity-data-toggle-btn {
       display: inline-flex;
@@ -633,8 +628,6 @@ $displayDesignedMinutes = $designedMinutes > 0 ? $designedMinutes : $totalMinute
     }
     .markdown-content h2 {
       margin: 0 0 8px;
-      font-size: 16px;
-      color: var(--text-1);
     }
     .markdown-content ul,
     .markdown-content ol {
@@ -794,7 +787,7 @@ $displayDesignedMinutes = $designedMinutes > 0 ? $designedMinutes : $totalMinute
     }
   </style>
 </head>
-<body>
+<body class="published-design-page">
 <main class="page">
   <header class="hero">
     <h1><?= esc($title) ?></h1>

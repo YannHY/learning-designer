@@ -149,10 +149,9 @@ function e(string $value): string
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" referrerpolicy="no-referrer">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="interface.css?v=20260729-language-toggle">
+    <link rel="stylesheet" href="interface.css?v=20260730-heading-spacing-h3">
     <link rel="stylesheet" href="account-ui.css?v=20260520-4">
-    <link rel="stylesheet" href="account-pages.css?v=20260730-dark-primary">
+    <link rel="stylesheet" href="account-pages.css?v=20260730-heading-spacing">
 </head>
 <body class="profile-page">
 <?php render_site_nav('profile'); ?>

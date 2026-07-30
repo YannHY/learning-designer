@@ -427,10 +427,9 @@ PROMPT;
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" referrerpolicy="no-referrer">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="interface.css?v=20260730-ui-monospace">
+    <link rel="stylesheet" href="interface.css?v=20260730-heading-spacing-h3">
     <link rel="stylesheet" href="account-ui.css?v=20260520-4">
-    <link rel="stylesheet" href="account-pages.css?v=20260730-dark-primary">
+    <link rel="stylesheet" href="account-pages.css?v=20260730-heading-spacing">
 </head>
 <body class="help-page">
 <?php render_site_nav('help'); ?>
@@ -466,25 +465,6 @@ PROMPT;
                 <p class="help-eyebrow"><i class="fa-solid fa-rocket" aria-hidden="true"></i> Prise en main</p>
                 <h2>Comprendre le learning design</h2>
                 <p>Le <em>learning design</em> consiste à organiser ce que les apprenants vont faire pour atteindre les acquis visés.</p>
-                <div class="help-callout">
-                    <i class="fa-solid fa-compass" aria-hidden="true"></i>
-                    <p><strong>Question de départ : que doivent faire les apprenants pour atteindre les acquis visés&nbsp;?</strong> Le design rend cette succession d’activités explicite.</p>
-                </div>
-                <div class="help-grid three">
-                    <div class="help-card">
-                        <strong><span class="help-card-icon"><i class="fa-solid fa-person-chalkboard" aria-hidden="true"></i></span>Concevoir l’activité</strong>
-                        <span>Préciser ce que font les apprenants, avec quelles ressources, dans quelle organisation et pendant combien de temps.</span>
-                    </div>
-                    <div class="help-card">
-                        <strong><span class="help-card-icon"><i class="fa-solid fa-shapes" aria-hidden="true"></i></span>Varier les apprentissages</strong>
-                        <span>Combiner acquisition, investigation, pratique, production, discussion et collaboration selon les besoins du scénario.</span>
-                    </div>
-                    <div class="help-card">
-                        <strong><span class="help-card-icon"><i class="fa-solid fa-arrows-rotate" aria-hidden="true"></i></span>Observer et ajuster</strong>
-                        <span>Comparer l’intention initiale avec ce qui se passe réellement, puis redessiner la séquence à partir des retours.</span>
-                    </div>
-                </div>
-                <p class="help-spaced">Les types d’apprentissage ne constituent pas une répartition idéale à reproduire mécaniquement. Ils forment un vocabulaire commun pour décrire l’expérience proposée et vérifier qu’elle ne repose pas uniquement sur la transmission. La section <a href="#types-apprentissage">Les six types d’apprentissage</a> les présente en détail.</p>
 
                 <h3 id="learning-designer-scenario-visible">Learning Designer : rendre le scénario visible</h3>
                 <p>Le <a href="https://www.ucl.ac.uk/learning-designer/" title="Learning Designer">Learning Designer</a> original a été développé à l’University College London par l’équipe de Diana Laurillard pour aider les enseignants à concevoir des activités pédagogiques, à analyser leur équilibre et à partager leurs scénarisations. L’application présentée ici s’inscrit dans cette filiation : elle transforme un scénario pédagogique en une structure lisible, analysable et réutilisable.</p>
@@ -550,7 +530,7 @@ PROMPT;
             <article class="help-section" id="types-apprentissage">
                 <p class="help-eyebrow"><i class="fa-solid fa-shapes" aria-hidden="true"></i> Cadre pédagogique</p>
                 <h2>Les six types d’apprentissage</h2>
-                <p>Le Learning Designer s’appuie sur les six types d’apprentissage associés au Cadre conversationnel de Diana Laurillard. Une séquence n’a pas besoin de les utiliser à parts égales, mais leur combinaison aide à varier l’expérience de l’apprenant.</p>
+                <p>Le Learning Designer s’appuie sur les six types d’apprentissage associés au <a href="cadre-conversationnel.php">Cadre conversationnel de Diana Laurillard</a>. Une séquence n’a pas besoin de les utiliser à parts égales, mais leur combinaison aide à varier l’expérience de l’apprenant.</p>
                 <div class="help-types">
                     <div class="help-type help-type-read"><span class="help-type-dot"></span><div><strong>Lire / Regarder / Écouter</strong><span>Acquérir des informations par un exposé, un texte, une vidéo ou un enregistrement.</span></div></div>
                     <div class="help-type help-type-investigate"><span class="help-type-dot"></span><div><strong>Investiguer</strong><span>Rechercher, sélectionner, comparer et évaluer des informations ou des données.</span></div></div>

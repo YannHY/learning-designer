@@ -108,17 +108,16 @@ function share_count_label(int $count, string $singular): string
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" referrerpolicy="no-referrer" />
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="interface.css?v=20260729-language-toggle" />
+    <link rel="stylesheet" href="interface.css?v=20260730-heading-spacing-h3" />
     <link rel="stylesheet" href="account-ui.css?v=20260520-4" />
-    <link rel="stylesheet" href="account-pages.css?v=20260730-dark-primary" />
+    <link rel="stylesheet" href="account-pages.css?v=20260730-heading-spacing" />
     <style>
       .shared-header {
         display: flex;
         align-items: flex-end;
         justify-content: space-between;
         gap: 18px;
-        margin-bottom: 24px;
+        margin-bottom: var(--page-section-gap);
       }
 
       .shared-shell {
@@ -135,7 +134,7 @@ function share_count_label(int $count, string $singular): string
       .shared-grid {
         display: grid;
         grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-        gap: 16px;
+        gap: var(--page-section-gap);
       }
 
       .shared-card {
@@ -151,8 +150,6 @@ function share_count_label(int $count, string $singular): string
 
       .shared-card-title {
         margin: 0;
-        color: var(--text-strong);
-        font-size: 20px;
         line-height: 1.25;
       }
 
@@ -221,11 +218,6 @@ function share_count_label(int $count, string $singular): string
         border-radius: 8px;
         color: var(--muted);
         background: var(--surface-light);
-      }
-
-      [data-theme="dark"] .shared-title,
-      [data-theme="dark"] .shared-card-title {
-        color: #eef3ff;
       }
 
       [data-theme="dark"] .shared-subtitle,

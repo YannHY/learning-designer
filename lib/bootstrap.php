@@ -778,27 +778,32 @@ function site_breadcrumb_items(string $active = ''): array
             ['fr' => 'Administration', 'en' => 'Administration'],
         ],
         'bloom' => [
+            ['fr' => 'Aide', 'en' => 'Help', 'href' => 'help.php'],
             ['fr' => 'Taxonomie de Bloom', 'en' => "Bloom's Taxonomy"],
         ],
-        'cli' => [
-            ['fr' => 'CLI', 'en' => 'CLI'],
-        ],
         'cli-reference' => [
-            ['fr' => 'CLI', 'en' => 'CLI', 'href' => 'cli.php'],
+            ['fr' => 'Aide', 'en' => 'Help', 'href' => 'help.php#cli'],
             ['fr' => 'CLI détaillé', 'en' => 'CLI details'],
         ],
         'skill' => [
-            ['fr' => 'CLI', 'en' => 'CLI', 'href' => 'cli.php'],
+            ['fr' => 'Aide', 'en' => 'Help', 'href' => 'help.php#cli'],
             ['fr' => 'Skill Claude', 'en' => 'Claude skill'],
         ],
         'competencies' => [
+            ['fr' => 'Aide', 'en' => 'Help', 'href' => 'help.php'],
             ['fr' => 'Compétences numériques', 'en' => 'Digital Competencies'],
         ],
         'help' => [
             ['fr' => 'Aide', 'en' => 'Help'],
         ],
         'learning-design' => [
+            ['fr' => 'Aide', 'en' => 'Help', 'href' => 'help.php'],
             ['fr' => 'Learning design', 'en' => 'Learning design'],
+        ],
+        'framework' => [
+            ['fr' => 'Aide', 'en' => 'Help', 'href' => 'help.php'],
+            ['fr' => 'Learning design', 'en' => 'Learning design', 'href' => 'learning-design.php'],
+            ['fr' => 'Cadre conversationnel', 'en' => 'Conversational Framework'],
         ],
         'login' => [
             ['fr' => 'Connexion', 'en' => 'Sign in'],

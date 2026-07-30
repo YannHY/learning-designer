@@ -68,10 +68,9 @@ function e(string $value): string
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" referrerpolicy="no-referrer" />
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="interface.css?v=20260729-language-toggle" />
+    <link rel="stylesheet" href="interface.css?v=20260730-heading-spacing-h3" />
     <link rel="stylesheet" href="account-ui.css?v=20260520-4" />
-    <link rel="stylesheet" href="account-pages.css?v=20260730-dark-primary" />
+    <link rel="stylesheet" href="account-pages.css?v=20260730-heading-spacing" />
     <style>
       .saved-shell {
         border: 0;
@@ -83,7 +82,7 @@ function e(string $value): string
         align-items: center;
         justify-content: space-between;
         gap: 16px;
-        margin-bottom: 24px;
+        margin-bottom: var(--page-section-gap);
       }
 
       .saved-subtitle {
@@ -110,7 +109,7 @@ function e(string $value): string
 
       .saved-grid {
         display: grid;
-        gap: 14px;
+        gap: var(--page-section-gap);
       }
 
       .saved-empty {
@@ -135,8 +134,6 @@ function e(string $value): string
 
       .saved-card-title {
         margin: 0 0 6px;
-        font-size: 18px;
-        color: var(--text-strong);
       }
 
       .saved-card-meta {
@@ -199,10 +196,6 @@ function e(string $value): string
         background: rgba(209, 140, 19, 0.1);
       }
 
-      [data-theme="dark"] .saved-title {
-        color: #f3f6ff;
-      }
-
       [data-theme="dark"] .saved-subtitle,
       [data-theme="dark"] .saved-card-meta,
       [data-theme="dark"] .saved-status,
@@ -238,10 +231,6 @@ function e(string $value): string
       [data-theme="dark"] .saved-status {
         border-color: var(--line);
         background: var(--surface-light);
-      }
-
-      [data-theme="dark"] .saved-card-title {
-        color: #eef3ff;
       }
 
       @media (max-width: 760px) {

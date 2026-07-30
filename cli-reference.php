@@ -30,15 +30,14 @@ function cli_ref_i18n_attr_attrs(string $attr, string $fr, string $en): string
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" referrerpolicy="no-referrer">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="interface.css?v=20260729-language-toggle">
+    <link rel="stylesheet" href="interface.css?v=20260730-heading-spacing-h3">
     <link rel="stylesheet" href="account-ui.css?v=20260520-4">
-    <link rel="stylesheet" href="account-pages.css?v=20260730-dark-primary">
+    <link rel="stylesheet" href="account-pages.css?v=20260730-heading-spacing">
     <style>
         .cli-ref-hero {
             display: grid;
             gap: 14px;
-            margin-bottom: 26px;
+            margin-bottom: var(--page-section-gap);
         }
         .cli-ref-subtitle {
             max-width: 980px;
@@ -49,7 +48,7 @@ function cli_ref_i18n_attr_attrs(string $attr, string $fr, string $en): string
         }
         .cli-ref-section {
             min-width: 0;
-            margin-top: 24px;
+            margin-top: var(--page-section-gap);
             padding: 24px;
             border: 1px solid var(--line);
             border-radius: 8px;
@@ -59,11 +58,6 @@ function cli_ref_i18n_attr_attrs(string $attr, string $fr, string $en): string
         .cli-ref-section h2,
         .cli-ref-section h3 {
             margin: 0 0 14px;
-            color: var(--text);
-            letter-spacing: 0;
-        }
-        .cli-ref-section h2 {
-            font-size: 24px;
         }
         .cli-ref-section h3 {
             font-size: 18px;
@@ -135,8 +129,6 @@ function cli_ref_i18n_attr_attrs(string $attr, string $fr, string $en): string
             color: var(--text);
             line-height: 1.55;
         }
-        [data-theme="dark"] .cli-ref-title,
-        [data-theme="dark"] .cli-ref-section h2,
         [data-theme="dark"] .cli-ref-section h3 {
             color: #f3f6ff;
         }

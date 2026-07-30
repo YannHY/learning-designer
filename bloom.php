@@ -68,10 +68,9 @@ $levels = [
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" referrerpolicy="no-referrer">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="interface.css?v=20260729-language-toggle">
+    <link rel="stylesheet" href="interface.css?v=20260730-heading-spacing-h3">
     <link rel="stylesheet" href="account-ui.css?v=20260520-4">
-    <link rel="stylesheet" href="account-pages.css?v=20260730-dark-primary">
+    <link rel="stylesheet" href="account-pages.css?v=20260730-heading-spacing">
     <style>
         body.bloom-page { background: #fff; }
         .bloom-shell {
@@ -79,7 +78,8 @@ $levels = [
             margin: 32px auto 64px;
         }
         .bloom-header {
-            margin: 0 0 18px;
+            margin: 0 0 var(--page-section-gap);
+            padding-bottom: 16px;
         }
         .bloom-kicker {
             margin: 0 0 8px;
@@ -91,18 +91,17 @@ $levels = [
         }
         .bloom-title {
             margin: 0 0 8px;
-            color: var(--text);
-            font-size: clamp(26px, 4vw, 38px);
         }
         .bloom-subtitle {
-            max-width: 760px;
+            width: 100%;
+            max-width: none;
             margin: 0;
             color: var(--muted);
             line-height: 1.6;
             font-size: 15px;
         }
         .bloom-poster-title {
-            margin: 22px 0 8px;
+            margin: var(--page-section-gap) 0 8px;
             border-radius: 6px 6px 0 0;
             background: #12295a;
             color: #fff;
@@ -145,12 +144,9 @@ $levels = [
         }
         .bloom-level h2 {
             margin: 0;
-            color: #fff;
-            text-transform: uppercase;
-            letter-spacing: 0.035em;
-            font-size: 21px;
-            line-height: 1.05;
-            text-shadow: 0 2px 8px rgba(15, 23, 42, 0.16);
+            padding: 6px 10px;
+            border-radius: 6px;
+            background: rgba(255, 255, 255, 0.92);
             overflow-wrap: anywhere;
             white-space: nowrap;
             align-self: center;
@@ -183,9 +179,6 @@ $levels = [
         }
         [data-theme="dark"] body.bloom-page {
             background: #181816;
-        }
-        [data-theme="dark"] .bloom-title {
-            color: #eef3ff;
         }
         [data-theme="dark"] .bloom-subtitle {
             color: var(--text-body);
@@ -227,7 +220,7 @@ $levels = [
 <?php render_site_nav(); ?>
 <main class="bloom-shell with-nav">
     <header class="bloom-header">
-        <p class="bloom-kicker" data-i18n-fr="Acquis d'apprentissage" data-i18n-en="Learning outcomes">Acquis d'apprentissage</p>
+        <p class="bloom-kicker" data-i18n-fr="Documentation" data-i18n-en="Documentation">Documentation</p>
         <h1 class="bloom-title" data-i18n-fr="Taxonomie révisée de Bloom" data-i18n-en="Revised Bloom's Taxonomy">Taxonomie révisée de Bloom</h1>
         <p class="bloom-subtitle" data-i18n-fr="Cette page rassemble les six niveaux cognitifs utilisés dans Learning Designer pour formuler des acquis d'apprentissage avec des verbes d'action adaptés." data-i18n-en="This page gathers the six cognitive levels used in Learning Designer to write learning outcomes with suitable action verbs.">Cette page rassemble les six niveaux cognitifs utilisés dans Learning Designer pour formuler des acquis d'apprentissage avec des verbes d'action adaptés.</p>
     </header>

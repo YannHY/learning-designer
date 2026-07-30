@@ -11,10 +11,9 @@ require_once __DIR__ . '/lib/bootstrap.php';
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" referrerpolicy="no-referrer">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="interface.css?v=20260729-language-toggle">
+    <link rel="stylesheet" href="interface.css?v=20260730-section-spacing">
     <link rel="stylesheet" href="account-ui.css?v=20260520-4">
-    <link rel="stylesheet" href="account-pages.css?v=20260730-dark-primary">
+    <link rel="stylesheet" href="account-pages.css?v=20260730-heading-spacing">
     <style>
         body.learning-design-page {
             background: #fff;
@@ -24,9 +23,7 @@ require_once __DIR__ . '/lib/bootstrap.php';
             margin: 32px auto 64px;
         }
         .ld-hero {
-            margin: 0 0 28px;
             padding-bottom: 24px;
-            border-bottom: 1px solid var(--line);
         }
         .ld-kicker {
             margin: 0 0 8px;
@@ -38,9 +35,6 @@ require_once __DIR__ . '/lib/bootstrap.php';
         }
         .ld-title {
             margin: 0 0 12px;
-            color: var(--text);
-            font-size: clamp(28px, 4vw, 42px);
-            line-height: 1.08;
         }
         .ld-lead {
             margin: 0;
@@ -48,16 +42,8 @@ require_once __DIR__ . '/lib/bootstrap.php';
             font-size: 16px;
             line-height: 1.72;
         }
-        .ld-section {
-            margin: 0 0 34px;
-        }
         .ld-section h2 {
             margin: 0 0 14px;
-            color: var(--primary);
-            font-size: 15px;
-            font-weight: 800;
-            letter-spacing: 0.06em;
-            text-transform: uppercase;
         }
         .ld-section p {
             margin: 0 0 14px;
@@ -69,25 +55,51 @@ require_once __DIR__ . '/lib/bootstrap.php';
             margin-bottom: 0;
         }
         .ld-quote {
-            margin: 0 0 34px;
-            padding: 22px 24px;
-            border-left: 4px solid var(--primary);
-            background: #f4f7fc;
+            position: relative;
+            width: min(100%, 900px);
+            margin-top: 0;
+            margin-inline: auto;
+            padding: 0 clamp(10px, 2vw, 24px) 0 clamp(64px, 8vw, 96px);
             color: var(--text);
-            border-radius: 8px;
-            box-shadow: var(--shadow-card);
+            text-align: left;
+        }
+        .ld-quote::before {
+            position: absolute;
+            top: -10px;
+            left: 0;
+            color: var(--primary);
+            content: "“";
+            font-family: Georgia, "Times New Roman", serif;
+            font-size: clamp(90px, 11vw, 124px);
+            font-weight: 700;
+            line-height: 1;
+            opacity: .3;
         }
         .ld-quote p {
-            margin: 0 0 10px;
+            max-width: 820px;
+            margin: 0;
             color: var(--text);
-            font-size: 15px;
-            line-height: 1.7;
+            font-size: clamp(18px, 1.9vw, 23px);
+            font-weight: 500;
+            letter-spacing: -.022em;
+            line-height: 1.45;
         }
         .ld-quote cite {
+            display: block;
+            margin-top: 16px;
             color: var(--muted);
             font-size: 13px;
             font-style: normal;
             font-weight: 700;
+        }
+        @media (max-width: 600px) {
+            .ld-quote {
+                padding-left: 54px;
+                padding-right: 0;
+            }
+            .ld-quote::before {
+                font-size: 76px;
+            }
         }
         .ld-type-grid,
         .ld-step-grid {
@@ -170,9 +182,6 @@ require_once __DIR__ . '/lib/bootstrap.php';
         [data-theme="dark"] body.learning-design-page {
             background: #181816;
         }
-        [data-theme="dark"] .ld-title {
-            color: #eef3ff;
-        }
         [data-theme="dark"] .ld-lead,
         [data-theme="dark"] .ld-section p,
         [data-theme="dark"] .ld-type-card p,
@@ -180,16 +189,11 @@ require_once __DIR__ . '/lib/bootstrap.php';
         [data-theme="dark"] .ld-quote cite {
             color: var(--text-body);
         }
-        [data-theme="dark"] .ld-section h2,
         [data-theme="dark"] .ld-kicker,
         [data-theme="dark"] .ld-link,
         [data-theme="dark"] .ld-callout i {
             color: #8cc6ff;
         }
-        [data-theme="dark"] .ld-hero {
-            border-bottom-color: rgba(129, 124, 112, 0.42);
-        }
-        [data-theme="dark"] .ld-quote,
         [data-theme="dark"] .ld-type-card,
         [data-theme="dark"] .ld-step-card {
             background: rgba(36, 35, 31, 0.82);
@@ -201,6 +205,9 @@ require_once __DIR__ . '/lib/bootstrap.php';
         [data-theme="dark"] .ld-step-card h3 {
             color: #eef3ff;
         }
+        [data-theme="dark"] .ld-quote::before {
+            color: #8cc6ff;
+        }
         [data-theme="dark"] .ld-callout {
             background: rgba(140, 198, 255, 0.10);
             border-color: rgba(140, 198, 255, 0.24);
@@ -211,14 +218,14 @@ require_once __DIR__ . '/lib/bootstrap.php';
 <?php render_site_nav(); ?>
 <main class="ld-shell with-nav">
     <header class="ld-hero">
-        <p class="ld-kicker" data-i18n-fr="Repères pédagogiques" data-i18n-en="Teaching guide">Repères pédagogiques</p>
+        <p class="ld-kicker" data-i18n-fr="Documentation" data-i18n-en="Documentation">Documentation</p>
         <h1 class="ld-title" data-i18n-fr="Qu'est-ce que le learning design ?" data-i18n-en="What is learning design?">Qu'est-ce que le learning design ?</h1>
         <p class="ld-lead" data-i18n-fr="Le learning design consiste à concevoir le processus d'apprentissage lui-même : non seulement les contenus à transmettre, mais les actions qui permettront aux élèves de les comprendre, de les transformer et de les réutiliser." data-i18n-en="Learning design means designing the learning process itself: not only the content to be taught, but the actions that help learners understand, transform, and reuse it.">Le learning design consiste à concevoir le processus d'apprentissage lui-même&nbsp;: non seulement les contenus à transmettre, mais les actions qui permettront aux élèves de les comprendre, de les transformer et de les réutiliser.</p>
     </header>
 
     <blockquote class="ld-quote">
         <p data-i18n-fr="Les enseignants agissent comme des ingénieurs de conception : ils s'appuient sur la science quand elle améliore leur pratique, observent ce qui se passe en classe, puis réajustent leur enseignement à partir des retours." data-i18n-en="Teachers act like design engineers: they use science when it improves their practice, observe what happens in class, and redesign their teaching from feedback.">Les enseignants agissent comme des ingénieurs de conception&nbsp;: ils s'appuient sur la science quand elle améliore leur pratique, observent ce qui se passe en classe, puis réajustent leur enseignement à partir des retours.</p>
-        <cite data-i18n-fr="D'après Diana Laurillard" data-i18n-en="Based on Diana Laurillard">D'après Diana Laurillard</cite>
+        <cite data-i18n-fr="Diana Laurillard" data-i18n-en="Diana Laurillard">Diana Laurillard</cite>
     </blockquote>
 
     <section class="ld-section">
@@ -229,7 +236,7 @@ require_once __DIR__ . '/lib/bootstrap.php';
 
     <section class="ld-section">
         <h2 data-i18n-fr="Les six types d'apprentissage" data-i18n-en="The Six Learning Types">Les six types d'apprentissage</h2>
-        <p data-i18n-fr="Le modèle utilisé ici reprend les six types d'apprentissage associés au Cadre conversationnel de Diana Laurillard. Une séquence solide ne les mobilise pas forcément tous au même niveau, mais elle gagne à combiner plusieurs formes d'activité." data-i18n-en="The model used here follows the six learning types associated with Diana Laurillard’s Conversational Framework. A strong sequence does not necessarily use them all equally, but it benefits from combining several kinds of activity.">Le modèle utilisé ici reprend les six types d'apprentissage associés au Cadre conversationnel de Diana Laurillard. Une séquence solide ne les mobilise pas forcément tous au même niveau, mais elle gagne à combiner plusieurs formes d'activité.</p>
+        <p><span data-i18n-fr="Le modèle utilisé ici reprend les six types d'apprentissage associés au " data-i18n-en="The model used here follows the six learning types associated with ">Le modèle utilisé ici reprend les six types d'apprentissage associés au </span><a class="ld-link" href="cadre-conversationnel.php" data-i18n-fr="Cadre conversationnel de Diana Laurillard" data-i18n-en="Diana Laurillard’s Conversational Framework">Cadre conversationnel de Diana Laurillard</a><span data-i18n-fr=". Une séquence solide ne les mobilise pas forcément tous au même niveau, mais elle gagne à combiner plusieurs formes d'activité." data-i18n-en=". A strong sequence does not necessarily use them all equally, but it benefits from combining several kinds of activity.">. Une séquence solide ne les mobilise pas forcément tous au même niveau, mais elle gagne à combiner plusieurs formes d'activité.</span></p>
         <div class="ld-type-grid">
             <article class="ld-type-card" style="--ld-type:var(--read)">
                 <div class="ld-card-head">

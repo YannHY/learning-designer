@@ -200,10 +200,9 @@ foreach ($sectionGroups as $sectionKey => $group) {
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" referrerpolicy="no-referrer">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="interface.css?v=20260729-language-toggle">
+    <link rel="stylesheet" href="interface.css?v=20260730-heading-spacing-h3">
     <link rel="stylesheet" href="account-ui.css?v=20260520-4">
-    <link rel="stylesheet" href="account-pages.css?v=20260730-dark-primary">
+    <link rel="stylesheet" href="account-pages.css?v=20260730-heading-spacing">
     <style>
         body.competencies-page {
             background: #fff;
@@ -211,11 +210,13 @@ foreach ($sectionGroups as $sectionKey => $group) {
         .competencies-shell {
             width: min(var(--content-shell-width, 1180px), calc(100vw - var(--content-shell-gutter, 36px)));
             margin: 32px auto 64px;
+            display: grid;
+            gap: var(--page-section-gap);
         }
         .competencies-header {
             display: grid;
             gap: 10px;
-            margin-bottom: 22px;
+            margin-bottom: 0;
         }
         .competencies-kicker {
             margin: 0;
@@ -227,11 +228,10 @@ foreach ($sectionGroups as $sectionKey => $group) {
         }
         .competencies-title {
             margin: 0;
-            color: var(--text);
-            font-size: clamp(25px, 4vw, 36px);
         }
         .competencies-subtitle {
-            max-width: 760px;
+            width: 100%;
+            max-width: none;
             margin: 0;
             color: var(--muted);
             font-size: 15px;
@@ -266,7 +266,7 @@ foreach ($sectionGroups as $sectionKey => $group) {
             grid-template-columns: minmax(220px, 1fr) auto;
             gap: 12px;
             align-items: center;
-            margin: 24px 0 14px;
+            margin: 0;
         }
         .competencies-search {
             width: 100%;
@@ -620,7 +620,7 @@ foreach ($sectionGroups as $sectionKey => $group) {
 <?php render_site_nav(); ?>
 <main class="competencies-shell with-nav">
     <header class="competencies-header">
-        <p class="competencies-kicker" data-i18n-fr="Référentiel" data-i18n-en="Curriculum">Référentiel</p>
+        <p class="competencies-kicker" data-i18n-fr="Documentation" data-i18n-en="Documentation">Documentation</p>
         <h1 class="competencies-title" data-i18n-fr="Compétences numériques" data-i18n-en="Digital Competencies">Compétences numériques</h1>
         <p class="competencies-subtitle" data-i18n-fr="Tableau complet du curriculum utilisé dans le sélecteur de compétences de Learning Designer. Les codes courts reprennent les trois niveaux : Acquérir, Approfondir et Créer." data-i18n-en="Complete table of the curriculum used in Learning Designer’s competency picker. Short codes follow the three levels: Acquire, Deepen, and Create.">Tableau complet du curriculum utilisé dans le sélecteur de compétences de Learning Designer. Les codes courts reprennent les trois niveaux : Acquérir, Approfondir et Créer.</p>
         <div class="competencies-summary" aria-label="Résumé du référentiel" data-i18n-attr="aria-label" data-i18n-fr="Résumé du référentiel" data-i18n-en="Curriculum summary">

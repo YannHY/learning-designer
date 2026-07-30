@@ -20,11 +20,10 @@ require_once __DIR__ . '/lib/bootstrap.php';
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" referrerpolicy="no-referrer">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="interface.css?v=20260729-language-toggle">
+    <link rel="stylesheet" href="interface.css?v=20260730-heading-spacing-h3">
     <link rel="stylesheet" href="account-ui.css?v=20260520-4">
-    <link rel="stylesheet" href="account-pages.css?v=20260730-dark-primary">
-    <link rel="stylesheet" href="home.css?v=20260730-16">
+    <link rel="stylesheet" href="account-pages.css?v=20260730-heading-spacing">
+    <link rel="stylesheet" href="home.css?v=20260730-25">
 </head>
 <body class="home-page">
 <a class="skip-link" href="#main-content"
@@ -254,18 +253,35 @@ require_once __DIR__ . '/lib/bootstrap.php';
         </section>
     </div>
 
-    <section class="home-final-cta home-reveal" aria-labelledby="home-final-title">
-        <p class="home-kicker"
-           data-site-i18n-en="Your next design starts here"
-           data-site-i18n-fr="Votre prochain design commence ici">Votre prochain design commence ici</p>
-        <h2 id="home-final-title"
-            data-site-i18n-en="Start designing"
-            data-site-i18n-fr="À vous de concevoir">À vous de concevoir</h2>
-        <a class="home-primary-action" href="designer.html">
-            <span data-site-i18n-en="Create a design" data-site-i18n-fr="Créer un design">Créer un design</span>
-            <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
-        </a>
-    </section>
+    <div class="home-closing">
+        <section class="home-quote home-reveal" aria-label="Citation de Diana Laurillard"
+                 data-site-i18n-attr="aria-label"
+                 data-site-i18n-en="Quote by Diana Laurillard"
+            data-site-i18n-fr="Citation de Diana Laurillard">
+            <div class="home-quote-inner">
+                <blockquote>
+                    <p data-site-i18n-en="We borrow, we adopt, we adapt, we test it out, make our own thing with it and then we share our product back with the rest of the community."
+                       data-site-i18n-fr="Nous empruntons, nous adoptons, nous adaptons, nous mettons le tout à l’essai, nous en faisons quelque chose qui nous est propre, puis nous partageons à notre tour notre création avec le reste de la communauté.">Nous empruntons, nous adoptons, nous adaptons, nous mettons le tout à l’essai, nous en faisons quelque chose qui nous est propre, puis nous partageons à notre tour notre création avec le reste de la communauté.</p>
+                    <footer><cite>Diana Laurillard</cite></footer>
+                </blockquote>
+            </div>
+        </section>
+
+        <section class="home-final-cta" aria-labelledby="home-final-title">
+            <div class="home-final-cta-content home-reveal">
+                <p class="home-kicker"
+                   data-site-i18n-en="Your next design starts here"
+                   data-site-i18n-fr="Votre prochain design commence ici">Votre prochain design commence ici</p>
+                <h2 id="home-final-title"
+                    data-site-i18n-en="Start designing"
+                    data-site-i18n-fr="À vous de concevoir">À vous de concevoir</h2>
+                <a class="home-primary-action" href="designer.html">
+                    <span data-site-i18n-en="Create a design" data-site-i18n-fr="Créer un design">Créer un design</span>
+                    <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
+                </a>
+            </div>
+        </section>
+    </div>
 </main>
 
 <?php require __DIR__ . '/partials/site-footer.php'; ?>

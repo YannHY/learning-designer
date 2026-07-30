@@ -119,10 +119,6 @@ body.admin-page {
 .skill-title,
 .cli-ref-title {
   margin: 0;
-  color: var(--text-strong);
-  font-size: clamp(28px, 4vw, 38px);
-  line-height: 1.2;
-  letter-spacing: 0;
 }
 
 body.profile-page .account-card,
@@ -145,7 +141,7 @@ body.profile-page #profile-cli-active-title {
 }
 
 body.admin-page .account-form.panel {
-  margin-bottom: 24px;
+  margin-bottom: var(--page-section-gap);
 }
 
 body.admin-page .inline-grid > div {
@@ -370,7 +366,10 @@ h1, h2 {
   padding: 20px;
 }
 .profile-productions {
-  margin-bottom: 18px;
+  margin-bottom: var(--page-section-gap);
+}
+.profile-cli {
+  margin-bottom: var(--page-section-gap);
 }
 .profile-section-head {
   display: flex;
@@ -592,8 +591,6 @@ th {
   color: #fff;
 }
 
-[data-theme="dark"] h1,
-[data-theme="dark"] h2,
 [data-theme="dark"] .account-form label {
   color: #f3f6ff;
 }

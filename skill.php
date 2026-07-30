@@ -44,15 +44,14 @@ PROMPT;
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" referrerpolicy="no-referrer">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="interface.css?v=20260730-ui-monospace">
+    <link rel="stylesheet" href="interface.css?v=20260730-heading-spacing-h3">
     <link rel="stylesheet" href="account-ui.css?v=20260520-4">
-    <link rel="stylesheet" href="account-pages.css?v=20260730-dark-primary">
+    <link rel="stylesheet" href="account-pages.css?v=20260730-heading-spacing">
     <style>
         .skill-hero {
             display: grid;
             gap: 14px;
-            margin-bottom: 26px;
+            margin-bottom: var(--page-section-gap);
         }
         .skill-subtitle {
             max-width: 980px;
@@ -62,7 +61,7 @@ PROMPT;
             line-height: 1.65;
         }
         .skill-section {
-            margin-top: 24px;
+            margin-top: var(--page-section-gap);
             padding: 24px;
             border: 1px solid var(--line);
             border-radius: 8px;
@@ -75,17 +74,12 @@ PROMPT;
             align-items: center;
             gap: 10px;
             margin: 0 0 14px;
-            color: var(--text);
-            letter-spacing: 0;
-        }
-        .skill-section h2 {
-            font-size: 24px;
         }
         .skill-section h3 {
             font-size: 18px;
         }
         .skill-section h3:not(:first-child) {
-            margin-top: 22px;
+            margin-top: var(--page-subsection-gap);
         }
         .skill-copy {
             color: var(--muted);
@@ -194,9 +188,6 @@ PROMPT;
             color: var(--primary);
             margin-top: 3px;
         }
-        [data-theme="dark"] .skill-title,
-        [data-theme="dark"] .skill-title span,
-        [data-theme="dark"] .skill-section h2,
         [data-theme="dark"] .skill-section h3,
         [data-theme="dark"] .skill-step strong {
             color: #f3f6ff;

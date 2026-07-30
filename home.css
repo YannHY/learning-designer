@@ -17,7 +17,7 @@ body.home-page {
 
 .home-hero,
 .home-features,
-.home-final-cta {
+.home-closing {
   width: min(var(--content-shell-width, 1180px), calc(100vw - var(--content-shell-gutter, 36px)));
   margin-inline: auto;
 }
@@ -641,11 +641,77 @@ body.home-page {
   49%, 100% { opacity: 0; }
 }
 
+.home-closing {
+  display: grid;
+  grid-template-columns: minmax(0, 1.18fr) minmax(320px, .82fr);
+  align-items: start;
+  gap: clamp(54px, 7vw, 92px);
+  padding: clamp(76px, 10vw, 116px) 0;
+}
+
+.home-quote {
+  min-width: 0;
+}
+
+.home-quote-inner {
+  padding: 0 clamp(4px, 2vw, 16px);
+}
+
+.home-quote blockquote {
+  position: relative;
+  margin: 0;
+  padding-left: clamp(72px, 8vw, 96px);
+}
+
+.home-quote blockquote::before {
+  position: absolute;
+  top: 0;
+  left: 0;
+  color: var(--primary);
+  content: "“";
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(90px, 11vw, 124px);
+  font-weight: 700;
+  line-height: 1;
+  opacity: .3;
+}
+
+.home-quote blockquote p {
+  max-width: 930px;
+  margin: 0;
+  color: var(--home-ink);
+  font-size: clamp(18px, 1.9vw, 23px);
+  font-weight: 500;
+  letter-spacing: -.022em;
+  line-height: 1.45;
+}
+
+.home-quote blockquote footer {
+  margin-top: 16px;
+  color: var(--home-copy);
+  font-size: 13px;
+  font-style: normal;
+  font-weight: 700;
+}
+
+.home-quote blockquote cite {
+  font-style: normal;
+}
+
 .home-final-cta {
   display: grid;
-  justify-items: center;
-  padding: clamp(72px, 10vw, 112px) 0;
-  text-align: center;
+  min-width: 0;
+  justify-items: start;
+  text-align: left;
+}
+
+.home-final-cta-content {
+  display: grid;
+  justify-items: start;
+}
+
+.home-closing .home-final-cta h2 {
+  font-size: clamp(34px, 3.6vw, 44px);
 }
 
 .home-final-cta h2 {
@@ -671,6 +737,10 @@ body.home-page {
 
 .reveal-ready .home-feature-visual.home-reveal {
   transition-delay: 110ms;
+}
+
+.reveal-ready .home-final-cta-content.home-reveal {
+  transition-delay: 180ms;
 }
 
 .reveal-ready .home-reveal.is-visible {
@@ -743,7 +813,7 @@ body.home-page {
 @media (min-width: 901px) and (max-width: 1200px) {
   .home-hero,
   .home-features,
-  .home-final-cta {
+  .home-closing {
     width: min(1060px, calc(100vw - 96px));
   }
 
@@ -781,8 +851,25 @@ body.home-page {
 @media (max-width: 900px) {
   .home-hero,
   .home-features,
-  .home-final-cta {
+  .home-closing {
     width: min(760px, calc(100vw - 96px));
+  }
+
+  .home-closing {
+    grid-template-columns: 1fr;
+    gap: 56px;
+    padding: 72px 0 84px;
+  }
+
+  .home-quote {
+    padding-bottom: 56px;
+    border-bottom: 1px solid var(--home-line);
+  }
+
+  .home-final-cta,
+  .home-final-cta-content {
+    justify-items: center;
+    text-align: center;
   }
 
   .home-hero {
@@ -832,8 +919,25 @@ body.home-page {
 @media (max-width: 600px) {
   .home-hero,
   .home-features,
-  .home-final-cta {
+  .home-closing {
     width: min(100% - 28px, var(--content-shell-width, 1180px));
+  }
+
+  .home-closing {
+    gap: 44px;
+    padding: 60px 0 72px;
+  }
+
+  .home-quote {
+    padding-bottom: 44px;
+  }
+
+  .home-quote blockquote {
+    padding-left: 54px;
+  }
+
+  .home-quote blockquote::before {
+    font-size: 76px;
   }
 
   .home-hero {

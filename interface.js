@@ -955,15 +955,27 @@ const activityLinkCancelBtn = document.getElementById("activity-link-cancel-btn"
 const activityLinkSaveBtn = document.getElementById("activity-link-save-btn");
 
 const LD_STORAGE_KEY = "ld_state_v1";
+const LD_LANGUAGE_STORAGE_KEY = "learningDesignerLang";
 let activeActivityLinkTrigger = null;
 let activeActivityLinkActivity = null;
 
+function preferredInterfaceLanguage(fallback = "fr") {
+  const normalizedFallback = fallback === "en" ? "en" : "fr";
+  try {
+    const savedLanguage = localStorage.getItem(LD_LANGUAGE_STORAGE_KEY);
+    if (savedLanguage === "fr" || savedLanguage === "en") return savedLanguage;
+  } catch (_) {}
+  return normalizedFallback;
+}
+
 let state = (() => {
+  let initialState = defaultState();
   try {
     const raw = localStorage.getItem(LD_STORAGE_KEY);
-    if (raw) return hydrateState(JSON.parse(raw), defaultState());
+    if (raw) initialState = hydrateState(JSON.parse(raw), initialState);
   } catch (_) {}
-  return defaultState();
+  initialState.meta.uiLanguage = preferredInterfaceLanguage(initialState.meta.uiLanguage);
+  return initialState;
 })();
 let dragState = null;
 let activeModalBackdrop = null;
@@ -1729,7 +1741,7 @@ function applyLocalizedUI() {
   refreshLocalizedCatalogs();
   document.documentElement.lang = currentLang();
   try {
-    localStorage.setItem("learningDesignerLang", currentLang());
+    localStorage.setItem(LD_LANGUAGE_STORAGE_KEY, currentLang());
   } catch (_) {}
   document.title = t("docTitle");
   if (langSelect) langSelect.value = currentLang();
@@ -2014,7 +2026,10 @@ function createNewDesignState() {
     allNotesExpanded: false,
     intentionsCollapsed: false,
     topPanelCollapsed: false,
-    meta: { ...NEW_DESIGN_META },
+    meta: {
+      ...NEW_DESIGN_META,
+      uiLanguage: preferredInterfaceLanguage(currentLang())
+    },
     sessions: [],
     partitionLineConfig: [
       { type: 'locationMode', label: 'Présentiel', value: 'onsite', visible: true },
@@ -6426,7 +6441,7 @@ function bindTopPanelEvents() {
     state.meta.uiLanguage = event.target.value === "en" ? "en" : "fr";
     document.documentElement.lang = state.meta.uiLanguage;
     try {
-      localStorage.setItem("learningDesignerLang", state.meta.uiLanguage);
+      localStorage.setItem(LD_LANGUAGE_STORAGE_KEY, state.meta.uiLanguage);
     } catch (_) {}
     saveState();
     render();
@@ -6728,6 +6743,7 @@ importFileInput.addEventListener("change", async (e) => {
     if (!hydrated) {
       throw new Error("Format invalide");
     }
+    hydrated.meta.uiLanguage = preferredInterfaceLanguage(currentLang());
     state = hydrated;
     saveState();
     render();
@@ -6913,8 +6929,10 @@ window.learningDesignerApp = {
     saveState();
   },
   loadDocument(documentState, remoteMeta = {}) {
+    const interfaceLanguage = preferredInterfaceLanguage(currentLang());
     state = hydrateState(documentState, defaultState());
     Object.assign(state.meta, remoteMeta);
+    state.meta.uiLanguage = interfaceLanguage;
     saveState();
     render();
   }

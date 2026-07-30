@@ -207,6 +207,7 @@ function ensure_app_tables(PDO $db): void
             title TEXT NOT NULL DEFAULT '',
             document_json TEXT NOT NULL,
             share_token TEXT NULL,
+            license_code TEXT NULL,
             is_published INTEGER NOT NULL DEFAULT 0,
             is_listed INTEGER NOT NULL DEFAULT 0,
             listed_at TEXT NULL,
@@ -250,6 +251,7 @@ function ensure_app_tables(PDO $db): void
         title VARCHAR(255) NOT NULL DEFAULT '',
         document_json LONGTEXT NOT NULL,
         share_token VARCHAR(64) NULL UNIQUE,
+        license_code VARCHAR(24) NULL,
         is_published TINYINT(1) NOT NULL DEFAULT 0,
         is_listed TINYINT(1) NOT NULL DEFAULT 0,
         listed_at DATETIME NULL,
@@ -311,6 +313,16 @@ function ensure_app_migrations(PDO $db): void
         if (!in_array('listed_at', $colNames, true)) {
             $db->exec("ALTER TABLE learning_designs ADD COLUMN listed_at TEXT NULL");
         }
+        if (!in_array('license_code', $colNames, true)) {
+            $db->exec("ALTER TABLE learning_designs ADD COLUMN license_code TEXT NULL");
+        }
+        // Designs already present in the public catalogue predate the license
+        // selector. Keep their existing publication terms explicit.
+        $db->exec("UPDATE learning_designs
+            SET license_code = 'cc-by-sa'
+            WHERE is_published = 1
+              AND is_listed = 1
+              AND (license_code IS NULL OR TRIM(license_code) = '')");
         $db->exec("CREATE INDEX IF NOT EXISTS idx_learning_designs_listed ON learning_designs(is_published, is_listed, updated_at)");
         return;
     }
@@ -354,11 +366,64 @@ function ensure_app_migrations(PDO $db): void
         $db->exec("ALTER TABLE learning_designs ADD COLUMN listed_at DATETIME NULL");
     }
 
+    $stmt = $db->prepare("SELECT COUNT(*) FROM information_schema.COLUMNS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'learning_designs' AND COLUMN_NAME = 'license_code'");
+    $stmt->execute();
+    if ((int)$stmt->fetchColumn() === 0) {
+        $db->exec("ALTER TABLE learning_designs ADD COLUMN license_code VARCHAR(24) NULL");
+    }
+    // Backfill the legacy catalogue entries. New catalogue publications must
+    // provide their own valid Creative Commons license in publish_design.php.
+    $db->exec("UPDATE learning_designs
+        SET license_code = 'cc-by-sa'
+        WHERE is_published = 1
+          AND is_listed = 1
+          AND (license_code IS NULL OR TRIM(license_code) = '')");
+
     $stmt = $db->prepare("SELECT COUNT(*) FROM information_schema.STATISTICS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'learning_designs' AND INDEX_NAME = 'idx_learning_designs_listed'");
     $stmt->execute();
     if ((int)$stmt->fetchColumn() === 0) {
         $db->exec("CREATE INDEX idx_learning_designs_listed ON learning_designs(is_published, is_listed, updated_at)");
     }
+}
+
+/**
+ * Creative Commons 4.0 licenses available when publishing a design.
+ *
+ * @return array<string, array{label: string, url: string}>
+ */
+function creative_commons_licenses(): array
+{
+    return [
+        'cc-by' => [
+            'label' => 'CC BY 4.0',
+            'url' => 'https://creativecommons.org/licenses/by/4.0/',
+        ],
+        'cc-by-sa' => [
+            'label' => 'CC BY-SA 4.0',
+            'url' => 'https://creativecommons.org/licenses/by-sa/4.0/',
+        ],
+        'cc-by-nd' => [
+            'label' => 'CC BY-ND 4.0',
+            'url' => 'https://creativecommons.org/licenses/by-nd/4.0/',
+        ],
+        'cc-by-nc' => [
+            'label' => 'CC BY-NC 4.0',
+            'url' => 'https://creativecommons.org/licenses/by-nc/4.0/',
+        ],
+        'cc-by-nc-sa' => [
+            'label' => 'CC BY-NC-SA 4.0',
+            'url' => 'https://creativecommons.org/licenses/by-nc-sa/4.0/',
+        ],
+        'cc-by-nc-nd' => [
+            'label' => 'CC BY-NC-ND 4.0',
+            'url' => 'https://creativecommons.org/licenses/by-nc-nd/4.0/',
+        ],
+    ];
+}
+
+function creative_commons_license(string $code): ?array
+{
+    return creative_commons_licenses()[strtolower(trim($code))] ?? null;
 }
 
 function current_user(): ?array
@@ -480,7 +545,7 @@ function render_site_nav(string $active = ''): void
     ?>
     <header class="site-nav site-nav-page" role="navigation" aria-label="Navigation principale" data-site-i18n-attr="aria-label" data-site-i18n-en="Main navigation" data-site-i18n-fr="Navigation principale">
         <div class="site-nav-brand">
-            <a class="site-nav-brand-link" href="index.html" aria-label="Accueil Learning Designer" data-site-i18n-attr="aria-label" data-site-i18n-en="Learning Designer home" data-site-i18n-fr="Accueil Learning Designer">
+            <a class="site-nav-brand-link" href="index.php" aria-label="Accueil Learning Designer" data-site-i18n-attr="aria-label" data-site-i18n-en="Learning Designer home" data-site-i18n-fr="Accueil Learning Designer">
                 <span class="site-nav-brand-mark" aria-hidden="true"></span>
                 <div class="site-nav-brand-copy">
                     <p class="site-nav-title">Learning Designer</p>
@@ -489,9 +554,10 @@ function render_site_nav(string $active = ''): void
         </div>
         <div id="site-nav-actions" class="site-nav-actions">
             <label for="lang-select" class="sr-only" data-site-i18n-en="Interface language" data-site-i18n-fr="Langue de l'interface">Langue de l'interface</label>
-            <div class="nav-language-switch" role="group" aria-label="Langue de l'interface" data-site-i18n-attr="aria-label" data-site-i18n-en="Interface language" data-site-i18n-fr="Langue de l'interface">
-                <button class="nav-language-option" type="button" data-language="fr" aria-pressed="true">FR</button>
-                <button class="nav-language-option" type="button" data-language="en" aria-pressed="false">EN</button>
+            <div class="nav-language-switch" aria-label="Langue de l'interface" data-site-i18n-attr="aria-label" data-site-i18n-en="Interface language" data-site-i18n-fr="Langue de l'interface">
+                <button class="nav-language-toggle" type="button" aria-label="Passer en anglais" title="Passer en anglais">
+                    <span class="nav-language-label">FR</span>
+                </button>
             </div>
             <select id="lang-select" hidden tabindex="-1" aria-hidden="true">
                 <option value="fr">FR</option>
@@ -590,12 +656,34 @@ function render_site_nav(string $active = ''): void
         }
 
         var langSelect = document.getElementById('lang-select');
-        var languageButtons = Array.prototype.slice.call(document.querySelectorAll('.nav-language-option'));
+        var languageButton = document.querySelector('.nav-language-toggle');
         function syncLanguageSwitch(lang) {
-            languageButtons.forEach(function (button) {
-                var isActive = button.dataset.language === lang;
-                button.setAttribute('aria-pressed', isActive ? 'true' : 'false');
-            });
+            if (!languageButton) return;
+            var isEnglish = lang === 'en';
+            var label = languageButton.querySelector('.nav-language-label');
+            if (label) label.textContent = isEnglish ? 'EN' : 'FR';
+            var actionLabel = isEnglish ? 'Switch to French' : 'Passer en anglais';
+            languageButton.setAttribute('aria-label', actionLabel);
+            languageButton.setAttribute('title', actionLabel);
+        }
+        function changeLanguage(nextLang) {
+            if (!langSelect || langSelect.value === nextLang) return;
+            var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+            if (!languageButton || reduceMotion) {
+                langSelect.value = nextLang;
+                langSelect.dispatchEvent(new Event('change', { bubbles: true }));
+                return;
+            }
+            languageButton.classList.add('is-leaving');
+            window.setTimeout(function () {
+                langSelect.value = nextLang;
+                langSelect.dispatchEvent(new Event('change', { bubbles: true }));
+                languageButton.classList.remove('is-leaving');
+                languageButton.classList.add('is-entering');
+                window.setTimeout(function () {
+                    languageButton.classList.remove('is-entering');
+                }, 180);
+            }, 90);
         }
         if (langSelect) {
             var savedLang = 'fr';
@@ -620,14 +708,11 @@ function render_site_nav(string $active = ''): void
                 } catch (error) {
                 }
             });
-            languageButtons.forEach(function (button) {
-                button.addEventListener('click', function () {
-                    var nextLang = button.dataset.language === 'en' ? 'en' : 'fr';
-                    if (langSelect.value === nextLang) return;
-                    langSelect.value = nextLang;
-                    langSelect.dispatchEvent(new Event('change', { bubbles: true }));
+            if (languageButton) {
+                languageButton.addEventListener('click', function () {
+                    changeLanguage(langSelect.value === 'en' ? 'fr' : 'en');
                 });
-            });
+            }
         }
 
         var hamburger = document.getElementById('nav-hamburger');
@@ -684,6 +769,7 @@ function site_breadcrumb_items(string $active = ''): array
     $page = basename((string)($_SERVER['SCRIPT_NAME'] ?? ''));
     $key = $active !== '' ? $active : pathinfo($page, PATHINFO_FILENAME);
     $map = [
+        'home' => [],
         'about' => [
             ['fr' => 'À propos', 'en' => 'About'],
         ],
@@ -754,7 +840,7 @@ function render_site_breadcrumb(array $items): void
     <nav class="site-breadcrumb" aria-label="Fil d'Ariane" data-site-i18n-attr="aria-label" data-site-i18n-en="Breadcrumb" data-site-i18n-fr="Fil d'Ariane">
         <ol>
             <li>
-                <a class="site-breadcrumb-home" href="index.html" aria-label="Accueil" title="Accueil" data-site-i18n-attr="aria-label,title" data-site-i18n-en="Home" data-site-i18n-fr="Accueil">
+                <a class="site-breadcrumb-home" href="index.php" aria-label="Accueil" title="Accueil" data-site-i18n-attr="aria-label,title" data-site-i18n-en="Home" data-site-i18n-fr="Accueil">
                     <i class="fa-solid fa-house" aria-hidden="true"></i>
                 </a>
             </li>

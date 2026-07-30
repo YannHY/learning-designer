@@ -353,6 +353,162 @@ Be concrete, concise, and realistic. Recommend a tool only when it addresses a c
 
 Here is the lesson plan to analyse and improve: *[LESSON PLAN]*
 PROMPT;
+
+$samrPrompt = <<<'PROMPT'
+# Instruction pour analyser et enrichir un scénario pédagogique selon le modèle SAMR
+
+Tu es un conseiller pédagogique spécialisé dans l'intégration réfléchie du numérique. Ta mission est d'analyser un scénario pédagogique à travers le prisme du modèle SAMR, de situer chaque usage technologique sur ce modèle, puis de proposer des pistes concrètes pour enrichir ou transformer l'expérience d'apprentissage.
+
+Avant de commencer, voici les quatre niveaux du modèle SAMR, tel que l'a défini le Dr Ruben Puentedura :
+
+- **Substitution** : la technologie remplace directement un outil traditionnel, sans apport fonctionnel nouveau. Exemple : taper un texte dans un traitement de texte plutôt que l'écrire à la main.
+- **Augmentation** : la technologie remplace un outil traditionnel, mais avec des améliorations fonctionnelles significatives. Exemple : ajouter des liens hypertextes, des vidéos intégrées ou des commentaires interactifs à un document.
+- **Modification** : la technologie permet de revoir en profondeur la conception de la tâche, ce qui n'aurait pas été possible ou naturel sans elle. Exemple : collaborer en temps réel dans un espace partagé en ligne pour co-construire un texte argumentatif.
+- **Redéfinition** : la technologie permet de créer des tâches entièrement nouvelles, impensables sans elle. Exemple : mener un échange en temps réel avec des élèves d'un autre pays pour confronter des points de vue culturels différents.
+
+Les deux premiers niveaux (S et A) relèvent de l'**amélioration** (*enhancement*) ; les deux derniers (M et R) relèvent de la **transformation**. Un niveau élevé n'est pas toujours préférable : parfois, la substitution est le choix le plus cohérent avec l'objectif pédagogique. L'enjeu n'est pas d'atteindre la Redéfinition à tout prix, mais d'utiliser la technologie de manière intentionnelle et pédagogiquement justifiée.
+
+## 1. Analyser le scénario existant
+
+- Identifier chaque usage ou outil technologique présent dans le scénario.
+- Situer chaque usage sur le modèle SAMR (S, A, M ou R) en justifiant brièvement ce classement.
+- Signaler les activités où aucune technologie n'est mobilisée, et noter si une intégration numérique apporterait une réelle valeur ajoutée.
+- Repérer les usages dont le niveau SAMR paraît en décalage avec l'ambition pédagogique de la séquence.
+
+## 2. Évaluer la cohérence entre le niveau SAMR et les objectifs d'apprentissage
+
+- Les usages technologiques sont-ils bien alignés avec les objectifs visés et les acquis attendus ?
+- Existe-t-il des activités à fort potentiel cognitif (analyser, évaluer, créer) qui se limitent à une substitution ou une augmentation alors qu'une modification ou une redéfinition serait possible ?
+- À l'inverse, existe-t-il des usages à un niveau élevé (M ou R) qui complexifient la tâche sans bénéfice pédagogique clairement identifiable ?
+- Les outils numériques choisis favorisent-ils réellement l'activité de l'élève, ou servent-ils essentiellement à faciliter la tâche de l'enseignant ?
+
+## 3. Proposer des pistes d'amélioration concrètes
+
+Pour chaque usage identifié ou pour les moments clés de la séquence, propose une ou deux pistes permettant de monter d'un niveau sur le modèle SAMR, en précisant :
+
+- le niveau SAMR actuel et le niveau visé ;
+- la modification concrète à apporter à l'activité (consigne, outil, organisation, production attendue) ;
+- la plus-value pédagogique apportée pour les élèves ;
+- les conditions de faisabilité (matériel, temps, compétences numériques des élèves).
+
+Lorsque la substitution ou l'augmentation est le niveau le plus approprié, explique-le et ne propose pas de montée en niveau artificielle.
+
+## 4. Exploiter les cinq catégories de l'EdTech Quintet (si pertinent)
+
+Pour les pistes visant les niveaux Modification et Redéfinition, tu peux t'appuyer sur les cinq grandes catégories d'outils numériques à fort potentiel éducatif identifiées par Puentedura :
+
+- **Social** : outils de communication, de partage et de collaboration (messagerie, visioconférence, espaces de travail partagés).
+- **Mobilité** : usages nomades permettant d'apprendre en dehors de la classe, à tout moment et en tout lieu.
+- **Visualisation** : outils transformant des concepts abstraits en représentations tangibles (frises, cartes conceptuelles, graphiques, nuages de mots).
+- **Storytelling numérique** : outils de création de sens par le récit (texte, image, audio, vidéo, animation, bande dessinée numérique).
+- **Gaming** : environnements ludiques posant des défis, encourageant l'exploration et fournissant un retour immédiat.
+
+Mentionne la catégorie concernée uniquement si elle éclaire utilement la proposition.
+
+## 5. Vérifier la faisabilité et l'équité
+
+Avant de formuler tes recommandations, vérifie que chaque proposition :
+
+- reste réaliste dans les conditions matérielles et temporelles d'une classe ordinaire ;
+- ne suppose pas des compétences numériques que les élèves ne possèdent pas encore ;
+- ne crée pas de rupture d'équité entre élèves disposant ou non d'équipements personnels ;
+- ne complexifie pas la tâche sans apporter de gain pédagogique réel.
+
+## Format attendu
+
+Présente ta réponse sous la forme suivante :
+
+1. **Cartographie SAMR du scénario** : liste chaque usage technologique identifié et son niveau S, A, M ou R, avec une justification courte.
+2. **Diagnostic global** : bilan des forces et des points de tension entre les niveaux SAMR et les objectifs pédagogiques.
+3. **Trois pistes prioritaires d'amélioration**, classées par ordre de faisabilité et d'impact pédagogique attendu.
+4. **Scénario révisé ou activités réécrites**, intégrant les modifications proposées, directement utilisables par l'enseignant.
+5. **Justification pédagogique** des changements retenus.
+6. **Points de vigilance** : usages à éviter, risques de surcharge cognitive ou de complexité inutile.
+
+Adopte un ton bienveillant, professionnel et encourageant. Évite le jargon technique inutile. Chaque suggestion doit être directement applicable en classe. Ne recommande pas un outil numérique sans justifier en quoi il améliore l'apprentissage des élèves.
+
+---
+
+Voici le scénario pédagogique à analyser et à enrichir : *[SCÉNARIO PÉDAGOGIQUE]*
+PROMPT;
+
+$samrPromptEn = <<<'PROMPT'
+# Instructions for analysing and enhancing a learning design using the SAMR model
+
+You are an instructional advisor specialising in the thoughtful integration of technology. Your task is to analyse a learning design through the lens of the SAMR model, place each use of technology within the model, and then propose concrete ways to enhance or transform the learning experience.
+
+Before you begin, here are the four levels of the SAMR model, as defined by Dr Ruben Puentedura:
+
+- **Substitution**: technology directly replaces a traditional tool, with no functional improvement. Example: typing a text in a word processor instead of writing it by hand.
+- **Augmentation**: technology replaces a traditional tool but adds significant functional improvements. Example: adding hyperlinks, embedded videos, or interactive comments to a document.
+- **Modification**: technology makes it possible to redesign the task substantially in a way that would not have been possible or natural without it. Example: collaborating in real time in a shared online space to co-construct an argumentative text.
+- **Redefinition**: technology enables entirely new tasks that were previously inconceivable. Example: holding a real-time exchange with students in another country to compare different cultural perspectives.
+
+The first two levels (S and A) are forms of **enhancement**; the last two (M and R) are forms of **transformation**. A higher level is not always better: substitution may sometimes be the most coherent choice for the learning objective. The aim is not to reach Redefinition at all costs, but to use technology intentionally and with sound pedagogical justification.
+
+## 1. Analyse the existing learning design
+
+- Identify each use of technology or technological tool in the learning design.
+- Place each use within the SAMR model (S, A, M, or R), briefly justifying the classification.
+- Identify activities that do not use technology and note whether digital integration would provide genuine added value.
+- Identify uses whose SAMR level appears misaligned with the pedagogical ambition of the sequence.
+
+## 2. Assess alignment between the SAMR level and the learning objectives
+
+- Are the uses of technology properly aligned with the intended objectives and expected learning outcomes?
+- Are there activities with strong cognitive potential (analysing, evaluating, creating) that remain at Substitution or Augmentation even though Modification or Redefinition would be possible?
+- Conversely, are there uses at a high level (M or R) that make the task more complex without a clearly identifiable pedagogical benefit?
+- Do the selected digital tools genuinely support student activity, or do they mainly make the teacher's work easier?
+
+## 3. Propose concrete improvements
+
+For each identified use or key moment in the sequence, propose one or two ways to move up one level in the SAMR model, specifying:
+
+- the current SAMR level and the target level;
+- the concrete change to the activity (instructions, tool, organisation, expected output);
+- the pedagogical added value for students;
+- the conditions for feasibility (equipment, time, students' digital skills).
+
+When Substitution or Augmentation is the most appropriate level, explain why and do not propose an artificial move to a higher level.
+
+## 4. Draw on the five categories of the EdTech Quintet (where relevant)
+
+For proposals targeting Modification and Redefinition, you may draw on the five broad categories of high-potential educational technology identified by Puentedura:
+
+- **Social**: communication, sharing, and collaboration tools (messaging, videoconferencing, shared workspaces).
+- **Mobility**: mobile uses that enable learning outside the classroom, at any time and in any place.
+- **Visualisation**: tools that transform abstract concepts into tangible representations (timelines, concept maps, charts, word clouds).
+- **Digital storytelling**: tools for creating meaning through narrative (text, image, audio, video, animation, digital comics).
+- **Gaming**: playful environments that present challenges, encourage exploration, and provide immediate feedback.
+
+Mention the relevant category only when it usefully clarifies the proposal.
+
+## 5. Check feasibility and equity
+
+Before making your recommendations, ensure that each proposal:
+
+- remains realistic within the material and time constraints of an ordinary classroom;
+- does not assume digital skills that students have not yet acquired;
+- does not create inequity between students who do and do not have personal equipment;
+- does not add complexity without producing a genuine learning benefit.
+
+## Expected format
+
+Present your response as follows:
+
+1. **SAMR map of the learning design**: list each identified use of technology and its S, A, M, or R level, with a brief justification.
+2. **Overall diagnosis**: summarise the strengths and points of tension between the SAMR levels and the learning objectives.
+3. **Three priority improvements**, ranked by feasibility and expected pedagogical impact.
+4. **Revised learning design or rewritten activities**, incorporating the proposed changes and ready for the teacher to use.
+5. **Pedagogical justification** for the selected changes.
+6. **Points requiring attention**: uses to avoid, risks of cognitive overload, or unnecessary complexity.
+
+Use a supportive, professional, and encouraging tone. Avoid unnecessary technical jargon. Every suggestion must be directly applicable in the classroom. Do not recommend a digital tool without explaining how it improves student learning.
+
+---
+
+Here is the learning design to analyse and enhance: *[LEARNING DESIGN]*
+PROMPT;
 ?>
 <!doctype html>
 <html lang="fr">
@@ -364,9 +520,9 @@ PROMPT;
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="interface.css?v=20260728-prompts-8">
+    <link rel="stylesheet" href="interface.css?v=20260730-full-width-intro">
     <link rel="stylesheet" href="account-ui.css?v=20260520-4">
-    <link rel="stylesheet" href="account-pages.css?v=20260722-neutral-theme">
+    <link rel="stylesheet" href="account-pages.css?v=20260730-dark-primary">
 </head>
 <body class="help-page">
 <?php render_site_nav('prompts'); ?>
@@ -376,11 +532,11 @@ PROMPT;
     </header>
 
     <div class="prompt-library-content">
-        <article class="help-section">
+        <article class="prompt-library">
             <p id="prompts-intro">Après avoir généré votre scénario pédagogique dans Learning Designer, vous pouvez l’exporter — par exemple au format Markdown — puis le transmettre à une IA comme Claude, ChatGPT ou Gemini. Celle-ci peut alors vous aider à l’enrichir, à l’améliorer, à le compléter ou à l’adapter à des besoins spécifiques.</p>
             <p id="prompts-intro-followup">Pour vous accompagner dans cette démarche, voici une série de prompts prêts à copier et à utiliser avec votre scénario exporté.</p>
 
-            <div class="help-card prompt-card">
+            <section class="prompt-card">
                 <div class="prompt-card-heading">
                     <strong><span class="help-card-icon"><i class="fa-solid fa-universal-access" aria-hidden="true"></i></span><span id="prompt-udl-title" class="prompt-title-text">1. Révision d’un plan de cours basé sur la CUA</span></strong>
                     <span id="prompt-udl-author" class="prompt-author">Prompt proposés par François Jourde</span>
@@ -390,9 +546,9 @@ PROMPT;
                     <pre class="help-prompt prompt-library-text" data-prompt-lang="fr"><?= h($udlPrompt) ?></pre>
                     <pre class="help-prompt prompt-library-text" data-prompt-lang="en" hidden><?= h($udlPromptEn) ?></pre>
                 </div>
-            </div>
+            </section>
 
-            <div class="help-card prompt-card">
+            <section class="prompt-card">
                 <div class="prompt-card-heading">
                     <strong><span class="help-card-icon"><i class="fa-solid fa-code-branch" aria-hidden="true"></i></span><span id="prompt-differentiation-title" class="prompt-title-text">2. Différenciation pédagogique</span></strong>
                     <span id="prompt-differentiation-author" class="prompt-author">Prompt proposé par Yann Houry</span>
@@ -402,7 +558,19 @@ PROMPT;
                     <pre class="help-prompt prompt-library-text" data-prompt-lang="fr"><?= h($differentiationPrompt) ?></pre>
                     <pre class="help-prompt prompt-library-text" data-prompt-lang="en" hidden><?= h($differentiationPromptEn) ?></pre>
                 </div>
-            </div>
+            </section>
+
+            <section class="prompt-card">
+                <div class="prompt-card-heading">
+                    <strong><span class="help-card-icon"><i class="fa-solid fa-laptop-code" aria-hidden="true"></i></span><span id="prompt-samr-title" class="prompt-title-text">3. Analyse et enrichissement selon le modèle SAMR</span></strong>
+                    <span id="prompt-samr-author" class="prompt-author">Prompt proposé par Yann Houry</span>
+                </div>
+                <div class="help-prompt-wrap prompt-library-wrap">
+                    <button class="help-copy-btn prompt-copy-button" type="button" aria-label="Copier le prompt" title="Copier"><i class="fa-regular fa-copy" aria-hidden="true"></i></button>
+                    <pre class="help-prompt prompt-library-text" data-prompt-lang="fr"><?= h($samrPrompt) ?></pre>
+                    <pre class="help-prompt prompt-library-text" data-prompt-lang="en" hidden><?= h($samrPromptEn) ?></pre>
+                </div>
+            </section>
         </article>
     </div>
 </main>
@@ -419,6 +587,8 @@ document.addEventListener('DOMContentLoaded', function () {
             udlAuthor: 'Prompt proposés par François Jourde',
             differentiationTitle: '2. Différenciation pédagogique',
             differentiationAuthor: 'Prompt proposé par Yann Houry',
+            samrTitle: '3. Analyse et enrichissement selon le modèle SAMR',
+            samrAuthor: 'Prompt proposé par Yann Houry',
             copy: 'Copier le prompt',
             copied: 'Copié'
         },
@@ -431,6 +601,8 @@ document.addEventListener('DOMContentLoaded', function () {
             udlAuthor: 'Prompt proposed by François Jourde',
             differentiationTitle: '2. Differentiated instruction',
             differentiationAuthor: 'Prompt proposed by Yann Houry',
+            samrTitle: '3. SAMR-based analysis and enhancement',
+            samrAuthor: 'Prompt proposed by Yann Houry',
             copy: 'Copy prompt',
             copied: 'Copied'
         }
@@ -456,6 +628,8 @@ document.addEventListener('DOMContentLoaded', function () {
         setText('prompt-udl-author', content.udlAuthor);
         setText('prompt-differentiation-title', content.differentiationTitle);
         setText('prompt-differentiation-author', content.differentiationAuthor);
+        setText('prompt-samr-title', content.samrTitle);
+        setText('prompt-samr-author', content.samrAuthor);
 
         document.querySelectorAll('.prompt-copy-button').forEach(function (copyButton) {
             copyButton.setAttribute('aria-label', content.copy);

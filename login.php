@@ -11,7 +11,7 @@ try {
     }
 
     if (current_user()) {
-        header('Location: index.html');
+        header('Location: designer.html');
         exit;
     }
 } catch (Throwable $e) {
@@ -45,7 +45,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             ];
             $touch = $db->prepare("UPDATE users SET last_login_at = CURRENT_TIMESTAMP WHERE id = ?");
             $touch->execute([(int)$user['id']]);
-            header('Location: index.html');
+            header('Location: designer.html');
             exit;
         }
     }
@@ -61,9 +61,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="interface.css?v=20260722-mobile-tab-spacing">
+    <link rel="stylesheet" href="interface.css?v=20260729-language-toggle">
     <link rel="stylesheet" href="account-ui.css?v=20260520-4">
-    <link rel="stylesheet" href="account-pages.css?v=20260722-neutral-theme">
+    <link rel="stylesheet" href="account-pages.css?v=20260730-dark-primary">
 </head>
 <body class="login-page">
 <?php render_site_nav('login'); ?>

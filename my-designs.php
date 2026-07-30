@@ -5,6 +5,7 @@ require_once __DIR__ . '/lib/bootstrap.php';
 $user = require_login_page();
 $db = app_db();
 $flashMessage = '';
+$flashMessageEn = '';
 $flashKind = 'info';
 
 if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
@@ -18,6 +19,33 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
         $flashMessage = $stmt->rowCount() > 0
             ? 'Production supprimée.'
             : 'Production introuvable.';
+        $flashMessageEn = $stmt->rowCount() > 0
+            ? 'Design deleted.'
+            : 'Design not found.';
+        $flashKind = $stmt->rowCount() > 0 ? 'success' : 'warning';
+    } elseif ($action === 'unlist' && $designId > 0) {
+        $stmt = $db->prepare('UPDATE learning_designs
+            SET is_listed = 0, listed_at = NULL
+            WHERE id = ? AND owner_user_id = ? AND is_published = 1 AND is_listed = 1');
+        $stmt->execute([$designId, (int)$user['id']]);
+        $flashMessage = $stmt->rowCount() > 0
+            ? 'Design retiré de la page des partages. Son lien reste actif.'
+            : 'Publication introuvable ou déjà retirée des partages.';
+        $flashMessageEn = $stmt->rowCount() > 0
+            ? 'Design removed from the shared catalog. Its link remains active.'
+            : 'Publication not found or already removed from the shared catalog.';
+        $flashKind = $stmt->rowCount() > 0 ? 'success' : 'warning';
+    } elseif ($action === 'revoke_share' && $designId > 0) {
+        $stmt = $db->prepare('UPDATE learning_designs
+            SET share_token = NULL, is_published = 0, is_listed = 0, listed_at = NULL
+            WHERE id = ? AND owner_user_id = ? AND is_published = 1');
+        $stmt->execute([$designId, (int)$user['id']]);
+        $flashMessage = $stmt->rowCount() > 0
+            ? 'Lien de partage révoqué.'
+            : 'Publication introuvable ou lien déjà révoqué.';
+        $flashMessageEn = $stmt->rowCount() > 0
+            ? 'Share link revoked.'
+            : 'Publication not found or link already revoked.';
         $flashKind = $stmt->rowCount() > 0 ? 'success' : 'warning';
     }
 }
@@ -36,14 +64,14 @@ function e(string $value): string
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Mes designs | Learning Designer</title>
+    <title data-site-i18n-en="My designs | Learning Designer" data-site-i18n-fr="Mes designs | Learning Designer">Mes designs | Learning Designer</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" referrerpolicy="no-referrer" />
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="interface.css?v=20260722-mobile-tab-spacing" />
+    <link rel="stylesheet" href="interface.css?v=20260729-language-toggle" />
     <link rel="stylesheet" href="account-ui.css?v=20260520-4" />
-    <link rel="stylesheet" href="account-pages.css?v=20260722-neutral-theme" />
+    <link rel="stylesheet" href="account-pages.css?v=20260730-dark-primary" />
     <style>
       .saved-shell {
         border: 0;
@@ -156,10 +184,19 @@ function e(string $value): string
       }
 
       .saved-action-delete:hover,
-      .saved-action-delete:focus-visible {
+      .saved-action-delete:focus-visible,
+      .saved-action-revoke:hover,
+      .saved-action-revoke:focus-visible {
         border-color: rgba(184, 54, 69, 0.28);
         color: var(--danger);
         background: rgba(184, 54, 69, 0.08);
+      }
+
+      .saved-action-unlist:hover,
+      .saved-action-unlist:focus-visible {
+        border-color: rgba(209, 140, 19, 0.32);
+        color: #a45f00;
+        background: rgba(209, 140, 19, 0.1);
       }
 
       [data-theme="dark"] .saved-title {
@@ -221,50 +258,88 @@ function e(string $value): string
     <main class="saved-shell">
       <div class="saved-header">
         <div>
-          <h1 class="saved-title">Mes designs</h1>
-          <p class="saved-subtitle">Retrouvez, ouvrez ou supprimez vos designs enregistrés.</p>
+          <h1 class="saved-title" data-site-i18n-en="My designs" data-site-i18n-fr="Mes designs">Mes designs</h1>
+          <p class="saved-subtitle" data-site-i18n-en="Find, open, or delete your saved designs." data-site-i18n-fr="Retrouvez, ouvrez ou supprimez vos designs enregistrés.">Retrouvez, ouvrez ou supprimez vos designs enregistrés.</p>
         </div>
       </div>
 
       <?php if ($flashMessage !== ''): ?>
-        <p class="saved-flash saved-flash-<?= e($flashKind) ?>"><?= e($flashMessage) ?></p>
+        <p class="saved-flash saved-flash-<?= e($flashKind) ?>" data-site-i18n-en="<?= e($flashMessageEn) ?>" data-site-i18n-fr="<?= e($flashMessage) ?>"><?= e($flashMessage) ?></p>
       <?php endif; ?>
 
       <?php if (!$items): ?>
-        <p class="saved-empty">Aucune sauvegarde pour le moment. Revenez dans l’éditeur puis utilisez le bouton Enregistrer.</p>
+        <p class="saved-empty"
+          data-site-i18n-en="No saved designs yet. Return to the editor and use the Save button."
+          data-site-i18n-fr="Aucune sauvegarde pour le moment. Revenez dans l’éditeur puis utilisez le bouton Enregistrer.">Aucune sauvegarde pour le moment. Revenez dans l’éditeur puis utilisez le bouton Enregistrer.</p>
       <?php else: ?>
-        <section class="saved-grid" aria-label="Liste des productions sauvegardées">
+        <section class="saved-grid" aria-label="Liste des productions sauvegardées"
+          data-site-i18n-attr="aria-label" data-site-i18n-en="Saved designs list" data-site-i18n-fr="Liste des productions sauvegardées">
           <?php foreach ($items as $item): ?>
             <article class="saved-card">
               <div>
                 <h2 class="saved-card-title"><?= e((string)$item['title']) ?></h2>
                 <p class="saved-card-meta">
-                  Dernière mise à jour :
+                  <span data-site-i18n-en="Last updated:" data-site-i18n-fr="Dernière mise à jour :">Dernière mise à jour :</span>
                   <?= e((string)$item['updated_at']) ?><br />
-                  Créée le :
+                  <span data-site-i18n-en="Created:" data-site-i18n-fr="Créée le :">Créée le :</span>
                   <?= e((string)$item['created_at']) ?>
                 </p>
                 <?php
                   $isPublished = (bool)$item['is_published'];
                   $isListed = (bool)$item['is_listed'];
-                  $statusText = $isListed ? 'Visible dans les partages' : ($isPublished ? 'Publié par lien' : 'Privé');
+                  $statusTextFr = $isListed ? 'Visible dans les partages' : ($isPublished ? 'Publié par lien' : 'Privé');
+                  $statusTextEn = $isListed ? 'Listed in the shared catalog' : ($isPublished ? 'Shared by link' : 'Private');
                   $statusIcon = $isListed ? 'fa-solid fa-share-nodes' : ($isPublished ? 'fa-regular fa-eye' : 'fa-solid fa-lock');
                 ?>
-                <span class="saved-status"><i class="<?= e($statusIcon) ?>" aria-hidden="true"></i><?= e($statusText) ?></span>
+                <span class="saved-status"><i class="<?= e($statusIcon) ?>" aria-hidden="true"></i><span data-site-i18n-en="<?= e($statusTextEn) ?>" data-site-i18n-fr="<?= e($statusTextFr) ?>"><?= e($statusTextFr) ?></span></span>
               </div>
               <div class="saved-card-actions">
-                <a class="btn btn-primary saved-action-btn" href="index.html?remote_design_id=<?= (int)$item['id'] ?>" aria-label="Ouvrir" title="Ouvrir">
+                <a class="btn btn-primary saved-action-btn" href="designer.html?remote_design_id=<?= (int)$item['id'] ?>"
+                  aria-label="Ouvrir le design" title="Ouvrir le design"
+                  data-site-i18n-attr="aria-label,title" data-site-i18n-en="Open design" data-site-i18n-fr="Ouvrir le design">
                   <i class="fa-regular fa-folder-open" aria-hidden="true"></i>
                 </a>
                 <?php if ($isPublished && trim((string)$item['share_token']) !== ''): ?>
-                  <a class="btn btn-light saved-action-btn" href="view.php?token=<?= urlencode((string)$item['share_token']) ?>" target="_blank" rel="noopener noreferrer" aria-label="Voir" title="Voir">
+                  <a class="btn btn-light saved-action-btn" href="view.php?token=<?= urlencode((string)$item['share_token']) ?>" target="_blank" rel="noopener noreferrer"
+                    aria-label="Voir le design partagé" title="Voir le design partagé"
+                    data-site-i18n-attr="aria-label,title" data-site-i18n-en="View shared design" data-site-i18n-fr="Voir le design partagé">
                     <i class="fa-regular fa-eye" aria-hidden="true"></i>
                   </a>
                 <?php endif; ?>
-                <form method="post" action="my-designs.php">
+                <?php if ($isListed): ?>
+                  <form class="saved-action-confirm" method="post" action="my-designs.php"
+                    data-confirm-fr="Retirer ce design de la page des partages ? Son lien de consultation restera actif."
+                    data-confirm-en="Remove this design from the shared catalog? Its view link will remain active.">
+                    <input type="hidden" name="action" value="unlist" />
+                    <input type="hidden" name="design_id" value="<?= (int)$item['id'] ?>" />
+                    <button class="btn btn-light saved-action-btn saved-action-unlist" type="submit"
+                      aria-label="Retirer le design des partages" title="Retirer le design des partages"
+                      data-site-i18n-attr="aria-label,title" data-site-i18n-en="Remove design from shared catalog" data-site-i18n-fr="Retirer le design des partages">
+                      <i class="fa-regular fa-eye-slash" aria-hidden="true"></i>
+                    </button>
+                  </form>
+                <?php endif; ?>
+                <?php if ($isPublished): ?>
+                  <form class="saved-action-confirm" method="post" action="my-designs.php"
+                    data-confirm-fr="Révoquer ce lien de partage ? Il cessera immédiatement de fonctionner et le design sera retiré des partages."
+                    data-confirm-en="Revoke this share link? It will stop working immediately and the design will be removed from the shared catalog.">
+                    <input type="hidden" name="action" value="revoke_share" />
+                    <input type="hidden" name="design_id" value="<?= (int)$item['id'] ?>" />
+                    <button class="btn btn-light saved-action-btn saved-action-revoke" type="submit"
+                      aria-label="Révoquer le lien de partage" title="Révoquer le lien de partage"
+                      data-site-i18n-attr="aria-label,title" data-site-i18n-en="Revoke share link" data-site-i18n-fr="Révoquer le lien de partage">
+                      <i class="fa-solid fa-link-slash" aria-hidden="true"></i>
+                    </button>
+                  </form>
+                <?php endif; ?>
+                <form class="saved-action-confirm" method="post" action="my-designs.php"
+                  data-confirm-fr="Supprimer définitivement ce design ? Cette action est irréversible."
+                  data-confirm-en="Permanently delete this design? This action cannot be undone.">
                   <input type="hidden" name="action" value="delete" />
                   <input type="hidden" name="design_id" value="<?= (int)$item['id'] ?>" />
-                  <button class="btn btn-light saved-action-btn saved-action-delete" type="submit" aria-label="Supprimer" title="Supprimer">
+                  <button class="btn btn-light saved-action-btn saved-action-delete" type="submit"
+                    aria-label="Supprimer le design" title="Supprimer le design"
+                    data-site-i18n-attr="aria-label,title" data-site-i18n-en="Delete design" data-site-i18n-fr="Supprimer le design">
                     <i class="fa-regular fa-trash-can" aria-hidden="true"></i>
                   </button>
                 </form>
@@ -275,5 +350,16 @@ function e(string $value): string
       <?php endif; ?>
     </main>
     <?php render_site_footer(); ?>
+    <script>
+      document.querySelectorAll('.saved-action-confirm').forEach(function (form) {
+        form.addEventListener('submit', function (event) {
+          var lang = document.documentElement.lang === 'en' ? 'en' : 'fr';
+          var message = lang === 'en' ? form.dataset.confirmEn : form.dataset.confirmFr;
+          if (message && !window.confirm(message)) {
+            event.preventDefault();
+          }
+        });
+      });
+    </script>
   </body>
 </html>

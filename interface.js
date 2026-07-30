@@ -873,7 +873,7 @@ const infoBtn = document.getElementById("info-btn");
 const saveBtn = document.getElementById("save-btn");
 const importFileInput = document.getElementById("import-file-input");
 const langSelect = document.getElementById("lang-select");
-const languageButtons = Array.from(document.querySelectorAll(".nav-language-option"));
+const languageButton = document.querySelector(".nav-language-toggle");
 const srStatus = document.getElementById("sr-status");
 const appTitle = document.getElementById("app-title");
 const topPanel = document.getElementById("top-panel");
@@ -1733,9 +1733,13 @@ function applyLocalizedUI() {
   } catch (_) {}
   document.title = t("docTitle");
   if (langSelect) langSelect.value = currentLang();
-  languageButtons.forEach((button) => {
-    button.setAttribute("aria-pressed", button.dataset.language === currentLang() ? "true" : "false");
-  });
+  if (languageButton) {
+    const isEnglish = currentLang() === "en";
+    languageButton.querySelector(".nav-language-label").textContent = isEnglish ? "EN" : "FR";
+    const actionLabel = isEnglish ? "Switch to French" : "Passer en anglais";
+    languageButton.setAttribute("aria-label", actionLabel);
+    languageButton.setAttribute("title", actionLabel);
+  }
   document.getElementById("skip-link").textContent = t("skipLink");
   document.querySelector(".toolbar").setAttribute("aria-label", t("toolbarRegion"));
   appTitle.textContent = t("appTitle");
@@ -6427,14 +6431,27 @@ function bindTopPanelEvents() {
     saveState();
     render();
   });
-  languageButtons.forEach((button) => {
-    button.addEventListener("click", () => {
-      const nextLang = button.dataset.language === "en" ? "en" : "fr";
-      if (langSelect.value === nextLang) return;
-      langSelect.value = nextLang;
-      langSelect.dispatchEvent(new Event("change", { bubbles: true }));
+  if (languageButton) {
+    languageButton.addEventListener("click", () => {
+      const nextLang = langSelect.value === "en" ? "fr" : "en";
+      const reduceMotion = window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches;
+      const applyLanguage = () => {
+        langSelect.value = nextLang;
+        langSelect.dispatchEvent(new Event("change", { bubbles: true }));
+      };
+      if (reduceMotion) {
+        applyLanguage();
+        return;
+      }
+      languageButton.classList.add("is-leaving");
+      window.setTimeout(() => {
+        applyLanguage();
+        languageButton.classList.remove("is-leaving");
+        languageButton.classList.add("is-entering");
+        window.setTimeout(() => languageButton.classList.remove("is-entering"), 180);
+      }, 90);
     });
-  });
+  }
 }
 
 addSessionBtn.addEventListener("click", () => {

@@ -57,7 +57,8 @@ Conservez les secrets dans un fichier local non versionné, par exemple `learnin
 
 ## Fichiers principaux
 
-- [index.html](./index.html) : interface de conception ;
+- [index.php](./index.php) : page d’accueil ;
+- [designer.html](./designer.html) : interface de conception ;
 - [interface.js](./interface.js) et [interface.css](./interface.css) : logique et styles de l'application ;
 - [help.php](./help.php) : documentation utilisateur ;
 - [prompts.php](./prompts.php) : bibliothèque bilingue de prompts pédagogiques ;

@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Learning Designer - Prototype</title>
+    <title>Interface de conception | Learning Designer</title>
     <script>
       (function() {
         try {
@@ -16,27 +16,33 @@
     </script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" referrerpolicy="no-referrer" />
-    <link rel="stylesheet" href="account-ui.css?v=20260520-4" />
+    <link rel="stylesheet" href="account-ui.css?v=20260729-2" />
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="interface.css?v=20260722-mobile-tab-spacing" />
+    <link rel="stylesheet" href="interface.css?v=20260729-brand-link" />
   </head>
   <body>
     <a id="skip-link" class="skip-link" href="#board">Aller au contenu principal</a>
     <p id="sr-status" class="sr-only" role="status" aria-live="polite" aria-atomic="true"></p>
     <header class="site-nav" role="navigation" aria-label="Navigation principale">
       <div class="site-nav-brand">
-        <span class="site-nav-brand-mark" aria-hidden="true"></span>
-        <div class="site-nav-brand-copy">
-          <p class="site-nav-title">Learning Designer</p>
-        </div>
+        <a class="site-nav-brand-link" href="index.php" aria-label="Accueil Learning Designer"
+           data-site-i18n-attr="aria-label"
+           data-site-i18n-en="Learning Designer home"
+           data-site-i18n-fr="Accueil Learning Designer">
+          <span class="site-nav-brand-mark" aria-hidden="true"></span>
+          <div class="site-nav-brand-copy">
+            <p class="site-nav-title">Learning Designer</p>
+          </div>
+        </a>
       </div>
       <div id="site-nav-actions" class="site-nav-actions">
         <label for="lang-select" class="sr-only">Langue de l'interface</label>
-        <div class="nav-language-switch" role="group" aria-label="Langue de l'interface">
-          <button class="nav-language-option" type="button" data-language="fr" aria-pressed="true">FR</button>
-          <button class="nav-language-option" type="button" data-language="en" aria-pressed="false">EN</button>
+        <div class="nav-language-switch" aria-label="Langue de l'interface">
+          <button class="nav-language-toggle" type="button" aria-label="Passer en anglais" title="Passer en anglais">
+            <span class="nav-language-label">FR</span>
+          </button>
         </div>
         <select id="lang-select" hidden tabindex="-1" aria-hidden="true">
           <option value="fr">FR</option>
@@ -622,8 +628,8 @@
         };
       })();
     </script>
-    <script src="interface.js?v=20260722-language-switch"></script>
-    <script src="account-ui.js?v=20260520-1"></script>
+    <script src="interface.js?v=20260729-language-toggle"></script>
+    <script src="account-ui.js?v=20260729-2"></script>
     <script>
       (function() {
         var html = document.documentElement;

@@ -428,9 +428,9 @@ PROMPT;
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="interface.css?v=20260728-numbered-subsections">
+    <link rel="stylesheet" href="interface.css?v=20260730-ui-monospace">
     <link rel="stylesheet" href="account-ui.css?v=20260520-4">
-    <link rel="stylesheet" href="account-pages.css?v=20260722-neutral-theme">
+    <link rel="stylesheet" href="account-pages.css?v=20260730-dark-primary">
 </head>
 <body class="help-page">
 <?php render_site_nav('help'); ?>
@@ -565,6 +565,7 @@ PROMPT;
             <article class="help-section" id="acquis-competences">
                 <p class="help-eyebrow"><i class="fa-solid fa-graduation-cap" aria-hidden="true"></i> Résultats attendus</p>
                 <h2>Formuler les acquis et suivre les compétences</h2>
+                <p>Formulez des résultats observables avec Bloom et reliez les activités aux compétences numériques.</p>
                 <h3 id="taxonomie-bloom">Taxonomie révisée de Bloom</h3>
                 <p>Les acquis d’apprentissage peuvent être formulés à partir de la taxonomie révisée d’Anderson et Krathwohl. Choisissez un niveau cognitif, un verbe d’action, puis précisez le résultat attendu.</p>
                 <div class="help-grid three">
@@ -589,6 +590,7 @@ PROMPT;
             <article class="help-section" id="vues-analyses">
                 <p class="help-eyebrow"><i class="fa-solid fa-chart-column" aria-hidden="true"></i> Lecture du scénario</p>
                 <h2>Afficher et analyser le scénario</h2>
+                <p>Utilisez les vues d’analyse et de chronologie pour repérer les équilibres, les écarts de durée et les données manquantes.</p>
                 <h3>Analyser l’expérience d’apprentissage</h3>
                 <p>Dans le panneau supérieur de l’éditeur, juste sous la barre de navigation, cliquez sur l’onglet <strong>Analyse</strong>, à côté de <strong>Paramètres</strong> et <strong>Chronologie</strong>. Si le panneau est replié, ce clic le déploie. La vue <strong>Expérience d’apprentissage</strong> synthétise alors le scénario sous forme de graphiques. Elle compare notamment :</p>
                 <ul>
@@ -609,6 +611,7 @@ PROMPT;
             <article class="help-section" id="sauvegarde-partage">
                 <p class="help-eyebrow"><i class="fa-solid fa-cloud-arrow-up" aria-hidden="true"></i> Compte et publication</p>
                 <h2>Sauvegarder, publier et réutiliser</h2>
+                <p>Comprenez ce qui reste local, ce qui est enregistré et les options de publication ou de réutilisation.</p>
                 <h3 id="sauvegarde-sans-compte">Sans compte</h3>
                 <p>Vous pouvez concevoir et exporter un design sans vous connecter. Les modifications restent disponibles dans la page tant qu’elle est ouverte. Aucune donnée n’est envoyée au serveur sans action explicite de votre part.</p>
                 <h3 id="sauvegarde-avec-compte">Avec un compte</h3>
@@ -616,6 +619,8 @@ PROMPT;
                 <h3 id="publier-lien">Publier un lien consultable</h3>
                 <p>Un design enregistré peut être publié pour générer une page de lecture partageable. Cette page présente les paramètres, les moments, les activités, les durées, les liens et les compétences numériques, mais ne permet pas aux visiteurs de modifier l’original.</p>
                 <ul>
+                    <li>Le lien seul reste non répertorié : seules les personnes qui le possèdent peuvent consulter le design.</li>
+                    <li>Pour rendre le design visible dans la galerie publique, choisissez l’une des six licences Creative Commons 4.0. La fenêtre de partage donne accès au sélecteur officiel et à un comparatif pour vous aider.</li>
                     <li>Vous pouvez révoquer le lien de publication.</li>
                     <li>Vous pouvez choisir de rendre le design visible dans la galerie publique des designs partagés.</li>
                     <li>Une personne connectée peut importer un design partagé dans son propre compte afin de l’adapter.</li>
@@ -629,6 +634,7 @@ PROMPT;
             <article class="help-section" id="import-export">
                 <p class="help-eyebrow"><i class="fa-solid fa-arrow-right-arrow-left" aria-hidden="true"></i> Formats d’échange</p>
                 <h2>Importer et exporter dans plusieurs formats</h2>
+                <p>Choisissez le bon format pour relire, partager, modifier ou réimporter votre design.</p>
                 <h3 id="formats-export">Formats d’export</h3>
                 <div class="help-table-wrap">
                     <table class="help-table">
@@ -747,7 +753,7 @@ Objectifs généraux de la formation.
 
             <article class="help-section" id="cli">
                 <h2>Créer avec l’IA</h2>
-                <p>Un CLI pour publier vos designs.</p>
+                <p>Choisissez entre un prompt prêt à copier, une skill réutilisable ou le CLI selon votre besoin.</p>
 
                 <h3 id="ia-guide">Guide</h3>
                 <div class="help-grid">
@@ -940,6 +946,7 @@ learning upgrade</pre>
             <article class="help-section" id="enrichir-design-ia">
                 <p class="help-eyebrow"><i class="fa-solid fa-wand-magic-sparkles" aria-hidden="true"></i> Réflexion pédagogique</p>
                 <h2>Interroger et enrichir son design avec l’IA</h2>
+                <p>Utilisez l’IA pour questionner un scénario, prioriser des améliorations et produire les ressources nécessaires.</p>
                 <h3 id="analyser-design-ia">Analyser son design</h3>
                 <p>Une IA peut vous aider à questionner votre séquence, repérer ses points forts et envisager des améliorations directement applicables en classe. Son analyse nourrit votre réflexion : vous restez maître des choix pédagogiques et de leur adaptation à vos élèves.</p>
 
@@ -973,7 +980,7 @@ learning upgrade</pre>
                 <h3 id="prompts-prets-emploi">Utiliser des prompts prêts à l’emploi</h3>
                 <div class="help-callout">
                     <i class="fa-solid fa-wand-magic-sparkles" aria-hidden="true"></i>
-                    <p><strong>Une bibliothèque de prompts pédagogiques est en préparation.</strong> Vous pourrez y choisir des prompts conçus pour interroger, enrichir ou compléter votre scénario. Les deux premiers sont consacrés à la conception universelle de l’apprentissage et à la différenciation pédagogique.<br><br><a href="prompts.php">Découvrir la page des prompts</a>.</p>
+                    <p><strong>Une bibliothèque de prompts pédagogiques est en préparation.</strong> Vous pourrez y choisir des prompts conçus pour interroger, enrichir ou compléter votre scénario. Les premiers sont consacrés à la conception universelle de l’apprentissage, la différenciation pédagogique et au modèle SAMR.<br><br><a href="prompts.php">Découvrir la page des prompts</a>.</p>
                 </div>
 
                 <h3 id="creer-contenus-ia">Créer les contenus nécessaires au scénario</h3>
@@ -1012,7 +1019,7 @@ window.helpPromptTranslations = <?= json_encode([
     ],
 ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) ?>;
 </script>
-<script src="help-i18n.js?v=20260728-3"></script>
+<script src="help-i18n.js?v=20260730-progressive-help"></script>
 <script>
 var initialHelpLanguage = 'fr';
 try {
@@ -1040,6 +1047,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     function navigateTo(target) {
         closeMobileSidebar();
+        expandSectionForTarget(target);
         if (window.history && window.history.pushState) {
             window.history.pushState(null, '', '#' + target.id);
         }
@@ -1135,7 +1143,75 @@ document.addEventListener('DOMContentLoaded', function () {
             group.appendChild(link);
         }
         toc.appendChild(group);
+
+        var sectionIntro = sectionHeading ? sectionHeading.nextElementSibling : null;
+        var sectionBodyStart = sectionHeading;
+        if (sectionIntro && sectionIntro.tagName === 'P') {
+            sectionBodyStart = sectionIntro;
+        }
+
+        if (sectionBodyStart) {
+            var sectionBody = document.createElement('div');
+            sectionBody.className = 'help-section-body';
+            sectionBody.id = section.id + '-content';
+
+            var nextNode = sectionBodyStart.nextSibling;
+            while (nextNode) {
+                var followingNode = nextNode.nextSibling;
+                sectionBody.appendChild(nextNode);
+                nextNode = followingNode;
+            }
+
+            var chapterToggle = document.createElement('button');
+            chapterToggle.className = 'help-section-toggle';
+            chapterToggle.type = 'button';
+            chapterToggle.setAttribute('aria-expanded', 'false');
+            chapterToggle.setAttribute('aria-controls', sectionBody.id);
+            chapterToggle.setAttribute(
+                'aria-label',
+                (isEnglish ? 'Open chapter: ' : 'Ouvrir le chapitre : ') + sectionTitle
+            );
+            chapterToggle.innerHTML =
+                '<span class="sr-only">' + (isEnglish ? 'View chapter' : 'Voir le chapitre') + '</span>' +
+                '<i class="fa-solid fa-chevron-down" aria-hidden="true"></i>';
+            chapterToggle.addEventListener('click', function () {
+                setSectionExpanded(section, chapterToggle.getAttribute('aria-expanded') !== 'true');
+            });
+
+            sectionBody.hidden = true;
+            section.appendChild(chapterToggle);
+            section.appendChild(sectionBody);
+        }
     });
+
+    function setSectionExpanded(section, expanded) {
+        if (!section) return;
+        var button = section.querySelector(':scope > .help-section-toggle');
+        var body = section.querySelector(':scope > .help-section-body');
+        if (!button || !body) return;
+
+        button.setAttribute('aria-expanded', expanded ? 'true' : 'false');
+        button.setAttribute(
+            'aria-label',
+            (expanded
+                ? (isEnglish ? 'Close chapter: ' : 'Réduire le chapitre : ')
+                : (isEnglish ? 'Open chapter: ' : 'Ouvrir le chapitre : ')) +
+            (section.querySelector(':scope > h2')?.textContent.replace(/^\d+\.\s*/, '').trim() || '')
+        );
+        button.querySelector('span').textContent = expanded
+            ? (isEnglish ? 'Hide chapter' : 'Masquer le chapitre')
+            : (isEnglish ? 'View chapter' : 'Voir le chapitre');
+        body.hidden = !expanded;
+        section.classList.toggle('is-expanded', expanded);
+    }
+
+    function expandSectionForTarget(target) {
+        if (!target) return;
+        var section = target.classList.contains('help-section')
+            ? target
+            : target.closest('.help-section');
+        setSectionExpanded(section, true);
+    }
 
     var tocLinks = Array.from(toc.querySelectorAll('.help-toc-link'));
     var tocSublinks = Array.from(toc.querySelectorAll('.help-toc-sublink'));
@@ -1163,9 +1239,12 @@ document.addEventListener('DOMContentLoaded', function () {
             if (section.getBoundingClientRect().top <= 145) current = section;
         });
         var currentSubsection = null;
-        Array.from(current.querySelectorAll(':scope > h3[id]')).forEach(function (subsection) {
-            if (subsection.getBoundingClientRect().top <= 145) currentSubsection = subsection;
-        });
+        var currentBody = current.querySelector(':scope > .help-section-body');
+        if (currentBody && !currentBody.hidden) {
+            Array.from(currentBody.querySelectorAll('h3[id]')).forEach(function (subsection) {
+                if (subsection.getBoundingClientRect().top <= 145) currentSubsection = subsection;
+            });
+        }
         setActiveSection(current.id, currentSubsection ? currentSubsection.id : '');
         scrollUpdatePending = false;
     }
@@ -1213,6 +1292,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     function syncHashNavigation() {
+        expandSectionForTarget(getHashTarget());
         expandSubmenuForHash();
         window.requestAnimationFrame(alignAndActivateHashTarget);
     }
@@ -1220,6 +1300,7 @@ document.addEventListener('DOMContentLoaded', function () {
     window.addEventListener('popstate', syncHashNavigation);
     window.addEventListener('hashchange', syncHashNavigation);
     window.addEventListener('load', syncHashNavigation);
+    expandSectionForTarget(getHashTarget());
     expandSubmenuForHash();
     updateActiveFromScroll();
 

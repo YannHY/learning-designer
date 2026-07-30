@@ -5,7 +5,7 @@ require_once __DIR__ . '/lib/bootstrap.php';
 $db = app_db();
 $user = current_user();
 
-$stmt = $db->query("SELECT d.title, d.document_json, d.share_token, d.updated_at, d.listed_at, u.username
+$stmt = $db->query("SELECT d.title, d.document_json, d.share_token, d.license_code, d.updated_at, d.listed_at, u.username
     FROM learning_designs d
     JOIN users u ON u.id = d.owner_user_id
     WHERE d.is_published = 1 AND d.is_listed = 1 AND d.share_token IS NOT NULL
@@ -48,6 +48,7 @@ foreach ($stmt->fetchAll() as $row) {
 
     $mode = trim((string)($meta['modeDelivery'] ?? ''));
     $designedDuration = share_designed_minutes($meta);
+    $license = creative_commons_license((string)($row['license_code'] ?? ''));
     $items[] = [
         'title' => $title,
         'description' => $description,
@@ -58,6 +59,7 @@ foreach ($stmt->fetchAll() as $row) {
         'activity_count' => $activityCount,
         'duration' => $designedDuration > 0 ? $designedDuration : $duration,
         'mode' => $mode,
+        'license' => $license,
     ];
 }
 
@@ -107,9 +109,9 @@ function share_count_label(int $count, string $singular): string
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="interface.css?v=20260722-mobile-tab-spacing" />
+    <link rel="stylesheet" href="interface.css?v=20260729-language-toggle" />
     <link rel="stylesheet" href="account-ui.css?v=20260520-4" />
-    <link rel="stylesheet" href="account-pages.css?v=20260722-neutral-theme" />
+    <link rel="stylesheet" href="account-pages.css?v=20260730-dark-primary" />
     <style>
       .shared-header {
         display: flex;
@@ -117,6 +119,10 @@ function share_count_label(int $count, string $singular): string
         justify-content: space-between;
         gap: 18px;
         margin-bottom: 24px;
+      }
+
+      .shared-shell {
+        width: min(1180px, calc(100vw - 36px));
       }
 
       .shared-subtitle {
@@ -158,21 +164,33 @@ function share_count_label(int $count, string $singular): string
 
       .shared-meta {
         display: flex;
-        flex-wrap: wrap;
-        gap: 8px;
+        flex-wrap: nowrap;
+        gap: 6px;
         margin-top: auto;
       }
 
       .shared-pill {
         display: inline-flex;
+        flex: 0 0 auto;
         align-items: center;
-        gap: 6px;
-        padding: 6px 9px;
+        gap: 5px;
+        padding: 6px 7px;
         border: 1px solid var(--line);
         border-radius: 999px;
         color: var(--muted);
-        font-size: 13px;
+        font-size: 12px;
+        white-space: nowrap;
         background: #fff;
+      }
+
+      .shared-meta a.shared-pill {
+        text-decoration: none;
+      }
+
+      .shared-meta a.shared-pill:hover,
+      .shared-meta a.shared-pill:focus {
+        border-color: var(--accent);
+        color: var(--accent);
       }
 
       .shared-actions {
@@ -184,6 +202,10 @@ function share_count_label(int $count, string $singular): string
 
       .shared-actions form {
         margin: 0;
+      }
+
+      .shared-actions .shared-action-btn {
+        width: 108px;
       }
 
       .shared-actions a.btn,
@@ -224,10 +246,22 @@ function share_count_label(int $count, string $singular): string
         background: var(--surface-light);
       }
 
+      @media (max-width: 1140px) {
+        .shared-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+
       @media (max-width: 760px) {
         .shared-header {
           align-items: stretch;
           flex-direction: column;
+        }
+      }
+
+      @media (max-width: 580px) {
+        .shared-meta {
+          flex-wrap: wrap;
         }
       }
     </style>
@@ -260,21 +294,24 @@ function share_count_label(int $count, string $singular): string
                 <span class="shared-pill"><i class="fa-solid fa-list-check" aria-hidden="true"></i><?= h(share_count_label((int)$item['activity_count'], 'activité')) ?></span>
                 <span class="shared-pill"><i class="fa-regular fa-clock" aria-hidden="true"></i><?= h(share_format_minutes((int)$item['duration'])) ?></span>
                 <span class="shared-pill"><i class="fa-solid fa-location-dot" aria-hidden="true"></i><?= h(share_mode_label($item['mode'])) ?></span>
+                <?php if ($item['license']): ?>
+                  <a class="shared-pill" href="<?= h($item['license']['url']) ?>" target="_blank" rel="license noopener noreferrer"><i class="fa-brands fa-creative-commons" aria-hidden="true"></i><?= h($item['license']['label']) ?></a>
+                <?php endif; ?>
               </div>
               <div class="shared-actions">
-                <a class="btn btn-light" href="view.php?token=<?= urlencode($item['token']) ?>">
-                  <span class="btn-label"><i class="fa-regular fa-eye btn-icon-inline" aria-hidden="true"></i>Voir</span>
+                <a class="btn btn-light shared-action-btn" href="view.php?token=<?= urlencode($item['token']) ?>">
+                  <span class="btn-label"><i class="fa-regular fa-eye btn-icon-inline" aria-hidden="true"></i><span data-site-i18n-en="View" data-site-i18n-fr="Voir">Voir</span></span>
                 </a>
                 <?php if ($user): ?>
                   <form method="post" action="import_shared_design.php">
                     <input type="hidden" name="token" value="<?= h($item['token']) ?>" />
-                    <button class="btn btn-primary" type="submit">
-                      <span class="btn-label"><i class="fa-solid fa-file-import btn-icon-inline" aria-hidden="true"></i>Importer</span>
+                    <button class="btn btn-primary shared-action-btn" type="submit">
+                      <span class="btn-label"><i class="fa-solid fa-file-import btn-icon-inline" aria-hidden="true"></i><span data-site-i18n-en="Import" data-site-i18n-fr="Importer">Importer</span></span>
                     </button>
                   </form>
                 <?php else: ?>
                   <a class="btn btn-primary" href="login.php">
-                    <span class="btn-label"><i class="fa-regular fa-user btn-icon-inline" aria-hidden="true"></i>Se connecter pour importer</span>
+                    <span class="btn-label"><i class="fa-regular fa-user btn-icon-inline" aria-hidden="true"></i><span data-site-i18n-en="Sign in to import" data-site-i18n-fr="Se connecter pour importer">Se connecter pour importer</span></span>
                   </a>
                 <?php endif; ?>
               </div>

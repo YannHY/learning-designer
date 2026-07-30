@@ -50,5 +50,5 @@ $insert = $db->prepare("INSERT INTO learning_designs (owner_user_id, title, docu
 $insert->execute([(int)$user['id'], $copyTitle, $payload]);
 $designId = (int)$db->lastInsertId();
 
-header('Location: index.html?remote_design_id=' . urlencode((string)$designId));
+header('Location: designer.html?remote_design_id=' . urlencode((string)$designId));
 exit;

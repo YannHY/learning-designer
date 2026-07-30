@@ -14,6 +14,10 @@
   --content-shell-gutter: 36px;
 }
 
+[data-theme="dark"] {
+  --primary: #6ab0ff;
+}
+
 * { box-sizing: border-box; }
 body {
   margin: 0;
@@ -577,6 +581,10 @@ th {
 
 [data-theme="dark"] .account-kicker {
   color: #8cc6ff;
+}
+
+[data-theme="dark"] .account-form button {
+  background: linear-gradient(180deg, var(--btn-primary-from), var(--btn-primary-to));
 }
 
 [data-theme="dark"] .profile-primary-link {

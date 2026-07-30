@@ -14,7 +14,7 @@ if ($token === '') {
 }
 
 $db = app_db();
-$stmt = $db->prepare("SELECT id, title, document_json, updated_at FROM learning_designs WHERE share_token = ? AND is_published = 1 LIMIT 1");
+$stmt = $db->prepare("SELECT id, title, document_json, license_code, updated_at FROM learning_designs WHERE share_token = ? AND is_published = 1 LIMIT 1");
 $stmt->execute([$token]);
 $row = $stmt->fetch();
 if (!$row) {
@@ -43,6 +43,8 @@ try {
     $dt = new DateTimeImmutable((string)$row['updated_at'], new DateTimeZone('UTC'));
     $updatedAt = $dt->setTimezone(new DateTimeZone('Europe/Paris'))->format('d/m/Y H:i');
 } catch (Exception) {}
+
+$license = creative_commons_license((string)($row['license_code'] ?? ''));
 
 // ── Label maps ───────────────────────────────────────────────
 $LEARNING_TYPES = [
@@ -739,6 +741,12 @@ $displayDesignedMinutes = $designedMinutes > 0 ? $designedMinutes : $totalMinute
     }
     .view-footer a { color: var(--accent); text-decoration: none; }
     .view-footer a:hover { text-decoration: underline; }
+    .view-license {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      margin: 0 0 6px;
+    }
     #app-tooltip {
       position: fixed;
       z-index: 9999;
@@ -970,6 +978,13 @@ $displayDesignedMinutes = $designedMinutes > 0 ? $designedMinutes : $totalMinute
   </div>
 
   <footer class="view-footer">
+    <?php if ($license): ?>
+    <p class="view-license">
+      <i class="fa-brands fa-creative-commons" aria-hidden="true"></i>
+      Cette production est mise à disposition sous
+      <a href="<?= esc($license['url']) ?>" target="_blank" rel="license noopener noreferrer"><?= esc($license['label']) ?></a>.
+    </p>
+    <?php endif; ?>
     <p>Partagé avec Learning Designer</p>
   </footer>
 

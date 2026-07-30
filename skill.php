@@ -45,9 +45,9 @@ PROMPT;
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="interface.css?v=20260722-mobile-tab-spacing">
+    <link rel="stylesheet" href="interface.css?v=20260730-ui-monospace">
     <link rel="stylesheet" href="account-ui.css?v=20260520-4">
-    <link rel="stylesheet" href="account-pages.css?v=20260722-neutral-theme">
+    <link rel="stylesheet" href="account-pages.css?v=20260730-dark-primary">
     <style>
         .skill-hero {
             display: grid;
@@ -136,10 +136,19 @@ PROMPT;
             border-radius: 8px;
             background: #0b1020;
             color: #e5edf8;
-            font: 13px/1.55 ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+            font-size: 13px;
+            line-height: 1.55;
             white-space: pre;
         }
+        .skill-code {
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+        }
         .skill-prompt {
+            font-family: var(--font-prompt);
+            font-size: 14px;
+            font-weight: 400;
+            line-height: 1.65;
+            letter-spacing: -.01em;
             min-height: 150px;
             resize: vertical;
         }

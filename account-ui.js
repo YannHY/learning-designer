@@ -569,7 +569,16 @@
     btn.hidden = !authState.user;
   }
 
-  function openPublishModal(shareUrl, alreadyPublished, isListed = false, listingUrl = "share.php") {
+  const CC_LICENSES = [
+    { code: "cc-by", label: "CC BY 4.0", fr: "Attribution", en: "Attribution" },
+    { code: "cc-by-sa", label: "CC BY-SA 4.0", fr: "Attribution, partage dans les mêmes conditions", en: "Attribution, ShareAlike" },
+    { code: "cc-by-nd", label: "CC BY-ND 4.0", fr: "Attribution, pas de modification", en: "Attribution, NoDerivatives" },
+    { code: "cc-by-nc", label: "CC BY-NC 4.0", fr: "Attribution, pas d’utilisation commerciale", en: "Attribution, NonCommercial" },
+    { code: "cc-by-nc-sa", label: "CC BY-NC-SA 4.0", fr: "Attribution, pas d’utilisation commerciale, partage dans les mêmes conditions", en: "Attribution, NonCommercial, ShareAlike" },
+    { code: "cc-by-nc-nd", label: "CC BY-NC-ND 4.0", fr: "Attribution, pas d’utilisation commerciale, pas de modification", en: "Attribution, NonCommercial, NoDerivatives" }
+  ];
+
+  function openPublishModal(shareUrl, alreadyPublished, isListed = false, listingUrl = "share.php", licenseCode = null) {
     closePublishModal();
 
     const backdrop = document.createElement("div");
@@ -590,29 +599,64 @@
       ? `<button id="publish-revoke-btn" class="btn" type="button" style="color:#b91c1c">${tr("Révoquer le lien", "Revoke link")}</button>`
       : "";
 
+    const selectedLicense = CC_LICENSES.some((license) => license.code === licenseCode) ? licenseCode : "";
+    const licenseOptions = [
+      `<option value="" disabled ${selectedLicense === "" ? "selected" : ""}>${tr("Choisir une licence…", "Choose a license…")}</option>`,
+      ...CC_LICENSES.map((license) => {
+        const description = document.documentElement.lang === "en" ? license.en : license.fr;
+        return `<option value="${license.code}" ${license.code === selectedLicense ? "selected" : ""}>${license.label} — ${escapeHtml(description)}</option>`;
+      })
+    ].join("");
+    const licenseHtml = `
+      <div id="publish-license-panel" class="publish-license-panel" ${isListed ? "" : "hidden"}>
+        <div class="publish-license-choice">
+          <label for="publish-license-select">${tr("Licence Creative Commons", "Creative Commons license")}</label>
+          <select id="publish-license-select" ${isListed ? "required" : ""}>${licenseOptions}</select>
+          <p class="publish-license-help">
+            ${tr("Vous ne connaissez pas ces licences ?", "Not familiar with these licenses?")}
+            <a href="https://creativecommons.org/chooser/" target="_blank" rel="noopener noreferrer">${tr("Utiliser l’outil officiel pour choisir", "Use the official license chooser")}</a>
+            · <a href="https://creativecommons.org/cc-licenses/" target="_blank" rel="noopener noreferrer">${tr("Comparer les licences", "Compare licenses")}</a>
+          </p>
+          <p class="publish-license-warning">${tr("Une licence CC déjà accordée ne peut pas être révoquée pour les copies déjà reçues.", "A CC license already granted cannot be revoked for copies already received.")}</p>
+        </div>
+      </div>`;
+
     const listingHtml = `
-      <label class="publish-listing-choice">
-        <input id="publish-listing-checkbox" type="checkbox" ${isListed ? "checked" : ""}>
-        <span>
-          <strong>${tr("Afficher sur la page de partage", "Show on the shared designs page")}</strong>
-          <small>${tr("Les autres enseignants pourront voir ce design dans le catalogue et l'importer dans leur compte.", "Other teachers will be able to find this design in the catalog and import a copy into their account.")}</small>
-        </span>
-      </label>
-      ${shareUrl && isListed
-        ? `<p class="publish-hint"><a href="${escapeHtml(listingUrl)}">${tr("Voir la page de partage", "Open shared designs page")}</a></p>`
-        : ""}`;
+      <section id="publish-catalog-option" class="publish-option ${isListed ? "is-active" : ""}" aria-labelledby="publish-catalog-title">
+        <label class="publish-listing-choice">
+          <input id="publish-listing-checkbox" type="checkbox" ${isListed ? "checked" : ""}
+            aria-controls="publish-license-panel" aria-expanded="${isListed ? "true" : "false"}">
+          <span>
+            <strong id="publish-catalog-title">${tr("Publier aussi dans le catalogue", "Also publish in the catalog")}</strong>
+            <small>${tr("Votre design devient visible par tous sur la page de partage et peut être importé par d’autres enseignants.", "Your design becomes visible to everyone on the shared designs page and can be imported by other teachers.")}</small>
+          </span>
+        </label>
+        ${licenseHtml}
+        ${shareUrl && isListed
+          ? `<p class="publish-catalog-link"><a href="${escapeHtml(listingUrl)}">${tr("Voir le design dans le catalogue", "View the design in the catalog")}</a></p>`
+          : ""}
+      </section>`;
 
     backdrop.innerHTML = `
-      <div class="modal-card" style="width:min(520px,calc(100vw - 24px))">
+      <div class="modal-card publish-modal-card">
         <h2 class="modal-title">${tr("Partager la production", "Share design")}</h2>
-        ${shareUrl
-          ? `<p class="publish-hint">${tr("Ce lien permet à n'importe qui de consulter votre production (lecture seule).", "Anyone with this link can view your design (read-only).")}</p>
-             ${urlHtml}`
-          : `<p class="publish-hint">${tr("Votre production sera accessible publiquement via un lien unique.", "Your design will be publicly accessible via a unique link.")}</p>`
-        }
+        <p class="publish-modal-intro">${tr("Choisissez comment vous souhaitez diffuser votre design.", "Choose how you want to share your design.")}</p>
+        <section class="publish-option publish-link-option" aria-labelledby="publish-link-title">
+          <div class="publish-option-heading">
+            <span class="publish-option-icon" aria-hidden="true"><i class="fa-solid fa-link"></i></span>
+            <div>
+              <h3 id="publish-link-title">${tr("Partager avec un lien", "Share with a link")}</h3>
+              <p>${tr("Seules les personnes qui possèdent le lien peuvent consulter le design, en lecture seule. Aucune licence n’est nécessaire.", "Only people who have the link can view the design, read-only. No license is required.")}</p>
+            </div>
+          </div>
+          ${shareUrl
+            ? urlHtml
+            : `<p class="publish-link-status">${tr("Un lien unique et non répertorié sera créé.", "A unique, unlisted link will be created.")}</p>`
+          }
+        </section>
         ${listingHtml}
         <div class="modal-actions" style="margin-top:20px">
-          <button id="publish-confirm-btn" class="btn btn-primary" type="button">${shareUrl ? tr("Mettre à jour", "Update") : tr("Générer le lien", "Generate link")}</button>
+          <button id="publish-confirm-btn" class="btn btn-primary" type="button">${shareUrl ? tr("Enregistrer", "Save") : tr("Créer le lien", "Create link")}</button>
           ${revokeHtml}
           <button id="publish-close-btn" class="btn btn-light" type="button">${tr("Fermer", "Close")}</button>
         </div>
@@ -632,10 +676,42 @@
       }).catch(() => { input.select(); document.execCommand("copy"); });
     });
 
+    const syncListingUi = () => {
+      const checkbox = $("publish-listing-checkbox");
+      const panel = $("publish-license-panel");
+      const select = $("publish-license-select");
+      const option = $("publish-catalog-option");
+      const isCatalogListed = Boolean(checkbox?.checked);
+      if (panel) panel.hidden = !isCatalogListed;
+      if (select) {
+        select.required = isCatalogListed;
+        if (!isCatalogListed) select.setCustomValidity("");
+      }
+      checkbox?.setAttribute("aria-expanded", String(isCatalogListed));
+      option?.classList.toggle("is-active", isCatalogListed);
+    };
+    $("publish-listing-checkbox")?.addEventListener("change", syncListingUi);
+    syncListingUi();
+
     $("publish-confirm-btn")?.addEventListener("click", async () => {
+      const isCatalogListed = Boolean($("publish-listing-checkbox")?.checked);
+      const licenseSelect = $("publish-license-select");
+      if (isCatalogListed && !licenseSelect?.value) {
+        licenseSelect?.setCustomValidity(tr("Choisissez une licence Creative Commons.", "Choose a Creative Commons license."));
+        licenseSelect?.reportValidity();
+        licenseSelect?.focus();
+        return;
+      }
+      licenseSelect?.setCustomValidity("");
       const confirmBtn = $("publish-confirm-btn");
-      if (confirmBtn) { confirmBtn.disabled = true; confirmBtn.textContent = tr("Publication…", "Publishing…"); }
+      if (confirmBtn) {
+        confirmBtn.disabled = true;
+        confirmBtn.textContent = shareUrl ? tr("Enregistrement…", "Saving…") : tr("Création…", "Creating…");
+      }
       await doPublish();
+    });
+    $("publish-license-select")?.addEventListener("change", (event) => {
+      event.currentTarget.setCustomValidity("");
     });
 
     $("publish-revoke-btn")?.addEventListener("click", async () => {
@@ -674,16 +750,18 @@
     }
 
     try {
+      const isCatalogListed = Boolean($("publish-listing-checkbox")?.checked);
       const data = await fetchJson("publish_design.php", {
         method: "POST",
         body: JSON.stringify({
           action: "publish",
           design_id: saved.design.id,
-          is_listed: Boolean($("publish-listing-checkbox")?.checked)
+          is_listed: isCatalogListed,
+          license_code: isCatalogListed ? ($("publish-license-select")?.value || "") : ""
         })
       });
       closePublishModal();
-      openPublishModal(data.share_url, true, Boolean(data.is_listed), data.listing_url || "share.php");
+      openPublishModal(data.share_url, true, Boolean(data.is_listed), data.listing_url || "share.php", data.license_code);
     } catch (err) {
       app()?.showNotice?.(err.message || tr("Publication impossible.", "Publish failed."), "error");
       closePublishModal();
@@ -718,7 +796,7 @@
       method: "POST",
       body: JSON.stringify({ action: "status", design_id: designId })
     }).then((data) => {
-      openPublishModal(data.share_url || null, Boolean(data.is_published), Boolean(data.is_listed), data.listing_url || "share.php");
+      openPublishModal(data.share_url || null, Boolean(data.is_published), Boolean(data.is_listed), data.listing_url || "share.php", data.license_code);
     }).catch(() => {
       openPublishModal(null, false, false);
     });

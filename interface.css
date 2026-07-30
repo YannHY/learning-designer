@@ -399,8 +399,11 @@ select:focus-visible,
   gap: 8px;
 }
 
-.brand-title {
+html body.designer-page h1.brand-title {
   margin: 0;
+  font-family: var(--font-family);
+  font-size: 28px;
+  line-height: 1.15;
 }
 
 .top-panel-toggle {
@@ -3273,7 +3276,7 @@ main {
     flex: 0 0 auto;
   }
 
-  .brand-title {
+  html body.designer-page h1.brand-title {
     font-size: 18px;
     line-height: 1.25;
   }

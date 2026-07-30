@@ -80,7 +80,7 @@ require_once __DIR__ . '/lib/bootstrap.php';
                     <p>Au <strong>niveau pratique</strong>, un mécanisme analogue est à l'œuvre : des actions répétées et ajustées permettent de développer progressivement une compétence, puis des compétences de plus en plus complexes.</p>
 
                     <figure class="cf-schema cf-schema-centered">
-                        <img src="assets/conversational-framework/schema/cadre-03.webp" alt="Schéma original montrant les cycles internes des concepts et de la pratique de l'apprenant." width="2134" height="1200" loading="lazy">
+                        <img src="assets/conversational-framework/schema/cadre-03.svg" alt="Schéma Excalidraw montrant les cycles internes des concepts et de la pratique de l'apprenant." width="1600" height="900" loading="lazy">
                         <figcaption>Les cycles internes de l'apprenant</figcaption>
                     </figure>
                 </section>
@@ -105,7 +105,7 @@ require_once __DIR__ . '/lib/bootstrap.php';
                     <p>À partir de cette structure de base — deux acteurs (enseignant, pairs), deux niveaux (concepts, pratiques), et les cycles qui les relient — Laurillard montre que l'on peut représenter l'ensemble des grands types d'apprentissage utilisés en éducation. Chaque type sollicite une partie particulière du cadre.</p>
 
                     <figure class="cf-schema cf-schema-wide">
-                        <img src="assets/conversational-framework/schema/cadre-04.webp" alt="Schéma original du cadre avec les concepts de l'enseignant et des pairs, l'environnement d'apprentissage, la pratique des pairs et les cycles de communication et de modélisation." width="2134" height="1200" loading="lazy">
+                        <img src="assets/conversational-framework/schema/cadre-04.svg" alt="Schéma Excalidraw du cadre avec les concepts de l'enseignant et des pairs, l'environnement d'apprentissage, la pratique des pairs et les cycles de communication et de modélisation." width="1600" height="900" loading="lazy">
                         <figcaption>Les échanges avec l'enseignant, l'environnement et les pairs</figcaption>
                     </figure>
                 </section>
@@ -122,7 +122,7 @@ require_once __DIR__ . '/lib/bootstrap.php';
                             <p>Sa caractéristique déterminante est que l'élève n'a pas, dans ce cadre, à produire lui-même des idées. L'activité conceptuelle y est donc la plus réduite des six types. Cela ne rend pas l'acquisition inutile — elle reste indispensable pour donner accès à des savoirs constitués — mais elle appelle à être complétée par des formes d'apprentissage plus actives.</p>
                         </div>
                         <figure class="cf-schema cf-type-schema">
-                            <img src="assets/conversational-framework/schema/cadre-05.webp" alt="Schéma original de l'apprentissage par acquisition." width="2134" height="1200" loading="lazy">
+                            <img src="assets/conversational-framework/schema/cadre-05.svg" alt="Schéma Excalidraw de l'apprentissage par acquisition." width="1600" height="900" loading="lazy">
                             <figcaption>Apprendre par acquisition</figcaption>
                         </figure>
                     </section>
@@ -136,7 +136,7 @@ require_once __DIR__ . '/lib/bootstrap.php';
                             <p>Cette activité produit davantage d'élaboration conceptuelle que la simple acquisition, précisément parce que l'élève est engagé dans la production des questions et la recherche des réponses. L'« enseignant » peut d'ailleurs être ici une personne, mais aussi un livre, un site web, une base documentaire, etc. Un principe s'en dégage : plus les cycles sont nombreux, plus l'élève a d'occasions de faire évoluer ses idées.</p>
                         </div>
                         <figure class="cf-schema cf-type-schema">
-                            <img src="assets/conversational-framework/schema/cadre-06.webp" alt="Schéma original de l'apprentissage par enquête." width="2134" height="1200" loading="lazy">
+                            <img src="assets/conversational-framework/schema/cadre-06.svg" alt="Schéma Excalidraw de l'apprentissage par enquête." width="1600" height="900" loading="lazy">
                             <figcaption>Apprendre par enquête</figcaption>
                         </figure>
                     </section>
@@ -150,7 +150,7 @@ require_once __DIR__ . '/lib/bootstrap.php';
                             <p>À ce cycle de l'action peut s'ajouter une dimension plus profonde : l'élève est encouragé à laisser sa pratique modifier ses concepts, et réciproquement, afin de produire une action encore mieux ajustée. C'est pourquoi ce type d'apprentissage est particulièrement puissant : il engage simultanément le développement des concepts, celui des pratiques, et l'établissement de liens entre les deux. La qualité du <em>feedback</em> — qu'il vienne de l'enseignant ou de l'environnement lui-même — y est déterminante.</p>
                         </div>
                         <figure class="cf-schema cf-type-schema">
-                            <img src="assets/conversational-framework/schema/cadre-07.webp" alt="Schéma original de l'apprentissage par la pratique." width="2134" height="1200" loading="lazy">
+                            <img src="assets/conversational-framework/schema/cadre-07.svg" alt="Schéma Excalidraw de l'apprentissage par la pratique." width="1600" height="900" loading="lazy">
                             <figcaption>Apprendre par la pratique</figcaption>
                         </figure>
                     </section>
@@ -164,7 +164,7 @@ require_once __DIR__ . '/lib/bootstrap.php';
                             <p>Ces reprises successives les engagent activement dans le développement de leurs concepts. La discussion prolonge ainsi le travail conceptuel, mais en le nourrissant de la confrontation à d'autres points de vue.</p>
                         </div>
                         <figure class="cf-schema cf-type-schema">
-                            <img src="assets/conversational-framework/schema/cadre-08.webp" alt="Schéma original de l'apprentissage par la discussion." width="2134" height="1200" loading="lazy">
+                            <img src="assets/conversational-framework/schema/cadre-08.svg" alt="Schéma Excalidraw de l'apprentissage par la discussion." width="1600" height="900" loading="lazy">
                             <figcaption>Apprendre par la discussion</figcaption>
                         </figure>
                     </section>
@@ -178,7 +178,7 @@ require_once __DIR__ . '/lib/bootstrap.php';
                             <p>Ce type d'apprentissage développe donc à la fois les concepts et les pratiques, avec un enrichissement supplémentaire : celui du contexte social d'apprentissage. La collaboration va plus loin que la simple discussion, car elle oblige les élèves à <strong>négocier ce qu'ils vont faire concrètement</strong> ensemble. Elle est de ce fait plus engageante que la discussion seule ou que la pratique seule. Son intérêt tient précisément à cette double source de retours : celui de l'environnement de pratique, et celui de la discussion et de la négociation avec les pairs.</p>
                         </div>
                         <figure class="cf-schema cf-type-schema">
-                            <img src="assets/conversational-framework/schema/cadre-09.webp" alt="Schéma original de l'apprentissage par la collaboration." width="2134" height="1200" loading="lazy">
+                            <img src="assets/conversational-framework/schema/cadre-09.svg" alt="Schéma Excalidraw de l'apprentissage par la collaboration." width="1600" height="900" loading="lazy">
                             <figcaption>Apprendre par la collaboration</figcaption>
                         </figure>
                     </section>
@@ -192,7 +192,7 @@ require_once __DIR__ . '/lib/bootstrap.php';
                             <p>C'est cette production de l'élève que l'on mobilise dans l'<strong>évaluation</strong> : elle constitue la preuve, fournie à l'enseignant, de ce qui a été appris. Devoir produire quelque chose pour l'enseignant ou pour la classe a par ailleurs une vertu motivationnelle : c'est l'une des raisons pour lesquelles l'évaluation est utilisée comme levier pour amener les élèves à se concentrer sur leur propre processus d'apprentissage.</p>
                         </div>
                         <figure class="cf-schema cf-type-schema">
-                            <img src="assets/conversational-framework/schema/cadre-10.webp" alt="Schéma original de l'apprentissage par la production." width="2134" height="1200" loading="lazy">
+                            <img src="assets/conversational-framework/schema/cadre-10.svg" alt="Schéma Excalidraw de l'apprentissage par la production." width="1600" height="900" loading="lazy">
                             <figcaption>Apprendre par la production</figcaption>
                         </figure>
                     </section>
@@ -263,7 +263,7 @@ require_once __DIR__ . '/lib/bootstrap.php';
                 </section>
 
                 <figure class="cf-schema cf-schema-wide cf-final-schema">
-                    <img src="assets/conversational-framework/schema/cadre-11.webp" alt="Schéma original complet des six types d'apprentissage dans le Cadre conversationnel." width="2134" height="1200" loading="lazy">
+                    <img src="assets/conversational-framework/schema/cadre-11.svg" alt="Schéma Excalidraw complet des six types d'apprentissage dans le Cadre conversationnel." width="1600" height="900" loading="lazy">
                     <figcaption>Les six types d'apprentissage dans le Cadre conversationnel complet</figcaption>
                 </figure>
             </div>

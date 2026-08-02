@@ -70,6 +70,13 @@ $EVAL_MODES     = [
     'summative'     => 'Sommative',
     'certificative' => 'Certificative',
 ];
+$AIAS_LEVELS    = [
+    1 => 'Sans IA',
+    2 => 'Planification avec l’IA',
+    3 => 'Collaboration avec l’IA',
+    4 => 'IA pleinement intégrée',
+    5 => 'Exploration de l’IA',
+];
 
 $TOOLS_LABELS = [
     'moodle:workshop'          => 'Atelier',
@@ -455,7 +462,7 @@ $displayDesignedMinutes = $designedMinutes > 0 ? $designedMinutes : $totalMinute
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title><?= esc($title) ?> — Learning Designer</title>
-  <link rel="stylesheet" href="interface.css?v=20260730-heading-spacing-h3">
+  <link rel="stylesheet" href="interface.css?v=20260802-aias-colors">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" referrerpolicy="no-referrer">
   <style>
     :root {
@@ -896,6 +903,7 @@ $displayDesignedMinutes = $designedMinutes > 0 ? $designedMinutes : $totalMinute
         $aLinks = is_array($act['links'] ?? null) ? $act['links'] : [];
 
         $chips = [];
+        $aiasChip = null;
         $gm = labelFor($GROUP_MODES, (string)($act['groupMode'] ?? ''));
         if ($gm !== '') $chips[] = $gm;
         $tr = labelFor($TRAINER_MODES, (string)($act['teacherPresence'] ?? ''));
@@ -906,6 +914,14 @@ $displayDesignedMinutes = $designedMinutes > 0 ? $designedMinutes : $totalMinute
         if ($lm !== '') $chips[] = $lm;
         $ev = $EVAL_MODES[(string)($act['evaluationMode'] ?? 'none')] ?? null;
         if ($ev !== null) $chips[] = $ev;
+        $aias = is_array($act['aias'] ?? null) ? $act['aias'] : [];
+        $aiasLevel = (int)($aias['level'] ?? 0);
+        if (($aias['status'] ?? '') === 'specified' && isset($AIAS_LEVELS[$aiasLevel])) {
+            $aiasChip = [
+                'label' => 'AIAS ' . $aiasLevel . ' · ' . $AIAS_LEVELS[$aiasLevel],
+                'class' => 'aias-level aias-level-' . $aiasLevel,
+            ];
+        }
       ?>
       <article class="activity-card" style="border-left-color:<?= esc($aColor) ?>">
         <div class="activity-head">
@@ -915,11 +931,14 @@ $displayDesignedMinutes = $designedMinutes > 0 ? $designedMinutes : $totalMinute
         <?php if ($aDesc !== ''): ?>
         <div class="activity-description markdown-content"><?= markdownHtml($aDesc) ?></div>
         <?php endif; ?>
-        <?php if ($chips || $aTools): ?>
+        <?php if ($chips || $aiasChip !== null || $aTools): ?>
         <div class="activity-chips">
           <?php foreach ($chips as $chip): ?>
           <span class="chip activity-context-chip"><?= esc($chip) ?></span>
           <?php endforeach; ?>
+          <?php if ($aiasChip !== null): ?>
+          <span class="chip activity-context-chip <?= esc($aiasChip['class']) ?>"><?= esc($aiasChip['label']) ?></span>
+          <?php endif; ?>
           <?php foreach ($aTools as $toolId):
             $competency = competencyForReference($toolId);
             if ($competency) {

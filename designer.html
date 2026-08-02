@@ -14,12 +14,11 @@
         }
       })();
     </script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" referrerpolicy="no-referrer" />
     <link rel="stylesheet" href="account-ui.css?v=20260729-2" />
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="stylesheet" href="interface.css?v=20260730-heading-spacing-h3" />
+    <link rel="stylesheet" href="interface.css?v=20260802-modal-title" />
   </head>
   <body class="designer-page">
     <a id="skip-link" class="skip-link" href="#board">Aller au contenu principal</a>
@@ -375,6 +374,9 @@
           <button class="choice-btn activity-location-mode-btn" type="button"></button>
           <button class="choice-btn activity-evaluation-mode-btn" type="button"></button>
           <div class="activity-actions">
+            <button class="icon-btn activity-aias-btn" type="button" title="AIAS" aria-label="AIAS" aria-haspopup="dialog" aria-expanded="false">
+              <i class="fa-solid fa-robot" aria-hidden="true"></i>
+            </button>
             <button class="icon-btn activity-links-btn" type="button" aria-haspopup="dialog" aria-expanded="false">
               <i class="fa-solid fa-link" aria-hidden="true"></i>
             </button>
@@ -434,24 +436,6 @@
           <button id="export-result-copy-btn" class="btn btn-light" type="button">Copier</button>
           <button id="export-modal-cancel-btn" class="btn btn-light" type="button">Fermer</button>
           <button id="export-modal-confirm-btn" class="btn btn-primary" type="button">Télécharger</button>
-        </div>
-      </div>
-    </div>
-
-    <div id="import-modal-backdrop" class="modal-backdrop hidden" role="dialog" aria-modal="true" aria-hidden="true" aria-labelledby="import-modal-title">
-      <div class="modal">
-        <h2 id="import-modal-title" class="modal-title">Importer le design</h2>
-        <label for="import-format-select">Format</label>
-        <select id="import-format-select" class="panel-select">
-          <option value="ldj">LDJ (Learning Designer)</option>
-          <option value="json">JSON</option>
-          <option value="csv">CSV</option>
-          <option value="xlsx">Excel (.xlsx)</option>
-          <option value="markdown">Markdown</option>
-        </select>
-        <div class="modal-actions">
-          <button id="import-modal-cancel-btn" class="btn btn-light" type="button">Annuler</button>
-          <button id="import-modal-confirm-btn" class="btn btn-primary" type="button">Importer</button>
         </div>
       </div>
     </div>
@@ -531,104 +515,27 @@
         </div>
       </div>
     </div>
-    <script>
-      (function () {
-        function fallbackOpenExportModal() {
-          var backdrop = document.getElementById("export-modal-backdrop");
-          var select = document.getElementById("export-format-select");
-          var filenameInput = document.getElementById("export-filename-input");
-          if (!backdrop) return;
-          if (select && !select.value) select.value = "markdown";
-          if (filenameInput && !filenameInput.value) filenameInput.value = fallbackDefaultExportName(select ? select.value : "json");
-          backdrop.classList.remove("hidden");
-          backdrop.setAttribute("aria-hidden", "false");
-        }
 
-        function fallbackDefaultExportName(format) {
-          var titleInput = document.getElementById("meta-name");
-          var title = titleInput ? String(titleInput.value || "").trim() : "";
-          return title || "design-learning-designer-fr";
-        }
-
-        function fallbackFilenameExtension(filename) {
-          var match = String(filename || "").match(/(\.[^.]+)$/);
-          return match ? match[1] : "";
-        }
-
-        function fallbackBuildCustomFilename(defaultFilename) {
-          var filenameInput = document.getElementById("export-filename-input");
-          var extension = fallbackFilenameExtension(defaultFilename) || ".txt";
-          var rawName = filenameInput ? String(filenameInput.value || "").trim() : "";
-          var cleaned = rawName
-            .replace(/[\\/:*?"<>|]+/g, "-")
-            .replace(/\s+/g, " ")
-            .replace(/^\.+|\.+$/g, "")
-            .trim();
-          if (!cleaned) return defaultFilename || ("export" + extension);
-          cleaned = cleaned.replace(/\.(json|md|markdown|html|doc|docx|xls|xlsx)$/i, "");
-          if (cleaned.toLowerCase().slice(-extension.length) !== extension.toLowerCase()) {
-            cleaned += extension;
-          }
-          return cleaned;
-        }
-
-        function fallbackCloseExportModal() {
-          var backdrop = document.getElementById("export-modal-backdrop");
-          if (!backdrop) return;
-          backdrop.classList.add("hidden");
-          backdrop.setAttribute("aria-hidden", "true");
-        }
-
-        function fallbackUpdateExportPreview(content) {
-          var resultText = document.getElementById("export-result-text");
-          if (!resultText) return;
-          resultText.value = String(content || "");
-        }
-
-        function fallbackDownload(content, filename, mimeType) {
-          var blob = new Blob([content], { type: mimeType || "text/plain;charset=utf-8" });
-          var url = URL.createObjectURL(blob);
-          var link = document.createElement("a");
-          link.href = url;
-          link.download = filename || "export.txt";
-          link.style.display = "none";
-          document.body.appendChild(link);
-          link.click();
-          link.remove();
-          window.setTimeout(function () {
-            URL.revokeObjectURL(url);
-          }, 1000);
-        }
-
-        window.learningDesignerOpenExport = function () {
-          fallbackOpenExportModal();
-        };
-
-        window.learningDesignerRunExport = function () {
-          var formatSelect = document.getElementById("export-format-select");
-          var format = formatSelect ? String(formatSelect.value || "json").toLowerCase() : "json";
-          var payload = null;
-          var app = window.learningDesignerApp;
-          if (typeof window.learningDesignerGetExportPayload === "function") {
-            payload = window.learningDesignerGetExportPayload(format);
-          }
-          if (!payload) {
-            payload = {
-              content: app && typeof app.getState === "function"
-                ? JSON.stringify(app.getState(), null, 2)
-                : "{}",
-              type: "application/json;charset=utf-8",
-              filename: "design-learning-designer-fr.json"
-            };
-          }
-          payload.filename = fallbackBuildCustomFilename(payload.filename);
-          fallbackUpdateExportPreview(payload.content);
-          fallbackDownload(payload.content, payload.filename, payload.type);
-        };
-      })();
-    </script>
-    <script src="interface.js?v=20260730-language-preference"></script>
-    <script src="account-ui.js?v=20260729-2"></script>
+    <div id="aias-modal-backdrop" class="modal-backdrop hidden"
+         role="dialog" aria-modal="true" aria-hidden="true"
+         aria-labelledby="aias-modal-title" aria-describedby="aias-modal-intro">
+      <div class="modal aias-modal">
+        <h2 id="aias-modal-title" class="modal-title">AIAS 2.1</h2>
+        <p id="aias-modal-intro" class="aias-modal-intro"></p>
+        <div id="aias-modal-status-options" class="aias-status-options"></div>
+        <div id="aias-modal-levels" class="aias-levels" role="radiogroup"></div>
+        <p class="aias-attribution">
+          <a href="https://aiassessmentscale.com/" target="_blank" rel="noopener noreferrer">AI Assessment Scale (AIAS) v2.1</a>
+          <span>© 2026 Learning Innovation Practice Ltd. ·</span>
+          <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" rel="noopener noreferrer">CC BY-NC-SA 4.0</a>
+        </p>
+        <div class="modal-actions">
+          <button id="aias-modal-close-btn" class="btn btn-light" type="button">Fermer</button>
+        </div>
+      </div>
+    </div>
+    <script src="interface.js?v=20260802-performance-modal-title"></script>
+    <script src="account-ui.js?v=20260802-performance"></script>
     <script>
       (function() {
         var html = document.documentElement;

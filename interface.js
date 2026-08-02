@@ -13,35 +13,6 @@ const LEARNING_TYPES = [
   { id: "collaborate", label: "Collaborer", color: "#e7b959" }
 ];
 
-const MATERIAL_ICON_PATHS = {
-  menu_book: `<path d="M4 6.5C4 5.12 5.12 4 6.5 4H20v14H6.5C5.67 18 5 18.67 5 19.5S5.67 21 6.5 21H20v1.5H6.5A2.5 2.5 0 0 1 4 20V6.5zm2.5-1A1 1 0 0 0 5.5 6.5V17c.29-.18.63-.3 1-.3H18V5.5H6.5z"/>`,
-  search: `<path d="M15.5 14h-.79l-.28-.27A6.47 6.47 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79L19 20.49 20.49 19 15.5 14zM9.5 14A4.5 4.5 0 1 1 14 9.5 4.5 4.5 0 0 1 9.5 14z"/>`,
-  school: `<path d="M12 3 1 9l11 6 9-4.91V17h2V9L12 3zm-7 10.18V19l7 4 7-4v-5.82L12 17l-7-3.82z"/>`,
-  autorenew: `<path d="M12 6v3l4-4-4-4v3c-4.42 0-8 3.58-8 8 0 1.57.46 3.03 1.24 4.26L6.7 14.8c-.45-.83-.7-1.79-.7-2.8 0-3.31 2.69-6 6-6zm6.76 1.74L17.3 9.2c.44.84.7 1.79.7 2.8 0 3.31-2.69 6-6 6v-3l-4 4 4 4v-3c4.42 0 8-3.58 8-8 0-1.57-.46-3.03-1.24-4.26z"/>`,
-  inventory_2: `<path d="M20 2H4a2 2 0 0 0-2 2v3c0 .55.22 1.05.59 1.41L4 22h16l1.41-13.59c.37-.36.59-.86.59-1.41V4a2 2 0 0 0-2-2zm0 5H4V4h16v3zm-5 5H9v-2h6v2z"/>`,
-  auto_awesome: `<path d="M19 9l1.25-2.75L23 5l-2.75-1.25L19 1l-1.25 2.75L15 5l2.75 1.25L19 9zm-7.5.5L9 4 6.5 9.5 1 12l5.5 2.5L9 20l2.5-5.5L17 12l-5.5-2.5zM19 15l-1.25 2.75L15 19l2.75 1.25L19 23l1.25-2.75L23 19l-2.75-1.25L19 15z"/>`,
-  forum: `<path d="M21 6h-2v9H6v2c0 .55.45 1 1 1h11l4 4V7c0-.55-.45-1-1-1zM17 12V3c0-.55-.45-1-1-1H3c-.55 0-1 .45-1 1v14l4-4h10c.55 0 1-.45 1-1z"/>`,
-  groups: `<path d="M16 11a3 3 0 1 0-2.82-4H9a3 3 0 1 0 0 2h4.18A3 3 0 0 0 16 11zM8 13c-2.67 0-6 1.34-6 4v3h12v-3c0-2.66-3.33-4-6-4zm10 0c-.83 0-1.55.09-2.18.25A5.77 5.77 0 0 1 18 17v3h6v-3c0-2.66-3.33-4-6-4z"/>`,
-  group_work: `<path d="M5 8h6v6H5V8zm8 0h6v6h-6V8zM5 16h6v6H5v-6zm8 0h6v6h-6v-6z"/>`,
-  person: `<path d="M12 12a4 4 0 1 0-4-4 4 4 0 0 0 4 4zm0 2c-4.42 0-8 1.79-8 4v2h16v-2c0-2.21-3.58-4-8-4z"/>`,
-  face: `<path d="M12 2a10 10 0 0 0-10 10v8a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-8A10 10 0 0 0 12 2zm0 2a8 8 0 0 1 8 8v1h-2a2 2 0 0 0-2 2v2H8v-2a2 2 0 0 0-2-2H4v-1a8 8 0 0 1 8-8zm-3 7a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3zm6 0a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3z"/>`,
-  person_off: `<path d="M2.1 3.51 3.5 2.1l18.39 18.39-1.41 1.41-3.07-3.07V20H4v-2c0-1.48 1.6-2.75 4.04-3.45L2.1 3.51zM12 6a3.98 3.98 0 0 1 3.74 2.62l-5.36-5.36C10.9 3.1 11.44 3 12 3a4 4 0 0 1 0 8c-.56 0-1.1-.1-1.62-.26l1.69 1.69c1.94.04 3.64.52 4.87 1.27l-1.52-1.52a6.8 6.8 0 0 0-2.2-.17A4 4 0 0 1 12 6z"/>`,
-  schedule: `<path d="M11 8h2v5l4.25 2.52-.75 1.23L11 13.5V8zm1-6a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm0 18a8 8 0 1 1 8-8 8 8 0 0 1-8 8z"/>`,
-  update: `<path d="M21 12a9 9 0 1 1-3.11-6.79L16 7h6V1l-2.67 2.67A11 11 0 1 0 23 12h-2zm-10 1h5v-2h-3V6h-2v7z"/>`,
-  business: `<path d="M3 21h18v-2h-2V3H9v4H3v12H1v2h2zm8-2h2v-2h-2v2zm0-4h2v-2h-2v2zm0-4h2V9h-2v2zm4 8h2v-2h-2v2zm0-4h2v-2h-2v2zm0-4h2V9h-2v2zM7 19h2v-2H7v2zm0-4h2v-2H7v2z"/>`,
-  meeting_room: `<path d="M14 6v15H3v-2h2V3h9v1h5v15h2v2h-4V6h-3zm-4 5v2h2v-2h-2z"/>`,
-  computer: `<path d="M20 2H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h6v2H7v2h10v-2h-3v-2h6a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2zm0 14H4V4h16v12z"/>`,
-  hub: `<path d="M17 16c-1.3 0-2.4.84-2.82 2H9.82A3 3 0 0 0 7 16c-.35 0-.69.06-1 .18L9.17 13c.5.31 1.08.5 1.71.5 1.45 0 2.68-.93 3.13-2.22l2.15 1.3a2.99 2.99 0 0 0-.16.92c0 1.66 1.34 3 3 3s3-1.34 3-3-1.34-3-3-3c-.6 0-1.15.18-1.62.48l-2.34-1.41A3.5 3.5 0 0 0 11.5 6c-1.93 0-3.5 1.57-3.5 3.5 0 .35.06.68.16 1L4.83 13.8A2.99 2.99 0 0 0 3 13c-1.66 0-3 1.34-3 3s1.34 3 3 3c1.3 0 2.4-.84 2.82-2h4.36A3 3 0 1 0 17 16z"/>`,
-  radio_button_unchecked: `<path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm0 18a8 8 0 1 1 8-8 8 8 0 0 1-8 8z"/>`,
-  fact_check: `<path d="M20 3H4a2 2 0 0 0-2 2v14l4-4h14a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2zM10 13H7v-2h3v2zm7 0h-5v-2h5v2zm0-4H7V7h10v2z"/>`,
-  verified: `<path d="m12 1 3 3 4-.5.5 4L23 11l-3.5 3.5.5 4-4-.5-3 3-3-3-4 .5.5-4L1 11l3.5-3.5-.5-4 4 .5 3-3zm-1 14 6-6-1.41-1.41L11 12.17l-1.59-1.59L8 12l3 3z"/>`
-};
-
-const materialIcon = (name) => {
-  const pathMarkup = MATERIAL_ICON_PATHS[name] || MATERIAL_ICON_PATHS.radio_button_unchecked;
-  return `<svg class="material-icon-svg" viewBox="0 0 24 24" aria-hidden="true">${pathMarkup}</svg>`;
-};
-
 const fontAwesomeIcon = (classes) => `<i class="${classes}" aria-hidden="true"></i>`;
 
 const ICONS = {
@@ -106,6 +77,24 @@ const EVAL_OPTIONS = [
   { value: "summative", label: "Sommative", short: "Somm.", icon: ICONS.summative },
   { value: "certificative", label: "Certificative", short: "Certif.", icon: ICONS.certificative }
 ];
+
+const AIAS_VERSION = "2.1";
+const AIAS_LEVELS = [
+  { level: 1, labelKey: "aiasLevel1Label", descriptionKey: "aiasLevel1Description" },
+  { level: 2, labelKey: "aiasLevel2Label", descriptionKey: "aiasLevel2Description" },
+  { level: 3, labelKey: "aiasLevel3Label", descriptionKey: "aiasLevel3Description" },
+  { level: 4, labelKey: "aiasLevel4Label", descriptionKey: "aiasLevel4Description" },
+  { level: 5, labelKey: "aiasLevel5Label", descriptionKey: "aiasLevel5Description" }
+];
+const AIAS_TRIGGER_ICONS = {
+  undecided: "fa-robot",
+  not_applicable: "fa-ban",
+  level_1: "fa-lock",
+  level_2: "fa-lightbulb",
+  level_3: "fa-handshake",
+  level_4: "fa-gears",
+  level_5: "fa-compass"
+};
 
 const TOOLS_DATA = [
   // ── Moodle – liste alphabétique (27 items : 17 standard + 10 Magistère) ──────────────────────────────
@@ -822,36 +811,19 @@ const DEFAULT_META = {
   boardLayout: "columns"
 };
 
-const NEW_DESIGN_META = {
-  name: "",
-  uiLanguage: "fr",
-  dayHours: DEFAULT_DAY_HOURS,
-  learningDays: 0,
-  learningHours: 0,
-  learningMinutes: 0,
-  modeDelivery: "",
-  sizeClass: "",
-  designers: "",
-  trainers: "",
-  description: "",
-  command: "",
-  personas: "",
-  sliders: [],
-  activeTab: "settings",
-  boardLayout: "columns"
-};
+const defaultPartitionLineConfig = () => [
+  { type: "locationMode", label: "Présentiel", value: "onsite", visible: true },
+  { type: "locationMode", label: "Distanciel", value: "online", visible: true },
+  { type: "locationMode", label: "Hybride", value: "hybrid", visible: true }
+];
 
 const defaultState = () => ({
   allNotesExpanded: false,
   intentionsCollapsed: false,
   topPanelCollapsed: false,
-  meta: { ...DEFAULT_META },
+  meta: { ...DEFAULT_META, sliders: [] },
   sessions: [],
-  partitionLineConfig: [
-    { type: 'locationMode', label: 'Présentiel', value: 'onsite', visible: true },
-    { type: 'locationMode', label: 'Distanciel', value: 'online', visible: true },
-    { type: 'locationMode', label: 'Hybride', value: 'hybrid', visible: true }
-  ]
+  partitionLineConfig: defaultPartitionLineConfig()
 });
 
 const board = document.getElementById("board");
@@ -942,10 +914,6 @@ const exportModalCancelBtn = document.getElementById("export-modal-cancel-btn");
 const exportModalConfirmBtn = document.getElementById("export-modal-confirm-btn");
 const exportResultText = document.getElementById("export-result-text");
 const exportResultCopyBtn = document.getElementById("export-result-copy-btn");
-const importModalBackdrop = document.getElementById("import-modal-backdrop");
-const importFormatSelect = document.getElementById("import-format-select");
-const importModalCancelBtn = document.getElementById("import-modal-cancel-btn");
-const importModalConfirmBtn = document.getElementById("import-modal-confirm-btn");
 const activityLinkModalBackdrop = document.getElementById("activity-link-modal-backdrop");
 const activityLinkTitleInput = document.getElementById("activity-link-title-input");
 const activityLinkUrlInput = document.getElementById("activity-link-url-input");
@@ -953,11 +921,19 @@ const activityLinkList = document.getElementById("activity-link-list");
 const activityLinkError = document.getElementById("activity-link-modal-error");
 const activityLinkCancelBtn = document.getElementById("activity-link-cancel-btn");
 const activityLinkSaveBtn = document.getElementById("activity-link-save-btn");
+const aiasModalBackdrop = document.getElementById("aias-modal-backdrop");
+const aiasModalTitle = document.getElementById("aias-modal-title");
+const aiasModalIntro = document.getElementById("aias-modal-intro");
+const aiasModalStatusOptions = document.getElementById("aias-modal-status-options");
+const aiasModalLevels = document.getElementById("aias-modal-levels");
+const aiasModalCloseBtn = document.getElementById("aias-modal-close-btn");
 
 const LD_STORAGE_KEY = "ld_state_v1";
 const LD_LANGUAGE_STORAGE_KEY = "learningDesignerLang";
 let activeActivityLinkTrigger = null;
 let activeActivityLinkActivity = null;
+let activeAiasTrigger = null;
+let activeAiasActivity = null;
 
 function preferredInterfaceLanguage(fallback = "fr") {
   const normalizedFallback = fallback === "en" ? "en" : "fr";
@@ -1090,6 +1066,23 @@ const I18N = {
     groupTitlePacing: "Rythme",
     groupTitleMode: "Modalité",
     groupTitleEvaluation: "Évaluation",
+    aiasFieldLabel: "Place de l’IA dans la tâche · AIAS 2.1",
+    aiasUndecided: "À définir",
+    aiasNotApplicable: "Non pertinent",
+    aiasPanelIntro: "Choisissez le rôle de l’IA dans cette tâche. Les niveaux décrivent des conceptions différentes, sans hiérarchie entre elles.",
+    aiasLevelsAriaLabel: "Niveau AIAS de l’activité",
+    aiasLevelPrefix: "Niveau",
+    aiasUpdated: "Place de l’IA mise à jour.",
+    aiasLevel1Label: "Sans IA",
+    aiasLevel1Description: "Cette tâche est réalisée dans un environnement contrôlé conçu pour exclure l’IA. Les connaissances, la compréhension et les compétences sont démontrées et évaluées de manière indépendante.",
+    aiasLevel2Label: "Planification avec l’IA",
+    aiasLevel2Description: "Cette tâche porte sur des activités de planification telles que l’exploration du sujet, l’élaboration d’un plan et la recherche initiale. L’IA peut être utilisée pour soutenir ce processus, et la qualité de la planification et du développement des idées est évaluée, que l’IA ait été utilisée ou non.",
+    aiasLevel3Label: "Collaboration avec l’IA",
+    aiasLevel3Description: "L’IA peut être utilisée pour aider à réaliser cette tâche, notamment pour générer des idées, rédiger, fournir des retours et affiner le travail. La tâche est conçue de sorte que l’IA seule ne puisse pas atteindre le niveau requis. L’évaluation porte à la fois sur le travail lui-même et sur la manière dont les productions de l’IA sont évaluées, modifiées et intégrées.",
+    aiasLevel4Label: "IA pleinement intégrée",
+    aiasLevel4Description: "L’utilisation de l’IA est attendue dans cette tâche. L’objectif ne peut être atteint ni par l’IA ni par une personne travaillant seule dans le temps imparti. L’évaluation porte sur l’esprit critique et les connaissances disciplinaires démontrés dans la manière de diriger l’IA.",
+    aiasLevel5Label: "Exploration de l’IA",
+    aiasLevel5Description: "Cette tâche est conçue pour une utilisation créative de l’IA afin de résoudre des problèmes, de produire de nouvelles perspectives ou de développer des solutions innovantes dans la discipline. Les approches peuvent être co-conçues par les étudiants et les enseignants.",
     newActivityDescription: "Nouvelle activité",
     sessionTitlePlaceholder: "Titre du moment",
     activityDescriptionPlaceholder: "Activité",
@@ -1195,6 +1188,7 @@ const I18N = {
     gridColSync: "Sync",
     gridColTeacher: "Enseignant",
     gridColEval: "Évaluation",
+    gridColAias: "AIAS",
     gridColDesc: "Description",
     gridColNotes: "Notes",
     gridAddActivity: "+ Activité",
@@ -1308,6 +1302,23 @@ const I18N = {
     groupTitlePacing: "Pacing",
     groupTitleMode: "Mode",
     groupTitleEvaluation: "Assessment",
+    aiasFieldLabel: "Role of AI in the task · AIAS 2.1",
+    aiasUndecided: "To be defined",
+    aiasNotApplicable: "Not applicable",
+    aiasPanelIntro: "Choose the role of AI in this task. The levels describe different task designs and are not a hierarchy.",
+    aiasLevelsAriaLabel: "AIAS level for the activity",
+    aiasLevelPrefix: "Level",
+    aiasUpdated: "Role of AI updated.",
+    aiasLevel1Label: "No AI",
+    aiasLevel1Description: "This task is completed in a controlled environment designed to exclude AI. Knowledge, understanding, and skills are demonstrated and assessed independently.",
+    aiasLevel2Label: "AI Planning",
+    aiasLevel2Description: "This task focuses on planning activities such as topic exploration, outlining, and initial research. AI may be used to support this process, and the quality of planning and idea development is assessed whether or not AI was used.",
+    aiasLevel3Label: "AI Collaboration",
+    aiasLevel3Description: "AI may be used to help complete this task, including idea generation, drafting, feedback, and refinement. It is designed so that AI alone will not reach the required standard. Assessment covers both the work itself and how AI outputs are evaluated, modified, and integrated.",
+    aiasLevel4Label: "Full AI",
+    aiasLevel4Description: "There is an expectation of AI involvement in this task. The goal cannot be reached by AI or by a person working alone in the time available. Assessment focuses on the critical thinking and subject knowledge shown in directing AI.",
+    aiasLevel5Label: "AI Exploration",
+    aiasLevel5Description: "This task is designed for creative AI use to solve problems, generate novel insights, or develop innovative solutions in the discipline. Approaches may be co-designed by students and instructors.",
     newActivityDescription: "New activity",
     sessionTitlePlaceholder: "Moment title",
     activityDescriptionPlaceholder: "Activity",
@@ -1413,6 +1424,7 @@ const I18N = {
     gridColSync: "Sync",
     gridColTeacher: "Teacher",
     gridColEval: "Assessment",
+    gridColAias: "AIAS",
     gridColDesc: "Description",
     gridColNotes: "Notes",
     gridAddActivity: "+ Activity",
@@ -1510,15 +1522,6 @@ function shortLabel(label) {
   return String(label || "")
     .split(/[ /-]+/)
     .filter(Boolean)[0] || String(label || "");
-}
-
-function formatSavedTime(date) {
-  if (!(date instanceof Date) || Number.isNaN(date.getTime())) return "";
-  const locale = currentLang() === "en" ? "en-GB" : "fr-BE";
-  return new Intl.DateTimeFormat(locale, {
-    hour: "2-digit",
-    minute: "2-digit"
-  }).format(date);
 }
 
 function ensureMarkdownToolbars(root = document) {
@@ -1856,10 +1859,6 @@ function applyLocalizedUI() {
   metaDesignedDaysInput.setAttribute("aria-label", t("designedDaysLabel"));
   metaDesignedHoursInput.setAttribute("aria-label", t("designedHoursLabel"));
   metaDesignedMinutesInput.setAttribute("aria-label", t("designedMinutesLabel"));
-  importModalBackdrop.querySelector("#import-modal-title").textContent = t("importTitle");
-  importModalBackdrop.querySelector("label[for='import-format-select']").textContent = t("format");
-  importModalCancelBtn.textContent = t("cancel");
-  importModalConfirmBtn.textContent = t("import");
   exportModalBackdrop.querySelector("#export-modal-title").textContent = t("exportTitle");
   exportModalBackdrop.querySelector("label[for='export-format-select']").textContent = t("format");
   exportModalBackdrop.querySelector("label[for='export-filename-input']").textContent = t("exportFilename");
@@ -1879,6 +1878,10 @@ function applyLocalizedUI() {
   if (activityLinkList) activityLinkList.dataset.empty = t("activityLinkEmpty");
   if (activityLinkCancelBtn) activityLinkCancelBtn.textContent = t("close");
   if (activityLinkSaveBtn) activityLinkSaveBtn.textContent = t("activityLinkAdd");
+  if (aiasModalTitle) aiasModalTitle.textContent = t("aiasFieldLabel");
+  if (aiasModalIntro) aiasModalIntro.textContent = t("aiasPanelIntro");
+  if (aiasModalLevels) aiasModalLevels.setAttribute("aria-label", t("aiasLevelsAriaLabel"));
+  if (aiasModalCloseBtn) aiasModalCloseBtn.textContent = t("close");
   document.getElementById("info-modal-title").textContent = t("infoTitle");
   document.getElementById("info-modal-p1").textContent = t("infoP1");
   document.getElementById("info-modal-p2").textContent = t("infoP2");
@@ -1953,14 +1956,10 @@ function hydrateState(parsed, fallback = defaultState()) {
     },
     partitionLineConfig: Array.isArray(parsed.partitionLineConfig)
       ? parsed.partitionLineConfig
-      : [
-          { type: 'locationMode', label: 'Présentiel', value: 'onsite', visible: true },
-          { type: 'locationMode', label: 'Distanciel', value: 'online', visible: true },
-          { type: 'locationMode', label: 'Hybride', value: 'hybrid', visible: true }
-        ],
-    sessions: parsed.sessions.map((session, sessionIndex) => ({
+      : defaultPartitionLineConfig(),
+    sessions: parsed.sessions.map((session) => ({
       id: session?.id || nextId(),
-      title: toPlainTextareaValue(session?.title).trim() || defaultSessionTitle(sessionIndex + 1),
+      title: toPlainTextareaValue(session?.title).trim(),
       objectives: toPlainTextareaValue(session?.objectives),
       intentions: toPlainTextareaValue(session?.intentions),
       notes: toPlainTextareaValue(session?.notes),
@@ -1976,6 +1975,7 @@ function hydrateState(parsed, fallback = defaultState()) {
               syncMode: activity?.syncMode,
               locationMode: activity?.locationMode,
               evaluationMode: activity?.evaluationMode,
+              aias: normalizeAiasState(activity?.aias ?? activity?.aiasLevel),
               description: toPlainTextareaValue(activity?.description),
               notes: toPlainTextareaValue(activity?.notes),
               tools: Array.isArray(activity?.tools) ? activity.tools : [],
@@ -2011,7 +2011,7 @@ function hydrateState(parsed, fallback = defaultState()) {
     hydrated.meta.modeDelivery = "";
   }
   if (hydrated.meta.activeTab === "timeline") hydrated.meta.activeTab = "settings";
-  if (!["settings", "analysis"].includes(hydrated.meta.activeTab)) {
+  if (!["settings", "analysis", "chronology"].includes(hydrated.meta.activeTab)) {
     hydrated.meta.activeTab = "settings";
   }
   if (!["columns", "list", "grid"].includes(hydrated.meta.boardLayout)) {
@@ -2027,24 +2027,40 @@ function createNewDesignState() {
     intentionsCollapsed: false,
     topPanelCollapsed: false,
     meta: {
-      ...NEW_DESIGN_META,
+      ...DEFAULT_META,
+      sliders: [],
       uiLanguage: preferredInterfaceLanguage(currentLang())
     },
     sessions: [],
-    partitionLineConfig: [
-      { type: 'locationMode', label: 'Présentiel', value: 'onsite', visible: true },
-      { type: 'locationMode', label: 'Distanciel', value: 'online', visible: true },
-      { type: 'locationMode', label: 'Hybride', value: 'hybrid', visible: true }
-    ]
+    partitionLineConfig: defaultPartitionLineConfig()
   };
 }
 
-function saveState() {
+let localStateSaveTimer = 0;
+let localStateSavePending = false;
+
+function persistStateNow() {
+  if (!localStateSavePending) return;
+  window.clearTimeout(localStateSaveTimer);
+  localStateSaveTimer = 0;
+  localStateSavePending = false;
   try {
     localStorage.setItem(LD_STORAGE_KEY, JSON.stringify(state));
   } catch (_) {}
+}
+
+function saveState() {
+  localStateSavePending = true;
+  window.clearTimeout(localStateSaveTimer);
+  localStateSaveTimer = window.setTimeout(persistStateNow, 300);
   window.dispatchEvent(new CustomEvent("ld:statechange"));
 }
+
+window.addEventListener("beforeunload", persistStateNow);
+window.addEventListener("pagehide", persistStateNow);
+document.addEventListener("visibilitychange", () => {
+  if (document.visibilityState === "hidden") persistStateNow();
+});
 
 // --- Outcomes (Acquis d'apprentissage) ---
 
@@ -2401,12 +2417,13 @@ function openToolPicker(trigger, activity) {
   panel.className = "tool-picker";
   panel.setAttribute("role", "dialog");
   panel.setAttribute("aria-modal", "false");
-  panel.setAttribute("aria-label", t("toolPickerTitle"));
+  panel.setAttribute("aria-labelledby", "tool-picker-title");
 
   const header = document.createElement("div");
   header.className = "tool-picker-header";
-  const titleEl = document.createElement("span");
-  titleEl.className = "tool-picker-title";
+  const titleEl = document.createElement("h2");
+  titleEl.id = "tool-picker-title";
+  titleEl.className = "modal-title";
   titleEl.textContent = t("toolPickerTitle");
   const closeBtn = document.createElement("button");
   closeBtn.type = "button";
@@ -2786,6 +2803,8 @@ function openChoiceMenu(trigger, options, currentValue, onSelect) {
 }
 
 function normalizeActivity(activity) {
+  activity.aias = normalizeAiasState(activity.aias ?? activity.aiasLevel);
+  delete activity.aiasLevel;
   if (!Array.isArray(activity.links)) activity.links = [];
   activity.links = activity.links
     .map(normalizeActivityLinkEntry)
@@ -2826,6 +2845,184 @@ function normalizeActivity(activity) {
   ) {
     activity.evaluationMode = "none";
   }
+}
+
+function defaultAiasState() {
+  return {
+    version: AIAS_VERSION,
+    status: "undecided",
+    level: null
+  };
+}
+
+function normalizeAiasState(value) {
+  if (typeof value === "number" || typeof value === "string") {
+    const legacyLevel = Number(value);
+    if (Number.isInteger(legacyLevel) && legacyLevel >= 1 && legacyLevel <= 5) {
+      return { version: AIAS_VERSION, status: "specified", level: legacyLevel };
+    }
+    return defaultAiasState();
+  }
+
+  if (!value || typeof value !== "object" || Array.isArray(value)) {
+    return defaultAiasState();
+  }
+
+  const level = Number(value.level);
+  if (Number.isInteger(level) && level >= 1 && level <= 5) {
+    return {
+      version: String(value.version || AIAS_VERSION),
+      status: "specified",
+      level
+    };
+  }
+
+  if (value.status === "not_applicable") {
+    return {
+      version: String(value.version || AIAS_VERSION),
+      status: "not_applicable",
+      level: null
+    };
+  }
+
+  return defaultAiasState();
+}
+
+function aiasLevelDefinition(level) {
+  return AIAS_LEVELS.find((item) => item.level === Number(level)) || null;
+}
+
+function aiasSummary(aias) {
+  const normalized = normalizeAiasState(aias);
+  if (normalized.status === "not_applicable") return `AIAS · ${t("aiasNotApplicable")}`;
+  if (normalized.status !== "specified") return `AIAS · ${t("aiasUndecided")}`;
+  const definition = aiasLevelDefinition(normalized.level);
+  return definition
+    ? `AIAS ${definition.level} · ${t(definition.labelKey)}`
+    : t("aiasUndecided");
+}
+
+function applyAiasLevelClass(element, aias) {
+  if (!element) return;
+  element.classList.remove(
+    "aias-level",
+    ...AIAS_LEVELS.map((definition) => `aias-level-${definition.level}`)
+  );
+  const normalized = normalizeAiasState(aias);
+  if (normalized.status === "specified") {
+    element.classList.add("aias-level", `aias-level-${normalized.level}`);
+  }
+}
+
+function parseAiasValue(value) {
+  const raw = String(value || "").trim();
+  if (!raw) return defaultAiasState();
+  const normalized = normalizeToken(raw);
+  if (["non pertinent", "not applicable", "n a", "na"].includes(normalized)) {
+    return { version: AIAS_VERSION, status: "not_applicable", level: null };
+  }
+  const levelMatch = raw.match(/(?:AIAS|niveau|level)?\s*([1-5])\b/i);
+  if (levelMatch) {
+    return { version: AIAS_VERSION, status: "specified", level: Number(levelMatch[1]) };
+  }
+  return defaultAiasState();
+}
+
+function updateAiasTrigger(trigger, activity) {
+  if (!trigger) return;
+  activity.aias = normalizeAiasState(activity.aias);
+  const summary = aiasSummary(activity.aias);
+  const iconKey = activity.aias.status === "specified"
+    ? `level_${activity.aias.level}`
+    : activity.aias.status;
+  const icon = trigger.querySelector("i");
+  if (icon) icon.className = `fa-solid ${AIAS_TRIGGER_ICONS[iconKey] || AIAS_TRIGGER_ICONS.undecided}`;
+  trigger.title = summary;
+  trigger.setAttribute("aria-label", `${t("aiasFieldLabel")}: ${summary}`);
+}
+
+function chooseAias(nextAias) {
+  if (!activeAiasActivity) return;
+  activeAiasActivity.aias = normalizeAiasState(nextAias);
+  saveState();
+  updateAiasTrigger(activeAiasTrigger, activeAiasActivity);
+  announce(t("aiasUpdated"));
+  closeAiasModal();
+}
+
+function renderAiasModal() {
+  if (!activeAiasActivity || !aiasModalStatusOptions || !aiasModalLevels) return;
+  activeAiasActivity.aias = normalizeAiasState(activeAiasActivity.aias);
+  if (aiasModalTitle) aiasModalTitle.textContent = t("aiasFieldLabel");
+  if (aiasModalIntro) aiasModalIntro.textContent = t("aiasPanelIntro");
+  aiasModalLevels.setAttribute("aria-label", t("aiasLevelsAriaLabel"));
+  aiasModalStatusOptions.replaceChildren();
+  aiasModalLevels.replaceChildren();
+
+  [
+    { status: "undecided", labelKey: "aiasUndecided" },
+    { status: "not_applicable", labelKey: "aiasNotApplicable" }
+  ].forEach(({ status, labelKey }) => {
+    const button = document.createElement("button");
+    const selected = activeAiasActivity.aias.status === status;
+    button.type = "button";
+    button.className = "aias-status-btn";
+    button.dataset.aiasStatus = status;
+    button.textContent = t(labelKey);
+    button.classList.toggle("selected", selected);
+    button.setAttribute("aria-pressed", String(selected));
+    button.addEventListener("click", () => chooseAias({
+      version: AIAS_VERSION,
+      status,
+      level: null
+    }));
+    aiasModalStatusOptions.appendChild(button);
+  });
+
+  AIAS_LEVELS.forEach((definition) => {
+    const selected = activeAiasActivity.aias.status === "specified"
+      && activeAiasActivity.aias.level === definition.level;
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = `aias-level-btn aias-level aias-level-${definition.level}`;
+    button.dataset.aiasLevel = String(definition.level);
+    button.setAttribute("role", "radio");
+    button.setAttribute("aria-checked", String(selected));
+    button.classList.toggle("selected", selected);
+
+    const number = document.createElement("span");
+    number.className = "aias-level-number";
+    number.textContent = String(definition.level);
+    const title = document.createElement("span");
+    title.className = "aias-level-title";
+    title.textContent = t(definition.labelKey);
+    const description = document.createElement("span");
+    description.className = "aias-level-description";
+    description.textContent = t(definition.descriptionKey);
+
+    button.append(number, title, description);
+    button.addEventListener("click", () => chooseAias({
+      version: AIAS_VERSION,
+      status: "specified",
+      level: definition.level
+    }));
+    aiasModalLevels.appendChild(button);
+  });
+}
+
+function openAiasModal(trigger, activity) {
+  activeAiasTrigger = trigger;
+  activeAiasActivity = activity;
+  renderAiasModal();
+  trigger?.setAttribute("aria-expanded", "true");
+  openModal(aiasModalBackdrop, ".selected, #aias-modal-close-btn");
+}
+
+function closeAiasModal() {
+  activeAiasTrigger?.setAttribute("aria-expanded", "false");
+  closeModal(aiasModalBackdrop);
+  activeAiasTrigger = null;
+  activeAiasActivity = null;
 }
 
 function normalizeActivityLinkEntry(link) {
@@ -2899,18 +3096,36 @@ function setLearningTime(days, hours, minutes) {
   state.meta.learningMinutes = normalized.minutes;
 }
 
-function aggregateDurations(mapper) {
-  const totals = {};
+function buildAnalysisMetrics() {
+  const metrics = {
+    activities: [],
+    overall: 0,
+    byType: {},
+    byLocation: {},
+    byTeacher: {},
+    bySync: {},
+    byEvaluation: {},
+    byGroup: {}
+  };
   let overall = 0;
   state.sessions.forEach((session) => {
     session.activities.forEach((activity) => {
-      const key = mapper(activity);
       const duration = Math.max(0, Number(activity.duration) || 0);
-      totals[key] = (totals[key] || 0) + duration;
+      const evaluationKey = activity.evaluationMode === "summative" || activity.evaluationMode === "certificative"
+        ? "summative"
+        : "formative";
+      metrics.activities.push(activity);
+      metrics.byType[activity.type] = (metrics.byType[activity.type] || 0) + duration;
+      metrics.byLocation[activity.locationMode] = (metrics.byLocation[activity.locationMode] || 0) + duration;
+      metrics.byTeacher[activity.teacherPresence] = (metrics.byTeacher[activity.teacherPresence] || 0) + duration;
+      metrics.bySync[activity.syncMode] = (metrics.bySync[activity.syncMode] || 0) + duration;
+      metrics.byEvaluation[evaluationKey] = (metrics.byEvaluation[evaluationKey] || 0) + duration;
+      metrics.byGroup[activity.groupMode] = (metrics.byGroup[activity.groupMode] || 0) + duration;
       overall += duration;
     });
   });
-  return { totals, overall };
+  metrics.overall = overall;
+  return metrics;
 }
 
 function buildSegments(definitions, totals) {
@@ -3203,13 +3418,9 @@ function totalDeclaredLearningMinutes() {
   return ((normalized.days * getDayHours() + normalized.hours) * 60) + normalized.minutes;
 }
 
-function collectActivities() {
-  return state.sessions.flatMap((session) => (Array.isArray(session.activities) ? session.activities : []));
-}
-
-function getAnalysisAlerts() {
-  const activities = collectActivities();
-  const designedMinutes = totalDesignedMinutes();
+function getAnalysisAlerts(metrics) {
+  const activities = metrics.activities;
+  const designedMinutes = metrics.overall;
   const learningMinutes = totalDeclaredLearningMinutes();
 
   const hasInvalidDuration = activities.some((activity) => {
@@ -3251,8 +3462,8 @@ function getAnalysisAlerts() {
   return alerts;
 }
 
-function renderAnalysisAlerts() {
-  const alerts = getAnalysisAlerts();
+function renderAnalysisAlerts(metrics) {
+  const alerts = getAnalysisAlerts(metrics);
   analysisAlerts.innerHTML = "";
   analysisAlerts.classList.toggle("hidden", alerts.length === 0);
   if (!alerts.length) return;
@@ -3267,14 +3478,15 @@ function renderAnalysisAlerts() {
 }
 
 function renderAnalysisPanel() {
-  renderAnalysisAlerts();
+  const metrics = buildAnalysisMetrics();
+  renderAnalysisAlerts(metrics);
 
   const learningDefs = LEARNING_TYPES.map((type) => ({
     key: type.id,
     label: type.label,
     color: type.color
   }));
-  const learningData = buildSegments(learningDefs, aggregateDurations((a) => a.type).totals);
+  const learningData = buildSegments(learningDefs, metrics.byType);
   renderConic(analysisLearningPie, learningData);
   renderLegend(analysisLearningLegend, learningData, false);
   renderPieOuterLabels(
@@ -3291,7 +3503,7 @@ function renderAnalysisPanel() {
     { key: "online", label: t("modeOnline"), color: "#bcc7d7" },
     { key: "hybrid", label: t("modeHybrid"), color: "#4e84c8" }
   ];
-  const deliveryData = buildSegments(deliveryDefs, aggregateDurations((a) => a.locationMode).totals);
+  const deliveryData = buildSegments(deliveryDefs, metrics.byLocation);
   renderConic(analysisDeliveryPie, deliveryData);
   renderLegend(analysisDeliveryLegend, deliveryData);
 
@@ -3299,7 +3511,7 @@ function renderAnalysisPanel() {
     { key: "present", label: t("teacherPresentLabel"), color: "#7a6854" },
     { key: "absent", label: t("teacherAbsentLabel"), color: "#c5b59f" }
   ];
-  const teacherData = buildSegments(teacherDefs, aggregateDurations((a) => a.teacherPresence).totals);
+  const teacherData = buildSegments(teacherDefs, metrics.byTeacher);
   renderConic(analysisTeacherPie, teacherData);
   renderLegend(analysisTeacherLegend, teacherData);
 
@@ -3307,7 +3519,7 @@ function renderAnalysisPanel() {
     { key: "sync", label: t("sync_sync"), color: "#ac7f8d" },
     { key: "async", label: t("sync_async"), color: "#cbbec2" }
   ];
-  const syncData = buildSegments(syncDefs, aggregateDurations((a) => a.syncMode).totals);
+  const syncData = buildSegments(syncDefs, metrics.bySync);
   renderConic(analysisSyncPie, syncData);
   renderLegend(analysisSyncLegend, syncData);
 
@@ -3315,13 +3527,7 @@ function renderAnalysisPanel() {
     { key: "formative", label: t("eval_formative"), color: "#ccd5aa" },
     { key: "summative", label: t("eval_summative"), color: "#b2cf69" }
   ];
-  const evalTotals = aggregateDurations((activity) => {
-    if (activity.evaluationMode === "summative" || activity.evaluationMode === "certificative") {
-      return "summative";
-    }
-    return "formative";
-  }).totals;
-  const evalData = buildSegments(evalDefs, evalTotals);
+  const evalData = buildSegments(evalDefs, metrics.byEvaluation);
   renderConic(analysisEvalPie, evalData);
   renderLegend(analysisEvalLegend, evalData);
 
@@ -3330,12 +3536,13 @@ function renderAnalysisPanel() {
     { key: "subgroups", label: t("group_subgroups"), color: "#6ab084" },
     { key: "individual", label: t("group_individual"), color: "#a8c8b1" }
   ];
-  const groupData = buildSegments(groupDefs, aggregateDurations((a) => a.groupMode).totals);
+  const groupData = buildSegments(groupDefs, metrics.byGroup);
   renderGroupBar(groupData);
   renderLegend(analysisGroupLegend, groupData);
 }
 
 function renderPartitionView() {
+  if (state.topPanelCollapsed || state.meta.activeTab !== "chronology") return;
   const container = document.getElementById('chronology-container');
   if (!container) return;
   container.innerHTML = '';
@@ -3466,21 +3673,27 @@ function renderTopPanel() {
   topPanelToggleBtn.setAttribute("title", toggleLabel);
   topPanelToggleBtn.setAttribute("aria-expanded", state.topPanelCollapsed ? "false" : "true");
 
-  metaNameInput.value = state.meta.name;
-  metaLearningDaysInput.value = state.meta.learningDays;
-  metaLearningHoursInput.value = state.meta.learningHours;
-  metaLearningMinutesInput.value = state.meta.learningMinutes;
-  metaDeliverySelect.value = state.meta.modeDelivery;
-  metaDayHoursInput.value = getDayHours();
-  metaSizeClassInput.value = state.meta.sizeClass;
-  metaDesignersInput.value = state.meta.designers;
-  metaTrainersInput.value = state.meta.trainers;
-  metaDescriptionInput.value = state.meta.description;
-  metaCommandInput.value = state.meta.command;
-  metaPersonasInput.value = state.meta.personas;
-  renderOutcomes();
-
   const panelExpanded = !state.topPanelCollapsed;
+  const settingsActive = state.meta.activeTab === "settings";
+  const analysisActive = state.meta.activeTab === "analysis";
+  const chronologyActive = state.meta.activeTab === "chronology";
+
+  if (panelExpanded && settingsActive) {
+    metaNameInput.value = state.meta.name;
+    metaLearningDaysInput.value = state.meta.learningDays;
+    metaLearningHoursInput.value = state.meta.learningHours;
+    metaLearningMinutesInput.value = state.meta.learningMinutes;
+    metaDeliverySelect.value = state.meta.modeDelivery;
+    metaDayHoursInput.value = getDayHours();
+    metaSizeClassInput.value = state.meta.sizeClass;
+    metaDesignersInput.value = state.meta.designers;
+    metaTrainersInput.value = state.meta.trainers;
+    metaDescriptionInput.value = state.meta.description;
+    metaCommandInput.value = state.meta.command;
+    metaPersonasInput.value = state.meta.personas;
+    renderOutcomes();
+  }
+
   topTabSettings.classList.toggle("active", panelExpanded && state.meta.activeTab === "settings");
   topTabAnalysis.classList.toggle("active", panelExpanded && state.meta.activeTab === "analysis");
   topTabChronology.classList.toggle("active", panelExpanded && state.meta.activeTab === "chronology");
@@ -3490,9 +3703,6 @@ function renderTopPanel() {
   topTabSettings.tabIndex = state.meta.activeTab === "settings" ? 0 : -1;
   topTabAnalysis.tabIndex = state.meta.activeTab === "analysis" ? 0 : -1;
   topTabChronology.tabIndex = state.meta.activeTab === "chronology" ? 0 : -1;
-  const settingsActive = state.meta.activeTab === "settings";
-  const analysisActive = state.meta.activeTab === "analysis";
-  const chronologyActive = state.meta.activeTab === "chronology";
   timelineView.classList.toggle("hidden", !settingsActive);
   analysisView.classList.toggle("hidden", !analysisActive);
   chronologyView.classList.toggle("hidden", !chronologyActive);
@@ -3500,44 +3710,46 @@ function renderTopPanel() {
   analysisView.setAttribute("aria-hidden", analysisActive ? "false" : "true");
   chronologyView.setAttribute("aria-hidden", chronologyActive ? "false" : "true");
 
-  const designed = splitMinutesToPedagogicalTime(totalDesignedMinutes(), getDayHours());
-  metaDesignedDaysInput.value = designed.days;
-  metaDesignedHoursInput.value = designed.hours;
-  metaDesignedMinutesInput.value = designed.minutes;
+  if (panelExpanded && settingsActive) {
+    const designed = splitMinutesToPedagogicalTime(totalDesignedMinutes(), getDayHours());
+    metaDesignedDaysInput.value = designed.days;
+    metaDesignedHoursInput.value = designed.hours;
+    metaDesignedMinutesInput.value = designed.minutes;
 
-  const totals = {};
-  LEARNING_TYPES.forEach((type) => {
-    totals[type.id] = 0;
-  });
-  state.sessions.forEach((session) => {
-    session.activities.forEach((activity) => {
-      const duration = Number(activity.duration || 0);
-      totals[activity.type] = (totals[activity.type] || 0) + duration;
+    const totals = {};
+    LEARNING_TYPES.forEach((type) => {
+      totals[type.id] = 0;
     });
-  });
+    state.sessions.forEach((session) => {
+      session.activities.forEach((activity) => {
+        const duration = Number(activity.duration || 0);
+        totals[activity.type] = (totals[activity.type] || 0) + duration;
+      });
+    });
 
-  const topDefs = LEARNING_TYPES.map((type) => ({
-    key: type.id,
-    label: type.label,
-    color: type.color
-  }));
-  const topData = buildSegments(topDefs, totals);
-  renderConic(topPie, topData);
-  renderPieOuterLabels(
-    topPieWrap,
-    topPie,
-    topPieLabels,
-    topPieTooltip,
-    topData,
-    (segment) => learningPieCode(segment.key)
-  );
+    const topDefs = LEARNING_TYPES.map((type) => ({
+      key: type.id,
+      label: type.label,
+      color: type.color
+    }));
+    const topData = buildSegments(topDefs, totals);
+    renderConic(topPie, topData);
+    renderPieOuterLabels(
+      topPieWrap,
+      topPie,
+      topPieLabels,
+      topPieTooltip,
+      topData,
+      (segment) => learningPieCode(segment.key)
+    );
 
-  topLegend.innerHTML = LEARNING_TYPES.map((type) => {
-    const pct = topData.sum > 0 ? Math.round((totals[type.id] / topData.sum) * 100) : 0;
-    return `<span class="legend-item">${legendDot(type.id, type.color)}${type.label} ${pct}%</span>`;
-  }).join("");
+    topLegend.innerHTML = LEARNING_TYPES.map((type) => {
+      const pct = topData.sum > 0 ? Math.round((totals[type.id] / topData.sum) * 100) : 0;
+      return `<span class="legend-item">${legendDot(type.id, type.color)}${type.label} ${pct}%</span>`;
+    }).join("");
+  }
 
-  renderAnalysisPanel();
+  if (panelExpanded && analysisActive) renderAnalysisPanel();
   updateTabSlider();
 }
 
@@ -3705,6 +3917,7 @@ function buildMarkdownExport() {
       lines.push(`- Rythme: ${labelForSyncMode(activity.syncMode)}`);
       lines.push(`- Modalité: ${labelForLocationMode(activity.locationMode)}`);
       lines.push(`- Évaluation: ${labelForEvaluationMode(activity.evaluationMode)}`);
+      lines.push(`- AIAS: ${aiasSummary(activity.aias)}`);
       lines.push(`- Description: ${activity.description || "-"}`);
       if (activity.links && activity.links.length) {
         const linkLabels = activity.links
@@ -3741,6 +3954,7 @@ function buildHtmlExportDocument() {
             <p><strong>Rythme:</strong> ${escapeHtml(labelForSyncMode(activity.syncMode))}</p>
             <p><strong>Modalité:</strong> ${escapeHtml(labelForLocationMode(activity.locationMode))}</p>
             <p><strong>Évaluation:</strong> ${escapeHtml(labelForEvaluationMode(activity.evaluationMode))}</p>
+            <p><strong>AIAS:</strong> ${escapeHtml(aiasSummary(activity.aias))}</p>
             <p><strong>Description:</strong> ${escapeHtmlWithBreaks(activity.description || "")}</p>
             ${activity.links && activity.links.length ? `<p><strong>Liens:</strong> ${activity.links.map((link) => `<a href="${escapeHtml(link.url)}" target="_blank" rel="noopener noreferrer">${escapeHtml(link.title)}</a>`).join(", ")}</p>` : ""}
             ${activity.tools && activity.tools.length ? `<p><strong>Compétences:</strong> ${escapeHtml(activity.tools.map(id => { const t = SELECTABLE_TOOLS_DATA.find(x => x.id === id); return t ? formatCompetencyLabel(t, "fr") : id; }).join(", "))}</p>` : ""}
@@ -4095,6 +4309,7 @@ function buildWordExportDocument() {
         ["Rythme", labelForSyncMode(activity.syncMode)],
         ["Modalité", labelForLocationMode(activity.locationMode)],
         ["Évaluation", labelForEvaluationMode(activity.evaluationMode)],
+        ["AIAS", aiasSummary(activity.aias)],
         ["Description", activity.description || "-"],
         ["Liens", links || "-"],
         ["Compétences", toolLabels || "-"]
@@ -4155,17 +4370,6 @@ function buildWordExportDocument() {
   ]);
 }
 
-function sanitizeCsvFormula(value) {
-  const text = String(value ?? "");
-  if (/^[=+\-@]/.test(text)) return `'${text}`;
-  return text;
-}
-
-function escapeCsvCell(value) {
-  const text = sanitizeCsvFormula(value).replaceAll('"', '""');
-  return `"${text}"`;
-}
-
 function buildSpreadsheetRows() {
   const designed = splitMinutesToPedagogicalTime(totalDesignedMinutes(), getDayHours());
   const metaLearningTime = formatPedagogicalTime(
@@ -4186,6 +4390,7 @@ function buildSpreadsheetRows() {
           session.objectives || "",
           session.intentions || "",
           session.notes || "",
+          "",
           "",
           "",
           "",
@@ -4230,6 +4435,7 @@ function buildSpreadsheetRows() {
           labelForSyncMode(activity.syncMode),
           labelForLocationMode(activity.locationMode),
           labelForEvaluationMode(activity.evaluationMode),
+          aiasSummary(activity.aias),
           activity.description || "",
           activity.notes || "",
           (activity.tools || [])
@@ -4269,6 +4475,7 @@ const SPREADSHEET_COLUMNS = [
   { key: "pacing", label: "Rythme", width: 14 },
   { key: "delivery_mode", label: "Modalité", width: 14 },
   { key: "assessment", label: "Évaluation", width: 18 },
+  { key: "aias", label: "AIAS", width: 28 },
   { key: "activity_description", label: "Description de l'activité", width: 34 },
   { key: "activity_notes", label: "Notes de l'activité", width: 24 },
   { key: "activity_competencies", label: "Compétences", width: 22 },
@@ -4285,12 +4492,6 @@ const SPREADSHEET_COLUMNS = [
   { key: "design_personas", label: "Personas", width: 26 },
   { key: "design_sliders", label: "Objectifs / curseurs", width: 26 }
 ];
-
-function buildCsvExport() {
-  return buildSpreadsheetRows()
-    .map((row) => row.map(escapeCsvCell).join(","))
-    .join("\n");
-}
 
 function buildExcelExportDocument() {
   const rows = buildSpreadsheetRows();
@@ -4714,6 +4915,7 @@ function buildStateFromCsv(csvText) {
       read("pacing"),
       read("delivery_mode"),
       read("assessment"),
+      read("aias"),
       read("activity_description"),
       read("activity_notes")
     ].some((value) => value.trim() !== "");
@@ -4729,6 +4931,7 @@ function buildStateFromCsv(csvText) {
       syncMode: lookupValue(read("pacing"), CSV_SYNC_LOOKUP, "sync"),
       locationMode: lookupValue(read("delivery_mode"), CSV_LOCATION_LOOKUP, "onsite"),
       evaluationMode: lookupValue(read("assessment"), CSV_EVAL_LOOKUP, "none"),
+      aias: parseAiasValue(read("aias")),
       description: read("activity_description"),
       notes: read("activity_notes"),
       tools: (read("activity_competencies") || read("activity_tools")).split(";").map(s => s.trim()).filter(Boolean),
@@ -4929,6 +5132,7 @@ function buildStateFromMarkdown(markdownText) {
           syncMode: "sync",
           locationMode: "onsite",
           evaluationMode: "none",
+          aias: defaultAiasState(),
           description: "",
           notes: "",
           tools: [],
@@ -4966,6 +5170,7 @@ function buildStateFromMarkdown(markdownText) {
           if (field.key === "rythme") currentActivity.syncMode = lookupValue(field.value, CSV_SYNC_LOOKUP, "sync");
           if (field.key === "modalite") currentActivity.locationMode = lookupValue(field.value, CSV_LOCATION_LOOKUP, "onsite");
           if (field.key === "evaluation") currentActivity.evaluationMode = lookupValue(field.value, CSV_EVAL_LOOKUP, "none");
+          if (field.key === "aias") currentActivity.aias = parseAiasValue(field.value);
           if (field.key === "description") {
             const descriptionLines = [field.value];
             index += 1;
@@ -5131,15 +5336,6 @@ function openExportModal() {
 function closeExportModal() {
   clearExportPreviewUrl();
   closeModal(exportModalBackdrop);
-}
-
-function openImportModal() {
-  importFormatSelect.value = "json";
-  openModal(importModalBackdrop, "#import-format-select");
-}
-
-function closeImportModal() {
-  closeModal(importModalBackdrop);
 }
 
 function openImportPicker(format = "") {
@@ -5414,8 +5610,8 @@ document.addEventListener("keydown", (event) => {
   if (event.key === "Escape") {
     event.preventDefault();
     if (activeModalBackdrop === exportModalBackdrop) closeExportModal();
-    if (activeModalBackdrop === importModalBackdrop) closeImportModal();
     if (activeModalBackdrop === infoModalBackdrop) closeInfoModal();
+    if (activeModalBackdrop === aiasModalBackdrop) closeAiasModal();
     return;
   }
   if (event.key !== "Tab") return;
@@ -5448,6 +5644,25 @@ const debouncedResizeLayoutRefresh = debounce(() => {
   updateResponsiveButtonLabels();
   renderTopPanel();
 }, 120);
+
+let topPanelRenderFrame = 0;
+let partitionRenderFrame = 0;
+
+function scheduleTopPanelRender() {
+  if (topPanelRenderFrame) return;
+  topPanelRenderFrame = window.requestAnimationFrame(() => {
+    topPanelRenderFrame = 0;
+    renderTopPanel();
+  });
+}
+
+function schedulePartitionRender() {
+  if (partitionRenderFrame) return;
+  partitionRenderFrame = window.requestAnimationFrame(() => {
+    partitionRenderFrame = 0;
+    renderPartitionView();
+  });
+}
 
 window.addEventListener("resize", closeChoiceMenu, { passive: true });
 window.addEventListener("resize", debouncedResizeLayoutRefresh, { passive: true });
@@ -5624,7 +5839,7 @@ function buildGridSessionRow(session, sIdx) {
   tr.dataset.sessionId = session.id;
 
   const td = document.createElement("td");
-  td.setAttribute("colspan", "10");
+  td.setAttribute("colspan", "11");
 
   const totalDur = session.activities.reduce((s, a) => s + (Number(a.duration) || 0), 0);
 
@@ -5640,8 +5855,7 @@ function buildGridSessionRow(session, sIdx) {
   titleInput.addEventListener("input", (e) => {
     session.title = e.target.value;
     saveState();
-    renderPartitionView();
-    renderTopPanel();
+    schedulePartitionRender();
   });
 
   const totalSpan = document.createElement("span");
@@ -5655,7 +5869,15 @@ function buildGridSessionRow(session, sIdx) {
   return tr;
 }
 
+function updateGridSessionTotal(session) {
+  const row = Array.from(board.querySelectorAll(".grid-session-row"))
+    .find((candidate) => candidate.dataset.sessionId === session.id);
+  const total = row?.querySelector(".grid-session-total");
+  if (total) total.textContent = `— ${totalSessionMinutes(session)} min`;
+}
+
 function buildGridActivityRow(session, act, aIdx) {
+  normalizeActivity(act);
   const tr = document.createElement("tr");
   tr.className = "grid-activity-row";
   tr.dataset.actId = act.id;
@@ -5704,9 +5926,9 @@ function buildGridActivityRow(session, act, aIdx) {
   durInput.addEventListener("input", (e) => {
     act.duration = Math.max(1, Number(e.target.value) || 1);
     saveState();
-    renderTopPanel();
-    renderPartitionView();
-    renderGridView(); // refresh session totals
+    updateGridSessionTotal(session);
+    scheduleTopPanelRender();
+    schedulePartitionRender();
   });
   const durUnit = document.createElement("span");
   durUnit.className = "grid-dur-unit";
@@ -5739,7 +5961,34 @@ function buildGridActivityRow(session, act, aIdx) {
     tr.appendChild(sTd);
   });
 
-  // Col 9 — Description
+  // Col 9 — AIAS
+  const aiasTd = mkTd();
+  const aiasOptions = [
+    { value: "undecided", label: t("aiasUndecided") },
+    { value: "not_applicable", label: t("aiasNotApplicable") },
+    ...AIAS_LEVELS.map((definition) => ({
+      value: `level_${definition.level}`,
+      label: `AIAS ${definition.level} · ${t(definition.labelKey)}`
+    }))
+  ];
+  const aiasValue = act.aias.status === "specified"
+    ? `level_${act.aias.level}`
+    : act.aias.status;
+  const aiasSelect = buildGridSelect(aiasOptions, aiasValue, "grid-select grid-aias-select");
+  applyAiasLevelClass(aiasSelect, act.aias);
+  aiasSelect.addEventListener("change", (event) => {
+    const selected = event.target.value;
+    const levelMatch = selected.match(/^level_([1-5])$/);
+    act.aias = levelMatch
+      ? { version: AIAS_VERSION, status: "specified", level: Number(levelMatch[1]) }
+      : { version: AIAS_VERSION, status: selected, level: null };
+    applyAiasLevelClass(aiasSelect, act.aias);
+    saveState();
+  });
+  aiasTd.appendChild(aiasSelect);
+  tr.appendChild(aiasTd);
+
+  // Col 10 — Description
   const descTd = mkTd();
   const descInput = document.createElement("textarea");
   descInput.className = "grid-desc-input";
@@ -5753,7 +6002,7 @@ function buildGridActivityRow(session, act, aIdx) {
   descTd.appendChild(descInput);
   tr.appendChild(descTd);
 
-  // Col 10 — Actions ↑ ↓ ✕
+  // Col 11 — Actions ↑ ↓ ✕
   const actTd = mkTd();
   const btns = document.createElement("div");
   btns.className = "grid-action-btns";
@@ -5811,6 +6060,7 @@ function renderGridView() {
     { cls: "grid-col-sync",    label: t("gridColSync") },
     { cls: "grid-col-teacher", label: t("gridColTeacher") },
     { cls: "grid-col-eval",    label: t("gridColEval") },
+    { cls: "grid-col-aias",    label: t("gridColAias") },
     { cls: "grid-col-desc",    label: t("gridColDesc") },
     { cls: "grid-col-actions", label: "" },
   ].forEach(({ cls, label }) => {
@@ -5834,7 +6084,7 @@ function renderGridView() {
     const addActRow = document.createElement("tr");
     addActRow.className = "grid-add-activity-row";
     const addActTd = document.createElement("td");
-    addActTd.setAttribute("colspan", "10");
+    addActTd.setAttribute("colspan", "11");
     const addActBtn = document.createElement("button");
     addActBtn.className = "grid-add-activity-btn";
     addActBtn.type = "button";
@@ -5844,7 +6094,8 @@ function renderGridView() {
         id: nextId(), type: "undefined", duration: 10,
         groupMode: "whole", teacherPresence: "present",
         syncMode: "sync", locationMode: "onsite",
-        evaluationMode: "none", description: "", notes: "", tools: [], links: []
+        evaluationMode: "none", aias: defaultAiasState(),
+        description: "", notes: "", tools: [], links: []
       });
       saveState(); renderGridView(); renderTopPanel(); renderPartitionView();
     });
@@ -5857,7 +6108,7 @@ function renderGridView() {
   const addSessRow = document.createElement("tr");
   addSessRow.className = "grid-add-session-row";
   const addSessTd = document.createElement("td");
-  addSessTd.setAttribute("colspan", "10");
+  addSessTd.setAttribute("colspan", "11");
   const addSessBtn = document.createElement("button");
   addSessBtn.className = "grid-add-session-btn";
   addSessBtn.type = "button";
@@ -5886,6 +6137,9 @@ function render() {
   closeToolPicker();
   if (activeActivityLinkActivity || !activityLinkModalBackdrop.classList.contains("hidden")) {
     closeActivityLinkModal();
+  }
+  if (activeAiasActivity || !aiasModalBackdrop.classList.contains("hidden")) {
+    closeAiasModal();
   }
   applyLocalizedUI();
   renderTopPanel();
@@ -5944,7 +6198,7 @@ function render() {
     title.addEventListener("input", (e) => {
       session.title = e.target.value;
       saveState();
-      renderPartitionView();
+      schedulePartitionRender();
     });
     objectives.value = session.objectives || "";
     objectives.setAttribute("aria-label", `${t("sessionObjectivesLabel")} ${sessionIndex + 1}`);
@@ -6046,6 +6300,7 @@ function render() {
       const syncModeBtn = activityFrag.querySelector(".activity-sync-mode-btn");
       const locationModeBtn = activityFrag.querySelector(".activity-location-mode-btn");
       const evaluationModeBtn = activityFrag.querySelector(".activity-evaluation-mode-btn");
+      const activityAiasBtn = activityFrag.querySelector(".activity-aias-btn");
       const activityLinksBtn = activityFrag.querySelector(".activity-links-btn");
       const typeLabel = activityFrag.querySelector(".activity-type-label");
       const durationLabel = activityFrag.querySelector(".activity-duration-label");
@@ -6078,6 +6333,7 @@ function render() {
       setChoiceButton(syncModeBtn, SYNC_OPTIONS, activity.syncMode);
       setChoiceButton(locationModeBtn, LOCATION_OPTIONS, activity.locationMode);
       setChoiceButton(evaluationModeBtn, EVAL_OPTIONS, activity.evaluationMode);
+      updateAiasTrigger(activityAiasBtn, activity);
       if (typeLabel) typeLabel.textContent = t("groupTitleType");
       if (durationLabel) durationLabel.textContent = currentLang() === "en" ? "Duration" : "Durée";
       if (groupLabel) groupLabel.textContent = t("groupTitleGroup");
@@ -6096,6 +6352,7 @@ function render() {
       activityLinksBtn.title = t("manageLinks");
       activityLinksBtn.setAttribute("aria-haspopup", "dialog");
       activityLinksBtn.setAttribute("aria-expanded", "false");
+      activityAiasBtn.addEventListener("click", () => openAiasModal(activityAiasBtn, activity));
       updateActivityToolsDisplay(selectToolsBtn, activity);
       updateActivityLinksDisplay(activityLinksBtn, activity);
       activityCard.addEventListener("dragstart", (event) => {
@@ -6156,8 +6413,8 @@ function render() {
         activity.duration = Math.max(1, Number(e.target.value) || 1);
         saveState();
         totalDuration.textContent = String(totalSessionMinutes(session));
-        renderTopPanel();
-        renderPartitionView();
+        scheduleTopPanelRender();
+        schedulePartitionRender();
       });
 
       bindChoiceControl(groupModeBtn, GROUP_MODE_OPTIONS, () => activity.groupMode, (nextValue) => {
@@ -6256,6 +6513,7 @@ function render() {
         syncMode: "sync",
         locationMode: "onsite",
         evaluationMode: "none",
+        aias: defaultAiasState(),
         description: "",
         notes: "",
         tools: [],
@@ -6428,6 +6686,10 @@ function bindTopPanelEvents() {
   activityLinkSaveBtn.addEventListener("click", confirmActivityLink);
   activityLinkModalBackdrop.addEventListener("click", (event) => {
     if (event.target === activityLinkModalBackdrop) closeActivityLinkModal();
+  });
+  aiasModalCloseBtn.addEventListener("click", closeAiasModal);
+  aiasModalBackdrop.addEventListener("click", (event) => {
+    if (event.target === aiasModalBackdrop) closeAiasModal();
   });
   activityLinkTitleInput.addEventListener("input", () => setActivityLinkError(""));
   activityLinkUrlInput.addEventListener("input", () => setActivityLinkError(""));
@@ -6682,25 +6944,33 @@ importDesignBtn.addEventListener("click", () => {
   openImportPicker();
 });
 
-importModalCancelBtn.addEventListener("click", () => {
-  closeImportModal();
-});
+let xlsxLibraryPromise = null;
+function loadXlsxLibrary() {
+  if (window.XLSX) return Promise.resolve(window.XLSX);
+  if (xlsxLibraryPromise) return xlsxLibraryPromise;
 
-importModalConfirmBtn.addEventListener("click", () => {
-  const format = importFormatSelect.value === "csv" ? "csv"
-               : importFormatSelect.value === "xlsx" ? "xlsx"
-               : importFormatSelect.value === "ldj" ? "ldj"
-               : importFormatSelect.value === "markdown" ? "markdown"
-               : "json";
-  openImportPicker(format);
-  closeImportModal();
-});
+  xlsxLibraryPromise = new Promise((resolve, reject) => {
+    const script = document.createElement("script");
+    script.src = "https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js";
+    script.async = true;
+    script.onload = () => {
+      if (window.XLSX) {
+        resolve(window.XLSX);
+        return;
+      }
+      xlsxLibraryPromise = null;
+      reject(new Error("XLSX unavailable"));
+    };
+    script.onerror = () => {
+      xlsxLibraryPromise = null;
+      script.remove();
+      reject(new Error("XLSX loading failed"));
+    };
+    document.head.appendChild(script);
+  });
 
-importModalBackdrop.addEventListener("click", (event) => {
-  if (event.target === importModalBackdrop) {
-    closeImportModal();
-  }
-});
+  return xlsxLibraryPromise;
+}
 
 importFileInput.addEventListener("change", async (e) => {
   const file = e.target.files?.[0];
@@ -6722,10 +6992,11 @@ importFileInput.addEventListener("change", async (e) => {
   try {
     let hydrated = null;
     if (selectedFormat === "xlsx") {
+      const xlsx = await loadXlsxLibrary();
       const buffer = await file.arrayBuffer();
-      const workbook = XLSX.read(buffer, { type: "array" });
+      const workbook = xlsx.read(buffer, { type: "array" });
       const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
-      const csvText = XLSX.utils.sheet_to_csv(firstSheet);
+      const csvText = xlsx.utils.sheet_to_csv(firstSheet);
       hydrated = buildStateFromCsv(csvText);
     } else if (selectedFormat === "csv") {
       const text = await file.text();

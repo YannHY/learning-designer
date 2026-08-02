@@ -1,7 +1,14 @@
 <?php
 declare(strict_types=1);
 
-if (session_status() !== PHP_SESSION_ACTIVE) {
+const APP_SCHEMA_VERSION = 1;
+
+function app_start_session(): void
+{
+    if (session_status() === PHP_SESSION_ACTIVE) {
+        return;
+    }
+
     ini_set('session.use_strict_mode', '1');
     $isHttps = !empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off';
     session_set_cookie_params([
@@ -182,9 +189,61 @@ function app_db(): PDO
         $db->exec('PRAGMA foreign_keys = ON');
     }
 
+    ensure_app_schema($db);
+    return $db;
+}
+
+function ensure_app_schema(PDO $db): void
+{
+    $currentVersion = null;
+    try {
+        $currentVersion = $db->query("SELECT schema_version FROM app_schema_meta WHERE id = 1")
+            ->fetchColumn();
+    } catch (PDOException) {
+        // Existing installations do not have the version table yet. The
+        // idempotent bootstrap below upgrades them without a deployment step.
+    }
+
+    if ($currentVersion !== false && $currentVersion !== null && (int)$currentVersion >= APP_SCHEMA_VERSION) {
+        return;
+    }
+
     ensure_app_tables($db);
     ensure_app_migrations($db);
-    return $db;
+    ensure_app_schema_meta_table($db);
+
+    $stmt = $db->prepare("SELECT schema_version FROM app_schema_meta WHERE id = 1");
+    $stmt->execute();
+    if ($stmt->fetchColumn() === false) {
+        try {
+            $db->prepare("INSERT INTO app_schema_meta (id, schema_version) VALUES (1, ?)")
+                ->execute([APP_SCHEMA_VERSION]);
+        } catch (PDOException) {
+            // Another first request may have completed the bootstrap in
+            // parallel. Updating the singleton row is safe in that case.
+            $db->prepare("UPDATE app_schema_meta SET schema_version = ? WHERE id = 1")
+                ->execute([APP_SCHEMA_VERSION]);
+        }
+    } else {
+        $db->prepare("UPDATE app_schema_meta SET schema_version = ? WHERE id = 1")
+            ->execute([APP_SCHEMA_VERSION]);
+    }
+}
+
+function ensure_app_schema_meta_table(PDO $db): void
+{
+    if ($db->getAttribute(PDO::ATTR_DRIVER_NAME) === 'sqlite') {
+        $db->exec("CREATE TABLE IF NOT EXISTS app_schema_meta (
+            id INTEGER PRIMARY KEY CHECK (id = 1),
+            schema_version INTEGER NOT NULL
+        )");
+        return;
+    }
+
+    $db->exec("CREATE TABLE IF NOT EXISTS app_schema_meta (
+        id TINYINT UNSIGNED NOT NULL PRIMARY KEY,
+        schema_version INT UNSIGNED NOT NULL
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
 }
 
 function ensure_app_tables(PDO $db): void
@@ -258,7 +317,10 @@ function ensure_app_tables(PDO $db): void
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
         INDEX idx_learning_designs_owner (owner_user_id),
+        INDEX idx_learning_designs_owner_updated (owner_user_id, updated_at),
+        INDEX idx_learning_designs_owner_published_updated (owner_user_id, is_published, updated_at),
         INDEX idx_learning_designs_listed (is_published, is_listed, updated_at),
+        INDEX idx_learning_designs_catalogue (is_published, is_listed, listed_at, id),
         CONSTRAINT fk_learning_designs_owner
             FOREIGN KEY (owner_user_id) REFERENCES users(id)
             ON DELETE CASCADE
@@ -323,7 +385,15 @@ function ensure_app_migrations(PDO $db): void
             WHERE is_published = 1
               AND is_listed = 1
               AND (license_code IS NULL OR TRIM(license_code) = '')");
+        $db->exec("UPDATE learning_designs
+            SET listed_at = updated_at
+            WHERE is_published = 1
+              AND is_listed = 1
+              AND listed_at IS NULL");
         $db->exec("CREATE INDEX IF NOT EXISTS idx_learning_designs_listed ON learning_designs(is_published, is_listed, updated_at)");
+        $db->exec("CREATE INDEX IF NOT EXISTS idx_learning_designs_owner_updated ON learning_designs(owner_user_id, updated_at DESC)");
+        $db->exec("CREATE INDEX IF NOT EXISTS idx_learning_designs_owner_published_updated ON learning_designs(owner_user_id, is_published, updated_at DESC)");
+        $db->exec("CREATE INDEX IF NOT EXISTS idx_learning_designs_catalogue ON learning_designs(is_published, is_listed, listed_at DESC, id DESC)");
         return;
     }
 
@@ -378,11 +448,29 @@ function ensure_app_migrations(PDO $db): void
         WHERE is_published = 1
           AND is_listed = 1
           AND (license_code IS NULL OR TRIM(license_code) = '')");
+    $db->exec("UPDATE learning_designs
+        SET listed_at = updated_at
+        WHERE is_published = 1
+          AND is_listed = 1
+          AND listed_at IS NULL");
 
     $stmt = $db->prepare("SELECT COUNT(*) FROM information_schema.STATISTICS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'learning_designs' AND INDEX_NAME = 'idx_learning_designs_listed'");
     $stmt->execute();
     if ((int)$stmt->fetchColumn() === 0) {
         $db->exec("CREATE INDEX idx_learning_designs_listed ON learning_designs(is_published, is_listed, updated_at)");
+    }
+
+    $mysqlIndexes = [
+        'idx_learning_designs_owner_updated' => 'CREATE INDEX idx_learning_designs_owner_updated ON learning_designs(owner_user_id, updated_at)',
+        'idx_learning_designs_owner_published_updated' => 'CREATE INDEX idx_learning_designs_owner_published_updated ON learning_designs(owner_user_id, is_published, updated_at)',
+        'idx_learning_designs_catalogue' => 'CREATE INDEX idx_learning_designs_catalogue ON learning_designs(is_published, is_listed, listed_at, id)',
+    ];
+    $indexCheck = $db->prepare("SELECT COUNT(*) FROM information_schema.STATISTICS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'learning_designs' AND INDEX_NAME = ?");
+    foreach ($mysqlIndexes as $indexName => $sql) {
+        $indexCheck->execute([$indexName]);
+        if ((int)$indexCheck->fetchColumn() === 0) {
+            $db->exec($sql);
+        }
     }
 }
 
@@ -428,6 +516,7 @@ function creative_commons_license(string $code): ?array
 
 function current_user(): ?array
 {
+    app_start_session();
     if (!isset($_SESSION['user']) || !is_array($_SESSION['user'])) {
         return null;
     }

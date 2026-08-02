@@ -50,6 +50,7 @@ Objectifs generaux de la formation.
 - Rythme: Synchrone
 - Modalité: Présentiel
 - Évaluation: Formative
+- AIAS: AIAS 3 · Collaboration avec l’IA
 - Description: Description de l'activite
 - Liens: Exemple (https://example.com)
 - Compétences: A6 - Exemple de competence
@@ -115,6 +116,12 @@ Evaluation :
 - `Sommative`
 - `Certificative`
 
+AIAS :
+
+- `À définir`
+- `Non pertinent`
+- `AIAS 1` à `AIAS 5`
+
 ## Ce qui peut etre modifie
 
 Vous pouvez modifier directement :
@@ -141,6 +148,7 @@ Evitez de changer les libelles fixes comme :
 - `- Rythme:`
 - `- Modalité:`
 - `- Évaluation:`
+- `- AIAS:`
 - `- Description:`
 
 Si ces libelles changent trop, Learning Designer risque de ne plus reconnaitre certaines informations.

@@ -23,7 +23,7 @@ require_once __DIR__ . '/lib/bootstrap.php';
     <link rel="stylesheet" href="interface.css?v=20260730-heading-spacing-h3">
     <link rel="stylesheet" href="account-ui.css?v=20260520-4">
     <link rel="stylesheet" href="account-pages.css?v=20260730-heading-spacing">
-    <link rel="stylesheet" href="home.css?v=20260730-25">
+    <link rel="stylesheet" href="home.css?v=20260802-mobile-section-spacing">
 </head>
 <body class="home-page">
 <a class="skip-link" href="#main-content"

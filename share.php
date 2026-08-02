@@ -5,11 +5,23 @@ require_once __DIR__ . '/lib/bootstrap.php';
 $db = app_db();
 $user = current_user();
 
-$stmt = $db->query("SELECT d.title, d.document_json, d.share_token, d.license_code, d.updated_at, d.listed_at, u.username
+$pageSize = 24;
+$itemCount = (int)$db->query("SELECT COUNT(*)
+    FROM learning_designs
+    WHERE is_published = 1 AND is_listed = 1 AND share_token IS NOT NULL")->fetchColumn();
+$pageCount = max(1, (int)ceil($itemCount / $pageSize));
+$currentPage = min($pageCount, max(1, (int)($_GET['page'] ?? 1)));
+$offset = ($currentPage - 1) * $pageSize;
+
+$stmt = $db->prepare("SELECT d.title, d.document_json, d.share_token, d.license_code, d.updated_at, d.listed_at, u.username
     FROM learning_designs d
     JOIN users u ON u.id = d.owner_user_id
     WHERE d.is_published = 1 AND d.is_listed = 1 AND d.share_token IS NOT NULL
-    ORDER BY COALESCE(d.listed_at, d.updated_at) DESC, d.id DESC");
+    ORDER BY d.listed_at DESC, d.id DESC
+    LIMIT :limit OFFSET :offset");
+$stmt->bindValue(':limit', $pageSize, PDO::PARAM_INT);
+$stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
+$stmt->execute();
 $items = [];
 
 foreach ($stmt->fetchAll() as $row) {
@@ -220,6 +232,19 @@ function share_count_label(int $count, string $singular): string
         background: var(--surface-light);
       }
 
+      .shared-pagination {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 12px;
+        margin-top: 24px;
+      }
+
+      .shared-pagination-status {
+        color: var(--muted);
+        font-size: 13px;
+      }
+
       [data-theme="dark"] .shared-subtitle,
       [data-theme="dark"] .shared-card-copy,
       [data-theme="dark"] .shared-pill,
@@ -310,6 +335,17 @@ function share_count_label(int $count, string $singular): string
             </article>
           <?php endforeach; ?>
         </section>
+        <?php if ($pageCount > 1): ?>
+          <nav class="shared-pagination" aria-label="Pagination du catalogue" data-site-i18n-attr="aria-label" data-site-i18n-en="Catalog pagination" data-site-i18n-fr="Pagination du catalogue">
+            <?php if ($currentPage > 1): ?>
+              <a class="btn btn-light" href="share.php?page=<?= $currentPage - 1 ?>" data-site-i18n-en="Previous" data-site-i18n-fr="Précédent">Précédent</a>
+            <?php endif; ?>
+            <span class="shared-pagination-status" data-site-i18n-en="Page <?= $currentPage ?> of <?= $pageCount ?>" data-site-i18n-fr="Page <?= $currentPage ?> sur <?= $pageCount ?>">Page <?= $currentPage ?> sur <?= $pageCount ?></span>
+            <?php if ($currentPage < $pageCount): ?>
+              <a class="btn btn-light" href="share.php?page=<?= $currentPage + 1 ?>" data-site-i18n-en="Next" data-site-i18n-fr="Suivant">Suivant</a>
+            <?php endif; ?>
+          </nav>
+        <?php endif; ?>
       <?php endif; ?>
     </main>
     <?php render_site_footer(); ?>

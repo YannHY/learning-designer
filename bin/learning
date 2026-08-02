@@ -23,6 +23,7 @@ from typing import Any
 
 VERSION = "0.3.1"
 DEFAULT_DAY_HOURS = 7
+AIAS_VERSION = "2.1"
 DEFAULT_SITE = "https://www.ralentirtravaux.com/flo/learning-designer"
 INSTALL_URL = "https://raw.githubusercontent.com/YannHY/learning-designer/main/install.sh"
 CONFIG_PATH = Path(os.environ.get("LEARNING_CONFIG", "~/.learning-designer/config.json")).expanduser()
@@ -362,6 +363,11 @@ def command_add_activity(args: argparse.Namespace) -> None:
             "syncMode": normalize(args.pacing, SYNC_ALIASES, "pacing"),
             "locationMode": normalize(args.mode, LOCATION_ALIASES, "mode"),
             "evaluationMode": normalize(args.evaluation, EVAL_ALIASES, "evaluation"),
+            "aias": {
+                "version": AIAS_VERSION,
+                "status": "specified" if args.aias is not None else "undecided",
+                "level": args.aias,
+            },
             "description": args.description or "",
             "notes": args.notes or "",
             "tools": tools,
@@ -436,6 +442,8 @@ def summarize_document(document: dict[str, Any]) -> str:
             lines.append(f"   Pedagogical choices: {session['intentions']}")
         for activity_index, activity in enumerate(session.get("activities", []), start=1):
             type_label = LEARNING_TYPES.get(activity.get("type"), ("Undefined", "Undefined"))[1]
+            aias = activity.get("aias") if isinstance(activity.get("aias"), dict) else {}
+            aias_label = f"AIAS {aias.get('level')}" if aias.get("status") == "specified" else aias.get("status", "undecided")
             lines.append(
                 "   "
                 f"{session_index}.{activity_index} {type_label}, "
@@ -444,7 +452,8 @@ def summarize_document(document: dict[str, Any]) -> str:
                 f"teacher={activity.get('teacherPresence')}, "
                 f"pacing={activity.get('syncMode')}, "
                 f"mode={activity.get('locationMode')}, "
-                f"assessment={activity.get('evaluationMode')}"
+                f"assessment={activity.get('evaluationMode')}, "
+                f"aias={aias_label}"
             )
             if activity.get("description"):
                 lines.append(f"      Description: {activity['description']}")
@@ -677,6 +686,7 @@ def build_parser() -> argparse.ArgumentParser:
     activity.add_argument("--pacing", "--rythme", default="sync")
     activity.add_argument("--mode", default="onsite")
     activity.add_argument("--evaluation", "--évaluation", "--assessment", default="none")
+    activity.add_argument("--aias", "--aias-level", type=int, choices=range(1, 6), help="AIAS level from 1 to 5")
     activity.add_argument("--description", default="")
     activity.add_argument("--notes", default="")
     activity.add_argument(

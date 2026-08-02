@@ -2118,6 +2118,7 @@ main {
 .grid-col-sync    { width: 84px;  }
 .grid-col-teacher { width: 92px;  }
 .grid-col-eval    { width: 100px; }
+.grid-col-aias    { width: 116px; }
 .grid-col-desc    { width: 180px; }
 .grid-col-actions { width: 66px;  text-align: center; }
 .grid-activity-row td {
@@ -2187,6 +2188,18 @@ main {
 }
 .grid-select:hover  { background: var(--hover-bg-mid); border-color: var(--line); }
 .grid-select:focus  { outline: 2px solid var(--primary); outline-offset: 0; }
+.grid-aias-select { font-size: 11px; }
+.grid-aias-select.aias-level {
+  border-color: color-mix(in srgb, var(--aias-color) 65%, #111827);
+  background: var(--aias-color);
+  color: var(--aias-ink);
+  font-weight: 650;
+}
+.grid-aias-select.aias-level:hover {
+  border-color: #111827;
+  background: var(--aias-color);
+  filter: brightness(.97);
+}
 .grid-dur-wrap { display: flex; align-items: center; gap: 2px; }
 .grid-dur-input {
   width: 44px;
@@ -2287,7 +2300,7 @@ main {
 }
 
 .board.layout-columns .session-card {
-  flex: 0 0 470px;
+  flex: 0 0 520px;
   height: auto;
   min-height: 560px;
 }
@@ -2505,6 +2518,175 @@ main {
 
 .activity-toolbar .activity-actions {
   margin-left: 0;
+}
+
+.aias-level {
+  --aias-ink: #111827;
+}
+
+.aias-level-1 { --aias-color: #64deff; }
+.aias-level-2 { --aias-color: #c1ffd2; }
+.aias-level-3 { --aias-color: #cfdeff; }
+.aias-level-4 { --aias-color: #fffecb; }
+.aias-level-5 { --aias-color: #ffc1ee; }
+
+.aias-modal {
+  width: min(820px, 94vw);
+  max-height: calc(100vh - 48px);
+  overflow-y: auto;
+  gap: 12px;
+}
+
+.aias-modal-intro {
+  margin: 0 0 10px;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.45;
+}
+
+.aias-status-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 8px;
+}
+
+.aias-status-btn {
+  min-height: 30px;
+  padding: 5px 9px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: var(--panel-2);
+  color: var(--text-body);
+  cursor: pointer;
+  font: inherit;
+  font-size: 11px;
+}
+
+.aias-status-btn:hover,
+.aias-level-btn:hover {
+  border-color: color-mix(in srgb, var(--primary) 52%, var(--line));
+  background: color-mix(in srgb, var(--primary) 5%, var(--panel-2));
+}
+
+.aias-status-btn:focus-visible,
+.aias-level-btn:focus-visible {
+  outline: 1px solid var(--primary);
+  outline-offset: 1px;
+}
+
+.aias-status-btn.selected {
+  border-color: var(--primary);
+  background: color-mix(in srgb, var(--primary) 10%, var(--panel-2));
+  color: var(--primary);
+  font-weight: 650;
+}
+
+.aias-levels {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 7px;
+}
+
+.aias-level-btn {
+  min-width: 0;
+  padding: 0;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--panel-2);
+  color: var(--text-body);
+  display: grid;
+  grid-template-columns: 34px clamp(100px, 20vw, 175px) minmax(0, 1fr);
+  align-items: stretch;
+  text-align: left;
+  cursor: pointer;
+  font: inherit;
+}
+
+.aias-level-btn.selected {
+  border-color: var(--primary);
+  background: color-mix(in srgb, var(--primary) 9%, var(--panel-2));
+  box-shadow: inset 0 0 0 1px var(--primary);
+}
+
+.aias-level-number {
+  color: var(--primary);
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1.3;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 9px 6px;
+  border-right: 1px solid color-mix(in srgb, var(--aias-color) 65%, #111827);
+}
+
+.aias-level-title {
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1.3;
+  display: flex;
+  align-items: center;
+  padding: 9px;
+  border-right: 1px solid color-mix(in srgb, var(--aias-color) 65%, #111827);
+}
+
+.aias-level-description {
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.35;
+  display: flex;
+  align-items: center;
+  padding: 9px;
+}
+
+.aias-level-btn.aias-level {
+  border-color: color-mix(in srgb, var(--aias-color) 65%, #111827);
+  background: var(--aias-color);
+  color: var(--aias-ink);
+}
+
+.aias-level-btn.aias-level:hover {
+  border-color: #111827;
+  background: var(--aias-color);
+  filter: brightness(.97);
+}
+
+.aias-level-btn.aias-level.selected {
+  border-color: #111827;
+  background: var(--aias-color);
+  box-shadow: none;
+}
+
+.aias-level-btn.aias-level .aias-level-number,
+.aias-level-btn.aias-level .aias-level-description {
+  color: var(--aias-ink);
+}
+
+.aias-attribution {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 3px 6px;
+  color: var(--muted);
+  font-size: 10px;
+  line-height: 1.3;
+}
+
+.aias-attribution a {
+  color: inherit;
+  text-underline-offset: 2px;
+}
+
+.aias-attribution a:hover,
+.aias-attribution a:focus-visible {
+  color: var(--primary);
+}
+
+.chip.aias-level {
+  border-color: color-mix(in srgb, var(--aias-color) 65%, #111827);
+  background: var(--aias-color);
+  color: var(--aias-ink);
+  font-weight: 650;
 }
 
 .activity-duration {
@@ -2858,12 +3040,6 @@ main {
   padding: 10px 14px 6px;
   border-bottom: 1px solid var(--line);
   flex-shrink: 0;
-}
-
-.tool-picker-title {
-  font-size: 13px;
-  font-weight: 700;
-  color: #1f2937;
 }
 
 .tool-picker-close {
@@ -3352,7 +3528,7 @@ main {
   }
 
   .board.layout-columns .session-card {
-    flex-basis: min(94vw, 470px);
+    flex-basis: min(94vw, 520px);
   }
 
   .activity-toolbar {
@@ -3886,6 +4062,7 @@ body.designs-page .saved-shell {
   height: 24px;
 }
 
+.activity-toolbar .activity-aias-btn,
 .activity-toolbar .activity-links-btn,
 .activity-toolbar .select-tools-btn,
 .activity-toolbar .delete-activity-btn {
@@ -3898,6 +4075,7 @@ body.designs-page .saved-shell {
   height: 18px;
 }
 
+.activity-toolbar .activity-aias-btn .fa-solid,
 .activity-toolbar .activity-links-btn .fa-solid,
 .activity-toolbar .activity-links-btn .fa-regular {
   width: 18px;
@@ -3912,6 +4090,37 @@ body.designs-page .saved-shell {
 .activity-toolbar .delete-activity-btn svg {
   width: 13px;
   height: 13px;
+}
+
+/* On narrow screens, keep every activity control inside the card. */
+@media (max-width: 480px) {
+  .activity-toolbar {
+    display: grid;
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    gap: 6px;
+    justify-content: initial;
+    padding: 8px;
+  }
+
+  .activity-toolbar .choice-btn,
+  .activity-toolbar .activity-aias-btn,
+  .activity-toolbar .activity-links-btn,
+  .activity-toolbar .select-tools-btn,
+  .activity-toolbar .delete-activity-btn {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .activity-toolbar .mini-label {
+    grid-column: span 2;
+    width: 100%;
+    min-width: 0;
+  }
+
+  .activity-toolbar .activity-duration {
+    width: 100%;
+    min-width: 0;
+  }
 }
 
 /* ── Session card: entrance + hover lift ───────────────────── */
@@ -4719,13 +4928,15 @@ body.help-page {
 .help-title {
     position: relative;
     z-index: 1;
-    max-width: 840px;
+    width: 100%;
+    max-width: none;
     margin: 0;
 }
 .help-lead {
     position: relative;
     z-index: 1;
-    max-width: 760px;
+    width: 100%;
+    max-width: none;
     margin: 20px 0 0;
     color: var(--text-body);
     font-size: clamp(16px, 2vw, 19px);
@@ -4983,7 +5194,6 @@ body.help-page {
 .help-section {
     position: relative;
     padding: clamp(24px, 3vw, 34px);
-    padding-right: clamp(72px, 7vw, 88px);
     border: 1px solid var(--line);
     border-radius: 18px;
     background: var(--panel);
@@ -5012,6 +5222,9 @@ body.help-page {
     display: flex;
     align-items: center;
     gap: 12px;
+    width: 100%;
+    max-width: none;
+    padding-right: 52px;
     margin: 0 0 14px;
 }
 .help-heading-index {
@@ -5021,6 +5234,8 @@ body.help-page {
     font-variant-numeric: tabular-nums;
 }
 .help-section h3 {
+    width: 100%;
+    max-width: none;
     margin: var(--page-subsection-gap) 0 var(--page-heading-gap);
     font-size: 18px;
     line-height: 1.35;
@@ -5031,6 +5246,8 @@ body.help-page {
     font-variant-numeric: tabular-nums;
 }
 .help-section h4 {
+    width: 100%;
+    max-width: none;
     margin: 32px 0 10px;
     font-size: 15px;
 }
@@ -5043,12 +5260,14 @@ body.help-page {
     line-height: 1.76;
 }
 .help-section p {
-    max-width: 760px;
+    width: 100%;
+    max-width: none;
     margin: 0 0 14px;
 }
 .help-section ul,
 .help-section ol {
-    max-width: 760px;
+    width: 100%;
+    max-width: none;
     margin: 12px 0 18px;
     padding-left: 22px;
 }
@@ -5483,7 +5702,7 @@ body.help-page {
         grid-template-columns: 1fr;
     }
     .help-section {
-        padding: 22px 64px 22px 20px;
+        padding: 22px 20px;
     }
     .help-section-toggle {
         top: 18px;

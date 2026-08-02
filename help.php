@@ -427,7 +427,7 @@ PROMPT;
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" referrerpolicy="no-referrer">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="stylesheet" href="interface.css?v=20260730-heading-spacing-h3">
+    <link rel="stylesheet" href="interface.css?v=20260802-help-full-width-text">
     <link rel="stylesheet" href="account-ui.css?v=20260520-4">
     <link rel="stylesheet" href="account-pages.css?v=20260730-heading-spacing">
 </head>
@@ -519,11 +519,13 @@ PROMPT;
                             <tr><td>Rythme</td><td>Synchrone ou asynchrone</td><td>Permet de distinguer les activités simultanées des activités réalisées au rythme de chacun.</td></tr>
                             <tr><td>Modalité</td><td>Présentiel, distanciel ou hybride</td><td>Décrit le lieu et le mode de participation.</td></tr>
                             <tr><td>Évaluation</td><td>Aucune, diagnostique, formative, sommative, certificative</td><td>Rend explicite la fonction évaluative de l’activité.</td></tr>
+                            <tr><td>AIAS</td><td>À définir, non pertinent ou niveaux 1 à 5</td><td>Décrit le rôle de l’IA dans la tâche, indépendamment de sa fonction évaluative.</td></tr>
                             <tr><td>Contenu</td><td>Description, notes et liens</td><td>Documente les consignes, supports, critères, rôle de l’enseignant et ressources.</td></tr>
                             <tr><td>Compétences</td><td>Une ou plusieurs compétences numériques</td><td>Relie l’activité au référentiel numérique intégré.</td></tr>
                         </tbody>
                     </table>
                 </div>
+                <p>Le champ AIAS s’appuie sur <a href="https://aiassessmentscale.com/" target="_blank" rel="noopener noreferrer">The AI Assessment Scale 2.1</a>. Les cinq niveaux décrivent des conceptions différentes de la tâche et ne constituent pas une progression.</p>
                 <p>Les descriptions et les notes acceptent une mise en forme <a href="https://github.com/YannHY/cours/blob/master/Tech/Markdown/Apprendre%20le%20Markdown.md" title="Markdown">Markdown</a> légère. Une barre d’outils et un aperçu permettent de structurer plus facilement le texte. Des liens nommés peuvent être ajoutés à chaque activité pour associer consignes, documents, vidéos ou outils.</p>
             </article>
 
@@ -692,6 +694,7 @@ Objectifs généraux de la formation.
 - Rythme: Synchrone
 - Modalité: Présentiel
 - Évaluation: Formative
+- AIAS: AIAS 3 · Collaboration avec l’IA
 - Description: Description de l'activité
 - Liens: Exemple (https://example.com)
 - Compétences: A6 - Exemple de compétence</pre>
@@ -714,13 +717,14 @@ Objectifs généraux de la formation.
                             <tr><td>Rythme</td><td><code>Synchrone</code>, <code>Asynchrone</code></td></tr>
                             <tr><td>Modalité</td><td><code>Présentiel</code>, <code>Distanciel</code>, <code>Hybride</code></td></tr>
                             <tr><td>Évaluation</td><td><code>Aucune</code>, <code>Diagnostique</code>, <code>Formative</code>, <code>Sommative</code>, <code>Certificative</code></td></tr>
+                            <tr><td>AIAS</td><td><code>À définir</code>, <code>Non pertinent</code>, <code>AIAS 1</code> à <code>AIAS 5</code></td></tr>
                         </tbody>
                     </table>
                 </div>
                 <h3 id="markdown-modifications">Ce que vous pouvez modifier</h3>
                 <p>Vous pouvez modifier le titre, les paramètres, la description, la commande institutionnelle, les objectifs, les acquis d’apprentissage, les titres et contenus des moments, ainsi que les activités et tous leurs champs.</p>
                 <h3 id="markdown-libelles">Libellés à conserver</h3>
-                <p>Évitez de changer les libellés fixes <code>## Paramètres</code>, <code>## Séances</code>, <code>- Durée:</code>, <code>- Groupe:</code>, <code>- Enseignant:</code>, <code>- Rythme:</code>, <code>- Modalité:</code>, <code>- Évaluation:</code> et <code>- Description:</code>. S’ils changent trop, certaines informations risquent de ne plus être reconnues.</p>
+                <p>Évitez de changer les libellés fixes <code>## Paramètres</code>, <code>## Séances</code>, <code>- Durée:</code>, <code>- Groupe:</code>, <code>- Enseignant:</code>, <code>- Rythme:</code>, <code>- Modalité:</code>, <code>- Évaluation:</code>, <code>- AIAS:</code> et <code>- Description:</code>. S’ils changent trop, certaines informations risquent de ne plus être reconnues.</p>
                 <h3 id="markdown-import">Procédure d’import</h3>
                 <ol>
                     <li>Ouvrez Learning Designer.</li>
@@ -870,10 +874,10 @@ learning login</pre>
                     </div>
                     <div>
                         <strong>3. Ajouter des activités</strong>
-                        <p>Une activité précise le type d’apprentissage, la durée, le groupe, la présence enseignante, le rythme, la modalité, l’évaluation et les compétences numériques.</p>
+                        <p>Une activité précise le type d’apprentissage, la durée, le groupe, la présence enseignante, le rythme, la modalité, l’évaluation, le rôle de l’IA et les compétences numériques.</p>
                         <div class="help-code-wrap">
                             <button class="help-copy-btn" type="button" aria-label="Copier la commande" title="Copier"><i class="fa-regular fa-copy" aria-hidden="true"></i></button>
-                            <pre class="help-code">learning add-activity design.json --type investigate --duration 30 --group subgroups --teacher present --pacing sync --mode onsite --evaluation formative --competencies A6,P34 --description "Comparer trois exemples d'usages de l'IA."</pre>
+                            <pre class="help-code">learning add-activity design.json --type investigate --duration 30 --group subgroups --teacher present --pacing sync --mode onsite --evaluation formative --aias 3 --competencies A6,P34 --description "Comparer trois exemples d'usages de l'IA."</pre>
                         </div>
                     </div>
                     <div>

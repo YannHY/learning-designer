@@ -137,13 +137,20 @@ body.home-page {
   transform: translateY(7%);
 }
 
+@property --wheel-reveal {
+  syntax: "<percentage>";
+  inherits: false;
+  initial-value: 0%;
+}
+
 .home-wheel {
   position: absolute;
   inset: 3%;
-  border: 1px solid rgba(15, 23, 42, .08);
+  overflow: hidden;
+  border: 1px solid rgba(24, 36, 51, .16);
   border-radius: 50%;
   background: conic-gradient(
-    from -15deg,
+    from -20deg,
     var(--read) 0 27%,
     var(--investigate) 27% 43%,
     var(--practice) 43% 64%,
@@ -151,17 +158,44 @@ body.home-page {
     var(--discuss) 76% 91%,
     var(--collaborate) 91% 100%
   );
-  box-shadow:
-    inset 0 0 0 1px rgba(255, 255, 255, .32),
-    0 22px 48px rgba(15, 23, 42, .1);
-  filter: saturate(.84);
-  transform: rotate(-5deg);
+  background-clip: padding-box;
+  box-shadow: 0 22px 48px rgba(15, 23, 42, .1);
+  contain: paint;
+}
+
+.home-wheel::after {
+  --wheel-reveal: 0%;
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    circle at 34% 28%,
+    #eef3f7 0,
+    #e3e9ef 68%,
+    #d8e0e8 100%
+  );
+  content: "";
+  -webkit-mask-image: conic-gradient(
+    from -20deg,
+    transparent 0 var(--wheel-reveal),
+    #000 var(--wheel-reveal) 100%
+  );
+  mask-image: conic-gradient(
+    from -20deg,
+    transparent 0 var(--wheel-reveal),
+    #000 var(--wheel-reveal) 100%
+  );
+  animation: home-wheel-reveal 1700ms cubic-bezier(.45, 0, .2, 1) 80ms forwards;
+}
+
+@keyframes home-wheel-reveal {
+  to {
+    --wheel-reveal: 100%;
+  }
 }
 
 .home-wheel-labels {
   position: absolute;
   inset: 3%;
-  transform: rotate(-5deg);
 }
 
 .home-wheel-label {
@@ -171,9 +205,18 @@ body.home-page {
   width: 92px;
   color: #172033;
   line-height: 1.1;
+  opacity: 0;
   text-align: center;
   text-shadow: 0 1px 1px rgba(255, 255, 255, .38);
-  transform: translate(-50%, -50%) rotate(5deg);
+  transform: translate(-50%, -50%);
+  animation: home-wheel-label-in 520ms cubic-bezier(.16, 1, .3, 1) both;
+  animation-delay: var(--wheel-label-delay);
+}
+
+@keyframes home-wheel-label-in {
+  to {
+    opacity: 1;
+  }
 }
 
 .home-wheel-label strong {
@@ -188,33 +231,39 @@ body.home-page {
 }
 
 .home-wheel-label-read {
-  top: 21.7%;
-  left: 68.8%;
+  --wheel-label-delay: 660ms;
+  top: 20.17%;
+  left: 66.26%;
 }
 
 .home-wheel-label-investigate {
-  top: 62.2%;
-  left: 81.7%;
+  --wheel-label-delay: 760ms;
+  top: 59.39%;
+  left: 82.64%;
 }
 
 .home-wheel-label-practice {
-  top: 84%;
-  left: 51.4%;
+  --wheel-label-delay: 910ms;
+  top: 83.75%;
+  left: 54.36%;
 }
 
 .home-wheel-label-produce {
-  top: 68.5%;
-  left: 22.5%;
+  --wheel-label-delay: 1030ms;
+  top: 70.83%;
+  left: 24.22%;
 }
 
 .home-wheel-label-discuss {
-  top: 40.9%;
-  left: 17.3%;
+  --wheel-label-delay: 1290ms;
+  top: 43.78%;
+  left: 16.63%;
 }
 
 .home-wheel-label-collaborate {
-  top: 20.9%;
-  left: 32.4%;
+  --wheel-label-delay: 1880ms;
+  top: 22.54%;
+  left: 29.93%;
 }
 
 .home-features {
@@ -760,6 +809,19 @@ body.home-page {
   --home-soft: #24231f;
 }
 
+[data-theme="dark"] .home-wheel::after {
+  background: radial-gradient(
+    circle at 34% 28%,
+    #353b42 0,
+    #2c3238 68%,
+    #24292f 100%
+  );
+}
+
+[data-theme="dark"] .home-wheel {
+  border-color: rgba(232, 237, 242, .2);
+}
+
 [data-theme="dark"] .home-moment-card,
 [data-theme="dark"] .home-analysis-card,
 [data-theme="dark"] .home-share-card {
@@ -925,7 +987,7 @@ body.home-page {
 
   .home-closing {
     gap: 44px;
-    padding: 60px 0 72px;
+    padding: 44px 0 72px;
   }
 
   .home-quote {
@@ -942,7 +1004,7 @@ body.home-page {
 
   .home-hero {
     gap: 44px;
-    padding: 44px 0 82px;
+    padding: 44px 0 52px;
   }
 
   .home-hero h1 {
@@ -956,6 +1018,11 @@ body.home-page {
 
   .home-primary-action {
     width: 100%;
+  }
+
+  .home-text-action {
+    align-self: center;
+    text-align: center;
   }
 
   .home-wheel-stage {
@@ -976,7 +1043,7 @@ body.home-page {
 
   .home-feature {
     gap: 42px;
-    padding: 58px 0;
+    padding: 42px 0;
   }
 
   .home-feature-copy {
@@ -1016,6 +1083,20 @@ body.home-page {
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .home-wheel-label {
+    opacity: 1;
+    animation: none;
+  }
+
+  .home-wheel::after {
+    display: none;
+    animation: none;
+  }
+
+  .home-wheel-label {
+    transform: translate(-50%, -50%);
+  }
+
   .home-terminal-cursor i {
     animation: none;
   }

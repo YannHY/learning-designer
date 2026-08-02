@@ -115,7 +115,7 @@ $LEARNING add-moment design.json --title "MOMENT TITLE" --objectives "MOMENT OBJ
 Add each activity:
 
 ```bash
-$LEARNING add-activity design.json --moment 1 --type investigate --duration 15 --group subgroups --teacher present --pacing sync --mode onsite --evaluation formative --competencies A1,P6 --description "ACTIVITY DESCRIPTION"
+$LEARNING add-activity design.json --moment 1 --type investigate --duration 15 --group subgroups --teacher present --pacing sync --mode onsite --evaluation formative --aias 3 --competencies A1,P6 --description "ACTIVITY DESCRIPTION"
 ```
 
 Use only CLI-controlled values for controlled fields. Safe values:
@@ -124,6 +124,7 @@ Use only CLI-controlled values for controlled fields. Safe values:
 - `group`: `whole`, `subgroups`, `individual`
 - `teacher`: `present`, `absent`
 - `evaluation`: `none`, `diagnostic`, `formative`, `summative`, `certificative`
+- `aias`: optional AIAS level from `1` to `5`; omit it when the role of AI is still undecided
 - `competencies`: short codes such as `A1`, `P6`, `C14`, comma-separated
 
 For `pacing` and `mode`, verify accepted values with the CLI or use values that the CLI accepts in the current environment. Common accepted values include:

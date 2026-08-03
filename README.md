@@ -59,7 +59,9 @@ Conservez les secrets dans un fichier local non versionné, par exemple `learnin
 
 - [index.php](./index.php) : page d’accueil ;
 - [designer.html](./designer.html) : interface de conception ;
-- [interface.js](./interface.js) et [interface.css](./interface.css) : logique et styles de l'application ;
+- [css](./css) : feuilles de style de l’application ;
+- [js](./js) : scripts JavaScript de l’application ;
+- [interface.js](./js/interface.js) et [interface.css](./css/interface.css) : logique et styles principaux de l’interface de conception ;
 - [help.php](./help.php) : documentation utilisateur ;
 - [prompts.php](./prompts.php) : bibliothèque bilingue de prompts pédagogiques ;
 - [lib/bootstrap.php](./lib/bootstrap.php) : configuration, base de données et fonctions PHP communes ;

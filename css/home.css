@@ -28,7 +28,7 @@ body.home-page {
   align-items: start;
   gap: clamp(42px, 7vw, 96px);
   min-height: auto;
-  padding: 68px 0 clamp(72px, 10vh, 112px);
+  padding: 68px 0 clamp(52px, 6vh, 68px);
 }
 
 .home-hero-copy {
@@ -275,8 +275,8 @@ body.home-page {
   grid-template-columns: minmax(0, .88fr) minmax(390px, 1.12fr);
   align-items: start;
   gap: clamp(56px, 9vw, 126px);
-  min-height: 56vh;
-  padding: clamp(60px, 8vh, 88px) 0;
+  min-height: auto;
+  padding: clamp(42px, 5vh, 58px) 0;
 }
 
 .home-feature:nth-child(even) .home-feature-copy {
@@ -695,7 +695,7 @@ body.home-page {
   grid-template-columns: minmax(0, 1.18fr) minmax(320px, .82fr);
   align-items: start;
   gap: clamp(54px, 7vw, 92px);
-  padding: clamp(76px, 10vw, 116px) 0;
+  padding: clamp(56px, 7vw, 80px) 0;
 }
 
 .home-quote {
@@ -872,17 +872,12 @@ body.home-page {
   filter: brightness(1.08);
 }
 
-@media (min-width: 901px) and (max-width: 1200px) {
-  .home-hero,
-  .home-features,
-  .home-closing {
-    width: min(1060px, calc(100vw - 96px));
-  }
-
+/* The 11-inch iPad Pro is 1210 CSS px wide in landscape. */
+@media (min-width: 901px) and (max-width: 1280px) {
   .home-hero {
     grid-template-columns: minmax(0, 1.05fr) minmax(330px, .95fr);
     gap: clamp(44px, 4.5vw, 54px);
-    padding: 58px 0 76px;
+    padding: 52px 0 60px;
   }
 
   .home-hero h1 {
@@ -901,7 +896,7 @@ body.home-page {
     grid-template-columns: minmax(0, .92fr) minmax(360px, 1.08fr);
     gap: clamp(44px, 4.25vw, 52px);
     min-height: auto;
-    padding: 68px 0;
+    padding: 52px 0;
   }
 
   .home-feature-copy {
@@ -911,12 +906,6 @@ body.home-page {
 }
 
 @media (max-width: 900px) {
-  .home-hero,
-  .home-features,
-  .home-closing {
-    width: min(760px, calc(100vw - 96px));
-  }
-
   .home-closing {
     grid-template-columns: 1fr;
     gap: 56px;
@@ -979,12 +968,6 @@ body.home-page {
 }
 
 @media (max-width: 600px) {
-  .home-hero,
-  .home-features,
-  .home-closing {
-    width: min(100% - 28px, var(--content-shell-width, 1180px));
-  }
-
   .home-closing {
     gap: 44px;
     padding: 44px 0 72px;

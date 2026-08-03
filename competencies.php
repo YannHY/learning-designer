@@ -4,7 +4,7 @@ require_once __DIR__ . '/lib/bootstrap.php';
 
 function competency_catalog_source(): string
 {
-    $path = __DIR__ . '/interface.js';
+    $path = __DIR__ . '/js/interface.js';
     $source = is_file($path) ? (string)file_get_contents($path) : '';
     if (!preg_match('/const\s+COMPETENCY_CATALOG_SOURCE\s*=\s*String\.raw`(.*?)`;/s', $source, $matches)) {
         return '';
@@ -200,9 +200,9 @@ foreach ($sectionGroups as $sectionKey => $group) {
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" referrerpolicy="no-referrer">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="stylesheet" href="interface.css?v=20260730-heading-spacing-h3">
-    <link rel="stylesheet" href="account-ui.css?v=20260520-4">
-    <link rel="stylesheet" href="account-pages.css?v=20260730-heading-spacing">
+    <link rel="stylesheet" href="css/interface.css?v=20260730-heading-spacing-h3">
+    <link rel="stylesheet" href="css/account-ui.css?v=20260520-4">
+    <link rel="stylesheet" href="css/account-pages.css?v=20260803-responsive-shell">
     <style>
         body.competencies-page {
             background: #fff;

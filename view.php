@@ -49,7 +49,7 @@ $license = creative_commons_license((string)($row['license_code'] ?? ''));
 // ── Label maps ───────────────────────────────────────────────
 $LEARNING_TYPES = [
     'undefined'   => ['label' => 'Non défini',               'color' => '#d1d5db'],
-    // This page is self-contained and cannot read interface.css tokens;
+    // This page is self-contained and cannot read css/interface.css tokens;
     // keep these in sync with --read…--collaborate there.
     'read'        => ['label' => 'Lire / Regarder / Écouter', 'color' => '#5bddd3'],
     'investigate' => ['label' => 'Investiguer',              'color' => '#f19492'],
@@ -298,7 +298,7 @@ function loadCompetencyCatalog(): array {
     if (is_array($catalog)) return $catalog;
 
     $catalog = [];
-    $sourcePath = __DIR__ . '/interface.js';
+    $sourcePath = __DIR__ . '/js/interface.js';
     $js = is_file($sourcePath) ? file_get_contents($sourcePath) : '';
     if (!is_string($js) || !preg_match('/const\s+COMPETENCY_CATALOG_SOURCE\s*=\s*String\.raw`(.*?)`;/s', $js, $matches)) {
         return $catalog;
@@ -462,7 +462,7 @@ $displayDesignedMinutes = $designedMinutes > 0 ? $designedMinutes : $totalMinute
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title><?= esc($title) ?> — Learning Designer</title>
-  <link rel="stylesheet" href="interface.css?v=20260802-aias-colors">
+  <link rel="stylesheet" href="css/interface.css?v=20260802-aias-colors">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" referrerpolicy="no-referrer">
   <style>
     :root {

@@ -120,9 +120,9 @@ function share_count_label(int $count, string $singular): string
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" referrerpolicy="no-referrer" />
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="stylesheet" href="interface.css?v=20260730-heading-spacing-h3" />
-    <link rel="stylesheet" href="account-ui.css?v=20260520-4" />
-    <link rel="stylesheet" href="account-pages.css?v=20260730-heading-spacing" />
+    <link rel="stylesheet" href="css/interface.css?v=20260730-heading-spacing-h3" />
+    <link rel="stylesheet" href="css/account-ui.css?v=20260520-4" />
+    <link rel="stylesheet" href="css/account-pages.css?v=20260803-responsive-shell" />
     <style>
       .shared-header {
         display: flex;
@@ -133,7 +133,7 @@ function share_count_label(int $count, string $singular): string
       }
 
       .shared-shell {
-        width: min(1180px, calc(100vw - 36px));
+        width: min(var(--content-shell-width, 1180px), calc(100vw - var(--content-shell-gutter, 36px)));
       }
 
       .shared-subtitle {

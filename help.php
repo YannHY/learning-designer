@@ -427,9 +427,9 @@ PROMPT;
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" referrerpolicy="no-referrer">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="stylesheet" href="interface.css?v=20260802-help-full-width-text">
-    <link rel="stylesheet" href="account-ui.css?v=20260520-4">
-    <link rel="stylesheet" href="account-pages.css?v=20260730-heading-spacing">
+    <link rel="stylesheet" href="css/interface.css?v=20260803-help-ipad-overflow">
+    <link rel="stylesheet" href="css/account-ui.css?v=20260520-4">
+    <link rel="stylesheet" href="css/account-pages.css?v=20260803-responsive-shell">
 </head>
 <body class="help-page">
 <?php render_site_nav('help'); ?>
@@ -464,7 +464,7 @@ PROMPT;
             <article class="help-section" id="premiers-pas">
                 <p class="help-eyebrow"><i class="fa-solid fa-rocket" aria-hidden="true"></i> Prise en main</p>
                 <h2>Comprendre le learning design</h2>
-                <p>Le <em>learning design</em> consiste à organiser ce que les apprenants vont faire pour atteindre les acquis visés.</p>
+                <p>Le <em>learning design</em> consiste à organiser les activités que les apprenants vont faire pour atteindre les acquis visés.</p>
 
                 <h3 id="learning-designer-scenario-visible">Learning Designer : rendre le scénario visible</h3>
                 <p>Le <a href="https://www.ucl.ac.uk/learning-designer/" title="Learning Designer">Learning Designer</a> original a été développé à l’University College London par l’équipe de Diana Laurillard pour aider les enseignants à concevoir des activités pédagogiques, à analyser leur équilibre et à partager leurs scénarisations. L’application présentée ici s’inscrit dans cette filiation : elle transforme un scénario pédagogique en une structure lisible, analysable et réutilisable.</p>
@@ -1003,7 +1003,7 @@ window.helpPromptTranslations = <?= json_encode([
     ],
 ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) ?>;
 </script>
-<script src="help-i18n.js?v=20260730-progressive-help"></script>
+<script src="js/help-i18n.js?v=20260730-progressive-help"></script>
 <script>
 var initialHelpLanguage = 'fr';
 try {

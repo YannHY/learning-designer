@@ -1,6 +1,6 @@
 (() => {
 "use strict";
-/* Keep in sync with the --read…--collaborate tokens in interface.css and with
+/* Keep in sync with the --read…--collaborate tokens in css/interface.css and with
    $LEARNING_TYPES in view.php. Duplicated because exports and canvas work
    need literal values, not computed styles. */
 const LEARNING_TYPES = [

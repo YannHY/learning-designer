@@ -19,7 +19,7 @@
     <link rel="stylesheet" href="css/account-ui.css?v=20260729-2" />
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="stylesheet" href="css/interface.css?v=20260823-export-options" />
+    <link rel="stylesheet" href="css/interface.css?v=20260823-import-models" />
   </head>
   <body class="designer-page">
     <a id="skip-link" class="skip-link" href="#board">Aller au contenu principal</a>
@@ -430,6 +430,41 @@
       </div>
     </div>
 
+    <!-- Import modal: template library or local file -->
+    <div id="import-modal-backdrop" class="modal-backdrop hidden" role="dialog" aria-modal="true" aria-hidden="true" aria-labelledby="import-modal-title">
+      <div class="modal import-modal">
+        <h2 id="import-modal-title" class="modal-title">Importer un scénario</h2>
+        <p id="import-modal-desc" class="import-modal-desc">Partez d’un modèle prérempli, ou chargez un fichier exporté depuis cette application. Le design actuel sera remplacé.</p>
+
+        <section class="import-source" aria-labelledby="import-file-section-title">
+          <h3 id="import-file-section-title" class="import-section-title">Depuis mon ordinateur</h3>
+          <div class="import-file-row">
+            <button id="import-file-btn" class="btn btn-light" type="button"><span class="btn-label"><i class="fa-solid fa-folder-open btn-icon-inline" aria-hidden="true"></i>Choisir un fichier…</span></button>
+            <span id="import-file-formats" class="import-file-formats">LDJ, JSON, CSV, Excel, Markdown</span>
+          </div>
+        </section>
+
+        <section class="import-source import-models-section" aria-labelledby="import-models-section-title">
+          <div class="import-models-head">
+            <h3 id="import-models-section-title" class="import-section-title">Bibliothèque de modèles</h3>
+            <a id="import-models-link" class="import-models-link" href="models.php" target="_blank" rel="noopener noreferrer">Voir la bibliothèque</a>
+          </div>
+          <div class="import-models-filters">
+            <label id="import-models-search-label" class="sr-only" for="import-models-search">Rechercher un modèle</label>
+            <input id="import-models-search" class="panel-input" type="search" autocomplete="off" placeholder="Rechercher un modèle…" />
+            <label id="import-models-family-label" class="sr-only" for="import-models-family">Famille de modèles</label>
+            <select id="import-models-family" class="panel-select"></select>
+          </div>
+          <p id="import-models-status" class="import-models-status" role="status" aria-live="polite">Chargement des modèles…</p>
+          <div id="import-models-list" class="import-models-list" role="list"></div>
+        </section>
+
+        <div class="modal-actions">
+          <button id="import-modal-cancel-btn" class="btn btn-light" type="button">Fermer</button>
+        </div>
+      </div>
+    </div>
+
     <div id="export-modal-backdrop" class="modal-backdrop hidden" role="dialog" aria-modal="true" aria-hidden="true" aria-labelledby="export-modal-title">
       <div class="modal export-modal">
         <h2 id="export-modal-title" class="modal-title">Exporter le design</h2>
@@ -439,19 +474,38 @@
             <label class="export-scope-option">
               <input id="export-scope-full-input" type="radio" name="export-scope" value="full" checked />
               <span class="export-scope-option-copy">
-                <span class="export-scope-option-title">Export complet</span>
+                <span class="export-scope-option-title">Export enseignant</span>
                 <span id="export-scope-full-description" class="export-scope-option-description">Toutes les informations du scénario pédagogique.</span>
               </span>
             </label>
             <label class="export-scope-option">
               <input id="export-scope-students-input" type="radio" name="export-scope" value="students" />
               <span class="export-scope-option-copy">
-                <span class="export-scope-option-title">Consignes élèves uniquement</span>
+                <span class="export-scope-option-title">Export élève</span>
                 <span id="export-scope-students-description" class="export-scope-option-description">Les séances, les activités et les consignes adressées aux élèves.</span>
               </span>
             </label>
           </div>
         </fieldset>
+        <details id="export-moments-details" class="export-moments-details">
+          <summary>
+            <span id="export-moments-label">Moments à exporter</span>
+            <span class="export-moments-summary-trailing">
+              <span id="export-moments-summary" class="export-moments-summary" aria-live="polite"></span>
+              <span class="export-moments-chevron" aria-hidden="true"></span>
+            </span>
+          </summary>
+          <div class="export-moments-content" role="group" aria-labelledby="export-moments-label">
+            <div class="export-moments-controls">
+              <label class="export-moments-all-option">
+                <input id="export-moments-all-input" type="checkbox" checked />
+                <span id="export-moments-all-label">Tous les moments</span>
+              </label>
+            </div>
+            <div id="export-moments-list" class="export-moments-list"></div>
+            <p id="export-moments-empty" class="export-moments-empty hidden">Aucun moment à exporter.</p>
+          </div>
+        </details>
         <label for="export-format-select">Format</label>
         <select id="export-format-select" class="panel-select">
           <option value="markdown">Markdown</option>
@@ -463,7 +517,13 @@
         <label for="export-filename-input">Nom du fichier</label>
         <input id="export-filename-input" class="panel-input" type="text" maxlength="160" autocomplete="off" />
         <p id="export-result-modal-copy">Le contenu exporté est lisible ci-dessous. Vous pouvez le copier ou télécharger le fichier.</p>
-        <textarea id="export-result-text" class="panel-textarea" rows="14" readonly></textarea>
+        <details id="export-preview-details" class="export-preview-details">
+          <summary>
+            <span id="export-preview-label">Prévisualisation</span>
+            <span class="export-preview-chevron" aria-hidden="true"></span>
+          </summary>
+          <textarea id="export-result-text" class="panel-textarea" rows="14" readonly></textarea>
+        </details>
         <div class="modal-actions">
           <button id="export-result-copy-btn" class="btn btn-light" type="button">Copier</button>
           <button id="export-modal-cancel-btn" class="btn btn-light" type="button">Fermer</button>
@@ -567,7 +627,7 @@
         </div>
       </div>
     </div>
-    <script src="js/interface.js?v=20260823-word-rich-text"></script>
+    <script src="js/interface.js?v=20260823-export-collapsed-sections"></script>
     <script src="js/account-ui.js?v=20260802-performance"></script>
     <script>
       (function() {

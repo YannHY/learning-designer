@@ -1,0 +1,282 @@
+{
+  "allNotesExpanded": false,
+  "intentionsCollapsed": false,
+  "topPanelCollapsed": false,
+  "meta": {
+    "name": "Esprit critique face à l'IA générative : comprendre et vérifier",
+    "uiLanguage": "fr",
+    "dayHours": 7,
+    "learningDays": 0,
+    "learningHours": 0,
+    "learningMinutes": 55,
+    "modeDelivery": "onsite",
+    "sizeClass": "28",
+    "designers": "Yann Houry",
+    "trainers": "Enseignant de la classe",
+    "description": "Séance unique de 55 minutes en lycée (28 élèves, 1 ordinateur par élève, accès à Gemini). Les élèves découvrent d'abord que l'IA générative prédit statistiquement le mot suivant et ne vérifie pas la vérité de ce qu'elle produit. Ils mettent ensuite cette compréhension à l'épreuve en faisant produire par Gemini une réponse sourcée, puis en vérifiant chaque source une à une. La séance débouche sur la construction collective puis individuelle d'un protocole de vérification croisée en 4 étapes, réutilisable dans toutes les disciplines.",
+    "command": "Éducation aux médias et à l'information (EMI) - développer l'esprit critique des élèves face aux contenus générés par IA. Volet numérique du projet d'établissement : usage raisonné et documenté de l'IA générative, intégrité académique.",
+    "personas": "Objectif d'enseignement 1 : faire comprendre le fonctionnement probabiliste d'un modèle de langage (prédiction du mot suivant, absence de vérification factuelle intrinsèque). Objectif d'enseignement 2 : transmettre et entraîner une méthode explicite de vérification et de croisement des sources appliquée aux réponses d'une IA générative.",
+    "sliders": [
+      {
+        "id": "outcome-1787507969948",
+        "category": "understand",
+        "categoryLabel": "Comprendre",
+        "verb": "Expliquer",
+        "text": "Expliquer, avec ses propres mots et un exemple, qu'un modèle de langage génère du texte en prédisant le mot le plus probable et non en vérifiant la véracité de ce qu'il affirme."
+      },
+      {
+        "id": "outcome-1787507970019",
+        "category": "analyze",
+        "categoryLabel": "Analyser",
+        "verb": "Distinguer",
+        "text": "Distinguer, dans une réponse produite par Gemini, les affirmations vérifiables, les affirmations invérifiables et les sources inexistantes ou mal attribuées."
+      },
+      {
+        "id": "outcome-1787507970093",
+        "category": "apply",
+        "categoryLabel": "Appliquer",
+        "verb": "Appliquer",
+        "text": "Appliquer un protocole de vérification en quatre étapes (identifier l'affirmation, retrouver la source citée, chercher une source indépendante, conclure) à au moins deux affirmations générées par une IA."
+      },
+      {
+        "id": "outcome-1787507970165",
+        "category": "evaluate",
+        "categoryLabel": "Évaluer",
+        "verb": "Évaluer",
+        "text": "Évaluer la fiabilité d'une information générée par IA en croisant au minimum deux sources indépendantes, et justifier son verdict (fiable, à nuancer, non vérifiable)."
+      },
+      {
+        "id": "outcome-1787507970228",
+        "category": "create",
+        "categoryLabel": "Créer",
+        "verb": "Rédiger",
+        "text": "Rédiger une fiche-protocole personnelle de vérification, formulée en consignes actionnables, enregistrée et nommée correctement dans son espace de travail numérique pour être réutilisée dans d'autres disciplines."
+      }
+    ],
+    "activeTab": "settings",
+    "boardLayout": "columns"
+  },
+  "sessions": [
+    {
+      "id": "moment-1787507988206",
+      "title": "1. Ce que je crois savoir de l'IA",
+      "objectives": "Faire émerger les représentations initiales des élèves sur ce qu'est une IA générative et sur la fiabilité de ses réponses. Établir un point de départ commun et repérer les conceptions erronées les plus répandues.",
+      "intentions": "Choix d'un démarrage par le conflit sociocognitif plutôt que par un cours magistral : les élèves se positionnent publiquement avant tout apport, ce qui rend la déstabilisation du moment 2 plus efficace. Le recueil est oral et rapide pour ne pas entamer le temps de manipulation.",
+      "notes": "Matériel : vidéoprojecteur, ordinateurs fermés (écrans rabattus) pendant ce moment. L'enseignant note au tableau 3 à 4 formulations d'élèves telles quelles, sans les corriger : elles seront reprises en fin de séance.",
+      "notesExpanded": false,
+      "activities": [
+        {
+          "id": "activity-1787507988283",
+          "type": "discuss",
+          "duration": 7,
+          "groupMode": "whole",
+          "teacherPresence": "present",
+          "syncMode": "sync",
+          "locationMode": "onsite",
+          "evaluationMode": "diagnostic",
+          "aias": {
+            "version": "2.1",
+            "status": "specified",
+            "level": 1
+          },
+          "description": "Sondage à main levée puis discussion guidée. L'enseignant projette trois affirmations et demande aux élèves de se positionner (d'accord / pas d'accord / je ne sais pas) : (1) « Gemini va chercher la réponse sur internet avant de répondre » ; (2) « Si l'IA cite une source avec un titre, un auteur et une date, c'est que cette source existe » ; (3) « Une IA se trompe surtout sur les sujets difficiles ». Après chaque vote, l'enseignant interroge deux élèves de camps opposés : « qu'est-ce qui te fait penser ça ? ». Aucune réponse n'est validée ni invalidée à ce stade. L'enseignant recopie au tableau, dans un cadre intitulé « Nos hypothèses de départ », trois formulations d'élèves qui seront confrontées aux résultats en fin de séance.",
+          "notes": "Rôle de l'enseignant : animateur neutre, il relance mais ne tranche pas. Différenciation : le vote à main levée permet à chacun de s'engager sans production écrite ; les élèves peu à l'aise à l'oral peuvent voter sans justifier. Repère pour l'enseignant : l'affirmation (2) est celle où l'adhésion est généralement la plus forte, c'est le levier du moment 3. Écueil à éviter : corriger tout de suite, ce qui désamorcerait la surprise pédagogique. Trace : photo du tableau prise par l'enseignant pour la reprise finale.",
+          "tools": [],
+          "links": []
+        }
+      ]
+    },
+    {
+      "id": "moment-1787508016696",
+      "title": "2. Comment une IA fabrique une phrase",
+      "objectives": "Comprendre le mécanisme de prédiction du mot suivant et en déduire que la fluidité d'une réponse n'est pas un indice de vérité. Établir le vocabulaire de travail : prédiction, probabilité, hallucination.",
+      "intentions": "Apport théorique volontairement bref (6 min) et immédiatement suivi d'une manipulation personnelle : la compréhension du mécanisme se construit en le faisant tourner soi-même, pas en l'écoutant. Le choix de faire manipuler Gemini en AIAS 2 (exploration guidée) permet d'observer le modèle plutôt que de lui déléguer une tâche.",
+      "notes": "L'enseignant projette un schéma simple : « le chat dort sur le → [canapé 41 % / tapis 22 % / toit 9 % ...] ». Insister sur une seule idée-force à écrire au tableau : PRÉDIRE ≠ VÉRIFIER. Ne pas entrer dans l'architecture des transformers, hors de portée et hors objectif.",
+      "notesExpanded": false,
+      "activities": [
+        {
+          "id": "activity-1787508016768",
+          "type": "read",
+          "duration": 6,
+          "groupMode": "whole",
+          "teacherPresence": "present",
+          "syncMode": "sync",
+          "locationMode": "onsite",
+          "evaluationMode": "none",
+          "aias": {
+            "version": "2.1",
+            "status": "specified",
+            "level": 1
+          },
+          "description": "Exposé illustré et projeté de 6 minutes. L'enseignant montre, à partir d'une phrase incomplète (« Le chat dort sur le... »), qu'un modèle de langage attribue une probabilité à chaque mot possible et choisit parmi les plus probables. Il en tire trois conséquences énoncées explicitement et notées au tableau : (1) le modèle produit ce qui est plausible, pas ce qui est vrai ; (2) une réponse bien écrite et assurée n'est pas pour autant exacte ; (3) quand le modèle n'a pas l'information, il produit quand même quelque chose de plausible — c'est ce qu'on appelle une hallucination. Le mot « hallucination » est défini et écrit au tableau. Les élèves recopient les trois conséquences sur leur fiche de séance.",
+          "notes": "Rôle de l'enseignant : transmission cadrée, minutée strictement à 6 minutes. Support : diaporama de 4 diapositives maximum. Différenciation : la fiche de séance distribuée comporte déjà les trois conséquences en amorce (phrases à trous) pour les élèves ayant des difficultés de prise de notes. Vérification de compréhension immédiate : demander à un élève de reformuler « prédire n'est pas vérifier » avec ses propres mots avant de passer à l'activité suivante.",
+          "tools": [],
+          "links": []
+        },
+        {
+          "id": "activity-1787508016848",
+          "type": "practice",
+          "duration": 6,
+          "groupMode": "individual",
+          "teacherPresence": "present",
+          "syncMode": "sync",
+          "locationMode": "onsite",
+          "evaluationMode": "formative",
+          "aias": {
+            "version": "2.1",
+            "status": "specified",
+            "level": 2
+          },
+          "description": "Manipulation individuelle sur Gemini. Consigne projetée : « Ouvre Gemini. Demande-lui : Donne-moi la biographie de [ton prénom + un nom de famille rare que tu inventes], écrivain français du XIXe siècle. Lis la réponse. Note sur ta fiche : (a) le nombre de dates précises qu'elle contient, (b) le ton employé — hésitant ou assuré ? » Les élèves constatent que le modèle produit une biographie détaillée, datée et assurée pour une personne qui n'existe pas. L'enseignant circule et fait verbaliser deux ou trois élèves : « Qu'est-ce que ça te dit sur la façon dont il a produit ce texte ? » Mise en commun éclair de 60 secondes : le modèle n'a jamais dit « je ne sais pas ».",
+          "notes": "Rôle de l'enseignant : circule, ne répond pas à la place, relance par des questions. Compétences numériques : A1 (interroger un outil numérique pour obtenir de l'information), P1 (produire une requête écrite adaptée). Différenciation : un prénom/nom inventé est fourni au tableau pour les élèves bloqués. Sécurité : consigne explicite de ne PAS utiliser le nom d'un camarade ni de personnes réelles de l'entourage — on invente un nom de famille. Écueil : certains modèles refusent parfois de répondre ; dans ce cas, faire reformuler « Rédige une courte notice biographique romancée de... ». Prévoir une capture d'écran de secours si le réseau est instable.",
+          "tools": [
+            "competency:acquerir:1",
+            "competency:approfondir:1"
+          ],
+          "links": []
+        }
+      ]
+    },
+    {
+      "id": "moment-1787508037533",
+      "title": "3. Le piège de la source inventée",
+      "objectives": "Analyser une réponse d'IA apparemment sourcée et éprouver, source par source, l'existence et la pertinence des références citées. Faire l'expérience directe de la source fabriquée ou mal attribuée.",
+      "intentions": "Cœur de la séance et moment le plus long (14 min) : c'est ici que se joue la déstabilisation de l'hypothèse (2) recueillie au moment 1. Travail en binômes pour que la vérification soit verbalisée et argumentée à deux plutôt que subie seul. Le sujet imposé est volontairement local et peu documenté en ligne, ce qui maximise le taux de sources fabriquées.",
+      "notes": "Sujet imposé au tableau (à adapter à votre contexte) : « l'histoire du lycée / d'un monument local peu connu / d'un événement régional du XIXe siècle ». Choisir un sujet réel mais faiblement documenté sur le web. Tableau de vérification à trois colonnes distribué en format papier ET déposé en version numérique sur l'ENT.",
+      "notesExpanded": false,
+      "activities": [
+        {
+          "id": "activity-1787508037618",
+          "type": "investigate",
+          "duration": 14,
+          "groupMode": "subgroups",
+          "teacherPresence": "present",
+          "syncMode": "sync",
+          "locationMode": "onsite",
+          "evaluationMode": "formative",
+          "aias": {
+            "version": "2.1",
+            "status": "specified",
+            "level": 3
+          },
+          "description": "Enquête en binômes, en trois temps chronométrés. Temps 1 (3 min) : le binôme demande à Gemini « Rédige un paragraphe de 10 lignes sur [sujet imposé], en citant tes sources avec auteur, titre et date. » Temps 2 (8 min) : le binôme remplit le tableau de vérification à trois colonnes — colonne A « Affirmation ou source citée », colonne B « Ce que je trouve en cherchant cette référence exacte (moteur de recherche, catalogue de bibliothèque, site officiel) », colonne C « Verdict : existe / n'existe pas / existe mais ne dit pas ça ». Chaque binôme doit traiter au minimum trois références. Temps 3 (3 min) : chaque binôme formule à l'écrit une phrase de conclusion commençant par « Nous avons découvert que... ». L'enseignant relève à la volée les verdicts « n'existe pas » et « existe mais ne dit pas ça », qui alimenteront la mise en commun.",
+          "notes": "Rôle de l'enseignant : passe de binôme en binôme, vérifie que la recherche porte bien sur la référence EXACTE (titre entre guillemets) et non sur le thème général — c'est l'erreur méthodologique la plus fréquente. Compétences numériques : A1 (rechercher l'information), A2 (évaluer la fiabilité et la pertinence d'une source), C14 (travailler à deux sur un même document). Différenciation : binômes hétérogènes constitués à l'avance ; pour les binômes rapides, consigne d'extension « trouvez une affirmation qui, elle, est exacte, et dites comment vous l'avez confirmée ». Pour les binômes en difficulté, l'enseignant fournit la première ligne du tableau déjà remplie en exemple. Évaluation formative : l'enseignant observe la qualité du raisonnement en colonne B, pas la quantité de lignes. Écueil : ne pas laisser les élèves conclure « l'IA ment » — reformuler systématiquement en « l'IA produit du plausible sans vérifier ».",
+          "tools": [
+            "competency:acquerir:1",
+            "competency:acquerir:2",
+            "competency:creer:14"
+          ],
+          "links": []
+        }
+      ]
+    },
+    {
+      "id": "moment-1787508067319",
+      "title": "4. Construire un protocole de vérification croisée",
+      "objectives": "Formaliser, à partir de l'expérience vécue au moment 3, une méthode de vérification en quatre étapes transférable à d'autres disciplines, puis se l'approprier individuellement par écrit.",
+      "intentions": "Le protocole n'est pas donné par l'enseignant : il est induit de ce que les élèves viennent de faire, ce qui garantit qu'il fait sens. Enchaînement collaboratif puis individuel : la phase collective produit la matière, la phase individuelle garantit l'appropriation et la trace personnelle réutilisable. La consigne de nommage et de rangement du fichier est intégrée à l'activité, pas traitée à part.",
+      "notes": "",
+      "notesExpanded": false,
+      "activities": [
+        {
+          "id": "activity-1787508067400",
+          "type": "collaborate",
+          "duration": 8,
+          "groupMode": "subgroups",
+          "teacherPresence": "present",
+          "syncMode": "sync",
+          "locationMode": "onsite",
+          "evaluationMode": "formative",
+          "aias": {
+            "version": "2.1",
+            "status": "specified",
+            "level": 2
+          },
+          "description": "Écriture collaborative en groupes de quatre (deux binômes du moment 3 réunis), sur un document partagé unique de la classe comportant une section par groupe. Consigne projetée : « À partir de ce que vous venez de faire, écrivez les 4 étapes à suivre pour vérifier une information donnée par une IA. Une étape = une phrase qui commence par un verbe à l'infinitif. » L'enseignant impose une contrainte de format : quatre étapes, pas trois ni six, ce qui force la sélection et la hiérarchisation. Chaque groupe doit aussi indiquer, sous ses quatre étapes, une étape qu'il a hésité à retenir et pourquoi il l'a écartée. Les groupes voient en direct les productions des autres et peuvent s'en inspirer, à condition de ne pas copier à l'identique.",
+          "notes": "Rôle de l'enseignant : projette le document partagé au tableau, commente à voix haute une ou deux formulations réussies pendant la rédaction pour tirer le groupe vers le haut. Compétences numériques : C14 (co-rédiger un document partagé), C15 (partager une production dans un espace contrôlé, respecter la section des autres groupes), P6 (structurer un contenu). Protocole cible attendu, à ne pas donner mais à reconnaître : (1) Isoler l'affirmation précise à vérifier ; (2) Rechercher la référence citée mot pour mot ; (3) Chercher une seconde source indépendante de la première ; (4) Conclure et noter le verdict. Différenciation : rôles attribués dans le groupe de quatre (un scripteur, un porte-parole, deux chercheurs) pour éviter le décrochage. Écueil : les groupes ont tendance à écrire « vérifier sur Google » — relancer par « vérifier quoi, exactement ? ».",
+          "tools": [
+            "competency:creer:14",
+            "competency:creer:15",
+            "competency:approfondir:6"
+          ],
+          "links": []
+        },
+        {
+          "id": "activity-1787508067479",
+          "type": "produce",
+          "duration": 6,
+          "groupMode": "individual",
+          "teacherPresence": "present",
+          "syncMode": "sync",
+          "locationMode": "onsite",
+          "evaluationMode": "formative",
+          "aias": {
+            "version": "2.1",
+            "status": "specified",
+            "level": 1
+          },
+          "description": "Production individuelle écrite et enregistrée. Consigne : « Rédige TA fiche-protocole. Elle tient en une demi-page et contient : les 4 étapes reformulées avec tes mots, un exemple tiré de ce que tu as vérifié aujourd'hui, et une phrase qui explique pourquoi la source doit être indépendante. » Contrainte de gestion de fichier imposée et évaluée : le document doit être enregistré dans le dossier de la discipline sous le nom exact PROTOCOLE-VERIF-IA_NOM-Prenom, et déposé dans l'espace de rendu de l'ENT. L'enseignant précise que cette fiche pourra être utilisée lors des prochaines recherches documentaires, dans toutes les matières — ce qui justifie l'exigence de nommage.",
+          "notes": "Rôle de l'enseignant : circule et relit trois ou quatre fiches en donnant un retour oral immédiat sur un seul point (le plus souvent : l'étape 3 sur l'indépendance des sources, mal comprise). Critères de réussite communiqués aux élèves : les 4 étapes sont reformulées et non recopiées ; l'exemple est concret et personnel ; la notion de source indépendante est expliquée et pas seulement nommée ; le fichier est nommé et rangé correctement. Compétences numériques : P1 (rédiger un texte numérique structuré), P6 (nommer, organiser et sauvegarder ses fichiers), A2 (mobiliser des critères de fiabilité). Différenciation : trame à compléter disponible sur l'ENT pour les élèves en difficulté rédactionnelle ; extension pour les élèves rapides — ajouter un cinquième point « ce que je fais si je ne trouve aucune source ». Évaluation formative uniquement, aucune note : retour écrit bref de l'enseignant sur l'ENT après la séance.",
+          "tools": [
+            "competency:approfondir:1",
+            "competency:approfondir:6",
+            "competency:acquerir:2"
+          ],
+          "links": []
+        }
+      ]
+    },
+    {
+      "id": "moment-1787508085156",
+      "title": "5. Retour sur nos hypothèses de départ",
+      "objectives": "Confronter les représentations initiales notées au moment 1 à l'expérience de la séance, verbaliser ce qui a changé, et fixer une règle d'usage commune de l'IA pour la classe.",
+      "intentions": "Boucler explicitement la séance sur le cadre « Nos hypothèses de départ » écrit au tableau en ouverture : la métacognition est rendue visible et matérielle. Le passage par une règle collective transforme un savoir en engagement, ce qui augmente le transfert vers les autres disciplines.",
+      "notes": "L'enseignant reprend la photo du tableau du moment 1. Prévoir d'écrire la règle de classe retenue sur une affiche ou dans l'espace de cours de l'ENT, visible lors des prochaines séances.",
+      "notesExpanded": false,
+      "activities": [
+        {
+          "id": "activity-1787508085275",
+          "type": "discuss",
+          "duration": 8,
+          "groupMode": "whole",
+          "teacherPresence": "present",
+          "syncMode": "sync",
+          "locationMode": "onsite",
+          "evaluationMode": "formative",
+          "aias": {
+            "version": "2.1",
+            "status": "specified",
+            "level": 1
+          },
+          "description": "Mise en commun et institutionnalisation. Temps 1 (4 min) : l'enseignant reprend une à une les trois hypothèses de départ écrites au tableau et demande à la classe « Qu'est-ce qu'on en fait maintenant ? On la garde, on la corrige, on la barre ? ». Chaque hypothèse est modifiée à la craie devant les élèves ; l'hypothèse « si l'IA cite une source, c'est qu'elle existe » est reformulée collectivement. Temps 2 (2 min) : deux ou trois groupes lisent leur quatrième étape de protocole ; l'enseignant en dégage la version de référence de la classe. Temps 3 (2 min) : la classe formule une règle d'usage en une phrase, du type « Je peux utiliser l'IA pour X, à condition de Y avant de le rendre. » La règle est écrite et affichée. Chaque élève la recopie sur sa fiche-protocole.",
+          "notes": "Rôle de l'enseignant : institue, tranche et nomme le savoir — c'est le seul moment de la séance où il valide explicitement. Compétences numériques : A2 (critères de fiabilité désormais explicités), C15 (règles de partage et de citation de ses productions). Critère de réussite du moment : au moins un élève est capable d'énoncer sans aide la différence entre « l'IA se trompe » et « l'IA produit du plausible sans vérifier ». Prolongement possible hors séance : appliquer la fiche-protocole à un travail de recherche réel dans une autre discipline, et faire figurer la mention de l'usage de l'IA dans le travail rendu. Si le temps manque : sacrifier le temps 2, jamais le temps 1 ni le temps 3.",
+          "tools": [
+            "competency:acquerir:2",
+            "competency:creer:15"
+          ],
+          "links": []
+        }
+      ]
+    }
+  ],
+  "partitionLineConfig": [
+    {
+      "type": "locationMode",
+      "label": "Présentiel",
+      "value": "onsite",
+      "visible": true
+    },
+    {
+      "type": "locationMode",
+      "label": "Distanciel",
+      "value": "online",
+      "visible": true
+    },
+    {
+      "type": "locationMode",
+      "label": "Hybride",
+      "value": "hybrid",
+      "visible": true
+    }
+  ]
+}

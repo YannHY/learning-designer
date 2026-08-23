@@ -1,0 +1,289 @@
+{
+  "allNotesExpanded": false,
+  "intentionsCollapsed": false,
+  "topPanelCollapsed": false,
+  "meta": {
+    "name": "Esprit critique face à l'IA générative (version courte)",
+    "uiLanguage": "fr",
+    "dayHours": 7,
+    "learningDays": 0,
+    "learningHours": 0,
+    "learningMinutes": 55,
+    "modeDelivery": "onsite",
+    "sizeClass": "28",
+    "designers": "Yann Houry",
+    "trainers": "Enseignant de la classe",
+    "description": "Séance de 55 min en lycée, 1 ordinateur par élève, accès à Gemini. Les élèves testent le caractère probabiliste d'un modèle de langage, vérifient les sources d'une réponse générée, puis construisent un protocole de vérification en 4 étapes.",
+    "command": "EMI - esprit critique face aux contenus générés par IA. Usage raisonné et documenté de l'IA générative.",
+    "personas": "1) Faire comprendre le fonctionnement probabiliste d'un modèle de langage. 2) Entraîner une méthode de vérification et de croisement des sources.",
+    "sliders": [
+      {
+        "id": "outcome-1787512651469",
+        "category": "understand",
+        "categoryLabel": "Comprendre",
+        "verb": "Expliquer",
+        "text": "Expliquer qu'un modèle de langage prédit le mot le plus probable et ne vérifie pas ce qu'il affirme."
+      },
+      {
+        "id": "outcome-1787512651538",
+        "category": "analyze",
+        "categoryLabel": "Analyser",
+        "verb": "Distinguer",
+        "text": "Distinguer, dans une réponse d'IA, les affirmations vérifiables des sources inexistantes ou mal attribuées."
+      },
+      {
+        "id": "outcome-1787512651609",
+        "category": "apply",
+        "categoryLabel": "Appliquer",
+        "verb": "Appliquer",
+        "text": "Appliquer un protocole de vérification en 4 étapes à des affirmations générées par une IA."
+      },
+      {
+        "id": "outcome-1787512651680",
+        "category": "evaluate",
+        "categoryLabel": "Évaluer",
+        "verb": "Évaluer",
+        "text": "Évaluer la fiabilité d'une information en croisant deux sources indépendantes et justifier son verdict."
+      },
+      {
+        "id": "outcome-1787512651752",
+        "category": "create",
+        "categoryLabel": "Créer",
+        "verb": "Rédiger",
+        "text": "Rédiger une fiche-protocole personnelle de vérification, enregistrée et nommée correctement."
+      }
+    ],
+    "activeTab": "settings",
+    "boardLayout": "columns"
+  },
+  "sessions": [
+    {
+      "id": "moment-1787512671911",
+      "title": "1. Ce que je crois savoir de l'IA",
+      "objectives": "Faire émerger les représentations initiales et repérer les conceptions erronées.",
+      "intentions": "Conflit sociocognitif d'entrée : les élèves se positionnent avant tout apport, ce qui rend la déstabilisation du moment 3 efficace.",
+      "notes": "Ordinateurs fermés. Noter 3 formulations d'élèves au tableau, sans les corriger. Photographier.",
+      "notesExpanded": false,
+      "activities": [
+        {
+          "id": "activity-1787512671967",
+          "type": "discuss",
+          "duration": 7,
+          "groupMode": "whole",
+          "teacherPresence": "present",
+          "syncMode": "sync",
+          "locationMode": "onsite",
+          "evaluationMode": "diagnostic",
+          "aias": {
+            "version": "2.1",
+            "status": "specified",
+            "level": 1
+          },
+          "description": "Vote à main levée sur 3 affirmations projetées, puis justification par deux élèves de camps opposés. Rien n'est validé. Les hypothèses sont écrites au tableau pour le moment 5.",
+          "instructions": "Ordinateur fermé. Pour chaque affirmation projetée, lève la main : d'accord / pas d'accord / je ne sais pas.\n1. « Gemini cherche sur internet avant de répondre. »\n2. « Si l'IA cite une source datée et signée, c'est qu'elle existe. »\n3. « Une IA se trompe surtout sur les sujets difficiles. »\nSi je t'interroge, dis ce qui te fait penser ça. On vérifiera à la fin.",
+          "notes": "Animateur neutre : relancer sans trancher. L'affirmation 2 est le levier du moment 3. Écueil : corriger tout de suite.",
+          "tools": [],
+          "links": []
+        }
+      ]
+    },
+    {
+      "id": "moment-1787512672020",
+      "title": "2. Comment une IA fabrique une phrase",
+      "objectives": "Comprendre la prédiction du mot suivant et en déduire que la fluidité n'est pas un indice de vérité.",
+      "intentions": "Apport bref suivi immédiatement d'une manipulation : le mécanisme se comprend en le faisant tourner soi-même.",
+      "notes": "Schéma projeté : « le chat dort sur le → canapé 41 % / tapis 22 % ». Idée-force au tableau : PRÉDIRE N'EST PAS VÉRIFIER.",
+      "notesExpanded": false,
+      "activities": [
+        {
+          "id": "activity-1787512672074",
+          "type": "read",
+          "duration": 6,
+          "groupMode": "whole",
+          "teacherPresence": "present",
+          "syncMode": "sync",
+          "locationMode": "onsite",
+          "evaluationMode": "none",
+          "aias": {
+            "version": "2.1",
+            "status": "specified",
+            "level": 1
+          },
+          "description": "Exposé projeté de 6 min, 4 diapositives. Trois conséquences écrites au tableau, dont la définition de « hallucination ».",
+          "instructions": "Observe le schéma, puis recopie les trois conséquences :\n1. Le modèle produit ce qui est plausible, pas ce qui est vrai.\n2. Une réponse assurée n'est pas pour autant exacte.\n3. Sans information, il produit quand même du plausible : c'est une hallucination.\nL'un de vous redira ensuite « prédire n'est pas vérifier » avec ses mots.",
+          "notes": "Chronométrer strictement. Fiche à trous disponible pour les élèves en difficulté de prise de notes. Ne passer à la suite qu'après une reformulation correcte.",
+          "tools": [],
+          "links": []
+        },
+        {
+          "id": "activity-1787512672127",
+          "type": "practice",
+          "duration": 6,
+          "groupMode": "individual",
+          "teacherPresence": "present",
+          "syncMode": "sync",
+          "locationMode": "onsite",
+          "evaluationMode": "formative",
+          "aias": {
+            "version": "2.1",
+            "status": "specified",
+            "level": 2
+          },
+          "description": "Les élèves font générer la biographie d'un écrivain inventé et constatent une réponse détaillée, datée et assurée sur une personne inexistante.",
+          "instructions": "Ouvre Gemini. Invente un nom de famille rare — jamais celui d'un camarade ni d'une personne réelle.\nDemande : « Donne-moi la biographie de [ton prénom + le nom inventé], écrivain français du XIXe siècle. »\nNote sur ta fiche : (a) combien de dates précises ? (b) le ton est-il hésitant ou assuré ?\nPrépare ta réponse à : qu'est-ce que ça t'apprend sur la façon dont ce texte a été produit ?",
+          "notes": "Circuler, relancer par des questions. Nom de secours au tableau. Si le modèle refuse : « Rédige une courte notice biographique romancée de... ». Capture d'écran de secours si le réseau lâche.",
+          "tools": [
+            "competency:acquerir:1",
+            "competency:approfondir:1"
+          ],
+          "links": []
+        }
+      ]
+    },
+    {
+      "id": "moment-1787512705726",
+      "title": "3. Le piège de la source inventée",
+      "objectives": "Vérifier une à une les références citées par l'IA et faire l'expérience de la source fabriquée.",
+      "intentions": "Cœur de la séance : c'est ici que tombe l'hypothèse 2 du moment 1. Binômes pour que la vérification soit argumentée à deux.",
+      "notes": "Sujet à fixer avant la séance : réel mais peu documenté en ligne (histoire du lycée, monument local, événement régional du XIXe). Tableau à 3 colonnes en papier et sur l'ENT.",
+      "notesExpanded": false,
+      "activities": [
+        {
+          "id": "activity-1787512705809",
+          "type": "investigate",
+          "duration": 14,
+          "groupMode": "subgroups",
+          "teacherPresence": "present",
+          "syncMode": "sync",
+          "locationMode": "onsite",
+          "evaluationMode": "formative",
+          "aias": {
+            "version": "2.1",
+            "status": "specified",
+            "level": 3
+          },
+          "description": "Enquête en binômes, trois temps chronométrés : génération sourcée (3 min), vérification des références (8 min), conclusion écrite (3 min). L'enseignant relève les verdicts pour le moment 5.",
+          "instructions": "À deux, sur un seul ordinateur.\nTEMPS 1 (3 min) — Demandez : « Rédige un paragraphe de 10 lignes sur [sujet au tableau], en citant tes sources avec auteur, titre et date. »\nTEMPS 2 (8 min) — Remplissez le tableau, 3 références minimum.\nA : recopiez la source citée. B : cherchez la référence EXACTE, titre entre guillemets, puis en catalogue ou site officiel. C : verdict — existe / n'existe pas / existe mais ne dit pas ça.\nCherchez la référence exacte, pas le thème général.\nTEMPS 3 (3 min) — Écrivez une phrase : « Nous avons découvert que... »",
+          "notes": "Erreur la plus fréquente : chercher le thème au lieu de la référence exacte — vérifier binôme par binôme. Évaluer le raisonnement en colonne B, pas le nombre de lignes. Extension : « trouvez une affirmation exacte et dites comment vous l'avez confirmée ». Écueil : ne pas laisser conclure « l'IA ment », mais « l'IA produit du plausible sans vérifier ».",
+          "tools": [
+            "competency:acquerir:1",
+            "competency:acquerir:2",
+            "competency:creer:14"
+          ],
+          "links": []
+        }
+      ]
+    },
+    {
+      "id": "moment-1787512705887",
+      "title": "4. Construire un protocole de vérification",
+      "objectives": "Formaliser une méthode en 4 étapes transférable, puis se l'approprier par écrit.",
+      "intentions": "Le protocole est induit de l'expérience, jamais dicté. Collectif pour produire la matière, individuel pour l'appropriation et la trace réutilisable.",
+      "notes": "Protocole cible, à reconnaître mais pas à dicter : isoler l'affirmation / rechercher la référence mot pour mot / chercher une source indépendante / conclure.",
+      "notesExpanded": false,
+      "activities": [
+        {
+          "id": "activity-1787512705951",
+          "type": "collaborate",
+          "duration": 8,
+          "groupMode": "subgroups",
+          "teacherPresence": "present",
+          "syncMode": "sync",
+          "locationMode": "onsite",
+          "evaluationMode": "formative",
+          "aias": {
+            "version": "2.1",
+            "status": "specified",
+            "level": 2
+          },
+          "description": "Groupes de quatre sur un document partagé, une section par groupe. La contrainte de 4 étapes exactement force la hiérarchisation.",
+          "instructions": "Réunissez-vous à quatre. Rôles : un scripteur, un porte-parole, deux chercheurs.\nDans VOTRE section du document partagé, écrivez les 4 étapes pour vérifier une information donnée par une IA. Quatre : pas trois, pas six. Chaque étape commence par un verbe à l'infinitif.\nAjoutez dessous une étape que vous avez écartée, et pourquoi.\nVous voyez les autres groupes : inspirez-vous, ne recopiez pas.",
+          "notes": "Projeter le document et commenter à voix haute une bonne formulation. Écueil : « vérifier sur Google » — relancer par « vérifier quoi, exactement ? ». Les rôles évitent le décrochage.",
+          "tools": [
+            "competency:creer:14",
+            "competency:creer:15",
+            "competency:approfondir:6"
+          ],
+          "links": []
+        },
+        {
+          "id": "activity-1787512706022",
+          "type": "produce",
+          "duration": 6,
+          "groupMode": "individual",
+          "teacherPresence": "present",
+          "syncMode": "sync",
+          "locationMode": "onsite",
+          "evaluationMode": "formative",
+          "aias": {
+            "version": "2.1",
+            "status": "specified",
+            "level": 1
+          },
+          "description": "Fiche individuelle rédigée, nommée et déposée. Le nommage fait partie des critères. L'enseignant relit 3 ou 4 fiches avec un retour oral sur un seul point.",
+          "instructions": "Rédige TA fiche-protocole, seul, une demi-page :\n- les 4 étapes avec tes mots, pas recopiées ;\n- un exemple tiré de ce que TU as vérifié aujourd'hui ;\n- pourquoi la deuxième source doit être indépendante de la première.\nEnregistre-la sous le nom exact PROTOCOLE-VERIF-IA_NOM-Prenom dans le dossier de la discipline, puis dépose-la sur l'ENT.\nRéussi si : étapes reformulées, exemple personnel, indépendance des sources expliquée, fichier bien nommé.",
+          "notes": "Point le plus souvent mal compris : l'indépendance des sources (étape 3). Trame à compléter sur l'ENT pour les élèves en difficulté rédactionnelle. Extension : « que faire si je ne trouve aucune source ? ». Pas de note, retour écrit sur l'ENT.",
+          "tools": [
+            "competency:approfondir:1",
+            "competency:approfondir:6",
+            "competency:acquerir:2"
+          ],
+          "links": []
+        }
+      ]
+    },
+    {
+      "id": "moment-1787512706093",
+      "title": "5. Retour sur nos hypothèses",
+      "objectives": "Confronter les représentations initiales à l'expérience et fixer une règle d'usage commune.",
+      "intentions": "Boucler sur le tableau d'ouverture rend la métacognition visible. La règle collective transforme le savoir en engagement.",
+      "notes": "Reprendre la photo du moment 1. Afficher la règle retenue. Si le temps manque : sacrifier le temps 2, jamais le 1 ni le 3.",
+      "notesExpanded": false,
+      "activities": [
+        {
+          "id": "activity-1787512706167",
+          "type": "discuss",
+          "duration": 8,
+          "groupMode": "whole",
+          "teacherPresence": "present",
+          "syncMode": "sync",
+          "locationMode": "onsite",
+          "evaluationMode": "formative",
+          "aias": {
+            "version": "2.1",
+            "status": "specified",
+            "level": 1
+          },
+          "description": "Trois temps : correction des hypothèses de départ à la craie (4 min), version de référence du protocole (2 min), règle d'usage de la classe (2 min). Seul moment où l'enseignant valide explicitement.",
+          "instructions": "TEMPS 1 — Pour chaque hypothèse du tableau : on la garde, on la corrige, ou on la barre ? Justifiez avec ce que vous avez trouvé.\nTEMPS 2 — Deux ou trois groupes lisent leur quatrième étape. Nous retiendrons une version de référence.\nTEMPS 3 — Nous écrivons ensemble la règle de la classe : « Je peux utiliser l'IA pour ..., à condition de ... avant de rendre mon travail. »\nRecopie-la en bas de ta fiche avant de sortir.",
+          "notes": "L'enseignant institue et tranche. Critère de réussite : un élève énonce sans aide la différence entre « l'IA se trompe » et « l'IA produit du plausible sans vérifier ». Prolongement : appliquer la fiche à une recherche réelle dans une autre discipline.",
+          "tools": [
+            "competency:acquerir:2",
+            "competency:creer:15"
+          ],
+          "links": []
+        }
+      ]
+    }
+  ],
+  "partitionLineConfig": [
+    {
+      "type": "locationMode",
+      "label": "Présentiel",
+      "value": "onsite",
+      "visible": true
+    },
+    {
+      "type": "locationMode",
+      "label": "Distanciel",
+      "value": "online",
+      "visible": true
+    },
+    {
+      "type": "locationMode",
+      "label": "Hybride",
+      "value": "hybrid",
+      "visible": true
+    }
+  ]
+}

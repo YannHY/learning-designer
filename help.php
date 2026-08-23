@@ -420,7 +420,7 @@ PROMPT;
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" referrerpolicy="no-referrer">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="stylesheet" href="css/interface.css?v=20260803-help-ipad-overflow">
+    <link rel="stylesheet" href="css/interface.css?v=20260823-import-models">
     <link rel="stylesheet" href="css/account-ui.css?v=20260520-4">
     <link rel="stylesheet" href="css/account-pages.css?v=20260803-responsive-shell">
 </head>
@@ -646,8 +646,10 @@ PROMPT;
                     </table>
                 </div>
                 <p>Pour exporter, cliquez sur <strong>Exporter</strong>, choisissez le format et le nom du fichier, puis prévisualisez le contenu lorsqu’il s’agit d’un format textuel. Vous pouvez le copier ou le télécharger.</p>
+                <h3 id="modeles">Partir d’un modèle</h3>
+                <p class="help-spaced">Le bouton <strong>Importer</strong> ouvre une fenêtre qui propose d’abord une bibliothèque de scénarios génériques et préremplis : introduire un chapitre, étude de documents, débat argumenté, exposé, tâche complexe, séance avec IA encadrée… Les moments, les durées, les types d’apprentissage, les modalités, les acquis Bloom et les niveaux AIAS sont déjà posés ; il reste à remplacer les jalons entre crochets, comme <code>[MATIÈRE]</code> ou <code>[NOTION 1]</code>, par le contenu de votre discipline. La page <a href="models.php">Modèles de scénarios</a> présente l’ensemble de la bibliothèque et permet de télécharger chaque modèle au format JSON.</p>
                 <h3 id="formats-import">Formats d’import</h3>
-                <p>Le bouton <strong>Importer</strong> accepte les formats suivants :</p>
+                <p>La même fenêtre permet de charger un fichier depuis votre ordinateur, dans les formats suivants :</p>
                 <ul>
                     <li><strong>LDJ</strong>, le format du Learning Designer de l’University College London (UCL) ;</li>
                     <li><strong>JSON</strong>, pour restaurer les données structurées ;</li>

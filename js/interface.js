@@ -19,7 +19,7 @@ const ICONS = {
   undefined: fontAwesomeIcon("fa-regular fa-circle"),
   read: fontAwesomeIcon("fa-solid fa-book-open"),
   investigate: fontAwesomeIcon("fa-solid fa-magnifying-glass"),
-  practice: fontAwesomeIcon("fa-solid fa-person-running"),
+  practice: fontAwesomeIcon("fa-solid fa-dumbbell"),
   produce: fontAwesomeIcon("fa-solid fa-pen-ruler"),
   discuss: fontAwesomeIcon("fa-solid fa-comments"),
   collaborate: fontAwesomeIcon("fa-solid fa-users"),
@@ -836,6 +836,14 @@ const exportDesignBtn = document.getElementById("export-design-btn");
 const infoBtn = document.getElementById("info-btn");
 const saveBtn = document.getElementById("save-btn");
 const importFileInput = document.getElementById("import-file-input");
+const importModalBackdrop = document.getElementById("import-modal-backdrop");
+const importModalCancelBtn = document.getElementById("import-modal-cancel-btn");
+const importFileBtn = document.getElementById("import-file-btn");
+const importModelsSearch = document.getElementById("import-models-search");
+const importModelsFamily = document.getElementById("import-models-family");
+const importModelsList = document.getElementById("import-models-list");
+const importModelsStatus = document.getElementById("import-models-status");
+const importModelsLink = document.getElementById("import-models-link");
 const langSelect = document.getElementById("lang-select");
 const languageButton = document.querySelector(".nav-language-toggle");
 const srStatus = document.getElementById("sr-status");
@@ -903,11 +911,20 @@ const infoModalCloseBtn = document.getElementById("info-modal-close-btn");
 const exportScopeLabel = document.getElementById("export-scope-label");
 const exportScopeFullInput = document.getElementById("export-scope-full-input");
 const exportScopeStudentsInput = document.getElementById("export-scope-students-input");
+const exportMomentsDetails = document.getElementById("export-moments-details");
+const exportMomentsLabel = document.getElementById("export-moments-label");
+const exportMomentsAllInput = document.getElementById("export-moments-all-input");
+const exportMomentsAllLabel = document.getElementById("export-moments-all-label");
+const exportMomentsList = document.getElementById("export-moments-list");
+const exportMomentsSummary = document.getElementById("export-moments-summary");
+const exportMomentsEmpty = document.getElementById("export-moments-empty");
 const exportModalBackdrop = document.getElementById("export-modal-backdrop");
 const exportFormatSelect = document.getElementById("export-format-select");
 const exportFilenameInput = document.getElementById("export-filename-input");
 const exportModalCancelBtn = document.getElementById("export-modal-cancel-btn");
 const exportModalConfirmBtn = document.getElementById("export-modal-confirm-btn");
+const exportPreviewDetails = document.getElementById("export-preview-details");
+const exportPreviewLabel = document.getElementById("export-preview-label");
 const exportResultText = document.getElementById("export-result-text");
 const exportResultCopyBtn = document.getElementById("export-result-copy-btn");
 const activityLinkModalBackdrop = document.getElementById("activity-link-modal-backdrop");
@@ -955,6 +972,7 @@ let activeModalBackdrop = null;
 let previousFocusedElement = null;
 let exportPreviewObjectUrl = "";
 let exportScope = "full";
+let exportSessionIds = null;
 
 const I18N = {
   fr: {
@@ -1008,16 +1026,41 @@ const I18N = {
     modeOnsite: "Présentiel",
     modeOnline: "Distanciel",
     modeHybrid: "Hybride",
-    importTitle: "Importer le design",
+    importTitle: "Importer un scénario",
+    importModalDesc: "Partez d’un modèle prérempli, ou chargez un fichier exporté depuis cette application. Le design actuel sera remplacé.",
+    importFromFileTitle: "Depuis mon ordinateur",
+    importChooseFile: "Choisir un fichier…",
+    importFileFormats: "LDJ, JSON, CSV, Excel, Markdown",
+    importModelsTitle: "Bibliothèque de modèles",
+    importModelsLink: "Voir la bibliothèque",
+    importModelsSearchLabel: "Rechercher un modèle",
+    importModelsSearchPlaceholder: "Rechercher un modèle…",
+    importModelsFamilyLabel: "Famille de modèles",
+    importModelsFamilyAll: "Toutes les familles",
+    importModelsLoading: "Chargement des modèles…",
+    importModelsCount: "{count} modèles disponibles.",
+    importModelsCountOne: "1 modèle disponible.",
+    importModelsNone: "Aucun modèle ne correspond à cette recherche.",
+    importModelsError: "Bibliothèque de modèles indisponible. L’import de fichier reste possible.",
+    importModelsUnitMoments: "moments",
+    importModelsUnitActivities: "activités",
+    importModelsToComplete: "À compléter :",
+    importModelApplied: "Modèle chargé : {name}",
+    importModelFailed: "Ce modèle n’a pas pu être chargé.",
     exportTitle: "Exporter le design",
     exportScopeTitle: "Contenu à exporter",
-    exportScopeFull: "Export complet",
+    exportScopeFull: "Export enseignant",
     exportScopeFullDescription: "Toutes les informations du scénario pédagogique.",
-    exportScopeStudents: "Consignes élèves uniquement",
+    exportScopeStudents: "Export élève",
     exportScopeStudentsDescription: "Les séances, les activités et les consignes adressées aux élèves.",
+    exportMomentsTitle: "Moments à exporter",
+    exportMomentsAll: "Tous les moments",
+    exportMomentsEmpty: "Aucun moment à exporter.",
+    exportMomentsSelection: (selected, total) => `${selected} sur ${total} sélectionné${selected === 1 ? "" : "s"}`,
     format: "Format",
     exportFilename: "Nom du fichier",
     exportPreviewCopy: "Le contenu exporté est lisible ci-dessous. Vous pouvez le copier ou télécharger le fichier.",
+    exportPreviewTitle: "Prévisualisation",
     exportDownloadOnly: "Ce format est destiné au téléchargement. Le contenu brut n'est pas affiché ni copiable.",
     copy: "Copier",
     download: "Télécharger",
@@ -1256,16 +1299,41 @@ const I18N = {
     modeOnsite: "Onsite",
     modeOnline: "Online",
     modeHybrid: "Hybrid",
-    importTitle: "Import design",
+    importTitle: "Import a scenario",
+    importModalDesc: "Start from a pre-filled template, or load a file exported from this application. The current design will be replaced.",
+    importFromFileTitle: "From my computer",
+    importChooseFile: "Choose a file…",
+    importFileFormats: "LDJ, JSON, CSV, Excel, Markdown",
+    importModelsTitle: "Template library",
+    importModelsLink: "Browse the library",
+    importModelsSearchLabel: "Search for a template",
+    importModelsSearchPlaceholder: "Search for a template…",
+    importModelsFamilyLabel: "Template family",
+    importModelsFamilyAll: "All families",
+    importModelsLoading: "Loading templates…",
+    importModelsCount: "{count} templates available.",
+    importModelsCountOne: "1 template available.",
+    importModelsNone: "No template matches this search.",
+    importModelsError: "Template library unavailable. File import is still possible.",
+    importModelsUnitMoments: "moments",
+    importModelsUnitActivities: "activities",
+    importModelsToComplete: "To complete:",
+    importModelApplied: "Template loaded: {name}",
+    importModelFailed: "This template could not be loaded.",
     exportTitle: "Export design",
     exportScopeTitle: "Content to export",
     exportScopeFull: "Full export",
     exportScopeFullDescription: "All the information in the learning design.",
     exportScopeStudents: "Student instructions only",
     exportScopeStudentsDescription: "Sessions, activities, and instructions addressed to students.",
+    exportMomentsTitle: "Moments to export",
+    exportMomentsAll: "All moments",
+    exportMomentsEmpty: "No moments to export.",
+    exportMomentsSelection: (selected, total) => `${selected} of ${total} selected`,
     format: "Format",
     exportFilename: "File name",
     exportPreviewCopy: "The exported content is shown below. You can copy it or download the file.",
+    exportPreviewTitle: "Preview",
     exportDownloadOnly: "This format is meant to be downloaded. Raw content is not shown or copyable.",
     copy: "Copy",
     download: "Download",
@@ -1481,7 +1549,7 @@ const MARKDOWN_ACTIONS = [
   { id: "list", text: "-", titleKey: "mdList", code: "KeyL", shift: true, key: "L" },
   { id: "ordered-list", text: "1.", titleKey: "mdOrderedList", code: "Digit7", shift: true, key: "7" },
   { id: "quote", text: ">", titleKey: "mdQuote", code: "KeyQ", shift: true, key: "Q" },
-  { id: "link", text: "↗", titleKey: "mdLink", code: "KeyK", shift: false, key: "K" }
+  { id: "link", iconClass: "fa-solid fa-link", titleKey: "mdLink", code: "KeyK", shift: false, key: "K" }
 ];
 
 function usesMacKeyboardShortcuts() {
@@ -1626,7 +1694,14 @@ function ensureMarkdownToolbars(root = document) {
       button.type = "button";
       button.className = "markdown-tool-btn";
       button.dataset.mdAction = action.id;
-      button.textContent = action.text;
+      if (action.iconClass) {
+        const icon = document.createElement("i");
+        icon.className = action.iconClass;
+        icon.setAttribute("aria-hidden", "true");
+        button.appendChild(icon);
+      } else {
+        button.textContent = action.text;
+      }
       toolbar.appendChild(button);
     });
     wrapper.insertBefore(toolbar, textarea);
@@ -1942,6 +2017,28 @@ function applyLocalizedUI() {
     helpBtn.setAttribute("title", t("help") || "Aide");
   }
   importDesignBtn.setAttribute("aria-haspopup", "dialog");
+  const importModalTitle = document.getElementById("import-modal-title");
+  if (importModalTitle) importModalTitle.textContent = t("importTitle");
+  const importModalDesc = document.getElementById("import-modal-desc");
+  if (importModalDesc) importModalDesc.textContent = t("importModalDesc");
+  const importFileSectionTitle = document.getElementById("import-file-section-title");
+  if (importFileSectionTitle) importFileSectionTitle.textContent = t("importFromFileTitle");
+  const importModelsSectionTitle = document.getElementById("import-models-section-title");
+  if (importModelsSectionTitle) importModelsSectionTitle.textContent = t("importModelsTitle");
+  const importFileFormats = document.getElementById("import-file-formats");
+  if (importFileFormats) importFileFormats.textContent = t("importFileFormats");
+  const importModelsSearchLabel = document.getElementById("import-models-search-label");
+  if (importModelsSearchLabel) importModelsSearchLabel.textContent = t("importModelsSearchLabel");
+  const importModelsFamilyLabel = document.getElementById("import-models-family-label");
+  if (importModelsFamilyLabel) importModelsFamilyLabel.textContent = t("importModelsFamilyLabel");
+  if (importModelsSearch) importModelsSearch.placeholder = t("importModelsSearchPlaceholder");
+  if (importModelsLink) importModelsLink.textContent = t("importModelsLink");
+  if (importModalCancelBtn) importModalCancelBtn.textContent = t("close");
+  if (importFileBtn) setButtonLabel(importFileBtn, "fa-solid fa-folder-open", t("importChooseFile"));
+  if (importModalBackdrop && !importModalBackdrop.classList.contains("hidden")) {
+    renderModelFamilyOptions();
+    renderModelList();
+  }
   exportDesignBtn.setAttribute("aria-haspopup", "dialog");
   board.setAttribute("aria-label", t("boardRegion"));
   metaCommandInput.placeholder = t("commandPlaceholder");
@@ -1961,11 +2058,16 @@ function applyLocalizedUI() {
   if (exportScopeStudentsTitle) exportScopeStudentsTitle.textContent = t("exportScopeStudents");
   if (exportScopeFullDescription) exportScopeFullDescription.textContent = t("exportScopeFullDescription");
   if (exportScopeStudentsDescription) exportScopeStudentsDescription.textContent = t("exportScopeStudentsDescription");
+  if (exportMomentsLabel) exportMomentsLabel.textContent = t("exportMomentsTitle");
+  if (exportMomentsAllLabel) exportMomentsAllLabel.textContent = t("exportMomentsAll");
+  if (exportMomentsEmpty) exportMomentsEmpty.textContent = t("exportMomentsEmpty");
+  renderExportMoments();
   exportModalBackdrop.querySelector("#export-modal-title").textContent = t("exportTitle");
   exportModalBackdrop.querySelector("label[for='export-format-select']").textContent = t("format");
   exportModalBackdrop.querySelector("label[for='export-filename-input']").textContent = t("exportFilename");
   const exportPreviewCopy = document.getElementById("export-result-modal-copy");
   if (exportPreviewCopy) exportPreviewCopy.textContent = t("exportPreviewCopy");
+  if (exportPreviewLabel) exportPreviewLabel.textContent = t("exportPreviewTitle");
   if (exportResultCopyBtn) exportResultCopyBtn.textContent = t("copy");
   exportModalCancelBtn.textContent = t("close");
   exportModalConfirmBtn.textContent = t("download");
@@ -3972,11 +4074,93 @@ function normalizeExportScope(scope = "full") {
   return String(scope).toLowerCase() === "students" ? "students" : "full";
 }
 
-function buildStudentInstructionsData() {
+function exportSessionKey(session) {
+  return String(session?.id || "");
+}
+
+function getExportSessionEntries(sessionIds = null) {
+  const selectedIds = sessionIds === null
+    ? null
+    : sessionIds instanceof Set
+      ? sessionIds
+      : new Set(Array.from(sessionIds || [], String));
+  return state.sessions
+    .map((session, sessionIndex) => ({ session, sessionIndex }))
+    .filter(({ session }) => selectedIds === null || selectedIds.has(exportSessionKey(session)));
+}
+
+function totalExportDesignedMinutes(sessionIds = null) {
+  return getExportSessionEntries(sessionIds).reduce(
+    (sessionAcc, { session }) => sessionAcc + totalSessionMinutes(session),
+    0
+  );
+}
+
+function syncExportMomentsSelection() {
+  const total = state.sessions.length;
+  const selected = getExportSessionEntries(exportSessionIds).length;
+  if (exportMomentsAllInput) {
+    exportMomentsAllInput.disabled = total === 0;
+    exportMomentsAllInput.checked = total > 0 && selected === total;
+    exportMomentsAllInput.indeterminate = selected > 0 && selected < total;
+  }
+  if (exportMomentsSummary) {
+    const selectionLabel = t("exportMomentsSelection");
+    exportMomentsSummary.textContent = total === 0
+      ? ""
+      : typeof selectionLabel === "function"
+        ? selectionLabel(selected, total)
+        : `${selected}/${total}`;
+  }
+}
+
+function renderExportMoments() {
+  if (!exportMomentsList) return;
+  const allIds = new Set(state.sessions.map(exportSessionKey));
+  const selectedIds = exportSessionIds instanceof Set ? exportSessionIds : allIds;
+  exportMomentsList.innerHTML = "";
+
+  state.sessions.forEach((session, sessionIndex) => {
+    const sessionId = exportSessionKey(session);
+    const option = document.createElement("label");
+    option.className = "export-moment-option";
+
+    const input = document.createElement("input");
+    input.type = "checkbox";
+    input.value = sessionId;
+    input.checked = selectedIds.has(sessionId);
+    input.dataset.exportSessionId = sessionId;
+
+    const number = document.createElement("span");
+    number.className = "export-moment-number";
+    number.textContent = `${sessionIndex + 1}.`;
+
+    const title = document.createElement("span");
+    title.className = "export-moment-title";
+    title.textContent = session.title || defaultSessionTitle(sessionIndex + 1);
+
+    input.addEventListener("change", () => {
+      if (!(exportSessionIds instanceof Set)) exportSessionIds = new Set(allIds);
+      if (input.checked) exportSessionIds.add(sessionId);
+      else exportSessionIds.delete(sessionId);
+      syncExportMomentsSelection();
+      updateExportPreview(exportFormatSelect?.value || "markdown", exportScope);
+    });
+
+    option.append(input, number, title);
+    exportMomentsList.appendChild(option);
+  });
+
+  exportMomentsList.classList.toggle("hidden", state.sessions.length === 0);
+  exportMomentsEmpty?.classList.toggle("hidden", state.sessions.length > 0);
+  syncExportMomentsSelection();
+}
+
+function buildStudentInstructionsData(sessionIds = null) {
   return {
     exportType: "student_instructions",
     title: state.meta.name || "Design Learning",
-    sessions: state.sessions.map((session, sessionIndex) => ({
+    sessions: getExportSessionEntries(sessionIds).map(({ session, sessionIndex }) => ({
       number: sessionIndex + 1,
       title: session.title || `Séance ${sessionIndex + 1}`,
       activities: session.activities.map((activity, activityIndex) => ({
@@ -3987,8 +4171,8 @@ function buildStudentInstructionsData() {
   };
 }
 
-function buildStudentMarkdownExport() {
-  const studentExport = buildStudentInstructionsData();
+function buildStudentMarkdownExport(sessionIds = null) {
+  const studentExport = buildStudentInstructionsData(sessionIds);
   const lines = [`# ${studentExport.title}`, "", "## Consignes pour les élèves", ""];
   studentExport.sessions.forEach((session) => {
     lines.push(`## ${session.number}. ${session.title}`);
@@ -4002,9 +4186,9 @@ function buildStudentMarkdownExport() {
   return lines.join("\n");
 }
 
-function buildMarkdownExport(scope = "full") {
-  if (normalizeExportScope(scope) === "students") return buildStudentMarkdownExport();
-  const designed = splitMinutesToPedagogicalTime(totalDesignedMinutes(), getDayHours());
+function buildMarkdownExport(scope = "full", sessionIds = null) {
+  if (normalizeExportScope(scope) === "students") return buildStudentMarkdownExport(sessionIds);
+  const designed = splitMinutesToPedagogicalTime(totalExportDesignedMinutes(sessionIds), getDayHours());
   const lines = [`# ${state.meta.name || "Design Learning"}`, "", "## Paramètres", ""];
   lines.push(`- Mode: ${labelForLocationMode(state.meta.modeDelivery)}`);
   lines.push(`- Taille du groupe: ${state.meta.sizeClass || "-"}`);
@@ -4048,7 +4232,7 @@ function buildMarkdownExport(scope = "full") {
   lines.push("## Séances");
   lines.push("");
 
-  state.sessions.forEach((session, sessionIndex) => {
+  getExportSessionEntries(sessionIds).forEach(({ session, sessionIndex }) => {
     lines.push(`## ${sessionIndex + 1}. ${session.title}`);
     if (session.objectives) {
       lines.push("> Objectifs:");
@@ -4094,8 +4278,8 @@ function buildMarkdownExport(scope = "full") {
   return lines.join("\n");
 }
 
-function buildStudentHtmlExportDocument() {
-  const studentExport = buildStudentInstructionsData();
+function buildStudentHtmlExportDocument(sessionIds = null) {
+  const studentExport = buildStudentInstructionsData(sessionIds);
   const sections = studentExport.sessions
     .map((session) => {
       const activities = session.activities
@@ -4136,11 +4320,11 @@ function buildStudentHtmlExportDocument() {
 </html>`;
 }
 
-function buildHtmlExportDocument(scope = "full") {
-  if (normalizeExportScope(scope) === "students") return buildStudentHtmlExportDocument();
-  const designed = splitMinutesToPedagogicalTime(totalDesignedMinutes(), getDayHours());
-  const sections = state.sessions
-    .map((session, sessionIndex) => {
+function buildHtmlExportDocument(scope = "full", sessionIds = null) {
+  if (normalizeExportScope(scope) === "students") return buildStudentHtmlExportDocument(sessionIds);
+  const designed = splitMinutesToPedagogicalTime(totalExportDesignedMinutes(sessionIds), getDayHours());
+  const sections = getExportSessionEntries(sessionIds)
+    .map(({ session, sessionIndex }) => {
       const activities = session.activities
         .map(
           (activity, activityIndex) => `
@@ -4573,9 +4757,9 @@ function wordFieldTable(rows) {
   );
 }
 
-function buildStudentWordBody() {
+function buildStudentWordBody(sessionIds = null) {
   const body = [];
-  const studentExport = buildStudentInstructionsData();
+  const studentExport = buildStudentInstructionsData(sessionIds);
   body.push(wordParagraph(studentExport.title, "Title"));
   body.push(wordParagraph("Consignes pour les élèves", "Heading1"));
   studentExport.sessions.forEach((session) => {
@@ -4589,8 +4773,8 @@ function buildStudentWordBody() {
   return body;
 }
 
-function buildFullWordBody() {
-  const designed = splitMinutesToPedagogicalTime(totalDesignedMinutes(), getDayHours());
+function buildFullWordBody(sessionIds = null) {
+  const designed = splitMinutesToPedagogicalTime(totalExportDesignedMinutes(sessionIds), getDayHours());
   const body = [];
   body.push(wordParagraph(state.meta.name || "Design Learning", "Title"));
   body.push(wordParagraph("Paramètres", "Heading1"));
@@ -4637,7 +4821,7 @@ function buildFullWordBody() {
   }
   body.push(wordParagraph("Séances", "Heading1"));
 
-  state.sessions.forEach((session, sessionIndex) => {
+  getExportSessionEntries(sessionIds).forEach(({ session, sessionIndex }) => {
     body.push(wordParagraph(`${sessionIndex + 1}. ${session.title || defaultSessionTitle(sessionIndex + 1)}`, "Heading2"));
     const sessionRows = [];
     if (session.objectives) sessionRows.push(["Objectifs", session.objectives]);
@@ -4679,9 +4863,11 @@ function buildFullWordBody() {
   return body;
 }
 
-function buildWordExportDocument(scope = "full") {
+function buildWordExportDocument(scope = "full", sessionIds = null) {
   resetWordNumbering();
-  const body = normalizeExportScope(scope) === "students" ? buildStudentWordBody() : buildFullWordBody();
+  const body = normalizeExportScope(scope) === "students"
+    ? buildStudentWordBody(sessionIds)
+    : buildFullWordBody(sessionIds);
 
   const documentXml = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">
@@ -4770,9 +4956,9 @@ function buildWordExportDocument(scope = "full") {
   ]);
 }
 
-function buildStudentSpreadsheetRows() {
+function buildStudentSpreadsheetRows(sessionIds = null) {
   const rows = [STUDENT_SPREADSHEET_COLUMNS.map((column) => column.label)];
-  const studentExport = buildStudentInstructionsData();
+  const studentExport = buildStudentInstructionsData(sessionIds);
   studentExport.sessions.forEach((session) => {
     if (!session.activities.length) {
       rows.push([studentExport.title, session.number, session.title, "", ""]);
@@ -4791,9 +4977,9 @@ function buildStudentSpreadsheetRows() {
   return rows;
 }
 
-function buildSpreadsheetRows(scope = "full") {
-  if (normalizeExportScope(scope) === "students") return buildStudentSpreadsheetRows();
-  const designed = splitMinutesToPedagogicalTime(totalDesignedMinutes(), getDayHours());
+function buildSpreadsheetRows(scope = "full", sessionIds = null) {
+  if (normalizeExportScope(scope) === "students") return buildStudentSpreadsheetRows(sessionIds);
+  const designed = splitMinutesToPedagogicalTime(totalExportDesignedMinutes(sessionIds), getDayHours());
   const metaLearningTime = formatPedagogicalTime(
     state.meta.learningDays,
     state.meta.learningHours,
@@ -4803,7 +4989,7 @@ function buildSpreadsheetRows(scope = "full") {
   const rows = [];
   rows.push(SPREADSHEET_COLUMNS.map((column) => column.label));
 
-  state.sessions.forEach((session, sessionIndex) => {
+  getExportSessionEntries(sessionIds).forEach(({ session, sessionIndex }) => {
     if (!session.activities.length) {
       rows.push(
         [
@@ -4926,10 +5112,10 @@ const STUDENT_SPREADSHEET_COLUMNS = [
   { key: "activity_instructions", label: "Consignes pour les élèves", width: 60 }
 ];
 
-function buildExcelExportDocument(scope = "full") {
+function buildExcelExportDocument(scope = "full", sessionIds = null) {
   const normalizedScope = normalizeExportScope(scope);
   const columns = normalizedScope === "students" ? STUDENT_SPREADSHEET_COLUMNS : SPREADSHEET_COLUMNS;
-  const rows = buildSpreadsheetRows(normalizedScope);
+  const rows = buildSpreadsheetRows(normalizedScope, sessionIds);
   const columnsXml = columns
     .map((column, index) => {
       const columnIndex = index + 1;
@@ -5732,7 +5918,7 @@ function isCopyableExportFormat(format = "json") {
 
 function updateExportPreview(format = exportFormatSelect?.value || "json", scope = exportScope) {
   const normalizedScope = normalizeExportScope(scope);
-  const { content, type } = getExportPayload(format, normalizedScope);
+  const { content, type } = getExportPayload(format, normalizedScope, exportSessionIds);
   const filename = getExportFilename(format, normalizedScope);
   const text = typeof content === "string" ? content : "";
   const isCopyable = isCopyableExportFormat(format);
@@ -5744,7 +5930,9 @@ function updateExportPreview(format = exportFormatSelect?.value || "json", scope
   }
   if (exportResultText) {
     exportResultText.value = isCopyable ? text : "";
-    exportResultText.classList.toggle("hidden", !isCopyable);
+  }
+  if (exportPreviewDetails) {
+    exportPreviewDetails.classList.toggle("hidden", !isCopyable);
   }
   if (exportResultCopyBtn) {
     exportResultCopyBtn.classList.toggle("hidden", !isCopyable);
@@ -5783,8 +5971,12 @@ function closeModal(backdrop) {
 function openExportModal() {
   clearExportPreviewUrl();
   exportScope = "full";
+  exportSessionIds = new Set(state.sessions.map(exportSessionKey));
+  if (exportMomentsDetails) exportMomentsDetails.open = false;
+  if (exportPreviewDetails) exportPreviewDetails.open = false;
   if (exportScopeFullInput) exportScopeFullInput.checked = true;
   if (exportScopeStudentsInput) exportScopeStudentsInput.checked = false;
+  renderExportMoments();
   exportModalBackdrop.querySelector("#export-modal-title").textContent = t("exportTitle");
   exportFormatSelect.value = "markdown";
   if (exportFilenameInput) {
@@ -5810,6 +6002,249 @@ function openImportPicker(format = "") {
     : "";
   importFileInput.value = "";
   importFileInput.click();
+}
+
+// ── Modèles de scénarios ─────────────────────────────────────────────────────
+
+const MODEL_CATALOG_URL = "models.php?format=json";
+
+let modelCatalog = null;
+let modelCatalogPromise = null;
+let modelCatalogFailed = false;
+let modelFilterQuery = "";
+let modelFilterFamily = "";
+
+function modelLabel(entry, field) {
+  const suffix = currentLang() === "en" ? "En" : "Fr";
+  return String(entry?.[field + suffix] ?? entry?.[field + "Fr"] ?? "");
+}
+
+function formatModelDuration(minutes) {
+  const total = Math.max(0, Number(minutes) || 0);
+  if (total < 60) return `${total} min`;
+  const hours = Math.floor(total / 60);
+  const rest = total % 60;
+  return rest === 0 ? `${hours} h` : `${hours} h ${String(rest).padStart(2, "0")}`;
+}
+
+function loadModelCatalog() {
+  if (modelCatalog) return Promise.resolve(modelCatalog);
+  if (modelCatalogPromise) return modelCatalogPromise;
+
+  modelCatalogPromise = fetch(MODEL_CATALOG_URL, { headers: { Accept: "application/json" } })
+    .then((response) => {
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+      return response.json();
+    })
+    .then((payload) => {
+      if (!payload || !Array.isArray(payload.models)) throw new Error("Invalid catalog");
+      modelCatalog = {
+        families: Array.isArray(payload.families) ? payload.families : [],
+        models: payload.models
+      };
+      modelCatalogFailed = false;
+      return modelCatalog;
+    })
+    .catch((error) => {
+      modelCatalogPromise = null;
+      modelCatalogFailed = true;
+      throw error;
+    });
+
+  return modelCatalogPromise;
+}
+
+function matchesModelFilter(entry) {
+  if (modelFilterFamily && entry.family !== modelFilterFamily) return false;
+  if (!modelFilterQuery) return true;
+  const haystack = [
+    modelLabel(entry, "title"),
+    modelLabel(entry, "summary"),
+    modelLabel(entry, "familyLabel"),
+    entry.keywords || ""
+  ].join(" ").toLowerCase();
+  return modelFilterQuery
+    .split(/\s+/)
+    .filter(Boolean)
+    .every((token) => haystack.includes(token));
+}
+
+function renderModelFamilyOptions() {
+  if (!importModelsFamily) return;
+  const previous = modelFilterFamily;
+  importModelsFamily.textContent = "";
+
+  const allOption = document.createElement("option");
+  allOption.value = "";
+  allOption.textContent = t("importModelsFamilyAll");
+  importModelsFamily.appendChild(allOption);
+
+  (modelCatalog?.families || []).forEach((family) => {
+    const option = document.createElement("option");
+    option.value = family.id;
+    option.textContent = currentLang() === "en" ? family.labelEn : family.labelFr;
+    importModelsFamily.appendChild(option);
+  });
+
+  importModelsFamily.value = previous;
+  if (importModelsFamily.value !== previous) {
+    modelFilterFamily = "";
+    importModelsFamily.value = "";
+  }
+}
+
+function buildModelCard(entry) {
+  const card = document.createElement("button");
+  card.type = "button";
+  card.className = "import-model-card";
+  card.dataset.modelId = entry.id;
+  card.setAttribute("role", "listitem");
+
+  const head = document.createElement("span");
+  head.className = "import-model-head";
+  const icon = document.createElement("i");
+  icon.className = `${entry.icon || "fa-solid fa-shapes"} import-model-icon`;
+  icon.setAttribute("aria-hidden", "true");
+  const title = document.createElement("span");
+  title.className = "import-model-title";
+  title.textContent = modelLabel(entry, "title");
+  head.append(icon, title);
+
+  const chips = document.createElement("span");
+  chips.className = "import-model-chips";
+  [
+    modelLabel(entry, "familyLabel"),
+    formatModelDuration(entry.minutes),
+    `${entry.momentCount} ${t("importModelsUnitMoments")}`,
+    `${entry.activityCount} ${t("importModelsUnitActivities")}`
+  ].forEach((label) => {
+    const chip = document.createElement("span");
+    chip.className = "import-model-chip";
+    chip.textContent = label;
+    chips.appendChild(chip);
+  });
+
+  const summary = document.createElement("span");
+  summary.className = "import-model-summary";
+  summary.textContent = modelLabel(entry, "summary");
+
+  card.append(head, chips, summary);
+
+  const types = document.createElement("span");
+  types.className = "import-model-types";
+  (entry.outline || []).forEach((moment) => {
+    (moment.activities || []).forEach((activity) => {
+      const dot = document.createElement("span");
+      dot.className = `import-model-dot type-${activity.type}`;
+      dot.title = currentLang() === "en" ? activity.typeLabelEn : activity.typeLabelFr;
+      types.appendChild(dot);
+    });
+  });
+  if (types.childElementCount) card.appendChild(types);
+
+  if (Array.isArray(entry.placeholders) && entry.placeholders.length) {
+    const todo = document.createElement("span");
+    todo.className = "import-model-todo";
+    todo.textContent = `${t("importModelsToComplete")} ${entry.placeholders.join(" · ")}`;
+    card.appendChild(todo);
+  }
+
+  return card;
+}
+
+function renderModelList() {
+  if (!importModelsList || !importModelsStatus) return;
+  importModelsList.textContent = "";
+
+  if (modelCatalogFailed) {
+    importModelsStatus.textContent = t("importModelsError");
+    importModelsStatus.classList.add("import-models-status-error");
+    return;
+  }
+  if (!modelCatalog) {
+    importModelsStatus.textContent = t("importModelsLoading");
+    importModelsStatus.classList.remove("import-models-status-error");
+    return;
+  }
+
+  importModelsStatus.classList.remove("import-models-status-error");
+  const matches = modelCatalog.models.filter(matchesModelFilter);
+  if (!matches.length) {
+    importModelsStatus.textContent = t("importModelsNone");
+    return;
+  }
+  importModelsStatus.textContent = matches.length === 1
+    ? t("importModelsCountOne")
+    : t("importModelsCount").replace("{count}", String(matches.length));
+
+  matches.forEach((entry) => importModelsList.appendChild(buildModelCard(entry)));
+}
+
+async function applyModel(modelId) {
+  const id = String(modelId || "");
+  if (!id) return false;
+  try {
+    const response = await fetch(`${MODEL_CATALOG_URL}&model=${encodeURIComponent(id)}`, {
+      headers: { Accept: "application/json" }
+    });
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    const payload = await response.json();
+    const hydrated = hydrateState(payload?.design, null);
+    if (!hydrated) throw new Error("Invalid model");
+    hydrated.meta.uiLanguage = preferredInterfaceLanguage(currentLang());
+    delete hydrated.meta.remoteDesignId;
+    delete hydrated.meta.remoteUpdatedAt;
+    state = hydrated;
+    saveState();
+    render();
+    window.learningDesignerClearRemoteDesignUrl?.();
+    const name = modelLabel(payload?.model || {}, "title") || hydrated.meta.name;
+    const message = t("importModelApplied").replace("{name}", name);
+    showNotice(message, "success");
+    announce(message);
+    return true;
+  } catch (_) {
+    showNotice(t("importModelFailed"), "error");
+    return false;
+  }
+}
+
+function openImportModal() {
+  modelFilterQuery = "";
+  modelFilterFamily = "";
+  if (importModelsSearch) importModelsSearch.value = "";
+  renderModelFamilyOptions();
+  renderModelList();
+  openModal(importModalBackdrop, "#import-file-btn");
+
+  if (!modelCatalog) {
+    loadModelCatalog()
+      .then(() => {
+        renderModelFamilyOptions();
+        renderModelList();
+      })
+      .catch(() => {
+        renderModelList();
+      });
+  }
+}
+
+function closeImportModal() {
+  closeModal(importModalBackdrop);
+}
+
+async function maybeApplyRequestedModel() {
+  const params = new URLSearchParams(window.location.search);
+  const requested = String(params.get("model") || "").trim();
+  if (!requested) return;
+  if (params.get("remote_design_id")) return;
+  const applied = await applyModel(requested);
+  if (applied) {
+    params.delete("model");
+    const query = params.toString();
+    const url = `${window.location.pathname}${query ? `?${query}` : ""}${window.location.hash}`;
+    window.history.replaceState({}, "", url);
+  }
 }
 
 function openInfoModal() {
@@ -6096,6 +6531,7 @@ document.addEventListener("keydown", (event) => {
   if (event.key === "Escape") {
     event.preventDefault();
     if (activeModalBackdrop === exportModalBackdrop) closeExportModal();
+    if (activeModalBackdrop === importModalBackdrop) closeImportModal();
     if (activeModalBackdrop === infoModalBackdrop) closeInfoModal();
     if (activeModalBackdrop === aiasModalBackdrop) closeAiasModal();
     return;
@@ -7324,40 +7760,49 @@ newDesignModalBackdrop.addEventListener("click", (e) => {
   if (e.target === newDesignModalBackdrop) closeModal(newDesignModalBackdrop);
 });
 
-function getExportPayload(format = "json", scope = exportScope) {
+function getExportPayload(format = "json", scope = exportScope, sessionIds = exportSessionIds) {
   const chosen = String(format).toLowerCase();
   const normalizedScope = normalizeExportScope(scope);
   const filenamePrefix = normalizedScope === "students" ? "consignes-eleves" : "design";
   if (chosen === "excel" || chosen === "xls" || chosen === "xlsx") {
     return {
-      content: buildExcelExportDocument(normalizedScope),
+      content: buildExcelExportDocument(normalizedScope, sessionIds),
       type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
       filename: `${filenamePrefix}-learning-designer-fr.xlsx`
     };
   }
   if (chosen === "md" || chosen === "markdown") {
     return {
-      content: buildMarkdownExport(normalizedScope),
+      content: buildMarkdownExport(normalizedScope, sessionIds),
       type: "text/markdown;charset=utf-8",
       filename: `${filenamePrefix}-learning-designer-fr.md`
     };
   }
   if (chosen === "html") {
     return {
-      content: buildHtmlExportDocument(normalizedScope),
+      content: buildHtmlExportDocument(normalizedScope, sessionIds),
       type: "text/html;charset=utf-8",
       filename: `${filenamePrefix}-learning-designer-fr.html`
     };
   }
   if (chosen === "word" || chosen === "doc" || chosen === "docx") {
     return {
-      content: buildWordExportDocument(normalizedScope),
+      content: buildWordExportDocument(normalizedScope, sessionIds),
       type: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
       filename: `${filenamePrefix}-learning-designer-fr.docx`
     };
   }
   return {
-    content: JSON.stringify(normalizedScope === "students" ? buildStudentInstructionsData() : state, null, 2),
+    content: JSON.stringify(
+      normalizedScope === "students"
+        ? buildStudentInstructionsData(sessionIds)
+        : {
+            ...state,
+            sessions: getExportSessionEntries(sessionIds).map(({ session }) => session)
+          },
+      null,
+      2
+    ),
     type: "application/json;charset=utf-8",
     filename: `${filenamePrefix}-learning-designer-fr.json`
   };
@@ -7432,6 +7877,17 @@ exportDesignBtn.addEventListener("click", () => {
   });
 });
 
+exportMomentsAllInput?.addEventListener("change", () => {
+  exportSessionIds = exportMomentsAllInput.checked
+    ? new Set(state.sessions.map(exportSessionKey))
+    : new Set();
+  exportMomentsList?.querySelectorAll("input[type='checkbox']").forEach((input) => {
+    input.checked = exportSessionIds.has(input.dataset.exportSessionId || "");
+  });
+  syncExportMomentsSelection();
+  updateExportPreview(exportFormatSelect?.value || "markdown", exportScope);
+});
+
 infoBtn.addEventListener("click", () => {
   openInfoModal();
 });
@@ -7483,7 +7939,36 @@ exportResultCopyBtn?.addEventListener("click", async () => {
 });
 
 importDesignBtn.addEventListener("click", () => {
+  openImportModal();
+});
+
+importModalCancelBtn?.addEventListener("click", () => {
+  closeImportModal();
+});
+
+importFileBtn?.addEventListener("click", () => {
   openImportPicker();
+});
+
+importModalBackdrop?.addEventListener("click", (event) => {
+  if (event.target === importModalBackdrop) closeImportModal();
+});
+
+importModelsSearch?.addEventListener("input", () => {
+  modelFilterQuery = importModelsSearch.value.trim().toLowerCase();
+  renderModelList();
+});
+
+importModelsFamily?.addEventListener("change", () => {
+  modelFilterFamily = importModelsFamily.value;
+  renderModelList();
+});
+
+importModelsList?.addEventListener("click", async (event) => {
+  const card = event.target.closest(".import-model-card");
+  if (!card) return;
+  const applied = await applyModel(card.dataset.modelId);
+  if (applied) closeImportModal();
 });
 
 let xlsxLibraryPromise = null;
@@ -7560,6 +8045,7 @@ importFileInput.addEventListener("change", async (e) => {
     state = hydrated;
     saveState();
     render();
+    if (activeModalBackdrop === importModalBackdrop) closeImportModal();
     announce(t("import"));
   } catch {
     alert(t("importInvalid"));
@@ -7899,4 +8385,5 @@ window.learningDesignerApp = {
 })();
 
 render();
+maybeApplyRequestedModel();
 })();

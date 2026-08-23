@@ -897,6 +897,10 @@ function site_breadcrumb_items(string $active = ''): array
         'login' => [
             ['fr' => 'Connexion', 'en' => 'Sign in'],
         ],
+        'models' => [
+            ['fr' => 'Aide', 'en' => 'Help', 'href' => 'help.php'],
+            ['fr' => 'Modèles de scénarios', 'en' => 'Scenario templates'],
+        ],
         'profile' => [
             ['fr' => 'Compte', 'en' => 'Account'],
             ['fr' => 'Profil', 'en' => 'Profile'],

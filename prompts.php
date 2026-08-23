@@ -769,6 +769,367 @@ Be concrete, measured and realistic. Express durations as ranges rather than fal
 
 Here is the lesson, unit or lesson plan to test and schedule: *[LESSON, UNIT OR LESSON PLAN]*
 PROMPT;
+
+$studentWorksheetPrompt = <<<'PROMPT'
+Tu es concepteur pédagogique et designer éditorial. À partir d’un scénario pédagogique, tu crées un véritable document Word destiné aux élèves, accessible et directement utilisable en classe.
+
+CONTRAINTE ABSOLUE DE LIVRAISON
+
+Le résultat final doit impérativement être un véritable fichier Word au format `.docx`, effectivement créé et téléchargeable par l’utilisateur.
+
+Cette exigence est obligatoire et prioritaire :
+
+- utilise les outils de création de documents disponibles pour produire physiquement le fichier ;
+- crée un fichier Office Open XML valide, et non un fichier texte simplement renommé avec l’extension `.docx` ;
+- enregistre réellement le fichier avant de répondre ;
+- vérifie que le fichier existe, qu’il n’est pas vide et qu’il possède bien l’extension `.docx` ;
+- vérifie qu’il peut être ouvert comme un document Word ;
+- joins le fichier à la réponse finale ou fournis un lien de téléchargement réellement fonctionnel vers le fichier créé ;
+- ne fournis jamais un lien fictif, un chemin inaccessible ou le nom d’un fichier qui n’a pas été créé ;
+- ne prétends jamais que le document est disponible si aucun fichier `.docx` n’est effectivement joint ou téléchargeable ;
+- ne remplace jamais le fichier demandé par du texte, du Markdown, du HTML, du RTF, un aperçu ou un bloc de code ;
+- ne génère pas de PDF ;
+- considère la tâche comme inachevée tant que le fichier `.docx` réel n’est pas disponible au téléchargement.
+
+PROCESSUS OBLIGATOIRE
+
+Avant de générer le document, tu dois obligatoirement demander à l’utilisateur, dans cet ordre :
+
+1. s’il souhaite une fiche de travail simple ou une fiche détaillée ;
+2. quel profil d’élève il souhaite utiliser.
+
+Ne demande pas le format du document : le livrable doit toujours être un fichier Word `.docx`.
+
+Ne génère ni fiche, ni ébauche, ni aperçu avant d’avoir obtenu ces deux réponses.
+
+ÉTAPE 1 — DEMANDER LE TYPE DE FICHE
+
+Commence obligatoirement par afficher cette question :
+
+« Quel type de fiche souhaitez-vous générer ? »
+
+Présente ces deux choix numérotés :
+
+1. **Fiche de travail simple**
+   Une fiche concise contenant principalement les consignes originales, les ressources nécessaires et une case à cocher devant chaque activité pour permettre à l’élève de suivre sa progression.
+
+2. **Fiche détaillée**
+   Une fiche complète avec les objectifs, les étapes, les durées, les modes de travail, les ressources, les consignes, les espaces de réponse, le suivi de la progression, le bilan et le feedback de l’élève.
+
+Invite l’utilisateur à répondre par `1` ou `2`, puis attends sa réponse.
+
+Ne présente pas encore les profils d’élèves avant d’avoir reçu le choix du type de fiche.
+
+ÉTAPE 2 — DEMANDER LE PROFIL DE L’ÉLÈVE
+
+Après avoir reçu le choix du type de fiche, affiche cette question :
+
+« Pour quel profil d’élève souhaitez-vous générer la fiche ? Indiquez le numéro du profil choisi. Vous pouvez sélectionner plusieurs numéros ou décrire des besoins précis. »
+
+Présente les profils sous la forme d’une liste numérotée :
+
+1. **Profil général**
+   Fiche destinée à l’ensemble de la classe, sans adaptation particulière.
+
+2. **Élève allophone débutant**
+   Repères visuels renforcés, lexique d’aide et organisation très explicite.
+
+3. **Élève allophone intermédiaire**
+   Soutien ponctuel du vocabulaire et clarification visuelle de la structure.
+
+4. **Élève rencontrant des difficultés de lecture ou d’écriture**
+   Texte aéré, blocs courts, police très lisible et espace d’écriture augmenté.
+
+5. **Élève avec troubles DYS**
+   Mise en page adaptée, alignement à gauche, espacement renforcé et absence de surcharge visuelle.
+
+6. **Élève avec difficultés d’attention ou de fonctions exécutives**
+   Activités fragmentées, progression très visible, une action à la fois et repères temporels.
+
+7. **Élève ayant besoin d’un cadre très prévisible**
+   Structure stable, étapes explicites et présentation constante.
+
+8. **Élève avec difficultés cognitives ou de compréhension**
+   Hiérarchie simplifiée, repères concrets et charge visuelle réduite.
+
+9. **Élève avec besoin visuel particulier**
+   Fort contraste, caractères agrandis, espaces généreux et aucune information transmise uniquement par la couleur.
+
+10. **Élève avec besoin moteur ou graphomoteur**
+    Grandes cases à cocher, zones de réponse agrandies et limitation de l’écriture manuscrite.
+
+11. **Élève à haut potentiel ou avançant rapidement**
+    Présentation compacte et espaces facultatifs d’approfondissement, sans ajout de nouveau contenu disciplinaire.
+
+12. **Profil personnalisé ou combinaison de plusieurs besoins**
+    L’utilisateur décrit les adaptations souhaitées ou sélectionne plusieurs profils.
+
+Invite l’utilisateur à répondre par un ou plusieurs numéros, par exemple : `2`, `5 et 6` ou `12 : caractères agrandis et grandes zones de réponse`.
+
+Attends sa réponse avant de générer le document.
+
+Si l’utilisateur choisit le profil 12 sans préciser ses besoins, demande-lui quelles adaptations il souhaite. S’il sélectionne plusieurs profils, applique les adaptations compatibles de manière équilibrée, sans surcharger la fiche.
+
+ÉTAPE 3 — GÉNÉRER LE DOCUMENT WORD
+
+Après avoir reçu le type de fiche et le profil de l’élève :
+
+1. Crée le contenu de la fiche.
+2. Génère physiquement le fichier Word `.docx`.
+3. Enregistre le fichier avec un nom explicite construit à partir du titre de la séance.
+4. Vérifie que le fichier existe et qu’il n’est pas vide.
+5. Vérifie qu’il s’agit d’un véritable fichier Word valide.
+6. Vérifie visuellement sa mise en page.
+7. Corrige les éventuels problèmes de mise en page.
+8. Joins le fichier réel à la réponse finale ou fournis un lien de téléchargement fonctionnel.
+
+Le fichier doit rester entièrement modifiable dans Word.
+
+Aucun titre, cadre, tableau, hyperlien, consigne ou espace de réponse ne doit être coupé, superposé, tronqué ou mal réparti entre deux pages.
+
+SCÉNARIO À TRANSFORMER
+[COLLER ICI LE SCÉNARIO PÉDAGOGIQUE]
+
+ADAPTATION AU PROFIL
+
+- Adapter la mise en page, la densité visuelle, la taille des caractères, les espacements, les repères et les zones de réponse au profil choisi.
+- Ne pas mentionner le diagnostic, le trouble ou le profil de l’élève dans la fiche.
+- Employer une présentation inclusive, valorisante et non stigmatisante.
+- Ne jamais simplifier, corriger ou reformuler les consignes du scénario.
+- Placer les adaptations autour des consignes : organisation visuelle, repères, pictogrammes fonctionnels, lexique d’aide, séparation des étapes ou espaces de travail.
+- Ne jamais fournir les réponses attendues.
+- Ne pas ajouter de notion, d’activité ou de ressource disciplinaire absente du scénario.
+- En cas de conflit entre une adaptation et la fidélité aux consignes, conserver les consignes originales et adapter uniquement leur présentation.
+
+FIDÉLITÉ AUX CONSIGNES
+
+- Reproduire les consignes pour les élèves mot pour mot.
+- Ne jamais les reformuler, les simplifier, les résumer, les corriger, les compléter ou les fusionner.
+- Conserver leur vocabulaire, leur ponctuation, leur numérotation, leurs listes, leurs sous-titres et leur ordre.
+- Si une consigne semble contenir une erreur ou une ambiguïté, la conserver telle quelle.
+- La transformation d’une URL brute en texte explicite hyperlié constitue la seule modification autorisée à l’intérieur d’une consigne.
+
+GESTION DES LIENS
+
+- Ne jamais afficher d’URL brute dans la fiche.
+- Transformer chaque URL en hyperlien cliquable associé à un texte court et explicite.
+- Utiliser en priorité le titre de la ressource présent dans le scénario.
+- Si aucun titre n’est fourni, créer un libellé fonctionnel, par exemple :
+  - « Consulter le diaporama » ;
+  - « Regarder la vidéo » ;
+  - « Ouvrir le questionnaire » ;
+  - « Télécharger la fiche d’activité ».
+- Conserver l’URL originale comme destination de l’hyperlien.
+- Vérifier que chaque lien est actif dans Word.
+- Ne jamais ajouter l’URL entre parenthèses, en note ou en bas de page.
+- Si une URL brute figure dans une consigne, conserver tous les autres mots de la consigne et remplacer uniquement l’affichage de l’URL par un texte explicite hyperlié.
+
+ÉLÉMENTS COMMUNS AUX DEUX TYPES DE FICHES
+
+Les deux types de fiches doivent contenir :
+
+- le titre de la séance ;
+- les champs « Nom », « Prénom » et « Date » ;
+- les activités utiles, dans l’ordre du scénario ;
+- les consignes originales reproduites mot pour mot ;
+- les ressources sous forme de textes explicites hyperliés ;
+- une case à cocher vide `☐` devant chaque activité ;
+- des cases suffisamment grandes pour être utilisées sur écran ou à la main ;
+- la rubrique finale « Mon avis sur la séance ».
+
+FICHE DE TRAVAIL SIMPLE
+
+Si l’utilisateur choisit la fiche de travail simple, inclure uniquement :
+
+1. **En-tête**
+   - titre de la séance ;
+   - champs « Nom », « Prénom » et « Date ».
+
+2. **Activités**
+   - les activités utiles dans l’ordre du scénario ;
+   - un titre court pour chaque activité ;
+   - une case à cocher vide devant chaque titre ;
+   - les consignes reproduites mot pour mot ;
+   - uniquement les ressources nécessaires, sous forme de textes explicites hyperliés ;
+   - les zones de réponse indispensables à la réalisation des consignes.
+
+Pour préserver la simplicité de cette version, ne pas ajouter :
+
+- d’introduction ;
+- de reformulation des objectifs ;
+- de description pédagogique ;
+- de durée ou de mode de travail, sauf si l’information est indispensable ;
+- de cadre récapitulatif « Ma progression » ;
+- de checklist finale redondante ;
+- de contenu explicatif absent du scénario.
+
+FICHE DÉTAILLÉE
+
+Si l’utilisateur choisit la fiche détaillée, inclure :
+
+1. **En-tête**
+   - titre de la séance ;
+   - discipline ou thème, si identifiable ;
+   - niveau de classe ;
+   - champs « Nom », « Prénom » et « Date ».
+
+2. **Introduction**
+   - une phrase courte présentant la séance ;
+   - 2 à 4 objectifs formulés avec « Je vais apprendre à… ».
+
+3. **Ma progression**
+   - un cadre récapitulant les grandes étapes ;
+   - une case à cocher vide devant chaque étape ;
+   - des libellés courts qui ne modifient pas les consignes ;
+   - aucune case précochée.
+
+4. **Parcours d’apprentissage**
+   - toutes les activités utiles dans leur ordre chronologique ;
+   - des étapes clairement numérotées ;
+   - une case à cocher devant chaque activité ;
+   - la durée et le mode de travail lorsqu’ils sont disponibles ;
+   - les consignes originales reproduites mot pour mot ;
+   - les ressources sous forme de textes explicites hyperliés ;
+   - des espaces de réponse adaptés : lignes, tableaux, cadres ou zones de brouillon ;
+   - les parcours différenciés clairement présentés, sans hiérarchiser ni stigmatiser les élèves.
+
+5. **Bilan**
+   - toute activité de bilan ou d’autoévaluation prévue dans le scénario ;
+   - une checklist finale permettant de vérifier les activités accomplies ;
+   - si aucune autoévaluation n’est prévue : « Je sais faire », « J’ai encore besoin d’aide » et « Je dois m’entraîner » ;
+   - une zone « Ce que je retiens de cette séance ».
+
+FEEDBACK DE L’ÉLÈVE
+
+Placer cette rubrique tout à la fin des deux types de fiches.
+
+Utiliser le titre « Mon avis sur la séance ».
+
+Poser la question « Comment as-tu trouvé cette séance ? » et préciser « Coche une seule réponse ».
+
+Proposer les choix suivants :
+
+- `☐ Très facile`
+- `☐ Plutôt facile`
+- `☐ Plutôt difficile`
+- `☐ Très difficile`
+
+Ajouter un champ de texte intitulé :
+
+« Si tu le souhaites, précise ce qui t’a semblé facile ou difficile. »
+
+Prévoir au moins deux lignes dans la fiche de travail simple et quatre lignes dans la fiche détaillée.
+
+Présenter cette zone comme un retour personnel, sans note ni jugement.
+
+RÈGLES DE TRANSFORMATION
+
+- Conserver fidèlement les objectifs, les activités, les ressources et la progression du scénario.
+- Ne pas afficher les informations réservées à l’enseignant : conseils pédagogiques, points de vigilance, données de conception, commande institutionnelle, AIAS ou remarques internes.
+- Ne pas inclure de corrigé ni suggérer les réponses attendues.
+- Supprimer uniquement les répétitions et métadonnées inutiles situées en dehors des consignes.
+- Employer un français simple et encourageant pour les titres, transitions et éléments ajoutés autour des consignes.
+
+MISE EN PAGE
+
+Produis une fiche sobre, très aérée et lisible sur écran comme après impression au format A4.
+
+Utilise cette palette :
+
+- fond principal : blanc `#FFFFFF` ;
+- texte principal : bleu nuit `#243447` ;
+- texte secondaire : gris ardoise `#5F6B76` ;
+- titres et repères : bleu grisé `#486A7C` ;
+- fonds des cadres : bleu très clair `#EAF1F4` ;
+- accent discret : vert sauge `#6F8575` ;
+- bordures : gris clair `#D5DDE2`.
+
+Utilise une police sans empattement très lisible, comme Arial, Aptos ou Inter, avec un corps d’au moins 11 pt à l’impression.
+
+Prévois des titres clairement hiérarchisés, des marges de page confortables et suffisamment d’espace pour écrire à la main.
+
+AÉRATION ET ESPACEMENT ENTRE LES SECTIONS
+
+- La fiche doit impérativement être aérée et ne jamais donner une impression de contenu tassé.
+- Conserver suffisamment d’espace blanc autour des titres, des consignes, des cases à cocher, des cadres et des zones de réponse.
+- Prévoir un espace vertical d’au moins `12 pt` entre deux sections distinctes.
+- Utiliser de préférence un espace de `18 pt` entre deux grandes sections principales.
+- Prévoir au moins `6 pt` entre le titre d’une section et son premier contenu.
+- Prévoir au moins `8 pt` entre deux activités successives.
+- Utiliser un interligne compris entre `1,15` et `1,3`, en l’adaptant au profil choisi.
+- Ne jamais réduire les espacements dans le seul but de faire tenir davantage de contenu sur une page.
+- Si une nouvelle section ne dispose pas d’un espace suffisant en bas de page, la déplacer sur la page suivante.
+- Ne jamais laisser un titre seul en bas d’une page.
+- Conserver le titre d’une section avec au moins les deux premières lignes de son contenu.
+- Prévoir une marge extérieure suffisante entre deux cadres consécutifs afin qu’ils soient visuellement séparés.
+- Éviter que deux sections, deux activités ou deux cadres se touchent.
+- Adapter le nombre de pages à la quantité de contenu plutôt que de compresser la mise en page.
+- Vérifier visuellement que chaque section est immédiatement identifiable grâce à l’espace qui la sépare de la précédente et de la suivante.
+
+CASES À COCHER
+
+Les cases à cocher doivent :
+
+- mesurer au moins 5 mm à l’impression ;
+- être bien visibles sur écran ;
+- rester identifiables en niveaux de gris ;
+- pouvoir être cochées numériquement lorsque Word le permet ;
+- disposer d’un espace suffisant autour d’elles pour ne pas se confondre avec le texte.
+
+HYPERLIENS
+
+Les hyperliens doivent être identifiables par une couleur contrastée et un soulignement.
+
+CADRES ET BORDS ARRONDIS
+
+- Si la fiche comporte des cadres ou des encadrés, utiliser systématiquement des bords légèrement arrondis.
+- Employer des formes Word de type rectangle à coins arrondis, entièrement modifiables.
+- Utiliser un arrondi discret et cohérent pour tous les cadres.
+- Ne pas mélanger des cadres à angles droits et des cadres à angles arrondis.
+- Appliquer une bordure fine gris clair `#D5DDE2`.
+- Utiliser un fond blanc ou bleu très clair `#EAF1F4`.
+- Conserver un contraste suffisant entre le cadre, son fond et son contenu.
+- Prévoir une marge intérieure confortable afin que le texte ne touche jamais les bords.
+- Prévoir un espace extérieur d’au moins `8 pt` avant et après chaque cadre.
+- Éviter les ombres, les effets 3D, les contours épais et les décorations.
+- Vérifier que les formes restent correctement positionnées et modifiables dans Word.
+- Les cadres ne doivent jamais couper un texte, gêner un hyperlien, toucher un autre cadre ou déborder des marges.
+
+La fiche de travail simple doit rester plus courte et visuellement plus légère que la fiche détaillée, sans sacrifier l’aération.
+
+Limite les aplats de couleur pour économiser l’encre. La couleur ne doit jamais constituer le seul moyen de transmettre une information. N’utilise ni illustration décorative, ni dégradé, ni effet visuel complexe.
+
+VALIDATION OBLIGATOIRE DU FICHIER
+
+Avant d’envoyer la réponse finale, vérifie impérativement les points suivants :
+
+- le fichier existe réellement ;
+- son extension est exactement `.docx` ;
+- son contenu n’est pas vide ;
+- il s’agit d’un fichier Word valide ;
+- il peut être téléchargé par l’utilisateur ;
+- le lien ou la pièce jointe pointe vers le fichier effectivement créé ;
+- les hyperliens contenus dans le document sont actifs ;
+- la fiche est suffisamment aérée ;
+- une marge visuelle suffisante sépare chaque section ;
+- aucun contenu n’est tassé pour réduire artificiellement le nombre de pages ;
+- la mise en page a été contrôlée ;
+- le document reste modifiable dans Word.
+
+Si l’une de ces vérifications échoue, corrige le problème et génère de nouveau le fichier avant de répondre.
+
+LIVRABLE
+
+Après avoir reçu le choix entre une fiche de travail simple ou une fiche détaillée, puis le profil de l’élève, génère uniquement le document Word final.
+
+La réponse finale doit contenir le véritable fichier `.docx` téléchargeable ou un lien fonctionnel pointant directement vers ce fichier.
+
+Une réponse contenant uniquement le nom du fichier, une promesse de création, un faux lien, un chemin local inaccessible, un aperçu textuel ou le contenu de la fiche ne satisfait pas la demande.
+
+Ne termine jamais la tâche sans avoir effectivement rendu le fichier `.docx` téléchargeable.
+
+Ne fournis pas de PDF. N’ajoute ni commentaire sur ta méthode, ni corrigé, ni note adressée à l’enseignant.
+PROMPT;
 ?>
 <!doctype html>
 <html lang="fr">
@@ -852,6 +1213,19 @@ PROMPT;
                     </div>
                 </div>
             </details>
+
+            <details id="prompt-student-worksheet" class="prompt-card prompt-card-details">
+                <summary class="prompt-card-heading">
+                    <strong><span class="help-card-icon"><i class="fa-solid fa-file-word" aria-hidden="true"></i></span><span id="prompt-student-worksheet-title" class="prompt-title-text">5. Générer une fiche élève d'activité</span></strong>
+                    <span id="prompt-student-worksheet-objective" class="prompt-objective">Transformer un scénario pédagogique en fiche de travail simple ou détaillée, adaptée au profil de l’élève.</span>
+                </summary>
+                <div class="prompt-card-body">
+                    <div class="help-prompt-wrap prompt-library-wrap">
+                        <button class="help-copy-btn prompt-copy-button" type="button" aria-label="Copier le prompt" title="Copier"><i class="fa-regular fa-copy" aria-hidden="true"></i></button>
+                        <pre class="help-prompt prompt-library-text"><?= h($studentWorksheetPrompt) ?></pre>
+                    </div>
+                </div>
+            </details>
         </article>
     </div>
 </main>
@@ -872,6 +1246,8 @@ document.addEventListener('DOMContentLoaded', function () {
             samrObjective: 'Évaluer la pertinence des usages numériques et proposer des améliorations alignées sur les objectifs d’apprentissage.',
             planningTitle: '4. Charge de travail et planification dans le calendrier',
             planningObjective: 'Vérifier les durées, estimer la charge réelle et répartir la séquence dans le calendrier scolaire.',
+            studentWorksheetTitle: "5. Générer une fiche élève d'activité",
+            studentWorksheetObjective: 'Transformer un scénario pédagogique en fiche de travail simple ou détaillée, adaptée au profil de l’élève.',
             copy: 'Copier le prompt',
             copied: 'Copié'
         },
@@ -888,6 +1264,8 @@ document.addEventListener('DOMContentLoaded', function () {
             samrObjective: 'Assess the relevance of technology use and propose improvements aligned with the learning objectives.',
             planningTitle: '4. Workload and calendar planning',
             planningObjective: 'Check timings, estimate the actual workload and schedule the sequence across the school calendar.',
+            studentWorksheetTitle: '5. Generate a student activity worksheet',
+            studentWorksheetObjective: 'Turn a learning design into a simple or detailed student worksheet adapted to the learner profile.',
             copy: 'Copy prompt',
             copied: 'Copied'
         }
@@ -917,6 +1295,8 @@ document.addEventListener('DOMContentLoaded', function () {
         setText('prompt-samr-objective', content.samrObjective);
         setText('prompt-planning-title', content.planningTitle);
         setText('prompt-planning-objective', content.planningObjective);
+        setText('prompt-student-worksheet-title', content.studentWorksheetTitle);
+        setText('prompt-student-worksheet-objective', content.studentWorksheetObjective);
 
         document.querySelectorAll('.prompt-copy-button').forEach(function (copyButton) {
             copyButton.setAttribute('aria-label', content.copy);

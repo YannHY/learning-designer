@@ -324,7 +324,7 @@ function share_count_label(int $count, string $singular): string
                   <form method="post" action="import_shared_design.php">
                     <input type="hidden" name="token" value="<?= h($item['token']) ?>" />
                     <button class="btn btn-primary shared-action-btn" type="submit">
-                      <span class="btn-label"><i class="fa-solid fa-file-import btn-icon-inline" aria-hidden="true"></i><span data-site-i18n-en="Import" data-site-i18n-fr="Importer">Importer</span></span>
+                      <span class="btn-label"><i class="fa-solid fa-file-import btn-icon-inline" aria-hidden="true"></i><span data-site-i18n-en="Reuse" data-site-i18n-fr="Réutiliser">Réutiliser</span></span>
                     </button>
                   </form>
                 <?php else: ?>

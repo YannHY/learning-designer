@@ -7,6 +7,7 @@ require_once __DIR__ . '/lib/bootstrap.php';
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="icon" href="assets/favicon.svg?v=20260804" type="image/svg+xml" sizes="any">
     <meta name="description" content="Learning Designer aide les enseignants à concevoir, analyser et partager des scénarios pédagogiques.">
     <title>Learning Designer | Concevoir des expériences d’apprentissage</title>
     <script>

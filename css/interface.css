@@ -1526,6 +1526,83 @@ body.fullscreen-editor-open {
   justify-content: flex-end;
 }
 
+.export-scope-fieldset {
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.export-scope-fieldset legend {
+  margin-bottom: 6px;
+  color: var(--text-body);
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.export-scope-options {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  margin-top: 4px;
+}
+
+.modal .export-scope-option {
+  width: 100%;
+  margin: 0;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--panel);
+  color: var(--text-body);
+  padding: 11px 14px;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: start;
+  gap: 4px;
+  text-align: left;
+  cursor: pointer;
+  transition:
+    border-color var(--transition-base),
+    background var(--transition-base),
+    box-shadow var(--transition-base);
+}
+
+.modal .export-scope-option:hover,
+.modal .export-scope-option:focus-within,
+.modal .export-scope-option:has(input:checked) {
+  border-color: var(--primary);
+  background: var(--active-bg-light);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary) 14%, transparent);
+  outline: none;
+}
+
+.export-scope-option input {
+  margin: 3px 6px 0 0;
+  accent-color: var(--primary);
+}
+
+.export-scope-option-copy {
+  display: grid;
+  gap: 3px;
+}
+
+.export-scope-option-title {
+  font-size: 15px;
+  font-weight: 750;
+}
+
+.export-scope-option-description {
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+@media (max-width: 640px) {
+  .export-scope-options {
+    grid-template-columns: 1fr;
+  }
+}
+
 /* --- Outcomes (Acquis d'apprentissage) --- */
 
 .outcomes-row {

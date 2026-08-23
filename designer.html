@@ -3,6 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" href="assets/favicon.svg?v=20260804" type="image/svg+xml" sizes="any" />
     <title>Interface de conception | Learning Designer</title>
     <script>
       (function() {
@@ -18,7 +19,7 @@
     <link rel="stylesheet" href="css/account-ui.css?v=20260729-2" />
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="stylesheet" href="css/interface.css?v=20260823-panel-toggle-color" />
+    <link rel="stylesheet" href="css/interface.css?v=20260823-export-options" />
   </head>
   <body class="designer-page">
     <a id="skip-link" class="skip-link" href="#board">Aller au contenu principal</a>
@@ -432,6 +433,25 @@
     <div id="export-modal-backdrop" class="modal-backdrop hidden" role="dialog" aria-modal="true" aria-hidden="true" aria-labelledby="export-modal-title">
       <div class="modal export-modal">
         <h2 id="export-modal-title" class="modal-title">Exporter le design</h2>
+        <fieldset class="export-scope-fieldset">
+          <legend id="export-scope-label">Contenu à exporter</legend>
+          <div class="export-scope-options">
+            <label class="export-scope-option">
+              <input id="export-scope-full-input" type="radio" name="export-scope" value="full" checked />
+              <span class="export-scope-option-copy">
+                <span class="export-scope-option-title">Export complet</span>
+                <span id="export-scope-full-description" class="export-scope-option-description">Toutes les informations du scénario pédagogique.</span>
+              </span>
+            </label>
+            <label class="export-scope-option">
+              <input id="export-scope-students-input" type="radio" name="export-scope" value="students" />
+              <span class="export-scope-option-copy">
+                <span class="export-scope-option-title">Consignes élèves uniquement</span>
+                <span id="export-scope-students-description" class="export-scope-option-description">Les séances, les activités et les consignes adressées aux élèves.</span>
+              </span>
+            </label>
+          </div>
+        </fieldset>
         <label for="export-format-select">Format</label>
         <select id="export-format-select" class="panel-select">
           <option value="markdown">Markdown</option>
@@ -547,7 +567,7 @@
         </div>
       </div>
     </div>
-    <script src="js/interface.js?v=20260823-panel-collapsed-default"></script>
+    <script src="js/interface.js?v=20260823-word-rich-text"></script>
     <script src="js/account-ui.js?v=20260802-performance"></script>
     <script>
       (function() {

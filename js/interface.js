@@ -900,6 +900,9 @@ const analysisGroupBar = document.getElementById("analysis-group-bar");
 const analysisGroupLegend = document.getElementById("analysis-group-legend");
 const infoModalBackdrop = document.getElementById("info-modal-backdrop");
 const infoModalCloseBtn = document.getElementById("info-modal-close-btn");
+const exportScopeLabel = document.getElementById("export-scope-label");
+const exportScopeFullInput = document.getElementById("export-scope-full-input");
+const exportScopeStudentsInput = document.getElementById("export-scope-students-input");
 const exportModalBackdrop = document.getElementById("export-modal-backdrop");
 const exportFormatSelect = document.getElementById("export-format-select");
 const exportFilenameInput = document.getElementById("export-filename-input");
@@ -951,6 +954,7 @@ let dragState = null;
 let activeModalBackdrop = null;
 let previousFocusedElement = null;
 let exportPreviewObjectUrl = "";
+let exportScope = "full";
 
 const I18N = {
   fr: {
@@ -1006,6 +1010,11 @@ const I18N = {
     modeHybrid: "Hybride",
     importTitle: "Importer le design",
     exportTitle: "Exporter le design",
+    exportScopeTitle: "Contenu à exporter",
+    exportScopeFull: "Export complet",
+    exportScopeFullDescription: "Toutes les informations du scénario pédagogique.",
+    exportScopeStudents: "Consignes élèves uniquement",
+    exportScopeStudentsDescription: "Les séances, les activités et les consignes adressées aux élèves.",
     format: "Format",
     exportFilename: "Nom du fichier",
     exportPreviewCopy: "Le contenu exporté est lisible ci-dessous. Vous pouvez le copier ou télécharger le fichier.",
@@ -1249,6 +1258,11 @@ const I18N = {
     modeHybrid: "Hybrid",
     importTitle: "Import design",
     exportTitle: "Export design",
+    exportScopeTitle: "Content to export",
+    exportScopeFull: "Full export",
+    exportScopeFullDescription: "All the information in the learning design.",
+    exportScopeStudents: "Student instructions only",
+    exportScopeStudentsDescription: "Sessions, activities, and instructions addressed to students.",
     format: "Format",
     exportFilename: "File name",
     exportPreviewCopy: "The exported content is shown below. You can copy it or download the file.",
@@ -1938,6 +1952,15 @@ function applyLocalizedUI() {
   metaDesignedDaysInput.setAttribute("aria-label", t("designedDaysLabel"));
   metaDesignedHoursInput.setAttribute("aria-label", t("designedHoursLabel"));
   metaDesignedMinutesInput.setAttribute("aria-label", t("designedMinutesLabel"));
+  const exportScopeFullTitle = exportScopeFullInput?.closest(".export-scope-option")?.querySelector(".export-scope-option-title");
+  const exportScopeStudentsTitle = exportScopeStudentsInput?.closest(".export-scope-option")?.querySelector(".export-scope-option-title");
+  const exportScopeFullDescription = document.getElementById("export-scope-full-description");
+  const exportScopeStudentsDescription = document.getElementById("export-scope-students-description");
+  if (exportScopeLabel) exportScopeLabel.textContent = t("exportScopeTitle");
+  if (exportScopeFullTitle) exportScopeFullTitle.textContent = t("exportScopeFull");
+  if (exportScopeStudentsTitle) exportScopeStudentsTitle.textContent = t("exportScopeStudents");
+  if (exportScopeFullDescription) exportScopeFullDescription.textContent = t("exportScopeFullDescription");
+  if (exportScopeStudentsDescription) exportScopeStudentsDescription.textContent = t("exportScopeStudentsDescription");
   exportModalBackdrop.querySelector("#export-modal-title").textContent = t("exportTitle");
   exportModalBackdrop.querySelector("label[for='export-format-select']").textContent = t("format");
   exportModalBackdrop.querySelector("label[for='export-filename-input']").textContent = t("exportFilename");
@@ -3945,7 +3968,42 @@ function markdownQuoteBlock(text) {
     .join("\n");
 }
 
-function buildMarkdownExport() {
+function normalizeExportScope(scope = "full") {
+  return String(scope).toLowerCase() === "students" ? "students" : "full";
+}
+
+function buildStudentInstructionsData() {
+  return {
+    exportType: "student_instructions",
+    title: state.meta.name || "Design Learning",
+    sessions: state.sessions.map((session, sessionIndex) => ({
+      number: sessionIndex + 1,
+      title: session.title || `Séance ${sessionIndex + 1}`,
+      activities: session.activities.map((activity, activityIndex) => ({
+        number: `${sessionIndex + 1}.${activityIndex + 1}`,
+        instructions: activity.instructions || ""
+      }))
+    }))
+  };
+}
+
+function buildStudentMarkdownExport() {
+  const studentExport = buildStudentInstructionsData();
+  const lines = [`# ${studentExport.title}`, "", "## Consignes pour les élèves", ""];
+  studentExport.sessions.forEach((session) => {
+    lines.push(`## ${session.number}. ${session.title}`);
+    lines.push("");
+    session.activities.forEach((activity) => {
+      lines.push(`### Activité ${activity.number}`);
+      lines.push(activity.instructions || "-");
+      lines.push("");
+    });
+  });
+  return lines.join("\n");
+}
+
+function buildMarkdownExport(scope = "full") {
+  if (normalizeExportScope(scope) === "students") return buildStudentMarkdownExport();
   const designed = splitMinutesToPedagogicalTime(totalDesignedMinutes(), getDayHours());
   const lines = [`# ${state.meta.name || "Design Learning"}`, "", "## Paramètres", ""];
   lines.push(`- Mode: ${labelForLocationMode(state.meta.modeDelivery)}`);
@@ -4036,7 +4094,50 @@ function buildMarkdownExport() {
   return lines.join("\n");
 }
 
-function buildHtmlExportDocument() {
+function buildStudentHtmlExportDocument() {
+  const studentExport = buildStudentInstructionsData();
+  const sections = studentExport.sessions
+    .map((session) => {
+      const activities = session.activities
+        .map((activity) => `
+          <li>
+            <h3>Activité ${escapeHtml(activity.number)}</h3>
+            <div class="instructions">${escapeHtmlWithBreaks(activity.instructions || "-")}</div>
+          </li>`)
+        .join("");
+      return `
+      <section>
+        <h2>${session.number}. ${escapeHtml(session.title)}</h2>
+        <ol>${activities}</ol>
+      </section>`;
+    })
+    .join("");
+
+  return `<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Consignes élèves — ${escapeHtml(studentExport.title)}</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 24px; line-height: 1.5; color: #1f2937; }
+    h1, h2, h3 { margin-bottom: 8px; }
+    section { margin-bottom: 24px; }
+    ol { padding-left: 24px; }
+    li { margin-bottom: 18px; }
+    .instructions { white-space: normal; }
+  </style>
+</head>
+<body>
+  <h1>${escapeHtml(studentExport.title)}</h1>
+  <h2>Consignes pour les élèves</h2>
+  ${sections}
+</body>
+</html>`;
+}
+
+function buildHtmlExportDocument(scope = "full") {
+  if (normalizeExportScope(scope) === "students") return buildStudentHtmlExportDocument();
   const designed = splitMinutesToPedagogicalTime(totalDesignedMinutes(), getDayHours());
   const sections = state.sessions
     .map((session, sessionIndex) => {
@@ -4249,11 +4350,70 @@ function createZipArchive(files) {
   return concatUint8Arrays([...localParts, centralDirectory, endRecord]);
 }
 
-function wordTextRuns(value) {
-  const lines = String(value ?? "").split("\n");
-  return lines
-    .map((line, index) => `${index ? "<w:br/>" : ""}<w:t xml:space="preserve">${escapeXml(line)}</w:t>`)
+let wordListNumberingInstances = [];
+let wordNextListNumberId = 1;
+
+function resetWordNumbering() {
+  wordListNumberingInstances = [];
+  wordNextListNumberId = 1;
+}
+
+function registerWordList(ordered = false) {
+  const numId = wordNextListNumberId;
+  wordNextListNumberId += 1;
+  wordListNumberingInstances.push({ numId, abstractNumId: ordered ? 1 : 0 });
+  return numId;
+}
+
+function wordRun(value, options = {}) {
+  const properties = [];
+  if (options.bold) properties.push("<w:b/>");
+  if (options.italic) properties.push("<w:i/>");
+  if (options.hyperlink) {
+    properties.push('<w:color w:val="0563C1"/>');
+    properties.push('<w:u w:val="single"/>');
+  }
+  const runProperties = properties.length ? `<w:rPr>${properties.join("")}</w:rPr>` : "";
+  return `<w:r>${runProperties}<w:t xml:space="preserve">${escapeXml(value)}</w:t></w:r>`;
+}
+
+function wordPlainTextRuns(value, options = {}) {
+  return String(value ?? "")
+    .split("\n")
+    .map((line, index) => `${index ? "<w:r><w:br/></w:r>" : ""}${line ? wordRun(line, options) : ""}`)
     .join("");
+}
+
+function wordHyperlink(label, url, options = {}) {
+  const safeUrl = String(url || "").replaceAll('"', "%22");
+  const instruction = escapeXml(`HYPERLINK "${safeUrl}"`);
+  return `<w:fldSimple w:instr="${instruction}">${wordPlainTextRuns(label, { ...options, hyperlink: true })}</w:fldSimple>`;
+}
+
+function wordInlineRuns(value, options = {}, depth = 0) {
+  const source = String(value ?? "");
+  if (!source || depth > 4) return wordPlainTextRuns(source, options);
+
+  const tokenPattern = /\[([^\]\n]+)\]\(((?:https?:\/\/|mailto:)[^\s)<]+)\)|\*\*([^*\n]+)\*\*|\*([^*\n]+)\*/gi;
+  const runs = [];
+  let cursor = 0;
+  let match;
+
+  while ((match = tokenPattern.exec(source))) {
+    if (match.index > cursor) runs.push(wordPlainTextRuns(source.slice(cursor, match.index), options));
+    if (match[1] !== undefined) {
+      runs.push(wordHyperlink(match[1], match[2], options));
+    } else if (match[3] !== undefined) {
+      runs.push(wordInlineRuns(match[3], { ...options, bold: true }, depth + 1));
+    } else {
+      runs.push(wordInlineRuns(match[4], { ...options, italic: true }, depth + 1));
+    }
+    cursor = tokenPattern.lastIndex;
+  }
+
+  if (!runs.length) return wordPlainTextRuns(source, options);
+  if (cursor < source.length) runs.push(wordPlainTextRuns(source.slice(cursor), options));
+  return runs.join("");
 }
 
 function wordParagraph(text, style = "", options = {}) {
@@ -4264,11 +4424,90 @@ function wordParagraph(text, style = "", options = {}) {
       `<w:spacing${options.spacingBefore ? ` w:before="${options.spacingBefore}"` : ""}${options.spacingAfter ? ` w:after="${options.spacingAfter}"` : ""}/>`
     );
   }
-  if (options.indentLeft) properties.push(`<w:ind w:left="${options.indentLeft}"/>`);
+  if (options.numId) {
+    properties.push(`<w:numPr><w:ilvl w:val="${Math.max(0, Math.min(8, Number(options.numLevel) || 0))}"/><w:numId w:val="${options.numId}"/></w:numPr>`);
+  }
+  if (options.indentLeft || options.indentRight) {
+    properties.push(`<w:ind${options.indentLeft ? ` w:left="${options.indentLeft}"` : ""}${options.indentRight ? ` w:right="${options.indentRight}"` : ""}/>`);
+  }
   if (options.align) properties.push(`<w:jc w:val="${options.align}"/>`);
+  if (options.keepNext) properties.push("<w:keepNext/>");
+  if (options.shading) properties.push(`<w:shd w:fill="${options.shading}"/>`);
   const paragraphProperties = properties.length ? `<w:pPr>${properties.join("")}</w:pPr>` : "";
-  const runProperties = options.bold ? "<w:rPr><w:b/></w:rPr>" : "";
-  return `<w:p>${paragraphProperties}<w:r>${runProperties}${wordTextRuns(text)}</w:r></w:p>`;
+  return `<w:p>${paragraphProperties}${wordInlineRuns(text, { bold: Boolean(options.bold), italic: Boolean(options.italic) })}</w:p>`;
+}
+
+function wordMarkdownBlocks(value, options = {}) {
+  const defaultStyle = options.style || "BodyText";
+  const tableMode = Boolean(options.tableMode);
+  const lines = String(value ?? "").replace(/\r\n?/g, "\n").split("\n");
+  const paragraphs = [];
+  let paragraphLines = [];
+  let activeList = null;
+
+  const closeList = () => {
+    activeList = null;
+  };
+  const flushParagraph = () => {
+    if (!paragraphLines.length) return;
+    paragraphs.push(wordParagraph(paragraphLines.join("\n"), defaultStyle));
+    paragraphLines = [];
+  };
+
+  lines.forEach((line) => {
+    const trimmed = line.trim();
+    if (!trimmed) {
+      flushParagraph();
+      closeList();
+      return;
+    }
+
+    const heading = trimmed.match(/^(#{1,6})\s+(.+)$/);
+    if (heading) {
+      flushParagraph();
+      closeList();
+      const headingStyle = tableMode
+        ? "TableHeading"
+        : heading[1].length === 1
+          ? "Heading1"
+          : heading[1].length === 2
+            ? "Heading2"
+            : "Heading3";
+      paragraphs.push(wordParagraph(heading[2], headingStyle));
+      return;
+    }
+
+    const unordered = line.match(/^(\s*)[-*+]\s+(.+)$/);
+    const ordered = line.match(/^(\s*)\d+[.)]\s+(.+)$/);
+    if (unordered || ordered) {
+      flushParagraph();
+      const isOrdered = Boolean(ordered);
+      if (!activeList || activeList.ordered !== isOrdered) {
+        activeList = { ordered: isOrdered, numId: registerWordList(isOrdered) };
+      }
+      const match = ordered || unordered;
+      const indentation = match[1].replaceAll("\t", "  ").length;
+      paragraphs.push(wordParagraph(match[2], tableMode ? "TableText" : "ListParagraph", {
+        numId: activeList.numId,
+        numLevel: Math.floor(indentation / 2)
+      }));
+      return;
+    }
+
+    const quote = trimmed.match(/^>\s?(.*)$/);
+    if (quote) {
+      flushParagraph();
+      closeList();
+      paragraphs.push(wordParagraph(quote[1], tableMode ? "TableQuote" : "Quote"));
+      return;
+    }
+
+    closeList();
+    paragraphLines.push(line);
+  });
+
+  flushParagraph();
+  return paragraphs.length ? paragraphs.join("") : wordParagraph("", defaultStyle);
 }
 
 function wordSpacer(size = 160) {
@@ -4279,7 +4518,10 @@ function wordTableCell(content, options = {}) {
   const width = options.width || 4500;
   const shading = options.shading ? `<w:shd w:fill="${options.shading}"/>` : "";
   const text = Array.isArray(content) ? content.join("\n") : content;
-  return `<w:tc><w:tcPr><w:tcW w:w="${width}" w:type="dxa"/>${shading}</w:tcPr>${wordParagraph(text, options.style || "TableText", { bold: Boolean(options.bold) })}</w:tc>`;
+  const cellContent = options.markdown
+    ? wordMarkdownBlocks(text, { style: options.style || "TableText", tableMode: true })
+    : wordParagraph(text, options.style || "TableText", { bold: Boolean(options.bold) });
+  return `<w:tc><w:tcPr><w:tcW w:w="${width}" w:type="dxa"/>${shading}</w:tcPr>${cellContent}</w:tc>`;
 }
 
 function wordTable(rows, widths = []) {
@@ -4291,7 +4533,8 @@ function wordTable(rows, widths = []) {
             width: widths[cellIndex] || 4500,
             shading: cell.shading,
             bold: cell.bold,
-            style: cell.style
+            style: cell.style,
+            markdown: cell.markdown
           })
         )
         .join("");
@@ -4324,13 +4567,29 @@ function wordFieldTable(rows) {
   return wordTable(
     rows.map(([label, value]) => [
       { text: label, bold: true, shading: "EEF2F7" },
-      { text: value || "-" }
+      { text: value || "-", markdown: true }
     ]),
     [3000, 6300]
   );
 }
 
-function buildWordExportDocument() {
+function buildStudentWordBody() {
+  const body = [];
+  const studentExport = buildStudentInstructionsData();
+  body.push(wordParagraph(studentExport.title, "Title"));
+  body.push(wordParagraph("Consignes pour les élèves", "Heading1"));
+  studentExport.sessions.forEach((session) => {
+    body.push(wordParagraph(`${session.number}. ${session.title}`, "Heading2"));
+    session.activities.forEach((activity) => {
+      body.push(wordParagraph(`Activité ${activity.number}`, "Heading3"));
+      body.push(wordMarkdownBlocks(activity.instructions || "-", { style: "BodyText" }));
+      body.push(wordSpacer(90));
+    });
+  });
+  return body;
+}
+
+function buildFullWordBody() {
   const designed = splitMinutesToPedagogicalTime(totalDesignedMinutes(), getDayHours());
   const body = [];
   body.push(wordParagraph(state.meta.name || "Design Learning", "Title"));
@@ -4354,24 +4613,25 @@ function buildWordExportDocument() {
   body.push(wordSpacer(120));
   if (state.meta.description) {
     body.push(wordParagraph("Description", "Heading2"));
-    body.push(wordParagraph(state.meta.description, "BodyText"));
+    body.push(wordMarkdownBlocks(state.meta.description, { style: "BodyText" }));
     body.push(wordSpacer(80));
   }
   if (state.meta.command) {
     body.push(wordParagraph("Commande institutionnelle", "Heading2"));
-    body.push(wordParagraph(state.meta.command, "BodyText"));
+    body.push(wordMarkdownBlocks(state.meta.command, { style: "BodyText" }));
     body.push(wordSpacer(80));
   }
   if (state.meta.personas) {
     body.push(wordParagraph("Objectifs", "Heading2"));
-    body.push(wordParagraph(state.meta.personas, "BodyText"));
+    body.push(wordMarkdownBlocks(state.meta.personas, { style: "BodyText" }));
     body.push(wordSpacer(80));
   }
   if (Array.isArray(state.meta.sliders) && state.meta.sliders.length) {
     body.push(wordParagraph("Acquis d'apprentissage", "Heading2"));
+    const outcomeListId = registerWordList(false);
     state.meta.sliders.forEach((outcome) => {
       const label = outcome.verb || outcome.categoryLabel || "";
-      body.push(wordParagraph(`${label}${label && outcome.text ? " : " : ""}${outcome.text || ""}`, "ListParagraph", { indentLeft: 360 }));
+      body.push(wordParagraph(`${label}${label && outcome.text ? " : " : ""}${outcome.text || ""}`, "ListParagraph", { numId: outcomeListId }));
     });
     body.push(wordSpacer(100));
   }
@@ -4389,7 +4649,7 @@ function buildWordExportDocument() {
     }
     session.activities.forEach((activity, activityIndex) => {
       const links = activity.links && activity.links.length
-        ? activity.links.map((link) => `${link.title} (${link.url})`).join("\n")
+        ? activity.links.map((link) => `[${link.title}](${link.url})`).join("\n")
         : "";
       let toolLabels = "";
       if (activity.tools && activity.tools.length) {
@@ -4416,6 +4676,12 @@ function buildWordExportDocument() {
       body.push(wordSpacer(activityIndex === session.activities.length - 1 ? 150 : 70));
     });
   });
+  return body;
+}
+
+function buildWordExportDocument(scope = "full") {
+  resetWordNumbering();
+  const body = normalizeExportScope(scope) === "students" ? buildStudentWordBody() : buildFullWordBody();
 
   const documentXml = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">
@@ -4438,8 +4704,38 @@ function buildWordExportDocument() {
   <w:style w:type="paragraph" w:styleId="Heading3"><w:name w:val="heading 3"/><w:basedOn w:val="Normal"/><w:next w:val="BodyText"/><w:uiPriority w:val="9"/><w:qFormat/><w:pPr><w:keepNext/><w:spacing w:before="220" w:after="100"/><w:outlineLvl w:val="2"/></w:pPr><w:rPr><w:b/><w:color w:val="243B53"/><w:sz w:val="22"/></w:rPr></w:style>
   <w:style w:type="paragraph" w:styleId="BodyText"><w:name w:val="Body Text"/><w:basedOn w:val="Normal"/><w:pPr><w:spacing w:after="140"/></w:pPr><w:rPr><w:sz w:val="21"/></w:rPr></w:style>
   <w:style w:type="paragraph" w:styleId="TableText"><w:name w:val="Table Text"/><w:basedOn w:val="Normal"/><w:pPr><w:spacing w:after="0"/></w:pPr><w:rPr><w:sz w:val="19"/></w:rPr></w:style>
+  <w:style w:type="paragraph" w:styleId="TableHeading"><w:name w:val="Table Heading"/><w:basedOn w:val="TableText"/><w:next w:val="TableText"/><w:pPr><w:keepNext/><w:spacing w:before="100" w:after="50"/></w:pPr><w:rPr><w:b/><w:color w:val="1F4D7A"/><w:sz w:val="20"/></w:rPr></w:style>
+  <w:style w:type="paragraph" w:styleId="Quote"><w:name w:val="Quote"/><w:basedOn w:val="BodyText"/><w:pPr><w:spacing w:after="120"/><w:ind w:left="540" w:right="240"/><w:shd w:fill="F3F6FA"/></w:pPr><w:rPr><w:i/><w:color w:val="475569"/></w:rPr></w:style>
+  <w:style w:type="paragraph" w:styleId="TableQuote"><w:name w:val="Table Quote"/><w:basedOn w:val="TableText"/><w:pPr><w:spacing w:after="40"/><w:ind w:left="300" w:right="120"/><w:shd w:fill="F3F6FA"/></w:pPr><w:rPr><w:i/><w:color w:val="475569"/></w:rPr></w:style>
   <w:style w:type="paragraph" w:styleId="ListParagraph"><w:name w:val="List Paragraph"/><w:basedOn w:val="Normal"/><w:pPr><w:spacing w:after="90"/><w:ind w:left="720"/></w:pPr><w:rPr><w:sz w:val="21"/></w:rPr></w:style>
 </w:styles>`;
+
+  const numberingLevelXml = (level, ordered) => {
+    const left = 720 + (level * 360);
+    const bullets = ["•", "◦", "▪"];
+    const levelText = ordered
+      ? `${Array.from({ length: level + 1 }, (_, index) => `%${index + 1}`).join(".")}.`
+      : bullets[level % bullets.length];
+    return `<w:lvl w:ilvl="${level}">
+      <w:start w:val="1"/>
+      <w:numFmt w:val="${ordered ? "decimal" : "bullet"}"/>
+      <w:lvlText w:val="${levelText}"/>
+      <w:lvlJc w:val="left"/>
+      <w:pPr><w:tabs><w:tab w:val="num" w:pos="${left}"/></w:tabs><w:ind w:left="${left}" w:hanging="360"/></w:pPr>
+      ${ordered ? "" : '<w:rPr><w:rFonts w:ascii="Arial" w:hAnsi="Arial"/></w:rPr>'}
+    </w:lvl>`;
+  };
+  const numberingXml = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<w:numbering xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">
+  <w:abstractNum w:abstractNumId="0"><w:multiLevelType w:val="hybridMultilevel"/>${Array.from({ length: 9 }, (_, level) => numberingLevelXml(level, false)).join("")}</w:abstractNum>
+  <w:abstractNum w:abstractNumId="1"><w:multiLevelType w:val="multilevel"/>${Array.from({ length: 9 }, (_, level) => numberingLevelXml(level, true)).join("")}</w:abstractNum>
+  ${wordListNumberingInstances.map(({ numId, abstractNumId }) => {
+    const restartOverrides = abstractNumId === 1
+      ? Array.from({ length: 9 }, (_, level) => `<w:lvlOverride w:ilvl="${level}"><w:startOverride w:val="1"/></w:lvlOverride>`).join("")
+      : "";
+    return `<w:num w:numId="${numId}"><w:abstractNumId w:val="${abstractNumId}"/>${restartOverrides}</w:num>`;
+  }).join("")}
+</w:numbering>`;
 
   return createZipArchive([
     {
@@ -4450,6 +4746,7 @@ function buildWordExportDocument() {
   <Default Extension="xml" ContentType="application/xml"/>
   <Override PartName="/word/document.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml"/>
   <Override PartName="/word/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.styles+xml"/>
+  <Override PartName="/word/numbering.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.numbering+xml"/>
 </Types>`
     },
     {
@@ -4462,14 +4759,40 @@ function buildWordExportDocument() {
     {
       name: "word/_rels/document.xml.rels",
       content: `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"/>`
+<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">
+  <Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles" Target="styles.xml"/>
+  <Relationship Id="rId2" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/numbering" Target="numbering.xml"/>
+</Relationships>`
     },
     { name: "word/document.xml", content: documentXml },
-    { name: "word/styles.xml", content: stylesXml }
+    { name: "word/styles.xml", content: stylesXml },
+    { name: "word/numbering.xml", content: numberingXml }
   ]);
 }
 
-function buildSpreadsheetRows() {
+function buildStudentSpreadsheetRows() {
+  const rows = [STUDENT_SPREADSHEET_COLUMNS.map((column) => column.label)];
+  const studentExport = buildStudentInstructionsData();
+  studentExport.sessions.forEach((session) => {
+    if (!session.activities.length) {
+      rows.push([studentExport.title, session.number, session.title, "", ""]);
+      return;
+    }
+    session.activities.forEach((activity) => {
+      rows.push([
+        studentExport.title,
+        session.number,
+        session.title,
+        activity.number,
+        activity.instructions
+      ]);
+    });
+  });
+  return rows;
+}
+
+function buildSpreadsheetRows(scope = "full") {
+  if (normalizeExportScope(scope) === "students") return buildStudentSpreadsheetRows();
   const designed = splitMinutesToPedagogicalTime(totalDesignedMinutes(), getDayHours());
   const metaLearningTime = formatPedagogicalTime(
     state.meta.learningDays,
@@ -4595,9 +4918,19 @@ const SPREADSHEET_COLUMNS = [
   { key: "design_sliders", label: "Objectifs / curseurs", width: 26 }
 ];
 
-function buildExcelExportDocument() {
-  const rows = buildSpreadsheetRows();
-  const columnsXml = SPREADSHEET_COLUMNS
+const STUDENT_SPREADSHEET_COLUMNS = [
+  { key: "design_title", label: "Titre du scénario", width: 28 },
+  { key: "session_index", label: "N° de séance", width: 12 },
+  { key: "session_title", label: "Titre de la séance", width: 24 },
+  { key: "activity_index", label: "N° d’activité", width: 12 },
+  { key: "activity_instructions", label: "Consignes pour les élèves", width: 60 }
+];
+
+function buildExcelExportDocument(scope = "full") {
+  const normalizedScope = normalizeExportScope(scope);
+  const columns = normalizedScope === "students" ? STUDENT_SPREADSHEET_COLUMNS : SPREADSHEET_COLUMNS;
+  const rows = buildSpreadsheetRows(normalizedScope);
+  const columnsXml = columns
     .map((column, index) => {
       const columnIndex = index + 1;
       return `<col min="${columnIndex}" max="${columnIndex}" width="${column.width}" customWidth="1"/>`;
@@ -4626,7 +4959,7 @@ function buildExcelExportDocument() {
   const workbookXml = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <workbook xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships">
   <sheets>
-    <sheet name="Design" sheetId="1" r:id="rId1"/>
+    <sheet name="${normalizedScope === "students" ? "Consignes élèves" : "Design"}" sheetId="1" r:id="rId1"/>
   </sheets>
 </workbook>`;
 
@@ -5397,9 +5730,10 @@ function isCopyableExportFormat(format = "json") {
   return chosen === "json" || chosen === "md" || chosen === "markdown" || chosen === "html";
 }
 
-function updateExportPreview(format = exportFormatSelect?.value || "json") {
-  const { content, type } = getExportPayload(format);
-  const filename = getExportFilename(format);
+function updateExportPreview(format = exportFormatSelect?.value || "json", scope = exportScope) {
+  const normalizedScope = normalizeExportScope(scope);
+  const { content, type } = getExportPayload(format, normalizedScope);
+  const filename = getExportFilename(format, normalizedScope);
   const text = typeof content === "string" ? content : "";
   const isCopyable = isCopyableExportFormat(format);
   const exportPreviewCopy = document.getElementById("export-result-modal-copy");
@@ -5447,12 +5781,17 @@ function closeModal(backdrop) {
 }
 
 function openExportModal() {
+  clearExportPreviewUrl();
+  exportScope = "full";
+  if (exportScopeFullInput) exportScopeFullInput.checked = true;
+  if (exportScopeStudentsInput) exportScopeStudentsInput.checked = false;
+  exportModalBackdrop.querySelector("#export-modal-title").textContent = t("exportTitle");
   exportFormatSelect.value = "markdown";
   if (exportFilenameInput) {
-    exportFilenameInput.value = getDefaultExportName(exportFormatSelect.value);
+    exportFilenameInput.value = getDefaultExportName(exportFormatSelect.value, exportScope);
   }
-  updateExportPreview(exportFormatSelect.value);
-  openModal(exportModalBackdrop, "#export-format-select");
+  updateExportPreview(exportFormatSelect.value, exportScope);
+  openModal(exportModalBackdrop, "#export-scope-full-input");
 }
 
 function closeExportModal() {
@@ -6985,40 +7324,42 @@ newDesignModalBackdrop.addEventListener("click", (e) => {
   if (e.target === newDesignModalBackdrop) closeModal(newDesignModalBackdrop);
 });
 
-function getExportPayload(format = "json") {
+function getExportPayload(format = "json", scope = exportScope) {
   const chosen = String(format).toLowerCase();
+  const normalizedScope = normalizeExportScope(scope);
+  const filenamePrefix = normalizedScope === "students" ? "consignes-eleves" : "design";
   if (chosen === "excel" || chosen === "xls" || chosen === "xlsx") {
     return {
-      content: buildExcelExportDocument(),
+      content: buildExcelExportDocument(normalizedScope),
       type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-      filename: "design-learning-designer-fr.xlsx"
+      filename: `${filenamePrefix}-learning-designer-fr.xlsx`
     };
   }
   if (chosen === "md" || chosen === "markdown") {
     return {
-      content: buildMarkdownExport(),
+      content: buildMarkdownExport(normalizedScope),
       type: "text/markdown;charset=utf-8",
-      filename: "design-learning-designer-fr.md"
+      filename: `${filenamePrefix}-learning-designer-fr.md`
     };
   }
   if (chosen === "html") {
     return {
-      content: buildHtmlExportDocument(),
+      content: buildHtmlExportDocument(normalizedScope),
       type: "text/html;charset=utf-8",
-      filename: "design-learning-designer-fr.html"
+      filename: `${filenamePrefix}-learning-designer-fr.html`
     };
   }
   if (chosen === "word" || chosen === "doc" || chosen === "docx") {
     return {
-      content: buildWordExportDocument(),
+      content: buildWordExportDocument(normalizedScope),
       type: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-      filename: "design-learning-designer-fr.docx"
+      filename: `${filenamePrefix}-learning-designer-fr.docx`
     };
   }
   return {
-    content: JSON.stringify(state, null, 2),
+    content: JSON.stringify(normalizedScope === "students" ? buildStudentInstructionsData() : state, null, 2),
     type: "application/json;charset=utf-8",
-    filename: "design-learning-designer-fr.json"
+    filename: `${filenamePrefix}-learning-designer-fr.json`
   };
 }
 
@@ -7027,11 +7368,13 @@ function getFilenameExtension(filename = "") {
   return match ? match[1] : "";
 }
 
-function getDefaultExportName(format = "json") {
-  const payload = getExportPayload(format);
+function getDefaultExportName(format = "json", scope = exportScope) {
+  const normalizedScope = normalizeExportScope(scope);
+  const payload = getExportPayload(format, normalizedScope);
   const extension = getFilenameExtension(payload.filename);
   const title = String(state?.meta?.name || "").trim();
-  return title || String(payload.filename || "").slice(0, -extension.length) || "export";
+  if (title) return normalizedScope === "students" ? `${title} - consignes élèves` : title;
+  return String(payload.filename || "").slice(0, -extension.length) || "export";
 }
 
 function sanitizeExportFilename(rawName, defaultFilename) {
@@ -7049,15 +7392,15 @@ function sanitizeExportFilename(rawName, defaultFilename) {
   return `${baseName}${extension}`;
 }
 
-function getExportFilename(format = "json") {
-  const defaultFilename = getExportPayload(format).filename;
+function getExportFilename(format = "json", scope = exportScope) {
+  const defaultFilename = getExportPayload(format, scope).filename;
   return sanitizeExportFilename(exportFilenameInput?.value, defaultFilename);
 }
 
 window.learningDesignerGetExportPayload = getExportPayload;
 
-async function exportDesign(format = "json") {
-  const { content, type, filename } = updateExportPreview(format);
+async function exportDesign(format = "json", scope = exportScope) {
+  const { content, type, filename } = updateExportPreview(format, scope);
   try {
     await downloadBlob(content, type, filename);
   } catch (error) {
@@ -7071,11 +7414,22 @@ window.learningDesignerOpenExport = () => {
 };
 
 window.learningDesignerRunExport = async () => {
-  await exportDesign(exportFormatSelect?.value || "json");
+  await exportDesign(exportFormatSelect?.value || "json", exportScope);
 };
 
 exportDesignBtn.addEventListener("click", () => {
   openExportModal();
+});
+
+[exportScopeFullInput, exportScopeStudentsInput].forEach((input) => {
+  input?.addEventListener("change", () => {
+    if (!input.checked) return;
+    exportScope = normalizeExportScope(input.value);
+    if (exportFilenameInput) {
+      exportFilenameInput.value = getDefaultExportName(exportFormatSelect?.value || "markdown", exportScope);
+    }
+    updateExportPreview(exportFormatSelect?.value || "markdown", exportScope);
+  });
 });
 
 infoBtn.addEventListener("click", () => {
@@ -7102,13 +7456,13 @@ exportModalConfirmBtn.addEventListener("click", async () => {
 
 exportFormatSelect?.addEventListener("change", () => {
   if (exportFilenameInput) {
-    exportFilenameInput.value = getDefaultExportName(exportFormatSelect.value);
+    exportFilenameInput.value = getDefaultExportName(exportFormatSelect.value, exportScope);
   }
-  updateExportPreview(exportFormatSelect.value);
+  updateExportPreview(exportFormatSelect.value, exportScope);
 });
 
 exportFilenameInput?.addEventListener("input", () => {
-  updateExportPreview(exportFormatSelect?.value || "json");
+  updateExportPreview(exportFormatSelect?.value || "json", exportScope);
 });
 
 exportModalBackdrop.addEventListener("click", (event) => {

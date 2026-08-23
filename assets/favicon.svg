@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Learning Designer">
+  <g transform="rotate(-90 32 32)" stroke-width="32" fill="none">
+    <circle cx="32" cy="32" r="16" pathLength="360" stroke="#5bddd3" stroke-dasharray="100 260" />
+    <circle cx="32" cy="32" r="16" pathLength="360" stroke="#f19492" stroke-dasharray="30 330" stroke-dashoffset="-100" />
+    <circle cx="32" cy="32" r="16" pathLength="360" stroke="#c498ec" stroke-dasharray="70 290" stroke-dashoffset="-130" />
+    <circle cx="32" cy="32" r="16" pathLength="360" stroke="#a2d681" stroke-dasharray="35 325" stroke-dashoffset="-200" />
+    <circle cx="32" cy="32" r="16" pathLength="360" stroke="#85b6f0" stroke-dasharray="75 285" stroke-dashoffset="-235" />
+    <circle cx="32" cy="32" r="16" pathLength="360" stroke="#e7b959" stroke-dasharray="50 310" stroke-dashoffset="-310" />
+  </g>
+</svg>

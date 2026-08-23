@@ -116,6 +116,7 @@ function share_count_label(int $count, string $singular): string
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" href="assets/favicon.svg?v=20260804" type="image/svg+xml" sizes="any" />
     <title>Designs partagés | Learning Designer</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" referrerpolicy="no-referrer" />
     <link rel="preconnect" href="https://fonts.googleapis.com">

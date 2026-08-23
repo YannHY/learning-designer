@@ -7,6 +7,7 @@ require_once __DIR__ . '/lib/bootstrap.php';
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="icon" href="assets/favicon.svg?v=20260804" type="image/svg+xml" sizes="any">
     <meta name="description" content="Le Cadre conversationnel de Diana Laurillard : concepts, pratiques, cycles et six types d'apprentissage.">
     <title>Le Cadre conversationnel de Diana Laurillard | Learning Designer</title>
     <script>

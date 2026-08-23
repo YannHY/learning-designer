@@ -181,6 +181,11 @@ function inlineMarkdown(string $text): string {
     $html = esc($text);
     $html = preg_replace('/\*\*([^*\n]+)\*\*/u', '<strong>$1</strong>', $html) ?? $html;
     $html = preg_replace('/(^|[^*])\*([^*\n]+)\*/u', '$1<em>$2</em>', $html) ?? $html;
+    $html = preg_replace(
+        '/\[([^\]\n]+)\]\(((?:https?:\/\/|mailto:)[^\s)<]+)\)/ui',
+        '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>',
+        $html
+    ) ?? $html;
     return $html;
 }
 
@@ -680,6 +685,30 @@ $displayDesignedMinutes = $designedMinutes > 0 ? $designedMinutes : $totalMinute
       margin-bottom: 8px;
       line-height: 1.6;
     }
+    .activity-instructions {
+      margin-bottom: 8px;
+      padding: 9px 11px;
+      border-radius: 8px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      font-size: 14px;
+      color: var(--text-1);
+      line-height: 1.6;
+    }
+    .activity-text-label {
+      display: block;
+      margin-bottom: 3px;
+      color: var(--text-2);
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .04em;
+    }
+    .markdown-content a {
+      color: var(--accent);
+      text-decoration: underline;
+      text-underline-offset: 2px;
+    }
     .activity-chips { display: flex; flex-wrap: wrap; gap: 5px; }
     .chip {
       font-size: 11px;
@@ -898,6 +927,7 @@ $displayDesignedMinutes = $designedMinutes > 0 ? $designedMinutes : $totalMinute
         $aColor = $LEARNING_TYPES[$aType]['color'] ?? '#d1d5db';
         $aLabel = $LEARNING_TYPES[$aType]['label'] ?? $aType;
         $aDesc  = safeText($act['description'] ?? '');
+        $aInstructions = safeText($act['instructions'] ?? '');
         $aNotes = safeText($act['notes'] ?? '');
         $aTools = is_array($act['tools'] ?? null) ? array_filter($act['tools'], 'is_string') : [];
         $aLinks = is_array($act['links'] ?? null) ? $act['links'] : [];
@@ -929,7 +959,10 @@ $displayDesignedMinutes = $designedMinutes > 0 ? $designedMinutes : $totalMinute
           <span class="activity-duration-badge"><?= esc(formatDuration($aDur)) ?></span>
         </div>
         <?php if ($aDesc !== ''): ?>
-        <div class="activity-description markdown-content"><?= markdownHtml($aDesc) ?></div>
+        <div class="activity-description"><span class="activity-text-label">Description de l'activité</span><div class="markdown-content"><?= markdownHtml($aDesc) ?></div></div>
+        <?php endif; ?>
+        <?php if ($aInstructions !== ''): ?>
+        <div class="activity-instructions"><span class="activity-text-label">Consignes pour les élèves</span><div class="markdown-content"><?= markdownHtml($aInstructions) ?></div></div>
         <?php endif; ?>
         <?php if ($chips || $aiasChip !== null || $aTools): ?>
         <div class="activity-chips">

@@ -86,15 +86,7 @@ const AIAS_LEVELS = [
   { level: 4, labelKey: "aiasLevel4Label", descriptionKey: "aiasLevel4Description" },
   { level: 5, labelKey: "aiasLevel5Label", descriptionKey: "aiasLevel5Description" }
 ];
-const AIAS_TRIGGER_ICONS = {
-  undecided: "fa-robot",
-  not_applicable: "fa-ban",
-  level_1: "fa-lock",
-  level_2: "fa-lightbulb",
-  level_3: "fa-handshake",
-  level_4: "fa-gears",
-  level_5: "fa-compass"
-};
+const AIAS_TRIGGER_ICON = "fa-wand-magic-sparkles";
 
 const TOOLS_DATA = [
   // ── Moodle – liste alphabétique (27 items : 17 standard + 10 Magistère) ──────────────────────────────
@@ -820,7 +812,7 @@ const defaultPartitionLineConfig = () => [
 const defaultState = () => ({
   allNotesExpanded: false,
   intentionsCollapsed: false,
-  topPanelCollapsed: false,
+  topPanelCollapsed: true,
   meta: { ...DEFAULT_META, sliders: [] },
   sessions: [],
   partitionLineConfig: defaultPartitionLineConfig()
@@ -849,6 +841,7 @@ const languageButton = document.querySelector(".nav-language-toggle");
 const srStatus = document.getElementById("sr-status");
 const appTitle = document.getElementById("app-title");
 const topPanel = document.getElementById("top-panel");
+const topPanelBody = document.getElementById("top-panel-body");
 const topPanelToggleBtn = document.getElementById("top-panel-toggle-btn");
 const topTabSettings = document.getElementById("top-tab-settings");
 const topTabAnalysis = document.getElementById("top-tab-analysis");
@@ -926,6 +919,7 @@ const aiasModalTitle = document.getElementById("aias-modal-title");
 const aiasModalIntro = document.getElementById("aias-modal-intro");
 const aiasModalStatusOptions = document.getElementById("aias-modal-status-options");
 const aiasModalLevels = document.getElementById("aias-modal-levels");
+const aiasModalAttributionPrefix = document.getElementById("aias-modal-attribution-prefix");
 const aiasModalCloseBtn = document.getElementById("aias-modal-close-btn");
 
 const LD_STORAGE_KEY = "ld_state_v1";
@@ -1037,6 +1031,7 @@ const I18N = {
     activityLabel: "Activité",
     activityDurationLabel: "Durée en minutes de l'activité",
     activityDescriptionLabel: "Description de l'activité",
+    activityInstructionsLabel: "Consignes pour les élèves",
     activityNotesLabel: "Notes de l'activité",
     sessionNotesLabel: "Notes de la séance",
     deleteSession: "Supprimer la séance",
@@ -1071,21 +1066,23 @@ const I18N = {
     aiasNotApplicable: "Non pertinent",
     aiasPanelIntro: "Choisissez le rôle de l’IA dans cette tâche. Les niveaux décrivent des conceptions différentes, sans hiérarchie entre elles.",
     aiasLevelsAriaLabel: "Niveau AIAS de l’activité",
+    aiasAttributionPrefix: "Basé sur",
     aiasLevelPrefix: "Niveau",
     aiasUpdated: "Place de l’IA mise à jour.",
     aiasLevel1Label: "Sans IA",
-    aiasLevel1Description: "Cette tâche est réalisée dans un environnement contrôlé conçu pour exclure l’IA. Les connaissances, la compréhension et les compétences sont démontrées et évaluées de manière indépendante.",
+    aiasLevel1Description: "Tâche réalisée sans IA, dans un environnement contrôlé, pour évaluer les acquis propres de l’élève.",
     aiasLevel2Label: "Planification avec l’IA",
-    aiasLevel2Description: "Cette tâche porte sur des activités de planification telles que l’exploration du sujet, l’élaboration d’un plan et la recherche initiale. L’IA peut être utilisée pour soutenir ce processus, et la qualité de la planification et du développement des idées est évaluée, que l’IA ait été utilisée ou non.",
+    aiasLevel2Description: "L’IA peut soutenir l’exploration, la recherche et la planification ; la réalisation reste autonome.",
     aiasLevel3Label: "Collaboration avec l’IA",
-    aiasLevel3Description: "L’IA peut être utilisée pour aider à réaliser cette tâche, notamment pour générer des idées, rédiger, fournir des retours et affiner le travail. La tâche est conçue de sorte que l’IA seule ne puisse pas atteindre le niveau requis. L’évaluation porte à la fois sur le travail lui-même et sur la manière dont les productions de l’IA sont évaluées, modifiées et intégrées.",
+    aiasLevel3Description: "L’IA contribue au travail ; l’élève évalue, modifie et intègre ses productions.",
     aiasLevel4Label: "IA pleinement intégrée",
-    aiasLevel4Description: "L’utilisation de l’IA est attendue dans cette tâche. L’objectif ne peut être atteint ni par l’IA ni par une personne travaillant seule dans le temps imparti. L’évaluation porte sur l’esprit critique et les connaissances disciplinaires démontrés dans la manière de diriger l’IA.",
+    aiasLevel4Description: "L’IA est pleinement intégrée ; l’élève la dirige avec esprit critique et expertise disciplinaire.",
     aiasLevel5Label: "Exploration de l’IA",
-    aiasLevel5Description: "Cette tâche est conçue pour une utilisation créative de l’IA afin de résoudre des problèmes, de produire de nouvelles perspectives ou de développer des solutions innovantes dans la discipline. Les approches peuvent être co-conçues par les étudiants et les enseignants.",
+    aiasLevel5Description: "L’élève explore et co-conçoit des usages créatifs de l’IA pour produire des idées ou des solutions nouvelles.",
     newActivityDescription: "Nouvelle activité",
     sessionTitlePlaceholder: "Titre du moment",
-    activityDescriptionPlaceholder: "Activité",
+    activityDescriptionPlaceholder: "Décrivez l'activité...",
+    activityInstructionsPlaceholder: "Indiquez les consignes données aux élèves...",
     newDesignConfirm: "Créer un nouveau design et écraser le contenu actuel ?",
     newDesignModalTitle: "Nouveau design",
     newDesignModalMsg: "Vous allez créer un nouveau design vierge. Si vous n'avez pas enregistré le design actuel, il sera perdu.",
@@ -1109,12 +1106,15 @@ const I18N = {
     mdList: "Liste à puces",
     mdOrderedList: "Liste numérotée",
     mdQuote: "Citation",
+    mdLink: "Lien",
     mdPlaceholderBold: "texte en gras",
     mdPlaceholderItalic: "texte en italique",
     mdPlaceholderHeading: "Titre",
     mdPlaceholderList: "élément de liste",
     mdPlaceholderOrderedList: "élément de liste",
     mdPlaceholderQuote: "citation",
+    mdPlaceholderLinkText: "texte du lien",
+    mdPlaceholderLinkUrl: "https://",
     uiLanguage: "Langue de l’interface",
     moved: "Élément déplacé.",
     an01: "Un ou plusieurs graphiques peuvent être incorrects, car une ou plusieurs activités n’ont pas de durée valide.",
@@ -1190,6 +1190,7 @@ const I18N = {
     gridColEval: "Évaluation",
     gridColAias: "AIAS",
     gridColDesc: "Description",
+    gridColInstructions: "Consignes pour les élèves",
     gridColNotes: "Notes",
     gridAddActivity: "+ Activité",
     gridAddSession: "+ Ajouter une séance",
@@ -1273,6 +1274,7 @@ const I18N = {
     activityLabel: "Activity",
     activityDurationLabel: "Activity duration in minutes",
     activityDescriptionLabel: "Activity description",
+    activityInstructionsLabel: "Instructions for students",
     activityNotesLabel: "Activity notes",
     sessionNotesLabel: "Session notes",
     deleteSession: "Delete session",
@@ -1307,21 +1309,23 @@ const I18N = {
     aiasNotApplicable: "Not applicable",
     aiasPanelIntro: "Choose the role of AI in this task. The levels describe different task designs and are not a hierarchy.",
     aiasLevelsAriaLabel: "AIAS level for the activity",
+    aiasAttributionPrefix: "Based on",
     aiasLevelPrefix: "Level",
     aiasUpdated: "Role of AI updated.",
     aiasLevel1Label: "No AI",
-    aiasLevel1Description: "This task is completed in a controlled environment designed to exclude AI. Knowledge, understanding, and skills are demonstrated and assessed independently.",
+    aiasLevel1Description: "The task is completed without AI, in a controlled environment, to assess the student’s own learning.",
     aiasLevel2Label: "AI Planning",
-    aiasLevel2Description: "This task focuses on planning activities such as topic exploration, outlining, and initial research. AI may be used to support this process, and the quality of planning and idea development is assessed whether or not AI was used.",
+    aiasLevel2Description: "AI may support exploration, research, and planning; the student completes the task independently.",
     aiasLevel3Label: "AI Collaboration",
-    aiasLevel3Description: "AI may be used to help complete this task, including idea generation, drafting, feedback, and refinement. It is designed so that AI alone will not reach the required standard. Assessment covers both the work itself and how AI outputs are evaluated, modified, and integrated.",
+    aiasLevel3Description: "AI contributes to the work; the student evaluates, modifies, and integrates its outputs.",
     aiasLevel4Label: "Full AI",
-    aiasLevel4Description: "There is an expectation of AI involvement in this task. The goal cannot be reached by AI or by a person working alone in the time available. Assessment focuses on the critical thinking and subject knowledge shown in directing AI.",
+    aiasLevel4Description: "AI is fully integrated; the student directs it using critical thinking and subject expertise.",
     aiasLevel5Label: "AI Exploration",
-    aiasLevel5Description: "This task is designed for creative AI use to solve problems, generate novel insights, or develop innovative solutions in the discipline. Approaches may be co-designed by students and instructors.",
+    aiasLevel5Description: "The student explores and co-designs creative uses of AI to produce new ideas or solutions.",
     newActivityDescription: "New activity",
     sessionTitlePlaceholder: "Moment title",
-    activityDescriptionPlaceholder: "Activity",
+    activityDescriptionPlaceholder: "Describe the activity...",
+    activityInstructionsPlaceholder: "Enter the instructions given to students...",
     newDesignConfirm: "Create a new design and replace current content?",
     newDesignModalTitle: "New design",
     newDesignModalMsg: "You are about to create a blank new design. If you have not saved the current design, it will be lost.",
@@ -1345,12 +1349,15 @@ const I18N = {
     mdList: "Bullet list",
     mdOrderedList: "Numbered list",
     mdQuote: "Quote",
+    mdLink: "Link",
     mdPlaceholderBold: "bold text",
     mdPlaceholderItalic: "italic text",
     mdPlaceholderHeading: "Heading",
     mdPlaceholderList: "list item",
     mdPlaceholderOrderedList: "list item",
     mdPlaceholderQuote: "quote",
+    mdPlaceholderLinkText: "link text",
+    mdPlaceholderLinkUrl: "https://",
     uiLanguage: "Interface language",
     moved: "Item moved.",
     an01: "One or more graphs might not display correctly, because one or more activities do not have a valid duration.",
@@ -1426,6 +1433,7 @@ const I18N = {
     gridColEval: "Assessment",
     gridColAias: "AIAS",
     gridColDesc: "Description",
+    gridColInstructions: "Instructions for students",
     gridColNotes: "Notes",
     gridAddActivity: "+ Activity",
     gridAddSession: "+ Add a session",
@@ -1453,13 +1461,79 @@ function setSessionNotesButtonLabel(button, expanded) {
 }
 
 const MARKDOWN_ACTIONS = [
-  { id: "bold", text: "B", titleKey: "mdBold" },
-  { id: "italic", text: "I", titleKey: "mdItalic" },
-  { id: "heading", text: "H", titleKey: "mdHeading" },
-  { id: "list", text: "-", titleKey: "mdList" },
-  { id: "ordered-list", text: "1.", titleKey: "mdOrderedList" },
-  { id: "quote", text: ">", titleKey: "mdQuote" }
+  { id: "bold", text: "B", titleKey: "mdBold", code: "KeyB", shift: false, key: "B" },
+  { id: "italic", text: "I", titleKey: "mdItalic", code: "KeyI", shift: false, key: "I" },
+  { id: "heading", text: "H", titleKey: "mdHeading", code: "KeyH", shift: true, key: "H" },
+  { id: "list", text: "-", titleKey: "mdList", code: "KeyL", shift: true, key: "L" },
+  { id: "ordered-list", text: "1.", titleKey: "mdOrderedList", code: "Digit7", shift: true, key: "7" },
+  { id: "quote", text: ">", titleKey: "mdQuote", code: "KeyQ", shift: true, key: "Q" },
+  { id: "link", text: "↗", titleKey: "mdLink", code: "KeyK", shift: false, key: "K" }
 ];
+
+function usesMacKeyboardShortcuts() {
+  const platform = navigator.userAgentData?.platform || navigator.platform || "";
+  return /Mac|iPhone|iPad|iPod/i.test(platform);
+}
+
+function markdownShortcutLabel(action) {
+  const modifier = usesMacKeyboardShortcuts() ? "⌘" : "Ctrl+";
+  const shift = action.shift ? (usesMacKeyboardShortcuts() ? "⇧" : "Shift+") : "";
+  return `${modifier}${shift}${action.key}`;
+}
+
+function markdownAriaKeyShortcuts(action) {
+  const suffix = `${action.shift ? "Shift+" : ""}${action.key}`;
+  return `Meta+${suffix} Control+${suffix}`;
+}
+
+function markdownActionForKeyboardEvent(event) {
+  if (event.isComposing || event.altKey || !(event.metaKey || event.ctrlKey)) return null;
+  return MARKDOWN_ACTIONS.find((action) =>
+    event.code === action.code && event.shiftKey === action.shift
+  ) || null;
+}
+
+function handleMarkdownListEnter(textarea, event) {
+  if (
+    event.key !== "Enter" ||
+    event.isComposing ||
+    event.shiftKey ||
+    event.altKey ||
+    event.metaKey ||
+    event.ctrlKey ||
+    textarea.selectionStart !== textarea.selectionEnd
+  ) return false;
+
+  const value = textarea.value;
+  const caret = textarea.selectionStart ?? value.length;
+  const lineStart = value.lastIndexOf("\n", Math.max(0, caret - 1)) + 1;
+  const nextLineBreak = value.indexOf("\n", caret);
+  const lineEnd = nextLineBreak === -1 ? value.length : nextLineBreak;
+  const currentLine = value.slice(lineStart, lineEnd);
+  const beforeCaret = value.slice(lineStart, caret);
+  const unordered = beforeCaret.match(/^(\s*)([-*])\s+(.*)$/);
+  const ordered = beforeCaret.match(/^(\s*)(\d+)\.\s+(.*)$/);
+  if (!unordered && !ordered) return false;
+
+  event.preventDefault();
+  const indent = (unordered || ordered)[1];
+  const fullUnordered = currentLine.match(/^(\s*)([-*])\s*(.*)$/);
+  const fullOrdered = currentLine.match(/^(\s*)(\d+)\.\s*(.*)$/);
+  const fullMatch = unordered ? fullUnordered : fullOrdered;
+
+  if (fullMatch && fullMatch[3].trim() === "") {
+    const nextValue = `${value.slice(0, lineStart)}${indent}${value.slice(lineEnd)}`;
+    const nextCaret = lineStart + indent.length;
+    updateTextareaValue(textarea, nextValue, nextCaret);
+    return true;
+  }
+
+  const marker = unordered ? unordered[2] : `${Number(ordered[2]) + 1}.`;
+  const insertion = `\n${indent}${marker} `;
+  const nextValue = `${value.slice(0, caret)}${insertion}${value.slice(caret)}`;
+  updateTextareaValue(textarea, nextValue, caret + insertion.length);
+  return true;
+}
 
 function getBoardLayout() {
   const v = state?.meta?.boardLayout;
@@ -1553,7 +1627,11 @@ function renderInlineMarkdown(value) {
 
   const inline = (text) => escapeHtml(text)
     .replace(/\*\*([^*\n]+)\*\*/g, "<strong>$1</strong>")
-    .replace(/(^|[^*])\*([^*\n]+)\*/g, "$1<em>$2</em>");
+    .replace(/(^|[^*])\*([^*\n]+)\*/g, "$1<em>$2</em>")
+    .replace(
+      /\[([^\]\n]+)\]\(((?:https?:\/\/|mailto:)[^\s)<]+)\)/gi,
+      '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>'
+    );
   const closeParagraph = () => {
     if (!paragraph.length) return;
     html.push(`<p>${paragraph.map(inline).join("<br />")}</p>`);
@@ -1643,7 +1721,7 @@ function ensureMarkdownPreviews(root = document) {
   });
 }
 
-const AUTO_RESIZE_SELECTOR = ".session-title, .session-objectives, .session-intentions, .activity-description, .session-notes-input, .panel-textarea, .outcome-text";
+const AUTO_RESIZE_SELECTOR = ".session-title, .session-objectives, .session-intentions, .activity-description, .activity-instructions, .session-notes-input, .panel-textarea, .outcome-text";
 
 /* scrollHeight excludes the border, but these textareas are border-box, so
    assigning it directly left the last line clipped by the border width. */
@@ -1684,7 +1762,8 @@ function localizeExpandableFieldControls(root = document) {
     if (!action) return;
     const label = t(action.titleKey);
     button.setAttribute("aria-label", label);
-    button.setAttribute("title", label);
+    button.setAttribute("title", `${label} (${markdownShortcutLabel(action)})`);
+    button.setAttribute("aria-keyshortcuts", markdownAriaKeyShortcuts(action));
   });
   root.querySelectorAll(".expand-btn").forEach((button) => {
     const wrapper = button.closest(".expandable-field");
@@ -1881,6 +1960,7 @@ function applyLocalizedUI() {
   if (aiasModalTitle) aiasModalTitle.textContent = t("aiasFieldLabel");
   if (aiasModalIntro) aiasModalIntro.textContent = t("aiasPanelIntro");
   if (aiasModalLevels) aiasModalLevels.setAttribute("aria-label", t("aiasLevelsAriaLabel"));
+  if (aiasModalAttributionPrefix) aiasModalAttributionPrefix.textContent = t("aiasAttributionPrefix");
   if (aiasModalCloseBtn) aiasModalCloseBtn.textContent = t("close");
   document.getElementById("info-modal-title").textContent = t("infoTitle");
   document.getElementById("info-modal-p1").textContent = t("infoP1");
@@ -1937,7 +2017,9 @@ function hydrateState(parsed, fallback = defaultState()) {
   const hydrated = {
     allNotesExpanded: Boolean(parsed.allNotesExpanded),
     intentionsCollapsed: Boolean(parsed.intentionsCollapsed),
-    topPanelCollapsed: Boolean(parsed.topPanelCollapsed),
+    topPanelCollapsed: Object.prototype.hasOwnProperty.call(parsed, "topPanelCollapsed")
+      ? Boolean(parsed.topPanelCollapsed)
+      : true,
     meta: {
       ...DEFAULT_META,
       ...parsedMeta,
@@ -1977,6 +2059,7 @@ function hydrateState(parsed, fallback = defaultState()) {
               evaluationMode: activity?.evaluationMode,
               aias: normalizeAiasState(activity?.aias ?? activity?.aiasLevel),
               description: toPlainTextareaValue(activity?.description),
+              instructions: toPlainTextareaValue(activity?.instructions),
               notes: toPlainTextareaValue(activity?.notes),
               tools: Array.isArray(activity?.tools) ? activity.tools : [],
               links: Array.isArray(activity?.links) ? activity.links : []
@@ -2025,7 +2108,7 @@ function createNewDesignState() {
   return {
     allNotesExpanded: false,
     intentionsCollapsed: false,
-    topPanelCollapsed: false,
+    topPanelCollapsed: true,
     meta: {
       ...DEFAULT_META,
       sliders: [],
@@ -2803,6 +2886,8 @@ function openChoiceMenu(trigger, options, currentValue, onSelect) {
 }
 
 function normalizeActivity(activity) {
+  activity.description = toPlainTextareaValue(activity.description);
+  activity.instructions = toPlainTextareaValue(activity.instructions);
   activity.aias = normalizeAiasState(activity.aias ?? activity.aiasLevel);
   delete activity.aiasLevel;
   if (!Array.isArray(activity.links)) activity.links = [];
@@ -2932,11 +3017,19 @@ function updateAiasTrigger(trigger, activity) {
   if (!trigger) return;
   activity.aias = normalizeAiasState(activity.aias);
   const summary = aiasSummary(activity.aias);
-  const iconKey = activity.aias.status === "specified"
-    ? `level_${activity.aias.level}`
-    : activity.aias.status;
-  const icon = trigger.querySelector("i");
-  if (icon) icon.className = `fa-solid ${AIAS_TRIGGER_ICONS[iconKey] || AIAS_TRIGGER_ICONS.undecided}`;
+  applyAiasLevelClass(trigger, activity.aias);
+  if (activity.aias.status === "specified") {
+    const number = document.createElement("span");
+    number.className = "aias-trigger-number";
+    number.textContent = String(activity.aias.level);
+    number.setAttribute("aria-hidden", "true");
+    trigger.replaceChildren(number);
+  } else {
+    const icon = document.createElement("i");
+    icon.className = `fa-solid ${AIAS_TRIGGER_ICON}`;
+    icon.setAttribute("aria-hidden", "true");
+    trigger.replaceChildren(icon);
+  }
   trigger.title = summary;
   trigger.setAttribute("aria-label", `${t("aiasFieldLabel")}: ${summary}`);
 }
@@ -3678,6 +3771,9 @@ function renderTopPanel() {
   const analysisActive = state.meta.activeTab === "analysis";
   const chronologyActive = state.meta.activeTab === "chronology";
 
+  topPanelBody.toggleAttribute("inert", !panelExpanded);
+  topPanelBody.setAttribute("aria-hidden", panelExpanded ? "false" : "true");
+
   if (panelExpanded && settingsActive) {
     metaNameInput.value = state.meta.name;
     metaLearningDaysInput.value = state.meta.learningDays;
@@ -3706,9 +3802,9 @@ function renderTopPanel() {
   timelineView.classList.toggle("hidden", !settingsActive);
   analysisView.classList.toggle("hidden", !analysisActive);
   chronologyView.classList.toggle("hidden", !chronologyActive);
-  timelineView.setAttribute("aria-hidden", settingsActive ? "false" : "true");
-  analysisView.setAttribute("aria-hidden", analysisActive ? "false" : "true");
-  chronologyView.setAttribute("aria-hidden", chronologyActive ? "false" : "true");
+  timelineView.setAttribute("aria-hidden", panelExpanded && settingsActive ? "false" : "true");
+  analysisView.setAttribute("aria-hidden", panelExpanded && analysisActive ? "false" : "true");
+  chronologyView.setAttribute("aria-hidden", panelExpanded && chronologyActive ? "false" : "true");
 
   if (panelExpanded && settingsActive) {
     const designed = splitMinutesToPedagogicalTime(totalDesignedMinutes(), getDayHours());
@@ -3919,6 +4015,7 @@ function buildMarkdownExport() {
       lines.push(`- Évaluation: ${labelForEvaluationMode(activity.evaluationMode)}`);
       lines.push(`- AIAS: ${aiasSummary(activity.aias)}`);
       lines.push(`- Description: ${activity.description || "-"}`);
+      lines.push(`- Consignes pour les élèves: ${activity.instructions || "-"}`);
       if (activity.links && activity.links.length) {
         const linkLabels = activity.links
           .map((link) => `${link.title} (${link.url})`)
@@ -3956,6 +4053,7 @@ function buildHtmlExportDocument() {
             <p><strong>Évaluation:</strong> ${escapeHtml(labelForEvaluationMode(activity.evaluationMode))}</p>
             <p><strong>AIAS:</strong> ${escapeHtml(aiasSummary(activity.aias))}</p>
             <p><strong>Description:</strong> ${escapeHtmlWithBreaks(activity.description || "")}</p>
+            <p><strong>Consignes pour les élèves:</strong> ${escapeHtmlWithBreaks(activity.instructions || "")}</p>
             ${activity.links && activity.links.length ? `<p><strong>Liens:</strong> ${activity.links.map((link) => `<a href="${escapeHtml(link.url)}" target="_blank" rel="noopener noreferrer">${escapeHtml(link.title)}</a>`).join(", ")}</p>` : ""}
             ${activity.tools && activity.tools.length ? `<p><strong>Compétences:</strong> ${escapeHtml(activity.tools.map(id => { const t = SELECTABLE_TOOLS_DATA.find(x => x.id === id); return t ? formatCompetencyLabel(t, "fr") : id; }).join(", "))}</p>` : ""}
           </li>
@@ -4311,6 +4409,7 @@ function buildWordExportDocument() {
         ["Évaluation", labelForEvaluationMode(activity.evaluationMode)],
         ["AIAS", aiasSummary(activity.aias)],
         ["Description", activity.description || "-"],
+        ["Consignes pour les élèves", activity.instructions || "-"],
         ["Liens", links || "-"],
         ["Compétences", toolLabels || "-"]
       ]));
@@ -4402,6 +4501,7 @@ function buildSpreadsheetRows() {
           "",
           "",
           "",
+          "",
           state.meta.name || "",
           labelForLocationMode(state.meta.modeDelivery),
           state.meta.sizeClass || "",
@@ -4437,6 +4537,7 @@ function buildSpreadsheetRows() {
           labelForEvaluationMode(activity.evaluationMode),
           aiasSummary(activity.aias),
           activity.description || "",
+          activity.instructions || "",
           activity.notes || "",
           (activity.tools || [])
             .map((id) => SELECTABLE_TOOLS_DATA.find((tool) => tool.id === id)?.shortCode || id)
@@ -4477,6 +4578,7 @@ const SPREADSHEET_COLUMNS = [
   { key: "assessment", label: "Évaluation", width: 18 },
   { key: "aias", label: "AIAS", width: 28 },
   { key: "activity_description", label: "Description de l'activité", width: 34 },
+  { key: "activity_instructions", label: "Consignes pour les élèves", width: 34 },
   { key: "activity_notes", label: "Notes de l'activité", width: 24 },
   { key: "activity_competencies", label: "Compétences", width: 22 },
   { key: "design_title", label: "Titre du design", width: 22 },
@@ -4815,6 +4917,9 @@ function buildStateFromLegacyLdj(parsed) {
             locationMode: String(legacyActivity?.onlineActivity) === "true" ? "online" : "onsite",
             evaluationMode: parseLegacyEvaluationType(legacyActivity?.assessmentType),
             description: toPlainTextareaValue(legacyActivity?.description).trim(),
+            instructions: toPlainTextareaValue(
+              legacyActivity?.instructions ?? legacyActivity?.studentInstructions
+            ).trim(),
             notes: "",
             tools: [],
             links: []
@@ -4917,6 +5022,7 @@ function buildStateFromCsv(csvText) {
       read("assessment"),
       read("aias"),
       read("activity_description"),
+      read("activity_instructions"),
       read("activity_notes")
     ].some((value) => value.trim() !== "");
     if (!hasActivityData) return;
@@ -4933,6 +5039,7 @@ function buildStateFromCsv(csvText) {
       evaluationMode: lookupValue(read("assessment"), CSV_EVAL_LOOKUP, "none"),
       aias: parseAiasValue(read("aias")),
       description: read("activity_description"),
+      instructions: read("activity_instructions"),
       notes: read("activity_notes"),
       tools: (read("activity_competencies") || read("activity_tools")).split(";").map(s => s.trim()).filter(Boolean),
       _csvOrder: parseCsvInteger(read("activity_index"), session.activities.length + 1)
@@ -5134,6 +5241,7 @@ function buildStateFromMarkdown(markdownText) {
           evaluationMode: "none",
           aias: defaultAiasState(),
           description: "",
+          instructions: "",
           notes: "",
           tools: [],
           links: []
@@ -5183,6 +5291,20 @@ function buildStateFromMarkdown(markdownText) {
               index += 1;
             }
             currentActivity.description = cleanMarkdownExportValue(descriptionLines.join("\n"));
+            continue;
+          }
+          if (["consignes", "consignes pour les eleves", "instructions", "instructions for students"].includes(field.key)) {
+            const instructionLines = [field.value];
+            index += 1;
+            while (
+              index < lines.length &&
+              !/^- [^:]+:/.test(lines[index]) &&
+              !/^#{2,3}\s+/.test(lines[index])
+            ) {
+              instructionLines.push(lines[index]);
+              index += 1;
+            }
+            currentActivity.instructions = cleanMarkdownExportValue(instructionLines.join("\n"));
             continue;
           }
           if (field.key === "liens") currentActivity.links = parseMarkdownLinks(field.value);
@@ -5372,10 +5494,10 @@ function getStoredSelection(wrapper, textarea) {
 }
 
 function rememberSelection(textarea) {
-  const wrapper = textarea?.closest(".expandable-field");
-  if (!wrapper) return;
-  wrapper.dataset.selectionStart = String(textarea.selectionStart ?? textarea.value.length);
-  wrapper.dataset.selectionEnd = String(textarea.selectionEnd ?? textarea.value.length);
+  const selectionHost = textarea?.closest(".expandable-field") || textarea;
+  if (!selectionHost) return;
+  selectionHost.dataset.selectionStart = String(textarea.selectionStart ?? textarea.value.length);
+  selectionHost.dataset.selectionEnd = String(textarea.selectionEnd ?? textarea.value.length);
 }
 
 function updateTextareaValue(textarea, value, selectionStart, selectionEnd = selectionStart) {
@@ -5418,15 +5540,16 @@ function prefixSelectionLines(textarea, wrapper, prefix, placeholder) {
 }
 
 function applyMarkdownAction(textarea, actionId) {
-  const wrapper = textarea.closest(".expandable-field");
-  if (!wrapper) return;
+  const wrapper = textarea.closest(".expandable-field") || textarea;
   const placeholders = {
     bold: t("mdPlaceholderBold"),
     italic: t("mdPlaceholderItalic"),
     heading: t("mdPlaceholderHeading"),
     list: t("mdPlaceholderList"),
     orderedList: t("mdPlaceholderOrderedList"),
-    quote: t("mdPlaceholderQuote")
+    quote: t("mdPlaceholderQuote"),
+    linkText: t("mdPlaceholderLinkText"),
+    linkUrl: t("mdPlaceholderLinkUrl")
   };
   if (actionId === "bold") {
     wrapSelection(textarea, wrapper, "**", "**", placeholders.bold);
@@ -5458,6 +5581,19 @@ function applyMarkdownAction(textarea, actionId) {
   if (actionId === "quote") {
     prefixSelectionLines(textarea, wrapper, "> ", placeholders.quote);
     return;
+  }
+  if (actionId === "link") {
+    const { start, end } = getStoredSelection(wrapper, textarea);
+    const label = textarea.value.slice(start, end) || placeholders.linkText;
+    const replacement = `[${label}](${placeholders.linkUrl})`;
+    const urlStart = start + label.length + 3;
+    replaceSelection(
+      textarea,
+      wrapper,
+      replacement,
+      urlStart,
+      urlStart + placeholders.linkUrl.length
+    );
   }
 }
 
@@ -5498,6 +5634,17 @@ function setupExpandableFields() {
     const textarea = wrapper?.querySelector("textarea");
     if (!textarea) return;
     applyMarkdownAction(textarea, button.dataset.mdAction || "");
+  });
+
+  document.addEventListener("keydown", (event) => {
+    const textarea = event.target.closest(".expandable-field textarea, .grid-desc-input");
+    if (!textarea) return;
+    if (handleMarkdownListEnter(textarea, event)) return;
+    const action = markdownActionForKeyboardEvent(event);
+    if (!action) return;
+    event.preventDefault();
+    rememberSelection(textarea);
+    applyMarkdownAction(textarea, action.id);
   });
 
   ["focusin", "input", "keyup", "mouseup"].forEach((eventName) => {
@@ -5839,7 +5986,7 @@ function buildGridSessionRow(session, sIdx) {
   tr.dataset.sessionId = session.id;
 
   const td = document.createElement("td");
-  td.setAttribute("colspan", "11");
+  td.setAttribute("colspan", "12");
 
   const totalDur = session.activities.reduce((s, a) => s + (Number(a.duration) || 0), 0);
 
@@ -6002,7 +6149,21 @@ function buildGridActivityRow(session, act, aIdx) {
   descTd.appendChild(descInput);
   tr.appendChild(descTd);
 
-  // Col 11 — Actions ↑ ↓ ✕
+  // Col 11 — Instructions
+  const instructionsTd = mkTd();
+  const instructionsInput = document.createElement("textarea");
+  instructionsInput.className = "grid-desc-input";
+  instructionsInput.rows = 1;
+  instructionsInput.value = toPlainTextareaValue(act.instructions);
+  instructionsInput.placeholder = t("activityInstructionsPlaceholder") || "—";
+  instructionsInput.addEventListener("input", (event) => {
+    act.instructions = event.target.value;
+    saveState();
+  });
+  instructionsTd.appendChild(instructionsInput);
+  tr.appendChild(instructionsTd);
+
+  // Col 12 — Actions ↑ ↓ ✕
   const actTd = mkTd();
   const btns = document.createElement("div");
   btns.className = "grid-action-btns";
@@ -6062,6 +6223,7 @@ function renderGridView() {
     { cls: "grid-col-eval",    label: t("gridColEval") },
     { cls: "grid-col-aias",    label: t("gridColAias") },
     { cls: "grid-col-desc",    label: t("gridColDesc") },
+    { cls: "grid-col-instructions", label: t("gridColInstructions") },
     { cls: "grid-col-actions", label: "" },
   ].forEach(({ cls, label }) => {
     const th = document.createElement("th");
@@ -6084,7 +6246,7 @@ function renderGridView() {
     const addActRow = document.createElement("tr");
     addActRow.className = "grid-add-activity-row";
     const addActTd = document.createElement("td");
-    addActTd.setAttribute("colspan", "11");
+    addActTd.setAttribute("colspan", "12");
     const addActBtn = document.createElement("button");
     addActBtn.className = "grid-add-activity-btn";
     addActBtn.type = "button";
@@ -6095,7 +6257,7 @@ function renderGridView() {
         groupMode: "whole", teacherPresence: "present",
         syncMode: "sync", locationMode: "onsite",
         evaluationMode: "none", aias: defaultAiasState(),
-        description: "", notes: "", tools: [], links: []
+        description: "", instructions: "", notes: "", tools: [], links: []
       });
       saveState(); renderGridView(); renderTopPanel(); renderPartitionView();
     });
@@ -6108,7 +6270,7 @@ function renderGridView() {
   const addSessRow = document.createElement("tr");
   addSessRow.className = "grid-add-session-row";
   const addSessTd = document.createElement("td");
-  addSessTd.setAttribute("colspan", "11");
+  addSessTd.setAttribute("colspan", "12");
   const addSessBtn = document.createElement("button");
   addSessBtn.className = "grid-add-session-btn";
   addSessBtn.type = "button";
@@ -6232,7 +6394,13 @@ function render() {
       clearDragIndicators();
     });
     card.addEventListener("keydown", (event) => {
-      if (!event.altKey) return;
+      if (
+        isInteractiveTarget(event.target) ||
+        !event.altKey ||
+        event.shiftKey ||
+        event.metaKey ||
+        event.ctrlKey
+      ) return;
       const wantsVerticalMove = isListLayout && (event.key === "ArrowUp" || event.key === "ArrowDown");
       const wantsHorizontalMove = !isListLayout && (event.key === "ArrowLeft" || event.key === "ArrowRight");
       if (wantsVerticalMove || wantsHorizontalMove) {
@@ -6310,6 +6478,9 @@ function render() {
       const locationLabel = activityFrag.querySelector(".activity-location-label");
       const evaluationLabel = activityFrag.querySelector(".activity-evaluation-label");
       const description = activityFrag.querySelector(".activity-description");
+      const instructions = activityFrag.querySelector(".activity-instructions");
+      const descriptionLabel = activityFrag.querySelector(".activity-description-label");
+      const instructionsLabel = activityFrag.querySelector(".activity-instructions-label");
       const deleteActivityBtn = activityFrag.querySelector(".delete-activity-btn");
       const selectToolsBtn = activityFrag.querySelector(".select-tools-btn");
 
@@ -6347,6 +6518,11 @@ function render() {
       description.value = activity.description;
       description.placeholder = t("activityDescriptionPlaceholder");
       description.setAttribute("aria-label", `${t("activityDescriptionLabel")} ${activityIndex + 1}`);
+      instructions.value = activity.instructions;
+      instructions.placeholder = t("activityInstructionsPlaceholder");
+      instructions.setAttribute("aria-label", `${t("activityInstructionsLabel")} ${activityIndex + 1}`);
+      if (descriptionLabel) descriptionLabel.textContent = t("activityDescriptionLabel");
+      if (instructionsLabel) instructionsLabel.textContent = t("activityInstructionsLabel");
       deleteActivityBtn.title = t("deleteActivity");
       deleteActivityBtn.setAttribute("aria-label", deleteActivityBtn.title);
       activityLinksBtn.title = t("manageLinks");
@@ -6373,7 +6549,13 @@ function render() {
         clearDragIndicators();
       });
       activityCard.addEventListener("keydown", (event) => {
-        if (!event.altKey) return;
+        if (
+          isInteractiveTarget(event.target) ||
+          !event.altKey ||
+          event.shiftKey ||
+          event.metaKey ||
+          event.ctrlKey
+        ) return;
         if (event.key === "ArrowUp" || event.key === "ArrowDown") {
           event.preventDefault();
           const moved = moveActivityByOffset(session.id, activity.id, event.key === "ArrowUp" ? -1 : 1);
@@ -6471,6 +6653,11 @@ function render() {
         saveState();
       });
 
+      instructions.addEventListener("input", (event) => {
+        activity.instructions = event.target.value;
+        saveState();
+      });
+
       deleteActivityBtn.addEventListener("click", () => {
         session.activities = session.activities.filter((a) => a.id !== activity.id);
         saveState();
@@ -6515,6 +6702,7 @@ function render() {
         evaluationMode: "none",
         aias: defaultAiasState(),
         description: "",
+        instructions: "",
         notes: "",
         tools: [],
         links: []

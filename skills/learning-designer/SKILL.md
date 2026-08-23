@@ -115,7 +115,7 @@ $LEARNING add-moment design.json --title "MOMENT TITLE" --objectives "MOMENT OBJ
 Add each activity:
 
 ```bash
-$LEARNING add-activity design.json --moment 1 --type investigate --duration 15 --group subgroups --teacher present --pacing sync --mode onsite --evaluation formative --aias 3 --competencies A1,P6 --description "ACTIVITY DESCRIPTION"
+$LEARNING add-activity design.json --moment 1 --type investigate --duration 15 --group subgroups --teacher present --pacing sync --mode onsite --evaluation formative --aias 3 --competencies A1,P6 --description "ACTIVITY DESCRIPTION" --instructions "INSTRUCTIONS FOR STUDENTS"
 ```
 
 Use only CLI-controlled values for controlled fields. Safe values:
@@ -134,12 +134,7 @@ For `pacing` and `mode`, verify accepted values with the CLI or use values that 
 
 Never put long natural-language text in controlled fields such as `--group`, `--teacher`, `--evaluation`, `--type`, or `--pacing`.
 
-Put instructions, criteria, supports, teacher role, differentiation details, and pedagogical detail in:
-
-- `--description`
-- `--notes`
-- `--objectives`
-- `--intentions`
+Use `--description` for the pedagogical description of the activity and `--instructions` for directions addressed directly to students. Put criteria, supports, teacher role, differentiation details, and other pedagogical detail in `--notes`, `--objectives`, or `--intentions` according to their scope.
 
 Add Bloom outcomes:
 

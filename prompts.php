@@ -519,7 +519,7 @@ PROMPT;
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" referrerpolicy="no-referrer">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="stylesheet" href="css/interface.css?v=20260730-heading-spacing-h3">
+    <link rel="stylesheet" href="css/interface.css?v=20260823-prompt-objectives-rem">
     <link rel="stylesheet" href="css/account-ui.css?v=20260520-4">
     <link rel="stylesheet" href="css/account-pages.css?v=20260803-responsive-shell">
 </head>
@@ -534,43 +534,49 @@ PROMPT;
     <div class="prompt-library-content">
         <article class="prompt-library">
             <p id="prompts-intro">Après avoir généré votre scénario pédagogique dans Learning Designer, vous pouvez l’exporter — par exemple au format Markdown — puis le transmettre à une IA comme Claude, ChatGPT ou Gemini. Celle-ci peut alors vous aider à l’enrichir, à l’améliorer, à le compléter ou à l’adapter à des besoins spécifiques.</p>
-            <p id="prompts-intro-followup">Pour vous accompagner dans cette démarche, voici une série de prompts prêts à copier et à utiliser avec votre scénario exporté.</p>
+            <p id="prompts-intro-followup">Cliquez sur le titre d’un prompt pour le déplier, puis copiez-le pour l’utiliser avec votre scénario exporté.</p>
 
-            <section class="prompt-card">
-                <div class="prompt-card-heading">
+            <details id="prompt-udl" class="prompt-card prompt-card-details">
+                <summary class="prompt-card-heading">
                     <strong><span class="help-card-icon"><i class="fa-solid fa-universal-access" aria-hidden="true"></i></span><span id="prompt-udl-title" class="prompt-title-text">1. Révision d’un plan de cours basé sur la CUA</span></strong>
-                    <span id="prompt-udl-author" class="prompt-author">Prompt proposés par François Jourde</span>
+                    <span id="prompt-udl-objective" class="prompt-objective">Repérer les obstacles et améliorer l’accessibilité, l’inclusion et les possibilités d’apprentissage offertes à tous les élèves.</span>
+                </summary>
+                <div class="prompt-card-body">
+                    <div class="help-prompt-wrap prompt-library-wrap">
+                        <button class="help-copy-btn prompt-copy-button" type="button" aria-label="Copier le prompt" title="Copier"><i class="fa-regular fa-copy" aria-hidden="true"></i></button>
+                        <pre class="help-prompt prompt-library-text" data-prompt-lang="fr"><?= h($udlPrompt) ?></pre>
+                        <pre class="help-prompt prompt-library-text" data-prompt-lang="en" hidden><?= h($udlPromptEn) ?></pre>
+                    </div>
                 </div>
-                <div class="help-prompt-wrap prompt-library-wrap">
-                    <button class="help-copy-btn prompt-copy-button" type="button" aria-label="Copier le prompt" title="Copier"><i class="fa-regular fa-copy" aria-hidden="true"></i></button>
-                    <pre class="help-prompt prompt-library-text" data-prompt-lang="fr"><?= h($udlPrompt) ?></pre>
-                    <pre class="help-prompt prompt-library-text" data-prompt-lang="en" hidden><?= h($udlPromptEn) ?></pre>
-                </div>
-            </section>
+            </details>
 
-            <section class="prompt-card">
-                <div class="prompt-card-heading">
+            <details id="prompt-differentiation" class="prompt-card prompt-card-details">
+                <summary class="prompt-card-heading">
                     <strong><span class="help-card-icon"><i class="fa-solid fa-code-branch" aria-hidden="true"></i></span><span id="prompt-differentiation-title" class="prompt-title-text">2. Différenciation pédagogique</span></strong>
-                    <span id="prompt-differentiation-author" class="prompt-author">Prompt proposé par Yann Houry</span>
+                    <span id="prompt-differentiation-objective" class="prompt-objective">Adapter une séquence aux besoins variés des élèves tout en maintenant des objectifs communs et ambitieux.</span>
+                </summary>
+                <div class="prompt-card-body">
+                    <div class="help-prompt-wrap prompt-library-wrap">
+                        <button class="help-copy-btn prompt-copy-button" type="button" aria-label="Copier le prompt" title="Copier"><i class="fa-regular fa-copy" aria-hidden="true"></i></button>
+                        <pre class="help-prompt prompt-library-text" data-prompt-lang="fr"><?= h($differentiationPrompt) ?></pre>
+                        <pre class="help-prompt prompt-library-text" data-prompt-lang="en" hidden><?= h($differentiationPromptEn) ?></pre>
+                    </div>
                 </div>
-                <div class="help-prompt-wrap prompt-library-wrap">
-                    <button class="help-copy-btn prompt-copy-button" type="button" aria-label="Copier le prompt" title="Copier"><i class="fa-regular fa-copy" aria-hidden="true"></i></button>
-                    <pre class="help-prompt prompt-library-text" data-prompt-lang="fr"><?= h($differentiationPrompt) ?></pre>
-                    <pre class="help-prompt prompt-library-text" data-prompt-lang="en" hidden><?= h($differentiationPromptEn) ?></pre>
-                </div>
-            </section>
+            </details>
 
-            <section class="prompt-card">
-                <div class="prompt-card-heading">
+            <details id="prompt-samr" class="prompt-card prompt-card-details">
+                <summary class="prompt-card-heading">
                     <strong><span class="help-card-icon"><i class="fa-solid fa-laptop-code" aria-hidden="true"></i></span><span id="prompt-samr-title" class="prompt-title-text">3. Analyse et enrichissement selon le modèle SAMR</span></strong>
-                    <span id="prompt-samr-author" class="prompt-author">Prompt proposé par Yann Houry</span>
+                    <span id="prompt-samr-objective" class="prompt-objective">Évaluer la pertinence des usages numériques et proposer des améliorations alignées sur les objectifs d’apprentissage.</span>
+                </summary>
+                <div class="prompt-card-body">
+                    <div class="help-prompt-wrap prompt-library-wrap">
+                        <button class="help-copy-btn prompt-copy-button" type="button" aria-label="Copier le prompt" title="Copier"><i class="fa-regular fa-copy" aria-hidden="true"></i></button>
+                        <pre class="help-prompt prompt-library-text" data-prompt-lang="fr"><?= h($samrPrompt) ?></pre>
+                        <pre class="help-prompt prompt-library-text" data-prompt-lang="en" hidden><?= h($samrPromptEn) ?></pre>
+                    </div>
                 </div>
-                <div class="help-prompt-wrap prompt-library-wrap">
-                    <button class="help-copy-btn prompt-copy-button" type="button" aria-label="Copier le prompt" title="Copier"><i class="fa-regular fa-copy" aria-hidden="true"></i></button>
-                    <pre class="help-prompt prompt-library-text" data-prompt-lang="fr"><?= h($samrPrompt) ?></pre>
-                    <pre class="help-prompt prompt-library-text" data-prompt-lang="en" hidden><?= h($samrPromptEn) ?></pre>
-                </div>
-            </section>
+            </details>
         </article>
     </div>
 </main>
@@ -582,13 +588,13 @@ document.addEventListener('DOMContentLoaded', function () {
             title: 'Prompts pédagogiques',
             pageTitle: 'Prompts pédagogiques',
             intro: 'Après avoir généré votre scénario pédagogique dans Learning Designer, vous pouvez l’exporter — par exemple au format Markdown — puis le transmettre à une IA comme Claude, ChatGPT ou Gemini. Celle-ci peut alors vous aider à l’enrichir, à l’améliorer, à le compléter ou à l’adapter à des besoins spécifiques.',
-            introFollowup: 'Pour vous accompagner dans cette démarche, voici une série de prompts prêts à copier et à utiliser avec votre scénario exporté.',
+            introFollowup: 'Cliquez sur le titre d’un prompt pour le déplier, puis copiez-le pour l’utiliser avec votre scénario exporté.',
             udlTitle: '1. Révision d’un plan de cours basé sur la CUA',
-            udlAuthor: 'Prompt proposés par François Jourde',
+            udlObjective: 'Repérer les obstacles et améliorer l’accessibilité, l’inclusion et les possibilités d’apprentissage offertes à tous les élèves.',
             differentiationTitle: '2. Différenciation pédagogique',
-            differentiationAuthor: 'Prompt proposé par Yann Houry',
+            differentiationObjective: 'Adapter une séquence aux besoins variés des élèves tout en maintenant des objectifs communs et ambitieux.',
             samrTitle: '3. Analyse et enrichissement selon le modèle SAMR',
-            samrAuthor: 'Prompt proposé par Yann Houry',
+            samrObjective: 'Évaluer la pertinence des usages numériques et proposer des améliorations alignées sur les objectifs d’apprentissage.',
             copy: 'Copier le prompt',
             copied: 'Copié'
         },
@@ -596,13 +602,13 @@ document.addEventListener('DOMContentLoaded', function () {
             title: 'Teaching prompts',
             pageTitle: 'Teaching prompts',
             intro: 'After generating your learning design in Learning Designer, you can export it — for example as Markdown — and share it with an AI such as Claude, ChatGPT or Gemini. The AI can then help you enrich, improve, complete or adapt it to specific needs.',
-            introFollowup: 'To guide you through this process, here is a series of ready-to-copy prompts to use with your exported learning design.',
+            introFollowup: 'Click a prompt title to expand it, then copy it to use with your exported learning design.',
             udlTitle: '1. UDL-based lesson plan review',
-            udlAuthor: 'Prompt proposed by François Jourde',
+            udlObjective: 'Identify barriers and improve accessibility, inclusion and learning opportunities for every student.',
             differentiationTitle: '2. Differentiated instruction',
-            differentiationAuthor: 'Prompt proposed by Yann Houry',
+            differentiationObjective: 'Adapt a sequence to students’ varied needs while maintaining shared, ambitious learning objectives.',
             samrTitle: '3. SAMR-based analysis and enhancement',
-            samrAuthor: 'Prompt proposed by Yann Houry',
+            samrObjective: 'Assess the relevance of technology use and propose improvements aligned with the learning objectives.',
             copy: 'Copy prompt',
             copied: 'Copied'
         }
@@ -625,11 +631,11 @@ document.addEventListener('DOMContentLoaded', function () {
         setText('prompts-intro', content.intro);
         setText('prompts-intro-followup', content.introFollowup);
         setText('prompt-udl-title', content.udlTitle);
-        setText('prompt-udl-author', content.udlAuthor);
+        setText('prompt-udl-objective', content.udlObjective);
         setText('prompt-differentiation-title', content.differentiationTitle);
-        setText('prompt-differentiation-author', content.differentiationAuthor);
+        setText('prompt-differentiation-objective', content.differentiationObjective);
         setText('prompt-samr-title', content.samrTitle);
-        setText('prompt-samr-author', content.samrAuthor);
+        setText('prompt-samr-objective', content.samrObjective);
 
         document.querySelectorAll('.prompt-copy-button').forEach(function (copyButton) {
             copyButton.setAttribute('aria-label', content.copy);

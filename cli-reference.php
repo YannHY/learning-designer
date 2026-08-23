@@ -210,7 +210,7 @@ learning login</pre>
                 <p class="cli-ref-copy"<?= cli_ref_i18n_attrs('Une activité précise le type d’apprentissage, la durée, le groupe, la présence enseignante, le rythme, la modalité, l’évaluation et les compétences numériques.', 'An activity defines the learning type, duration, group, teacher presence, pacing, mode, evaluation, and digital competencies.') ?>>Une activité précise le type d’apprentissage, la durée, le groupe, la présence enseignante, le rythme, la modalité, l’évaluation et les compétences numériques.</p>
                 <div class="cli-ref-copy-wrap">
                     <button class="cli-ref-copy-btn" type="button" aria-label="Copier la commande" title="Copier"<?= cli_ref_i18n_attr_attrs('aria-label,title', 'Copier la commande', 'Copy command') ?>><i class="fa-regular fa-copy" aria-hidden="true"></i></button>
-                    <pre class="cli-ref-code">learning add-activity design.json --type investigate --duration 30 --group subgroups --teacher present --pacing sync --mode onsite --evaluation formative --competencies A6,P34 --description "Comparer trois exemples d'usages de l'IA."</pre>
+                    <pre class="cli-ref-code">learning add-activity design.json --type investigate --duration 30 --group subgroups --teacher present --pacing sync --mode onsite --evaluation formative --competencies A6,P34 --description "Comparer trois exemples d'usages de l'IA." --instructions "Relevez deux points communs et une différence."</pre>
                 </div>
             </div>
             <div class="cli-ref-item">

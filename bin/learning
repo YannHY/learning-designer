@@ -369,6 +369,7 @@ def command_add_activity(args: argparse.Namespace) -> None:
                 "level": args.aias,
             },
             "description": args.description or "",
+            "instructions": args.instructions or "",
             "notes": args.notes or "",
             "tools": tools,
             "links": parse_links(args.link),
@@ -457,6 +458,8 @@ def summarize_document(document: dict[str, Any]) -> str:
             )
             if activity.get("description"):
                 lines.append(f"      Description: {activity['description']}")
+            if activity.get("instructions"):
+                lines.append(f"      Instructions for students: {activity['instructions']}")
             if activity.get("tools"):
                 lines.append(f"      Digital competencies: {', '.join(activity['tools'])}")
     return "\n".join(lines)
@@ -688,6 +691,7 @@ def build_parser() -> argparse.ArgumentParser:
     activity.add_argument("--evaluation", "--évaluation", "--assessment", default="none")
     activity.add_argument("--aias", "--aias-level", type=int, choices=range(1, 6), help="AIAS level from 1 to 5")
     activity.add_argument("--description", default="")
+    activity.add_argument("--instructions", "--consignes", default="")
     activity.add_argument("--notes", default="")
     activity.add_argument(
         "--competencies",

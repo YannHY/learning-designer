@@ -18,7 +18,7 @@
     <link rel="stylesheet" href="css/account-ui.css?v=20260729-2" />
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="stylesheet" href="css/interface.css?v=20260803-designer-title-scale" />
+    <link rel="stylesheet" href="css/interface.css?v=20260823-panel-toggle-color" />
   </head>
   <body class="designer-page">
     <a id="skip-link" class="skip-link" href="#board">Aller au contenu principal</a>
@@ -67,7 +67,7 @@
         <span class="hamburger-bar"></span>
       </button>
     </header>
-    <section id="top-panel" class="top-panel" role="region" aria-labelledby="app-title">
+    <section id="top-panel" class="top-panel collapsed" role="region" aria-labelledby="app-title">
       <div class="top-brand">
         <div class="brand-left">
           <h1 id="app-title" class="brand-title">Interface de conception d’apprentissage</h1>
@@ -79,12 +79,12 @@
             <button id="top-tab-analysis" class="top-tab active" type="button" role="tab" aria-selected="true" aria-controls="analysis-view">Analyse</button>
             <button id="top-tab-chronology" class="top-tab" type="button" role="tab" aria-selected="false" aria-controls="chronology-view">Chronologie</button>
           </div>
-          <button id="top-panel-toggle-btn" class="top-panel-toggle" type="button" aria-expanded="true" aria-controls="top-panel-body" aria-label="Replier le panneau" title="Replier le panneau">
+          <button id="top-panel-toggle-btn" class="top-panel-toggle" type="button" aria-expanded="false" aria-controls="top-panel-body" aria-label="Déplier le panneau" title="Déplier le panneau">
             <svg class="chevron" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M7.41 8.59 12 13.17l4.59-4.58L18 10l-6 6-6-6z"/></svg>
           </button>
         </div>
       </div>
-      <div id="top-panel-body" class="top-panel-body">
+      <div id="top-panel-body" class="top-panel-body" aria-hidden="true" inert>
         <div id="timeline-view" class="panel-grid" role="tabpanel" aria-labelledby="top-tab-settings">
           <div class="panel-column panel-column-left">
             <div class="form-row">
@@ -375,7 +375,7 @@
           <button class="choice-btn activity-evaluation-mode-btn" type="button"></button>
           <div class="activity-actions">
             <button class="icon-btn activity-aias-btn" type="button" title="AIAS" aria-label="AIAS" aria-haspopup="dialog" aria-expanded="false">
-              <i class="fa-solid fa-robot" aria-hidden="true"></i>
+              <i class="fa-solid fa-wand-magic-sparkles" aria-hidden="true"></i>
             </button>
             <button class="icon-btn activity-links-btn" type="button" aria-haspopup="dialog" aria-expanded="false">
               <i class="fa-solid fa-link" aria-hidden="true"></i>
@@ -395,9 +395,21 @@
         </div>
         <div class="activity-tools hidden" role="list"></div>
         <div class="activity-links hidden" role="list"></div>
-        <div class="expandable-field">
-          <textarea class="activity-description" rows="3"></textarea>
-          <button class="expand-btn" type="button" aria-label="Plein écran">⤢</button>
+        <div class="activity-text-fields">
+          <div class="activity-field-group">
+            <div class="activity-field-label activity-description-label">Description de l'activité</div>
+            <div class="expandable-field">
+              <textarea class="activity-description" rows="3"></textarea>
+              <button class="expand-btn" type="button" aria-label="Plein écran">⤢</button>
+            </div>
+          </div>
+          <div class="activity-field-group">
+            <div class="activity-field-label activity-instructions-label">Consignes pour les élèves</div>
+            <div class="expandable-field">
+              <textarea class="activity-instructions" rows="3"></textarea>
+              <button class="expand-btn" type="button" aria-label="Plein écran">⤢</button>
+            </div>
+          </div>
         </div>
       </div>
     </template>
@@ -525,6 +537,7 @@
         <div id="aias-modal-status-options" class="aias-status-options"></div>
         <div id="aias-modal-levels" class="aias-levels" role="radiogroup"></div>
         <p class="aias-attribution">
+          <span id="aias-modal-attribution-prefix">Basé sur</span>
           <a href="https://aiassessmentscale.com/" target="_blank" rel="noopener noreferrer">AI Assessment Scale (AIAS) v2.1</a>
           <span>© 2026 Learning Innovation Practice Ltd. ·</span>
           <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" rel="noopener noreferrer">CC BY-NC-SA 4.0</a>
@@ -534,7 +547,7 @@
         </div>
       </div>
     </div>
-    <script src="js/interface.js?v=20260802-performance-modal-title"></script>
+    <script src="js/interface.js?v=20260823-panel-collapsed-default"></script>
     <script src="js/account-ui.js?v=20260802-performance"></script>
     <script>
       (function() {

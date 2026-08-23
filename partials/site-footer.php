@@ -1,7 +1,6 @@
 <footer class="site-footer">
     <div class="site-footer-copy-stack">
         <span class="site-footer-copy">Learning Designer — Yann Houry &amp; François Jourde</span>
-        <span class="site-footer-copy"><span data-site-i18n-en="Inspired by " data-site-i18n-fr="Inspiré de l’">Inspiré de l’</span><a class="site-footer-link" href="https://www.ucl.ac.uk/learning-designer/" target="_blank" rel="noopener noreferrer">UCL Learning Designer</a>.</span>
         <nav class="site-footer-links" aria-label="Liens du pied de page" data-site-i18n-attr="aria-label" data-site-i18n-en="Footer links" data-site-i18n-fr="Liens du pied de page">
             <a class="site-footer-link" id="footer-about-btn" href="about.php" data-site-i18n-en="About" data-site-i18n-fr="À propos">À propos</a>
             <span class="site-footer-separator" aria-hidden="true">|</span>

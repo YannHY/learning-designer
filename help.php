@@ -91,11 +91,7 @@ Pour `--pacing` et `--mode`, vérifie avec le CLI ou utilise les valeurs produit
 
 Ne mets jamais de phrases longues dans les champs contrôlés comme `--group`, `--teacher`, `--evaluation`, `--type` ou `--pacing`.
 
-Mets les consignes, critères, supports, rôle de l’enseignant, modalités de différenciation et détails pédagogiques dans :
-- `--description`
-- `--notes`
-- `--objectives`
-- `--intentions`
+Utilise `--description` pour décrire l’activité du point de vue pédagogique et `--instructions` pour les consignes directement adressées aux élèves. Place les critères, supports, rôle de l’enseignant, modalités de différenciation et autres détails dans `--notes`, `--objectives` ou `--intentions` selon leur portée.
 
 Commandes à utiliser obligatoirement autant que possible :
 - ./.tools/bin/learning init
@@ -306,11 +302,7 @@ For `--pacing` and `--mode`, check the CLI or use values from working examples. 
 
 Never put long sentences in controlled fields such as `--group`, `--teacher`, `--evaluation`, `--type`, or `--pacing`.
 
-Put instructions, criteria, resources, the teacher’s role, differentiation, and pedagogical details in:
-- `--description`
-- `--notes`
-- `--objectives`
-- `--intentions`
+Use `--description` for the pedagogical description of the activity and `--instructions` for directions addressed directly to students. Put criteria, resources, the teacher’s role, differentiation, and other details in `--notes`, `--objectives`, or `--intentions` according to their scope.
 
 Use these commands whenever possible:
 - ./.tools/bin/learning init
@@ -520,13 +512,35 @@ PROMPT;
                             <tr><td>Modalité</td><td>Présentiel, distanciel ou hybride</td><td>Décrit le lieu et le mode de participation.</td></tr>
                             <tr><td>Évaluation</td><td>Aucune, diagnostique, formative, sommative, certificative</td><td>Rend explicite la fonction évaluative de l’activité.</td></tr>
                             <tr><td>AIAS</td><td>À définir, non pertinent ou niveaux 1 à 5</td><td>Décrit le rôle de l’IA dans la tâche, indépendamment de sa fonction évaluative.</td></tr>
-                            <tr><td>Contenu</td><td>Description, notes et liens</td><td>Documente les consignes, supports, critères, rôle de l’enseignant et ressources.</td></tr>
+                            <tr><td>Description de l’activité</td><td>Texte libre</td><td>Décrit l’intention pédagogique, le déroulement et l’organisation de l’activité du point de vue de l’enseignant.</td></tr>
+                            <tr><td>Consignes pour les élèves</td><td>Texte libre</td><td>Formule les actions attendues dans un langage directement adressé aux élèves : étapes, production attendue et critères utiles.</td></tr>
+                            <tr><td>Ressources</td><td>Notes et liens</td><td>Associe les supports, documents, vidéos, outils et autres informations utiles.</td></tr>
                             <tr><td>Compétences</td><td>Une ou plusieurs compétences numériques</td><td>Relie l’activité au référentiel numérique intégré.</td></tr>
                         </tbody>
                     </table>
                 </div>
-                <p>Le champ AIAS s’appuie sur <a href="https://aiassessmentscale.com/" target="_blank" rel="noopener noreferrer">The AI Assessment Scale 2.1</a>. Les cinq niveaux décrivent des conceptions différentes de la tâche et ne constituent pas une progression.</p>
-                <p>Les descriptions et les notes acceptent une mise en forme <a href="https://github.com/YannHY/cours/blob/master/Tech/Markdown/Apprendre%20le%20Markdown.md" title="Markdown">Markdown</a> légère. Une barre d’outils et un aperçu permettent de structurer plus facilement le texte. Des liens nommés peuvent être ajoutés à chaque activité pour associer consignes, documents, vidéos ou outils.</p>
+                <p>Le champ AIAS s’appuie sur <a href="https://aiassessmentscale.com/" target="_blank" rel="noopener noreferrer">The AI Assessment Scale 2.1</a>. Dans une activité, l’icône avec des étincelles signale ce réglage lié à l’intelligence artificielle. Après sélection, le bouton affiche directement le niveau choisi, de 1 à 5. Ces cinq niveaux décrivent des conceptions différentes de la tâche et ne constituent pas une progression.</p>
+                <p>Les descriptions, les consignes et les notes acceptent une mise en forme <a href="https://github.com/YannHY/cours/blob/master/Tech/Markdown/Apprendre%20le%20Markdown.md" title="Markdown">Markdown</a> légère. Une barre d’outils et un aperçu permettent de structurer plus facilement le texte. Des liens nommés peuvent être ajoutés à chaque activité pour associer documents, vidéos ou outils.</p>
+                <h3>Raccourcis clavier Markdown</h3>
+                <p>Lorsque le curseur se trouve dans un champ compatible Markdown, utilisez <code>Cmd</code> sur macOS ou <code>Ctrl</code> sur Windows et Linux.</p>
+                <div class="help-table-wrap">
+                    <table class="help-table">
+                        <thead><tr><th>Action</th><th>Raccourci</th></tr></thead>
+                        <tbody>
+                            <tr><td>Gras</td><td><code>Cmd/Ctrl + B</code></td></tr>
+                            <tr><td>Italique</td><td><code>Cmd/Ctrl + I</code></td></tr>
+                            <tr><td>Lien</td><td><code>Cmd/Ctrl + K</code></td></tr>
+                            <tr><td>Titre</td><td><code>Cmd/Ctrl + Shift + H</code></td></tr>
+                            <tr><td>Liste à puces</td><td><code>Cmd/Ctrl + Shift + L</code></td></tr>
+                            <tr><td>Liste numérotée</td><td><code>Cmd/Ctrl + Shift + 7</code></td></tr>
+                            <tr><td>Continuer une liste</td><td><code>Entrée</code></td></tr>
+                            <tr><td>Saut de ligne sans nouvelle puce</td><td><code>Shift + Entrée</code></td></tr>
+                            <tr><td>Citation</td><td><code>Cmd/Ctrl + Shift + Q</code></td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <p>Pour créer un lien, sélectionnez son libellé, utilisez <code>Cmd/Ctrl + K</code>, puis remplacez <code>https://</code> par l’adresse voulue.</p>
+                <p>Dans une liste à puces ou numérotée, <code>Entrée</code> crée automatiquement la puce ou le numéro suivant. Appuyez sur <code>Entrée</code> lorsque l’élément est vide pour terminer la liste, ou sur <code>Shift + Entrée</code> pour insérer un simple saut de ligne.</p>
             </article>
 
             <article class="help-section" id="types-apprentissage">
@@ -696,6 +710,7 @@ Objectifs généraux de la formation.
 - Évaluation: Formative
 - AIAS: AIAS 3 · Collaboration avec l’IA
 - Description: Description de l'activité
+- Consignes pour les élèves: Lisez les documents puis justifiez votre réponse.
 - Liens: Exemple (https://example.com)
 - Compétences: A6 - Exemple de compétence</pre>
                 </div>
@@ -724,7 +739,7 @@ Objectifs généraux de la formation.
                 <h3 id="markdown-modifications">Ce que vous pouvez modifier</h3>
                 <p>Vous pouvez modifier le titre, les paramètres, la description, la commande institutionnelle, les objectifs, les acquis d’apprentissage, les titres et contenus des moments, ainsi que les activités et tous leurs champs.</p>
                 <h3 id="markdown-libelles">Libellés à conserver</h3>
-                <p>Évitez de changer les libellés fixes <code>## Paramètres</code>, <code>## Séances</code>, <code>- Durée:</code>, <code>- Groupe:</code>, <code>- Enseignant:</code>, <code>- Rythme:</code>, <code>- Modalité:</code>, <code>- Évaluation:</code>, <code>- AIAS:</code> et <code>- Description:</code>. S’ils changent trop, certaines informations risquent de ne plus être reconnues.</p>
+                <p>Évitez de changer les libellés fixes <code>## Paramètres</code>, <code>## Séances</code>, <code>- Durée:</code>, <code>- Groupe:</code>, <code>- Enseignant:</code>, <code>- Rythme:</code>, <code>- Modalité:</code>, <code>- Évaluation:</code>, <code>- AIAS:</code>, <code>- Description:</code> et <code>- Consignes pour les élèves:</code>. S’ils changent trop, certaines informations risquent de ne plus être reconnues.</p>
                 <h3 id="markdown-import">Procédure d’import</h3>
                 <ol>
                     <li>Ouvrez Learning Designer.</li>
@@ -874,10 +889,10 @@ learning login</pre>
                     </div>
                     <div>
                         <strong>3. Ajouter des activités</strong>
-                        <p>Une activité précise le type d’apprentissage, la durée, le groupe, la présence enseignante, le rythme, la modalité, l’évaluation, le rôle de l’IA et les compétences numériques.</p>
+                        <p>Une activité précise le type d’apprentissage, ses paramètres, sa description pédagogique et les consignes directement adressées aux élèves.</p>
                         <div class="help-code-wrap">
                             <button class="help-copy-btn" type="button" aria-label="Copier la commande" title="Copier"><i class="fa-regular fa-copy" aria-hidden="true"></i></button>
-                            <pre class="help-code">learning add-activity design.json --type investigate --duration 30 --group subgroups --teacher present --pacing sync --mode onsite --evaluation formative --aias 3 --competencies A6,P34 --description "Comparer trois exemples d'usages de l'IA."</pre>
+                            <pre class="help-code">learning add-activity design.json --type investigate --duration 30 --group subgroups --teacher present --pacing sync --mode onsite --evaluation formative --aias 3 --competencies A6,P34 --description "Comparer trois exemples d'usages de l'IA." --instructions "Relevez deux points communs et une différence."</pre>
                         </div>
                     </div>
                     <div>
@@ -1003,7 +1018,7 @@ window.helpPromptTranslations = <?= json_encode([
     ],
 ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) ?>;
 </script>
-<script src="js/help-i18n.js?v=20260730-progressive-help"></script>
+<script src="js/help-i18n.js?v=20260823-aias-numbers"></script>
 <script>
 var initialHelpLanguage = 'fr';
 try {

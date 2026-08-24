@@ -2276,123 +2276,7 @@ current_user();
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="stylesheet" href="css/interface.css?v=20260823-import-models">
     <link rel="stylesheet" href="css/account-ui.css?v=20260520-4">
-    <link rel="stylesheet" href="css/account-pages.css?v=20260803-responsive-shell">
-    <style>
-        body.models-page { background: #fff; }
-        .models-shell {
-            width: min(var(--content-shell-width, 1180px), calc(100vw - var(--content-shell-gutter, 36px)));
-            margin: 32px auto 64px;
-        }
-        .models-header { margin: 0 0 var(--page-section-gap); padding-bottom: 16px; }
-        .models-kicker {
-            margin: 0 0 8px;
-            color: var(--primary);
-            text-transform: uppercase;
-            letter-spacing: 0.08em;
-            font-size: 12px;
-            font-weight: 800;
-        }
-        .models-title { margin: 0 0 8px; }
-        .models-subtitle {
-            max-width: 78ch;
-            margin: 0 0 16px;
-            color: var(--muted);
-            line-height: 1.6;
-            font-size: 15px;
-        }
-        .models-lead-actions { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
-        .models-stats {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-            margin: 16px 0 0;
-            padding: 0;
-            list-style: none;
-        }
-        .models-stat {
-            border: 1px solid rgba(15, 23, 42, 0.12);
-            border-radius: 999px;
-            padding: 5px 12px;
-            font-size: 13px;
-            font-weight: 650;
-            color: var(--text-body);
-        }
-        .models-howto {
-            border: 1px solid rgba(15, 23, 42, 0.12);
-            border-left: 4px solid var(--primary);
-            border-radius: 8px;
-            background: rgba(15, 23, 42, 0.03);
-            padding: 16px 18px;
-            margin: 0 0 var(--page-section-gap);
-        }
-        html body .models-howto h2 { margin: 0 0 10px; font-size: 16px; }
-        .models-howto ol { margin: 0; padding-left: 22px; line-height: 1.65; font-size: 14px; }
-        .models-family { margin: 0 0 var(--page-section-gap); }
-        .models-family-head { margin: 0 0 6px; display: flex; align-items: center; gap: 10px; }
-        html body .models-family-head h2 { margin: 0; font-size: 20px; }
-        .models-family-icon { color: var(--primary); font-size: 18px; }
-        .models-family-desc { margin: 0 0 16px; color: var(--muted); font-size: 14px; }
-        .models-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
-            gap: 16px;
-        }
-        .model-card {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-            border: 1px solid rgba(15, 23, 42, 0.12);
-            border-radius: 10px;
-            background: #fff;
-            padding: 18px;
-            box-shadow: 0 6px 16px rgba(15, 23, 42, 0.06);
-        }
-        html body .model-card h3 { margin: 0; font-size: 17px; line-height: 1.3; }
-        .model-card-summary { margin: 0; color: var(--text-body); font-size: 14px; line-height: 1.55; }
-        .model-card-chips { display: flex; flex-wrap: wrap; gap: 6px; margin: 0; padding: 0; list-style: none; }
-        .model-chip {
-            border: 1px solid rgba(15, 23, 42, 0.12);
-            border-radius: 999px;
-            padding: 3px 10px;
-            font-size: 12px;
-            font-weight: 650;
-            color: var(--muted);
-        }
-        .model-outline { margin: 0; padding: 0; list-style: none; display: grid; gap: 8px; }
-        .model-outline-moment { font-size: 13px; }
-        .model-outline-title { display: block; font-weight: 700; margin-bottom: 4px; }
-        .model-outline-acts { display: flex; flex-wrap: wrap; gap: 4px; }
-        .model-act {
-            display: inline-flex;
-            align-items: center;
-            gap: 5px;
-            border-radius: 5px;
-            padding: 2px 7px;
-            font-size: 11px;
-            font-weight: 650;
-            color: #111827;
-            background: var(--act-color, #e5e7eb);
-        }
-        .model-act-read { --act-color: var(--read); }
-        .model-act-investigate { --act-color: var(--investigate); }
-        .model-act-practice { --act-color: var(--practice); }
-        .model-act-produce { --act-color: var(--produce); }
-        .model-act-discuss { --act-color: var(--discuss); }
-        .model-act-collaborate { --act-color: var(--collaborate); }
-        .model-act-undefined { --act-color: #d1d5db; }
-        .model-todo { margin: 0; font-size: 12.5px; color: var(--muted); line-height: 1.6; }
-        .model-todo strong { color: var(--text-body); }
-        .model-card-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: auto; padding-top: 4px; }
-        [data-theme="dark"] body.models-page { background: #181816; }
-        [data-theme="dark"] .model-card { background: rgba(255, 255, 255, 0.04); border-color: rgba(255, 255, 255, 0.12); }
-        [data-theme="dark"] .models-howto { background: rgba(255, 255, 255, 0.04); border-color: rgba(255, 255, 255, 0.12); }
-        [data-theme="dark"] .models-stat,
-        [data-theme="dark"] .model-chip { border-color: rgba(255, 255, 255, 0.16); }
-        [data-theme="dark"] .models-subtitle { color: var(--text-body); }
-        @media (max-width: 720px) {
-            .models-grid { grid-template-columns: 1fr; }
-        }
-    </style>
+    <link rel="stylesheet" href="css/account-pages.css?v=20260824-models-links">
 </head>
 <body class="models-page">
 <?php render_site_nav('models'); ?>
@@ -2401,10 +2285,6 @@ current_user();
         <p class="models-kicker" data-i18n-fr="Bibliothèque" data-i18n-en="Library">Bibliothèque</p>
         <h1 class="models-title" data-i18n-fr="Modèles de scénarios" data-i18n-en="Scenario templates">Modèles de scénarios</h1>
         <p class="models-subtitle" data-i18n-fr="Des scénarios génériques, préremplis et prêts à l’emploi : moments, durées, types d’apprentissage, modalités, acquis Bloom et niveaux AIAS sont déjà posés. Il reste à remplacer les jalons entre crochets par le contenu de votre discipline." data-i18n-en="Generic, pre-filled, ready-to-use scenarios: moments, durations, learning types, delivery settings, Bloom outcomes and AIAS levels are already set. All that remains is to replace the bracketed placeholders with your own subject content.">Des scénarios génériques, préremplis et prêts à l’emploi : moments, durées, types d’apprentissage, modalités, acquis Bloom et niveaux AIAS sont déjà posés. Il reste à remplacer les jalons entre crochets par le contenu de votre discipline.</p>
-        <div class="models-lead-actions">
-            <a class="btn btn-primary" href="designer.html" data-i18n-fr="Ouvrir le concepteur" data-i18n-en="Open the designer">Ouvrir le concepteur</a>
-            <a class="btn btn-light" href="help.php" data-i18n-fr="Aide" data-i18n-en="Help">Aide</a>
-        </div>
         <ul class="models-stats">
             <li class="models-stat"><?= count($LD_SCENARIO_MODELS) ?> <span data-i18n-fr="modèles" data-i18n-en="templates">modèles</span></li>
             <li class="models-stat"><?= count($LD_MODEL_FAMILIES) ?> <span data-i18n-fr="familles" data-i18n-en="families">familles</span></li>

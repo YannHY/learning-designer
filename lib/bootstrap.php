@@ -1,7 +1,9 @@
 <?php
 declare(strict_types=1);
 
-const APP_SCHEMA_VERSION = 1;
+const APP_SCHEMA_VERSION = 2;
+const EMAIL_VERIFICATION_TTL_SECONDS = 86400;
+const EMAIL_VERIFICATION_RESEND_DELAY_SECONDS = 60;
 
 function app_start_session(): void
 {
@@ -256,6 +258,10 @@ function ensure_app_tables(PDO $db): void
             password_hash TEXT NOT NULL,
             role TEXT NOT NULL DEFAULT 'designer' CHECK (role IN ('admin','designer')),
             status TEXT NOT NULL DEFAULT 'active' CHECK (status IN ('active','disabled')),
+            email_verified_at TEXT NULL,
+            email_verification_token_hash TEXT NULL,
+            email_verification_expires_at INTEGER NULL,
+            email_verification_sent_at INTEGER NULL,
             created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
             last_login_at TEXT NULL
         )");
@@ -300,8 +306,13 @@ function ensure_app_tables(PDO $db): void
         password_hash VARCHAR(255) NOT NULL,
         role ENUM('admin','designer') NOT NULL DEFAULT 'designer',
         status ENUM('active','disabled') NOT NULL DEFAULT 'active',
+        email_verified_at DATETIME NULL,
+        email_verification_token_hash CHAR(64) NULL,
+        email_verification_expires_at BIGINT UNSIGNED NULL,
+        email_verification_sent_at BIGINT UNSIGNED NULL,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        last_login_at DATETIME NULL
+        last_login_at DATETIME NULL,
+        UNIQUE INDEX idx_users_email_verification_token (email_verification_token_hash)
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
 
     $db->exec("CREATE TABLE IF NOT EXISTS learning_designs (
@@ -360,6 +371,27 @@ function ensure_app_migrations(PDO $db): void
         )");
         $db->exec("CREATE INDEX IF NOT EXISTS idx_learning_cli_tokens_user ON learning_cli_tokens(user_id)");
 
+        $userCols = $db->query("PRAGMA table_info(users)")->fetchAll();
+        $userColNames = array_column($userCols, 'name');
+        if (!in_array('email_verified_at', $userColNames, true)) {
+            $db->exec("ALTER TABLE users ADD COLUMN email_verified_at TEXT NULL");
+        }
+        if (!in_array('email_verification_token_hash', $userColNames, true)) {
+            $db->exec("ALTER TABLE users ADD COLUMN email_verification_token_hash TEXT NULL");
+        }
+        if (!in_array('email_verification_expires_at', $userColNames, true)) {
+            $db->exec("ALTER TABLE users ADD COLUMN email_verification_expires_at INTEGER NULL");
+        }
+        if (!in_array('email_verification_sent_at', $userColNames, true)) {
+            $db->exec("ALTER TABLE users ADD COLUMN email_verification_sent_at INTEGER NULL");
+        }
+        // Accounts created before email verification existed remain usable.
+        $db->exec("UPDATE users
+            SET email_verified_at = CURRENT_TIMESTAMP
+            WHERE email_verified_at IS NULL
+              AND email_verification_token_hash IS NULL");
+        $db->exec("CREATE UNIQUE INDEX IF NOT EXISTS idx_users_email_verification_token ON users(email_verification_token_hash) WHERE email_verification_token_hash IS NOT NULL");
+
         $cols = $db->query("PRAGMA table_info(learning_designs)")->fetchAll();
         $colNames = array_column($cols, 'name');
         if (!in_array('share_token', $colNames, true)) {
@@ -411,6 +443,30 @@ function ensure_app_migrations(PDO $db): void
             FOREIGN KEY (user_id) REFERENCES users(id)
             ON DELETE CASCADE
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+
+    $userColumns = [
+        'email_verified_at' => "ALTER TABLE users ADD COLUMN email_verified_at DATETIME NULL",
+        'email_verification_token_hash' => "ALTER TABLE users ADD COLUMN email_verification_token_hash CHAR(64) NULL",
+        'email_verification_expires_at' => "ALTER TABLE users ADD COLUMN email_verification_expires_at BIGINT UNSIGNED NULL",
+        'email_verification_sent_at' => "ALTER TABLE users ADD COLUMN email_verification_sent_at BIGINT UNSIGNED NULL",
+    ];
+    $userColumnCheck = $db->prepare("SELECT COUNT(*) FROM information_schema.COLUMNS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'users' AND COLUMN_NAME = ?");
+    foreach ($userColumns as $columnName => $sql) {
+        $userColumnCheck->execute([$columnName]);
+        if ((int)$userColumnCheck->fetchColumn() === 0) {
+            $db->exec($sql);
+        }
+    }
+    // Accounts created before email verification existed remain usable.
+    $db->exec("UPDATE users
+        SET email_verified_at = CURRENT_TIMESTAMP
+        WHERE email_verified_at IS NULL
+          AND email_verification_token_hash IS NULL");
+    $verificationIndexCheck = $db->prepare("SELECT COUNT(*) FROM information_schema.STATISTICS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'users' AND INDEX_NAME = 'idx_users_email_verification_token'");
+    $verificationIndexCheck->execute();
+    if ((int)$verificationIndexCheck->fetchColumn() === 0) {
+        $db->exec("CREATE UNIQUE INDEX idx_users_email_verification_token ON users(email_verification_token_hash)");
+    }
 
     $stmt = $db->prepare("SELECT COUNT(*) FROM information_schema.COLUMNS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'learning_designs' AND COLUMN_NAME = 'share_token'");
     $stmt->execute();
@@ -614,6 +670,89 @@ function sanitize_username(string $value): string
     $value = preg_replace('/\s+/u', '_', $value) ?? '';
     $value = preg_replace('/[^\p{L}\p{N}_.-]/u', '', $value) ?? '';
     return mb_substr($value, 0, 80, 'UTF-8');
+}
+
+function is_florimont_email(string $email): bool
+{
+    if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        return false;
+    }
+
+    $atPosition = strrpos($email, '@');
+    if ($atPosition === false) {
+        return false;
+    }
+
+    return strtolower(substr($email, $atPosition + 1)) === 'florimont.ch';
+}
+
+/**
+ * Create and store a one-time email verification token.
+ *
+ * The raw token is returned to the caller and only its SHA-256 hash is stored.
+ */
+function create_email_verification_token(PDO $db, int $userId): string
+{
+    $token = bin2hex(random_bytes(32));
+    $stmt = $db->prepare("UPDATE users
+        SET email_verification_token_hash = ?,
+            email_verification_expires_at = ?,
+            email_verification_sent_at = NULL
+        WHERE id = ? AND email_verified_at IS NULL");
+    $stmt->execute([
+        hash('sha256', $token),
+        time() + EMAIL_VERIFICATION_TTL_SECONDS,
+        $userId,
+    ]);
+
+    if ($stmt->rowCount() !== 1) {
+        throw new RuntimeException('Impossible de créer le lien de vérification.');
+    }
+
+    return $token;
+}
+
+function send_email_verification_message(string $email, string $username, string $token): bool
+{
+    if (!filter_var($email, FILTER_VALIDATE_EMAIL) || preg_match('/[\r\n]/', $email)) {
+        return false;
+    }
+
+    $from = trim((string)(app_env('APP_MAIL_FROM') ?? 'no-reply@ralentirtravaux.com'));
+    $fromName = trim((string)(app_env('APP_MAIL_FROM_NAME') ?? 'Learning Designer'));
+    if (!filter_var($from, FILTER_VALIDATE_EMAIL) || preg_match('/[\r\n]/', $from . $fromName)) {
+        return false;
+    }
+
+    $verificationUrl = app_base_url() . '/verify-email.php?token=' . rawurlencode($token);
+    $safeUsername = trim(str_replace(["\r", "\n"], ' ', $username));
+    $body = "Bonjour {$safeUsername},\n\n"
+        . "Confirmez votre adresse email pour activer votre compte Learning Designer :\n"
+        . $verificationUrl . "\n\n"
+        . "Ce lien est valable pendant 24 heures et ne peut être utilisé qu'une fois.\n\n"
+        . "Si vous n'avez pas demandé la création de ce compte, vous pouvez ignorer ce message.\n";
+
+    $subject = 'Confirmez votre adresse email — Learning Designer';
+    if (function_exists('mb_encode_mimeheader')) {
+        $subject = mb_encode_mimeheader($subject, 'UTF-8');
+        $encodedFromName = mb_encode_mimeheader($fromName, 'UTF-8');
+    } else {
+        $encodedFromName = $fromName;
+    }
+    $headers = [
+        'From: ' . $encodedFromName . ' <' . $from . '>',
+        'MIME-Version: 1.0',
+        'Content-Type: text/plain; charset=UTF-8',
+        'Content-Transfer-Encoding: 8bit',
+    ];
+
+    return mail($email, $subject, wordwrap($body, 78), implode("\r\n", $headers));
+}
+
+function mark_email_verification_sent(PDO $db, int $userId): void
+{
+    $stmt = $db->prepare("UPDATE users SET email_verification_sent_at = ? WHERE id = ? AND email_verified_at IS NULL");
+    $stmt->execute([time(), $userId]);
 }
 
 function h(string $value): string
@@ -921,6 +1060,9 @@ function site_breadcrumb_items(string $active = ''): array
         ],
         'signup' => [
             ['fr' => 'Créer un compte', 'en' => 'Create account'],
+        ],
+        'verify_email' => [
+            ['fr' => 'Vérifier l’email', 'en' => 'Verify email'],
         ],
     ];
 

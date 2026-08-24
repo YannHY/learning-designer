@@ -152,7 +152,7 @@ function e(string $value): string
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="stylesheet" href="css/interface.css?v=20260823-import-models">
     <link rel="stylesheet" href="css/account-ui.css?v=20260520-4">
-    <link rel="stylesheet" href="css/account-pages.css?v=20260803-responsive-shell">
+    <link rel="stylesheet" href="css/account-pages.css?v=20260824-profile-dark-theme">
 </head>
 <body class="profile-page">
 <?php render_site_nav('profile'); ?>

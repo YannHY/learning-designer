@@ -3,6 +3,7 @@ declare(strict_types=1);
 require_once __DIR__ . '/lib/bootstrap.php';
 
 $error = '';
+$verificationRequired = false;
 try {
     $db = app_db();
     if (is_admin_seed_needed($db)) {
@@ -29,12 +30,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     } elseif ($email === '' || $password === '') {
         $error = 'Merci de renseigner l’email et le mot de passe.';
     } else {
-        $stmt = $db->prepare("SELECT id, username, email, password_hash, role, status FROM users WHERE email = ? LIMIT 1");
+        $stmt = $db->prepare("SELECT id, username, email, password_hash, role, status, email_verified_at FROM users WHERE email = ? LIMIT 1");
         $stmt->execute([$email]);
         $user = $stmt->fetch();
 
         if (!$user || $user['status'] !== 'active' || !password_verify($password, (string)$user['password_hash'])) {
             $error = 'Identifiants invalides.';
+        } elseif ($user['email_verified_at'] === null || trim((string)$user['email_verified_at']) === '') {
+            app_start_session();
+            $_SESSION['pending_verification_email'] = (string)$user['email'];
+            $verificationRequired = true;
+            $error = 'Votre adresse email doit être vérifiée avant la première connexion.';
         } else {
             session_regenerate_id(true);
             $_SESSION['user'] = [
@@ -81,6 +87,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </form>
         <?php if ($error !== ''): ?>
             <p class="account-message error"><?= htmlspecialchars($error, ENT_QUOTES, 'UTF-8') ?></p>
+        <?php endif; ?>
+        <?php if ($verificationRequired): ?>
+            <p class="account-footer"><a href="verify-email.php">Renvoyer l’email de vérification</a></p>
         <?php endif; ?>
         <p class="account-footer"><a href="signup.php">Créer un compte</a></p>
     </section>

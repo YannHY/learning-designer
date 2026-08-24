@@ -23,7 +23,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $error = 'Le mot de passe doit contenir au moins 8 caractères.';
     } else {
         try {
-            $stmt = $db->prepare("INSERT INTO users (username, email, password_hash, role, status) VALUES (?, ?, ?, ?, 'active')");
+            $stmt = $db->prepare("INSERT INTO users (username, email, password_hash, role, status, email_verified_at) VALUES (?, ?, ?, ?, 'active', CURRENT_TIMESTAMP)");
             $stmt->execute([$username, $email, password_hash($password, PASSWORD_DEFAULT), $role]);
             $message = 'Compte créé avec succès.';
         } catch (PDOException $e) {
@@ -38,12 +38,13 @@ $usersStmt = $db->query("SELECT
     u.email,
     u.role,
     u.status,
+    u.email_verified_at,
     u.created_at,
     u.last_login_at,
     COUNT(d.id) AS design_count
 FROM users u
 LEFT JOIN learning_designs d ON d.owner_user_id = u.id
-GROUP BY u.id, u.username, u.email, u.role, u.status, u.created_at, u.last_login_at
+GROUP BY u.id, u.username, u.email, u.role, u.status, u.email_verified_at, u.created_at, u.last_login_at
 ORDER BY u.created_at DESC");
 $users = $usersStmt->fetchAll();
 ?>
@@ -127,7 +128,7 @@ $users = $usersStmt->fetchAll();
                             <td><?= htmlspecialchars((string)$u['email'], ENT_QUOTES, 'UTF-8') ?></td>
                             <td><?= htmlspecialchars((string)$u['role'], ENT_QUOTES, 'UTF-8') ?></td>
                             <td><?= (int)$u['design_count'] ?></td>
-                            <td><?= htmlspecialchars((string)$u['status'], ENT_QUOTES, 'UTF-8') ?></td>
+                            <td><?= htmlspecialchars((string)$u['status'], ENT_QUOTES, 'UTF-8') ?><?= empty($u['email_verified_at']) ? ' · email en attente' : '' ?></td>
                             <td><?= htmlspecialchars((string)$u['created_at'], ENT_QUOTES, 'UTF-8') ?></td>
                             <td><?= htmlspecialchars((string)($u['last_login_at'] ?: 'Jamais'), ENT_QUOTES, 'UTF-8') ?></td>
                         </tr>

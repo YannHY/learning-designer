@@ -942,8 +942,10 @@ const aiasModalLevels = document.getElementById("aias-modal-levels");
 const aiasModalAttributionPrefix = document.getElementById("aias-modal-attribution-prefix");
 const aiasModalCloseBtn = document.getElementById("aias-modal-close-btn");
 
-const LD_STORAGE_KEY = "ld_state_v1";
+const LD_STORAGE_KEY_PREFIX = "ld_state_v2_";
 const LD_LANGUAGE_STORAGE_KEY = "learningDesignerLang";
+let activeStorageKey = null;
+let storageScopeReady = false;
 let activeActivityLinkTrigger = null;
 let activeActivityLinkActivity = null;
 let activeAiasTrigger = null;
@@ -958,15 +960,8 @@ function preferredInterfaceLanguage(fallback = "fr") {
   return normalizedFallback;
 }
 
-let state = (() => {
-  let initialState = defaultState();
-  try {
-    const raw = localStorage.getItem(LD_STORAGE_KEY);
-    if (raw) initialState = hydrateState(JSON.parse(raw), initialState);
-  } catch (_) {}
-  initialState.meta.uiLanguage = preferredInterfaceLanguage(initialState.meta.uiLanguage);
-  return initialState;
-})();
+let state = defaultState();
+state.meta.uiLanguage = preferredInterfaceLanguage(state.meta.uiLanguage);
 let dragState = null;
 let activeModalBackdrop = null;
 let previousFocusedElement = null;
@@ -2252,9 +2247,33 @@ function persistStateNow() {
   window.clearTimeout(localStateSaveTimer);
   localStateSaveTimer = 0;
   localStateSavePending = false;
+  if (!activeStorageKey) return;
   try {
-    localStorage.setItem(LD_STORAGE_KEY, JSON.stringify(state));
+    localStorage.setItem(activeStorageKey, JSON.stringify(state));
   } catch (_) {}
+}
+
+function initializeStorageScope(userId = null) {
+  const numericUserId = Number(userId);
+  const scope = Number.isInteger(numericUserId) && numericUserId > 0
+    ? `user_${numericUserId}`
+    : "guest";
+  const nextStorageKey = `${LD_STORAGE_KEY_PREFIX}${scope}`;
+  if (storageScopeReady && activeStorageKey === nextStorageKey) return;
+
+  persistStateNow();
+  activeStorageKey = nextStorageKey;
+  storageScopeReady = true;
+
+  let scopedState = createNewDesignState();
+  try {
+    const raw = localStorage.getItem(activeStorageKey);
+    if (raw) scopedState = hydrateState(JSON.parse(raw), scopedState);
+  } catch (_) {}
+  scopedState.meta.uiLanguage = preferredInterfaceLanguage(scopedState.meta.uiLanguage);
+  state = scopedState;
+  render();
+  void maybeApplyRequestedModel();
 }
 
 function saveState() {
@@ -8214,6 +8233,7 @@ window.learningDesignerApp = {
   t,
   announce,
   showNotice,
+  initializeStorageScope,
   saveLocal() {
     saveState();
   },
@@ -8385,5 +8405,4 @@ window.learningDesignerApp = {
 })();
 
 render();
-maybeApplyRequestedModel();
 })();

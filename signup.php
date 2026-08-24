@@ -31,26 +31,43 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $error = 'Nom d’utilisateur, email et mot de passe requis.';
     } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
         $error = 'Adresse email invalide.';
+    } elseif (!is_florimont_email($email)) {
+        $error = 'L’inscription est réservée aux adresses email @florimont.ch.';
     } elseif (strlen($password) < 8) {
         $error = 'Le mot de passe doit contenir au moins 8 caractères.';
     } else {
         try {
-            $stmt = $db->prepare("INSERT INTO users (username, email, password_hash, role, status, last_login_at) VALUES (?, ?, ?, 'designer', 'active', CURRENT_TIMESTAMP)");
-            $stmt->execute([$username, $email, password_hash($password, PASSWORD_DEFAULT)]);
+            $token = bin2hex(random_bytes(32));
+            $stmt = $db->prepare("INSERT INTO users (
+                username,
+                email,
+                password_hash,
+                role,
+                status,
+                email_verification_token_hash,
+                email_verification_expires_at
+            ) VALUES (?, ?, ?, 'designer', 'active', ?, ?)");
+            $stmt->execute([
+                $username,
+                $email,
+                password_hash($password, PASSWORD_DEFAULT),
+                hash('sha256', $token),
+                time() + EMAIL_VERIFICATION_TTL_SECONDS,
+            ]);
 
             $userId = (int)$db->lastInsertId();
-            session_regenerate_id(true);
-            $_SESSION['user'] = [
-                'id' => $userId,
-                'username' => $username,
-                'email' => $email,
-                'role' => 'designer',
-            ];
-
-            header('Location: designer.html');
+            $sent = send_email_verification_message($email, $username, $token);
+            if ($sent) {
+                mark_email_verification_sent($db, $userId);
+            }
+            app_start_session();
+            $_SESSION['pending_verification_email'] = $email;
+            header('Location: verify-email.php?sent=' . ($sent ? '1' : '0'));
             exit;
-        } catch (PDOException $e) {
+        } catch (PDOException) {
             $error = 'Impossible de créer ce compte (email ou nom déjà utilisé ?).';
+        } catch (Throwable) {
+            $error = 'Le compte a été créé, mais le lien de vérification n’a pas pu être préparé. Essayez de le renvoyer depuis la page de connexion.';
         }
     }
 }
@@ -75,12 +92,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <section class="account-card">
         <p class="account-kicker">Learning Designer</p>
         <h1>Créer un compte</h1>
-        <p class="account-copy">Inscrivez-vous pour sauvegarder vos productions et les retrouver plus tard.</p>
+        <p class="account-copy">Inscrivez-vous avec votre adresse @florimont.ch. Un lien de vérification vous sera envoyé avant votre première connexion.</p>
         <form method="post" class="account-form">
             <label for="username">Nom d’utilisateur</label>
             <input id="username" name="username" type="text" required autocomplete="nickname">
             <label for="email">Email</label>
-            <input id="email" name="email" type="email" required autocomplete="username">
+            <input id="email" name="email" type="email" required autocomplete="username" placeholder="@florimont.ch">
             <label for="password">Mot de passe</label>
             <input id="password" name="password" type="password" minlength="8" required autocomplete="new-password">
             <button type="submit">Créer mon compte</button>

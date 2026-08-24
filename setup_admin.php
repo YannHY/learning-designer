@@ -30,7 +30,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $error = 'Le mot de passe doit contenir au moins 8 caracteres.';
     } else {
         try {
-            $stmt = $db->prepare("INSERT INTO users (username, email, password_hash, role, status) VALUES (?, ?, ?, 'admin', 'active')");
+            $stmt = $db->prepare("INSERT INTO users (username, email, password_hash, role, status, email_verified_at) VALUES (?, ?, ?, 'admin', 'active', CURRENT_TIMESTAMP)");
             $stmt->execute([$username, $email, password_hash($password, PASSWORD_DEFAULT)]);
             header('Location: login.php');
             exit;

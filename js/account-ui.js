@@ -36,6 +36,27 @@
     return String(state?.meta?.remoteUpdatedAt || "");
   }
 
+  function hasMeaningfulDesignContent(state) {
+    if (Array.isArray(state?.sessions) && state.sessions.length > 0) return true;
+
+    const meta = state?.meta ?? {};
+    const textFields = [
+      "name",
+      "description",
+      "command",
+      "designers",
+      "trainers",
+      "personas",
+      "modeDelivery",
+      "sizeClass"
+    ];
+    if (textFields.some((field) => String(meta[field] ?? "").trim() !== "")) return true;
+    if (Array.isArray(meta.sliders) && meta.sliders.length > 0) return true;
+
+    return ["learningDays", "learningHours", "learningMinutes"]
+      .some((field) => Number(meta[field] || 0) > 0);
+  }
+
   function setRemoteDesignUrl(designId) {
     if (!Number.isFinite(designId) || designId <= 0) return;
     const url = new URL(window.location.href);
@@ -84,6 +105,7 @@
       authState.user = null;
     } finally {
       authState.loading = false;
+      app()?.initializeStorageScope?.(authState.user?.id ?? null);
       renderAccountArea();
       syncSaveUi();
       syncPublishUi();
@@ -180,6 +202,7 @@
   async function autoSaveRemote() {
     const state = app()?.getState?.();
     if (!state) return;
+    if (currentDesignId() <= 0 && !hasMeaningfulDesignContent(state)) return;
     setAutoSaveStatus("saving", tr("Sauvegarde…", "Saving…"));
     try {
       const data = await fetchJson("save_design.php", {

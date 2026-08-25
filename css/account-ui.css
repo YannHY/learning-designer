@@ -76,10 +76,6 @@
   border-color: rgba(255, 255, 255, 0.22);
 }
 
-.nav-account-label {
-  font-size: 13px;
-}
-
 /* Dark mode */
 [data-theme="dark"] .nav-icon-btn,
 [data-theme="dark"] .nav-account-btn {
@@ -156,66 +152,10 @@
   background: var(--hover-bg);
 }
 
-.saved-designs-empty {
-  margin: 0;
-  color: var(--muted);
-}
-
-.saved-designs-list {
-  display: grid;
-  gap: 12px;
-  margin-top: 16px;
-}
-
-.saved-design-item {
-  border: 1px solid var(--line);
-  border-radius: 14px;
-  padding: 14px;
-  background: var(--panel-2);
-}
-
-.saved-design-head {
-  display: flex;
-  justify-content: space-between;
-  gap: 16px;
-  align-items: start;
-}
-
-.saved-design-title {
-  margin: 0 0 4px;
-  font-size: 16px;
-  color: var(--text-strong);
-}
-
-.saved-design-meta {
-  margin: 0;
-  color: var(--muted);
-  font-size: 13px;
-}
-
-.saved-design-actions {
-  display: inline-flex;
-  gap: 8px;
-  flex-wrap: wrap;
-}
-
-.saved-design-actions .btn {
-  white-space: nowrap;
-}
-
-.saved-design-status {
-  margin-top: 14px;
-  color: var(--muted);
-  font-size: 14px;
-}
-
 @media (max-width: 720px) {
   .account-toolbar-cluster {
     flex-direction: column;
     align-items: flex-start;
-  }
-  .saved-design-head {
-    flex-direction: column;
   }
 }
 
@@ -292,13 +232,6 @@
   margin: 13px 0 0 45px;
   color: var(--muted);
   font-size: 13px;
-}
-
-.publish-hint {
-  font-size: 14px;
-  color: var(--muted);
-  margin: 0 0 14px;
-  line-height: 1.6;
 }
 
 .publish-url-row {

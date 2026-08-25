@@ -10,7 +10,6 @@ Elle permet de structurer une séquence en moments et activités, d'en analyser 
 - [Modèles de scénarios](./models.php) : 28 scénarios génériques préremplis, répartis en huit familles
 - [Prompts pédagogiques](./prompts.php) : prompts prêts à copier pour enrichir un scénario avec une IA
 - [Comprendre le learning design](./learning-design.php) : principes et cadre pédagogique
-- [Référence du CLI](./cli-reference.php) : commandes du CLI `learning`
 
 ## Fonctionnalités
 

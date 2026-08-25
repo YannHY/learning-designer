@@ -1009,14 +1009,6 @@ function site_breadcrumb_items(string $active = ''): array
             ['fr' => 'Aide', 'en' => 'Help', 'href' => 'help.php'],
             ['fr' => 'Taxonomie de Bloom', 'en' => "Bloom's Taxonomy"],
         ],
-        'cli-reference' => [
-            ['fr' => 'Aide', 'en' => 'Help', 'href' => 'help.php#cli'],
-            ['fr' => 'CLI détaillé', 'en' => 'CLI details'],
-        ],
-        'skill' => [
-            ['fr' => 'Aide', 'en' => 'Help', 'href' => 'help.php#cli'],
-            ['fr' => 'Skill Claude', 'en' => 'Claude skill'],
-        ],
         'competencies' => [
             ['fr' => 'Aide', 'en' => 'Help', 'href' => 'help.php'],
             ['fr' => 'Compétences numériques', 'en' => 'Digital Competencies'],

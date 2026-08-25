@@ -11,6 +11,21 @@ function app_start_session(): void
         return;
     }
 
+    // Une session ne peut plus démarrer une fois les en-têtes envoyés. Sans ce
+    // garde-fou, PHP affichait trois avertissements au milieu de la page — avec
+    // les chemins absolus du serveur — et la navigation présentait un visiteur
+    // connecté comme déconnecté. La page doit appeler cette fonction avant
+    // d'émettre du HTML ; on trace le manquement au lieu de défigurer la page.
+    if (headers_sent($fichier, $ligne)) {
+        error_log(sprintf(
+            'Learning Designer : session demandée après envoi des en-têtes (sortie démarrée dans %s ligne %d).'
+                . ' Appelez app_start_session() avant tout HTML.',
+            (string)$fichier,
+            (int)$ligne
+        ));
+        return;
+    }
+
     ini_set('session.use_strict_mode', '1');
     $isHttps = !empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off';
     session_set_cookie_params([

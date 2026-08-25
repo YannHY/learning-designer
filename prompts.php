@@ -2,6 +2,9 @@
 declare(strict_types=1);
 require_once __DIR__ . '/lib/bootstrap.php';
 
+// La navigation lit la session : elle doit démarrer avant tout HTML.
+app_start_session();
+
 $udlPrompt = <<<'PROMPT'
 # Instruction pour la révision du plan de cours basé sur la CUA
 

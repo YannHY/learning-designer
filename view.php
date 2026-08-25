@@ -322,9 +322,8 @@ function loadCompetencyCatalog(): array {
     if (is_array($catalog)) return $catalog;
 
     $catalog = [];
-    $sourcePath = __DIR__ . '/js/interface.js';
-    $js = is_file($sourcePath) ? file_get_contents($sourcePath) : '';
-    if (!is_string($js) || !preg_match('/const\s+COMPETENCY_CATALOG_SOURCE\s*=\s*String\.raw`(.*?)`;/s', $js, $matches)) {
+    $tsv = app_competency_catalog_source();
+    if ($tsv === '') {
         return $catalog;
     }
 
@@ -333,7 +332,7 @@ function loadCompetencyCatalog(): array {
     $currentLevel = null;
     $currentLevelSections = [];
 
-    foreach (preg_split('/\R/', (string)$matches[1]) ?: [] as $rawLine) {
+    foreach (preg_split('/\R/', $tsv) ?: [] as $rawLine) {
         $line = str_replace("\r", '', (string)$rawLine);
         if (trim($line) === '') continue;
 

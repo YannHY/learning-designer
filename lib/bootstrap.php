@@ -761,6 +761,41 @@ function h(string $value): string
 }
 
 /**
+ * Renvoie le TSV du catalogue des compétences numériques.
+ *
+ * La source de vérité est js/competency-catalog.js, un fichier dédié à cette
+ * seule constante pour que le JS y accède sans requête réseau et que le PHP
+ * n'ait pas à lire les 356 Ko de interface.js à chaque affichage d'un design
+ * public. view.php et competencies.php passent tous les deux par ici : c'est
+ * le seul endroit qui connaît l'emplacement du catalogue.
+ *
+ * Un échec d'extraction se traduisait par des libellés de compétences vides,
+ * sans aucun signal ; il est désormais tracé dans le journal du serveur.
+ */
+function app_competency_catalog_source(): string
+{
+    static $source = null;
+    if (is_string($source)) {
+        return $source;
+    }
+
+    $path = __DIR__ . '/../js/competency-catalog.js';
+    if (!is_file($path)) {
+        error_log('Learning Designer : catalogue de compétences introuvable (' . $path . ').');
+        return $source = '';
+    }
+
+    $js = (string)file_get_contents($path);
+    if (!preg_match('/const\s+COMPETENCY_CATALOG_SOURCE\s*=\s*String\.raw`(.*?)`;/s', $js, $matches)) {
+        error_log('Learning Designer : COMPETENCY_CATALOG_SOURCE illisible dans ' . $path
+            . ' (constante renommée ou littéral modifié ?).');
+        return $source = '';
+    }
+
+    return $source = (string)$matches[1];
+}
+
+/**
  * Applique le thème sombre avant le premier rendu.
  *
  * Le script de navigation attend DOMContentLoaded pour lire le thème, ce qui

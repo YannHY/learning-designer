@@ -627,7 +627,9 @@
         </div>
       </div>
     </div>
-    <script src="js/interface.js?v=20260824-user-storage-scope"></script>
+    <!-- Doit précéder interface.js, qui lit COMPETENCY_CATALOG_SOURCE au chargement. -->
+    <script src="js/competency-catalog.js?v=20260825-catalogue-extrait"></script>
+    <script src="js/interface.js?v=20260825-catalogue-extrait"></script>
     <script src="js/account-ui.js?v=20260824-skip-empty-autosave"></script>
     <script>
       (function() {

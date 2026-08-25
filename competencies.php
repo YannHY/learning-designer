@@ -2,16 +2,6 @@
 declare(strict_types=1);
 require_once __DIR__ . '/lib/bootstrap.php';
 
-function competency_catalog_source(): string
-{
-    $path = __DIR__ . '/js/interface.js';
-    $source = is_file($path) ? (string)file_get_contents($path) : '';
-    if (!preg_match('/const\s+COMPETENCY_CATALOG_SOURCE\s*=\s*String\.raw`(.*?)`;/s', $source, $matches)) {
-        return '';
-    }
-    return (string)$matches[1];
-}
-
 function competency_roman(int $value): string
 {
     $numerals = [
@@ -125,7 +115,7 @@ function collect_competency_references(mixed $value, array &$references): void
     }
 }
 
-$catalog = parse_competency_catalog(competency_catalog_source());
+$catalog = parse_competency_catalog(app_competency_catalog_source());
 $levels = $catalog['levels'];
 $items = $catalog['items'];
 $total = count($items);
@@ -198,6 +188,7 @@ foreach ($sectionGroups as $sectionKey => $group) {
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="icon" href="assets/favicon.svg?v=20260804" type="image/svg+xml" sizes="any">
     <title>Compétences numériques | Learning Designer</title>
+    <?php render_theme_boot_script(); ?>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" referrerpolicy="no-referrer">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>

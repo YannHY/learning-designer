@@ -760,6 +760,28 @@ function h(string $value): string
     return htmlspecialchars($value, ENT_QUOTES, 'UTF-8');
 }
 
+/**
+ * Applique le thème sombre avant le premier rendu.
+ *
+ * Le script de navigation attend DOMContentLoaded pour lire le thème, ce qui
+ * laissait apparaître un flash clair sur toutes les pages. À appeler dans le
+ * <head>, avant les feuilles de style. Le pendant statique de cette fonction
+ * se trouve dans le <head> de designer.html, qui n'est pas un fichier PHP.
+ */
+function render_theme_boot_script(): void
+{
+    ?>
+    <script>
+        try {
+            if (localStorage.getItem('learningDesignerTheme') === 'dark') {
+                document.documentElement.setAttribute('data-theme', 'dark');
+            }
+        } catch (error) {
+        }
+    </script>
+    <?php
+}
+
 function render_site_nav(string $active = ''): void
 {
     $user = current_user();

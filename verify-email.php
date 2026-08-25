@@ -128,6 +128,7 @@ if ($db !== null && $requestMethod === 'POST' && $submittedToken !== '') {
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="icon" href="assets/favicon.svg?v=20260804" type="image/svg+xml" sizes="any">
     <title>Vérifier l’email | Learning Designer</title>
+    <?php render_theme_boot_script(); ?>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" referrerpolicy="no-referrer">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>

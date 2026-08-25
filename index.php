@@ -10,14 +10,7 @@ require_once __DIR__ . '/lib/bootstrap.php';
     <link rel="icon" href="assets/favicon.svg?v=20260804" type="image/svg+xml" sizes="any">
     <meta name="description" content="Learning Designer aide les enseignants à concevoir, analyser et partager des scénarios pédagogiques.">
     <title>Learning Designer | Concevoir des expériences d’apprentissage</title>
-    <script>
-        try {
-            if (localStorage.getItem('learningDesignerTheme') === 'dark') {
-                document.documentElement.setAttribute('data-theme', 'dark');
-            }
-        } catch (error) {
-        }
-    </script>
+    <?php render_theme_boot_script(); ?>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" referrerpolicy="no-referrer">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>

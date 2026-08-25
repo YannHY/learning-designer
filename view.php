@@ -177,6 +177,25 @@ function safeEsc(mixed $v): string {
     return esc(safeText($v));
 }
 
+/**
+ * N'autorise que les schémas d'URL sûrs dans un attribut href.
+ *
+ * Le concepteur normalise déjà les liens d'activité en http/https côté client
+ * (normalizeExternalUrl dans js/interface.js), mais save_design.php et
+ * cli_publish.php enregistrent le document JSON tel quel : une requête forgée
+ * ou une publication par le CLI peut donc stocker un lien « javascript: »,
+ * exécuté au clic sur l'origine du site depuis cette page publique.
+ * Même liste de schémas que inlineMarkdown() juste en dessous.
+ */
+function safeUrl(string $url): string {
+    $url = trim($url);
+    if ($url === '' || preg_match('/[\x00-\x1F\x7F]/', $url)) {
+        return '';
+    }
+
+    return preg_match('#^(?:https?://|mailto:)#i', $url) === 1 ? $url : '';
+}
+
 function inlineMarkdown(string $text): string {
     $html = esc($text);
     $html = preg_replace('/\*\*([^*\n]+)\*\*/u', '<strong>$1</strong>', $html) ?? $html;
@@ -1001,7 +1020,7 @@ $displayDesignedMinutes = $designedMinutes > 0 ? $designedMinutes : $totalMinute
           <?php foreach ($aLinks as $link):
             if (!is_array($link)) continue;
             $linkTitle = safeText($link['title'] ?? '');
-            $linkUrl = safeText($link['url'] ?? '');
+            $linkUrl = safeUrl(safeText($link['url'] ?? ''));
             if ($linkTitle === '' || $linkUrl === '') continue;
           ?>
           <a class="activity-link-public" href="<?= esc($linkUrl) ?>" target="_blank" rel="noopener noreferrer">↗ <?= esc($linkTitle) ?></a>

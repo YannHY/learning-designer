@@ -1,1 +1,24 @@
 DirectoryIndex index.php
+
+# La base SQLite vit dans la racine web : sans ces règles, elle est
+# téléchargeable (emails, empreintes de mots de passe, empreintes de jetons CLI).
+# Le correctif de fond reste de la déplacer hors racine via APP_DB_SQLITE_PATH.
+#
+# Chaque directive est encadrée par le module qui la fournit : si aucun de ces
+# modules n'est chargé, le fichier reste inerte au lieu de provoquer une 500.
+<FilesMatch "\.(sqlite|sqlite-journal|sqlite-wal|sqlite-shm|db)$">
+    <IfModule mod_authz_core.c>
+        Require all denied
+    </IfModule>
+    <IfModule mod_access_compat.c>
+        Order allow,deny
+        Deny from all
+    </IfModule>
+</FilesMatch>
+
+# Repli indépendant des modules d'autorisation : mod_alias est présent sur
+# Apache 2.2 comme 2.4 et couvre les hébergements où les deux modules
+# ci-dessus manqueraient.
+<IfModule mod_alias.c>
+    RedirectMatch 404 (?i)\.(sqlite|sqlite-journal|sqlite-wal|sqlite-shm|db)$
+</IfModule>

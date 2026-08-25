@@ -17,19 +17,62 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $username = sanitize_username((string)($_POST['username'] ?? ''));
         $email = trim((string)($_POST['email'] ?? ''));
 
+        $emailChanged = strcasecmp($email, (string)($user['email'] ?? '')) !== 0;
+
         if ($username === '' || $email === '') {
             $error = 'Nom d’utilisateur et email requis.';
         } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
             $error = 'Adresse email invalide.';
+        } elseif ($emailChanged && !is_florimont_email($email)) {
+            // Sans ce contrôle, un compte pouvait basculer vers n'importe quel
+            // domaine après coup et contourner la restriction de signup.php.
+            $error = 'Les comptes sont réservés aux adresses email @florimont.ch.';
         } else {
             try {
-                $stmt = $db->prepare("UPDATE users SET username = ?, email = ? WHERE id = ?");
-                $stmt->execute([$username, $email, (int)$user['id']]);
-                $_SESSION['user']['username'] = $username;
-                $_SESSION['user']['email'] = $email;
-                $message = 'Informations mises a jour.';
+                if (!$emailChanged) {
+                    $stmt = $db->prepare("UPDATE users SET username = ? WHERE id = ?");
+                    $stmt->execute([$username, (int)$user['id']]);
+                    $_SESSION['user']['username'] = $username;
+                    $message = 'Informations mises à jour.';
+                } else {
+                    // La nouvelle adresse doit être confirmée avant de servir à
+                    // se connecter. Tout se fait dans une transaction : si
+                    // l'email de vérification ne part pas, on annule et le
+                    // compte reste utilisable avec l'ancienne adresse — aucun
+                    // chemin ne peut enfermer l'utilisateur dehors.
+                    $db->beginTransaction();
+                    $db->prepare("UPDATE users
+                            SET username = ?, email = ?, email_verified_at = NULL
+                            WHERE id = ?")
+                       ->execute([$username, $email, (int)$user['id']]);
+
+                    $token = create_email_verification_token($db, (int)$user['id']);
+                    if (!send_email_verification_message($email, $username, $token)) {
+                        $db->rollBack();
+                        $error = 'L’email de confirmation n’a pas pu être envoyé : votre adresse actuelle est conservée. Réessayez plus tard.';
+                    } else {
+                        mark_email_verification_sent($db, (int)$user['id']);
+                        $db->commit();
+
+                        // La session en cours reste valide, mais la prochaine
+                        // connexion exigera la confirmation.
+                        $_SESSION['user']['username'] = $username;
+                        $_SESSION['user']['email'] = $email;
+                        $_SESSION['pending_verification_email'] = $email;
+                        $message = 'Informations mises à jour. Un lien de confirmation vient d’être envoyé à ' . $email
+                            . ' : cette adresse devra être confirmée avant votre prochaine connexion.';
+                    }
+                }
             } catch (PDOException $e) {
-                $error = 'Nom d’utilisateur ou email deja utilise.';
+                if ($db->inTransaction()) {
+                    $db->rollBack();
+                }
+                $error = 'Nom d’utilisateur ou email déjà utilisé.';
+            } catch (Throwable $e) {
+                if ($db->inTransaction()) {
+                    $db->rollBack();
+                }
+                $error = 'Le changement d’adresse n’a pas pu être préparé : votre adresse actuelle est conservée.';
             }
         }
     } elseif ($action === 'password') {
@@ -52,6 +95,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             } else {
                 $upd = $db->prepare("UPDATE users SET password_hash = ? WHERE id = ?");
                 $upd->execute([password_hash($next, PASSWORD_DEFAULT), (int)$user['id']]);
+                // Un identifiant de session capté avant le changement ne doit
+                // pas rester valide après.
+                session_regenerate_id(true);
                 $message = 'Mot de passe mis a jour.';
             }
         }

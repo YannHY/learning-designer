@@ -2465,7 +2465,7 @@ function updateActivityLinksDisplay(trigger, activity) {
     chip.setAttribute("role", "listitem");
     const anchor = document.createElement("a");
     anchor.className = "activity-link-chip-anchor";
-    anchor.href = link.url;
+    anchor.href = normalizeExternalUrl(link.url);
     anchor.target = "_blank";
     anchor.rel = "noopener noreferrer";
     anchor.textContent = link.title;
@@ -2501,7 +2501,7 @@ function renderActivityLinkList(activity) {
     main.className = "activity-link-list-main";
     const anchor = document.createElement("a");
     anchor.className = "activity-link-list-title";
-    anchor.href = link.url;
+    anchor.href = normalizeExternalUrl(link.url);
     anchor.target = "_blank";
     anchor.rel = "noopener noreferrer";
     anchor.textContent = link.title;
@@ -4015,7 +4015,7 @@ function buildHtmlExportDocument(scope = "full", sessionIds = null) {
             <p><strong>AIAS:</strong> ${escapeHtml(aiasSummary(activity.aias))}</p>
             <p><strong>Description:</strong> ${escapeHtmlWithBreaks(activity.description || "")}</p>
             <p><strong>Consignes pour les élèves:</strong> ${escapeHtmlWithBreaks(activity.instructions || "")}</p>
-            ${activity.links && activity.links.length ? `<p><strong>Liens:</strong> ${activity.links.map((link) => `<a href="${escapeHtml(link.url)}" target="_blank" rel="noopener noreferrer">${escapeHtml(link.title)}</a>`).join(", ")}</p>` : ""}
+            ${activity.links && activity.links.length ? `<p><strong>Liens:</strong> ${activity.links.map((link) => `<a href="${escapeHtml(normalizeExternalUrl(link.url))}" target="_blank" rel="noopener noreferrer">${escapeHtml(link.title)}</a>`).join(", ")}</p>` : ""}
             ${activity.tools && activity.tools.length ? `<p><strong>Compétences:</strong> ${escapeHtml(activity.tools.map(id => { const t = SELECTABLE_TOOLS_DATA.find(x => x.id === id); return t ? formatCompetencyLabel(t, "fr") : id; }).join(", "))}</p>` : ""}
           </li>
         `

@@ -1,0 +1,16 @@
+# Aucun fichier de ce dossier ne doit être servi par le serveur web : il
+# contient la base SQLite (emails, empreintes de mots de passe, empreintes de
+# jetons CLI). Le correctif de fond reste de placer la base hors racine via
+# APP_DB_SQLITE_PATH ; ce fichier est la protection de repli, et il suppose que
+# l'hébergeur autorise les .htaccess (AllowOverride).
+#
+# Chaque directive est encadrée par le module qui la fournit, pour qu'un
+# hébergement dépourvu de ces modules reste fonctionnel au lieu de renvoyer 500.
+<IfModule mod_authz_core.c>
+    Require all denied
+</IfModule>
+
+<IfModule mod_access_compat.c>
+    Order allow,deny
+    Deny from all
+</IfModule>

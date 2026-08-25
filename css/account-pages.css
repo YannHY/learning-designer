@@ -681,8 +681,12 @@ th {
 }
 
 /* The light profile surfaces are scoped through body.profile-page above,
-   so the dark overrides need the same scope to win the cascade. */
-[data-theme="dark"] body.profile-page .account-card {
+   so the dark overrides need the same scope to win the cascade.
+   body.admin-page partage la même règle claire : ses surfaces doivent donc
+   figurer ici aussi, faute de quoi la page d'administration affiche des
+   cartes blanches sous un texte clair, illisible. */
+[data-theme="dark"] body.profile-page .account-card,
+[data-theme="dark"] body.admin-page .account-card {
   background: linear-gradient(180deg, rgba(42, 40, 35, 0.96), rgba(32, 31, 28, 0.96));
   border-color: rgba(129, 124, 112, 0.42);
 }
@@ -690,7 +694,8 @@ th {
 [data-theme="dark"] body.profile-page .panel,
 [data-theme="dark"] body.profile-page .profile-stat,
 [data-theme="dark"] body.profile-page .profile-empty,
-[data-theme="dark"] body.profile-page .profile-publication {
+[data-theme="dark"] body.profile-page .profile-publication,
+[data-theme="dark"] body.admin-page .panel {
   background: rgba(36, 35, 31, 0.82);
   border-color: rgba(129, 124, 112, 0.42);
 }

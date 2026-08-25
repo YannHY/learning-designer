@@ -194,7 +194,7 @@ foreach ($sectionGroups as $sectionKey => $group) {
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="stylesheet" href="css/interface.css?v=20260823-import-models">
     <link rel="stylesheet" href="css/account-ui.css?v=20260520-4">
-    <link rel="stylesheet" href="css/account-pages.css?v=20260825-admin-dark">
+    <link rel="stylesheet" href="css/account-pages.css?v=20260825-autofill-sombre">
     <style>
         body.competencies-page {
             background: #fff;

@@ -601,6 +601,29 @@ th {
   color: #8892aa;
 }
 
+/* Les champs remplis par le gestionnaire de mots de passe reçoivent du
+   navigateur un fond bleu pâle imposé, qui ignore background-color : seule une
+   ombre interne assez épaisse le recouvre. Sans ces règles, « Nom
+   d'utilisateur » et « Mot de passe » restaient clairs au milieu d'un
+   formulaire sombre.
+   Deux blocs séparés et non une liste de sélecteurs : un navigateur qui ne
+   connaît pas l'une des deux pseudo-classes invaliderait la règle entière. */
+[data-theme="dark"] .account-form input:-webkit-autofill,
+[data-theme="dark"] .account-form input:-webkit-autofill:hover,
+[data-theme="dark"] .account-form input:-webkit-autofill:focus,
+[data-theme="dark"] .account-form input:-webkit-autofill:active {
+  -webkit-box-shadow: 0 0 0 100px #201f1c inset;
+  box-shadow: 0 0 0 100px #201f1c inset;
+  -webkit-text-fill-color: #f1efe9;
+  caret-color: #f1efe9;
+}
+
+[data-theme="dark"] .account-form input:autofill {
+  box-shadow: 0 0 0 100px #201f1c inset;
+  -webkit-text-fill-color: #f1efe9;
+  caret-color: #f1efe9;
+}
+
 [data-theme="dark"] .profile-stat,
 [data-theme="dark"] .profile-empty,
 [data-theme="dark"] .profile-publication {

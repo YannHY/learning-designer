@@ -61,7 +61,7 @@ $users = $usersStmt->fetchAll();
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="stylesheet" href="css/interface.css?v=20260823-import-models">
     <link rel="stylesheet" href="css/account-ui.css?v=20260520-4">
-    <link rel="stylesheet" href="css/account-pages.css?v=20260825-admin-dark">
+    <link rel="stylesheet" href="css/account-pages.css?v=20260825-autofill-sombre">
 </head>
 <body class="admin-page">
 <?php render_site_nav('admin'); ?>
@@ -86,15 +86,15 @@ $users = $usersStmt->fetchAll();
             <div class="inline-grid">
                 <div>
                     <label for="username">Nom d’utilisateur</label>
-                    <input id="username" name="username" type="text" required>
+                    <input id="username" name="username" type="text" required autocomplete="off">
                 </div>
                 <div>
                     <label for="email">Email</label>
-                    <input id="email" name="email" type="email" required>
+                    <input id="email" name="email" type="email" required autocomplete="off">
                 </div>
                 <div>
                     <label for="password">Mot de passe</label>
-                    <input id="password" name="password" type="password" minlength="8" required>
+                    <input id="password" name="password" type="password" minlength="8" required autocomplete="new-password">
                 </div>
                 <div>
                     <label for="role">Rôle</label>

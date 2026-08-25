@@ -53,7 +53,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="stylesheet" href="css/interface.css?v=20260823-import-models">
     <link rel="stylesheet" href="css/account-ui.css?v=20260520-4">
-    <link rel="stylesheet" href="css/account-pages.css?v=20260825-admin-dark">
+    <link rel="stylesheet" href="css/account-pages.css?v=20260825-autofill-sombre">
 </head>
 <body class="setup-page">
 <?php render_site_nav(); ?>
@@ -64,11 +64,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <p class="account-copy">Cette page n’apparait que tant qu’aucun administrateur n’existe dans la base.</p>
         <form method="post" class="account-form">
             <label for="username">Nom d’utilisateur</label>
-            <input id="username" name="username" type="text" required>
+            <input id="username" name="username" type="text" required autocomplete="nickname">
             <label for="email">Email</label>
-            <input id="email" name="email" type="email" required>
+            <input id="email" name="email" type="email" required autocomplete="username">
             <label for="password">Mot de passe</label>
-            <input id="password" name="password" type="password" minlength="8" required>
+            <input id="password" name="password" type="password" minlength="8" required autocomplete="new-password">
             <button type="submit">Creer l’administrateur</button>
         </form>
         <?php if ($error !== ''): ?>

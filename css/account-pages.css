@@ -299,6 +299,18 @@ h1, h2 {
 .subtle-link {
   font: inherit;
 }
+.account-form-link {
+  align-self: flex-end;
+  color: var(--primary);
+  font-size: 14px;
+  font-weight: 700;
+  text-decoration: none;
+}
+.account-form-link:hover,
+.account-form-link:focus-visible {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
 .account-form button {
   margin-top: 16px;
   border: 0;

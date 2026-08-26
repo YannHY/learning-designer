@@ -84,6 +84,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <input id="email" name="email" type="email" required autocomplete="username">
             <label for="password">Mot de passe</label>
             <input id="password" name="password" type="password" required autocomplete="current-password">
+            <a class="account-form-link" href="forgot-password.php">Mot de passe oublié&nbsp;?</a>
             <button type="submit">Se connecter</button>
         </form>
         <?php if ($error !== ''): ?>

@@ -1,9 +1,11 @@
 <?php
 declare(strict_types=1);
 
-const APP_SCHEMA_VERSION = 2;
+const APP_SCHEMA_VERSION = 3;
 const EMAIL_VERIFICATION_TTL_SECONDS = 86400;
 const EMAIL_VERIFICATION_RESEND_DELAY_SECONDS = 60;
+const PASSWORD_RESET_TTL_SECONDS = 3600;
+const PASSWORD_RESET_RESEND_DELAY_SECONDS = 60;
 
 function app_start_session(): void
 {
@@ -277,6 +279,9 @@ function ensure_app_tables(PDO $db): void
             email_verification_token_hash TEXT NULL,
             email_verification_expires_at INTEGER NULL,
             email_verification_sent_at INTEGER NULL,
+            password_reset_token_hash TEXT NULL,
+            password_reset_expires_at INTEGER NULL,
+            password_reset_sent_at INTEGER NULL,
             created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
             last_login_at TEXT NULL
         )");
@@ -325,9 +330,13 @@ function ensure_app_tables(PDO $db): void
         email_verification_token_hash CHAR(64) NULL,
         email_verification_expires_at BIGINT UNSIGNED NULL,
         email_verification_sent_at BIGINT UNSIGNED NULL,
+        password_reset_token_hash CHAR(64) NULL,
+        password_reset_expires_at BIGINT UNSIGNED NULL,
+        password_reset_sent_at BIGINT UNSIGNED NULL,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         last_login_at DATETIME NULL,
-        UNIQUE INDEX idx_users_email_verification_token (email_verification_token_hash)
+        UNIQUE INDEX idx_users_email_verification_token (email_verification_token_hash),
+        UNIQUE INDEX idx_users_password_reset_token (password_reset_token_hash)
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
 
     $db->exec("CREATE TABLE IF NOT EXISTS learning_designs (
@@ -400,12 +409,22 @@ function ensure_app_migrations(PDO $db): void
         if (!in_array('email_verification_sent_at', $userColNames, true)) {
             $db->exec("ALTER TABLE users ADD COLUMN email_verification_sent_at INTEGER NULL");
         }
+        if (!in_array('password_reset_token_hash', $userColNames, true)) {
+            $db->exec("ALTER TABLE users ADD COLUMN password_reset_token_hash TEXT NULL");
+        }
+        if (!in_array('password_reset_expires_at', $userColNames, true)) {
+            $db->exec("ALTER TABLE users ADD COLUMN password_reset_expires_at INTEGER NULL");
+        }
+        if (!in_array('password_reset_sent_at', $userColNames, true)) {
+            $db->exec("ALTER TABLE users ADD COLUMN password_reset_sent_at INTEGER NULL");
+        }
         // Accounts created before email verification existed remain usable.
         $db->exec("UPDATE users
             SET email_verified_at = CURRENT_TIMESTAMP
             WHERE email_verified_at IS NULL
               AND email_verification_token_hash IS NULL");
         $db->exec("CREATE UNIQUE INDEX IF NOT EXISTS idx_users_email_verification_token ON users(email_verification_token_hash) WHERE email_verification_token_hash IS NOT NULL");
+        $db->exec("CREATE UNIQUE INDEX IF NOT EXISTS idx_users_password_reset_token ON users(password_reset_token_hash) WHERE password_reset_token_hash IS NOT NULL");
 
         $cols = $db->query("PRAGMA table_info(learning_designs)")->fetchAll();
         $colNames = array_column($cols, 'name');
@@ -464,6 +483,9 @@ function ensure_app_migrations(PDO $db): void
         'email_verification_token_hash' => "ALTER TABLE users ADD COLUMN email_verification_token_hash CHAR(64) NULL",
         'email_verification_expires_at' => "ALTER TABLE users ADD COLUMN email_verification_expires_at BIGINT UNSIGNED NULL",
         'email_verification_sent_at' => "ALTER TABLE users ADD COLUMN email_verification_sent_at BIGINT UNSIGNED NULL",
+        'password_reset_token_hash' => "ALTER TABLE users ADD COLUMN password_reset_token_hash CHAR(64) NULL",
+        'password_reset_expires_at' => "ALTER TABLE users ADD COLUMN password_reset_expires_at BIGINT UNSIGNED NULL",
+        'password_reset_sent_at' => "ALTER TABLE users ADD COLUMN password_reset_sent_at BIGINT UNSIGNED NULL",
     ];
     $userColumnCheck = $db->prepare("SELECT COUNT(*) FROM information_schema.COLUMNS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'users' AND COLUMN_NAME = ?");
     foreach ($userColumns as $columnName => $sql) {
@@ -481,6 +503,11 @@ function ensure_app_migrations(PDO $db): void
     $verificationIndexCheck->execute();
     if ((int)$verificationIndexCheck->fetchColumn() === 0) {
         $db->exec("CREATE UNIQUE INDEX idx_users_email_verification_token ON users(email_verification_token_hash)");
+    }
+    $resetIndexCheck = $db->prepare("SELECT COUNT(*) FROM information_schema.STATISTICS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'users' AND INDEX_NAME = 'idx_users_password_reset_token'");
+    $resetIndexCheck->execute();
+    if ((int)$resetIndexCheck->fetchColumn() === 0) {
+        $db->exec("CREATE UNIQUE INDEX idx_users_password_reset_token ON users(password_reset_token_hash)");
     }
 
     $stmt = $db->prepare("SELECT COUNT(*) FROM information_schema.COLUMNS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'learning_designs' AND COLUMN_NAME = 'share_token'");
@@ -768,6 +795,68 @@ function mark_email_verification_sent(PDO $db, int $userId): void
 {
     $stmt = $db->prepare("UPDATE users SET email_verification_sent_at = ? WHERE id = ? AND email_verified_at IS NULL");
     $stmt->execute([time(), $userId]);
+}
+
+/**
+ * Create a one-time password reset token without storing the raw value.
+ */
+function create_password_reset_token(PDO $db, int $userId): string
+{
+    $token = bin2hex(random_bytes(32));
+    $stmt = $db->prepare("UPDATE users
+        SET password_reset_token_hash = ?,
+            password_reset_expires_at = ?,
+            password_reset_sent_at = ?
+        WHERE id = ? AND status = 'active'");
+    $stmt->execute([
+        hash('sha256', $token),
+        time() + PASSWORD_RESET_TTL_SECONDS,
+        time(),
+        $userId,
+    ]);
+
+    if ($stmt->rowCount() !== 1) {
+        throw new RuntimeException('Impossible de créer le lien de réinitialisation.');
+    }
+
+    return $token;
+}
+
+function send_password_reset_message(string $email, string $username, string $token): bool
+{
+    if (!filter_var($email, FILTER_VALIDATE_EMAIL) || preg_match('/[\r\n]/', $email)) {
+        return false;
+    }
+
+    $from = trim((string)(app_env('APP_MAIL_FROM') ?? 'no-reply@ralentirtravaux.com'));
+    $fromName = trim((string)(app_env('APP_MAIL_FROM_NAME') ?? 'Learning Designer'));
+    if (!filter_var($from, FILTER_VALIDATE_EMAIL) || preg_match('/[\r\n]/', $from . $fromName)) {
+        return false;
+    }
+
+    $resetUrl = app_base_url() . '/reset-password.php?token=' . rawurlencode($token);
+    $safeUsername = trim(str_replace(["\r", "\n"], ' ', $username));
+    $body = "Bonjour {$safeUsername},\n\n"
+        . "Vous avez demandé la réinitialisation de votre mot de passe Learning Designer :\n"
+        . $resetUrl . "\n\n"
+        . "Ce lien est valable pendant une heure et ne peut être utilisé qu'une fois.\n\n"
+        . "Si vous n'êtes pas à l'origine de cette demande, ignorez ce message : votre mot de passe ne sera pas modifié.\n";
+
+    $subject = 'Réinitialisez votre mot de passe — Learning Designer';
+    if (function_exists('mb_encode_mimeheader')) {
+        $subject = mb_encode_mimeheader($subject, 'UTF-8');
+        $encodedFromName = mb_encode_mimeheader($fromName, 'UTF-8');
+    } else {
+        $encodedFromName = $fromName;
+    }
+    $headers = [
+        'From: ' . $encodedFromName . ' <' . $from . '>',
+        'MIME-Version: 1.0',
+        'Content-Type: text/plain; charset=UTF-8',
+        'Content-Transfer-Encoding: 8bit',
+    ];
+
+    return mail($email, $subject, wordwrap($body, 78), implode("\r\n", $headers));
 }
 
 function h(string $value): string
@@ -1100,6 +1189,10 @@ function site_breadcrumb_items(string $active = ''): array
         'login' => [
             ['fr' => 'Connexion', 'en' => 'Sign in'],
         ],
+        'forgot_password' => [
+            ['fr' => 'Connexion', 'en' => 'Sign in', 'href' => 'login.php'],
+            ['fr' => 'Mot de passe oublié', 'en' => 'Forgot password'],
+        ],
         'models' => [
             ['fr' => 'Aide', 'en' => 'Help', 'href' => 'help.php'],
             ['fr' => 'Modèles de scénarios', 'en' => 'Scenario templates'],
@@ -1124,6 +1217,10 @@ function site_breadcrumb_items(string $active = ''): array
         ],
         'signup' => [
             ['fr' => 'Créer un compte', 'en' => 'Create account'],
+        ],
+        'reset_password' => [
+            ['fr' => 'Connexion', 'en' => 'Sign in', 'href' => 'login.php'],
+            ['fr' => 'Nouveau mot de passe', 'en' => 'New password'],
         ],
         'verify_email' => [
             ['fr' => 'Vérifier l’email', 'en' => 'Verify email'],

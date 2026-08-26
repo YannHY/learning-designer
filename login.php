@@ -63,38 +63,62 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="icon" href="assets/favicon.svg?v=20260804" type="image/svg+xml" sizes="any">
-    <title>Connexion | Learning Designer</title>
+    <title data-site-i18n-en="Sign in | Learning Designer" data-site-i18n-fr="Connexion | Learning Designer">Connexion | Learning Designer</title>
     <?php render_theme_boot_script(); ?>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" referrerpolicy="no-referrer">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="stylesheet" href="css/interface.css?v=20260823-import-models">
+    <link rel="stylesheet" href="css/interface.css?v=20260826-title-blue">
     <link rel="stylesheet" href="css/account-ui.css?v=20260520-4">
-    <link rel="stylesheet" href="css/account-pages.css?v=20260825-autofill-sombre">
+    <link rel="stylesheet" href="css/account-pages.css?v=20260826-title-blue">
 </head>
 <body class="login-page">
 <?php render_site_nav('login'); ?>
-<main class="account-shell with-nav">
-    <section class="account-card">
-        <p class="account-kicker">Learning Designer</p>
-        <h1>Connexion</h1>
-        <p class="account-copy">Connectez-vous pour sauvegarder et retrouver vos productions.</p>
+<main class="account-shell with-nav login-account-shell">
+    <div class="login-layout">
+        <section class="login-intro" aria-labelledby="login-intro-title">
+            <h2 id="login-intro-title">Learning Designer</h2>
+            <p class="login-intro-copy" data-site-i18n-en="Design, analyse and share your learning scenarios." data-site-i18n-fr="Concevez, analysez et partagez vos scénarios pédagogiques.">Concevez, analysez et partagez vos scénarios pédagogiques.</p>
+            <ul class="login-benefits">
+                <li><i class="fa-solid fa-diagram-project" aria-hidden="true"></i><span data-site-i18n-en="Structure a learning sequence" data-site-i18n-fr="Structurer une séquence">Structurer une séquence</span></li>
+                <li><i class="fa-solid fa-chart-pie" aria-hidden="true"></i><span data-site-i18n-en="Analyse its balance" data-site-i18n-fr="Analyser son équilibre">Analyser son équilibre</span></li>
+                <li><i class="fa-solid fa-share-nodes" aria-hidden="true"></i><span data-site-i18n-en="Share your work" data-site-i18n-fr="Partager ses productions">Partager ses productions</span></li>
+            </ul>
+            <div class="login-learning-rhythm" aria-hidden="true">
+                <span></span><span></span><span></span><span></span><span></span><span></span>
+            </div>
+        </section>
+
+        <section class="account-card">
+        <h1 data-site-i18n-en="Sign in" data-site-i18n-fr="Connexion">Connexion</h1>
+        <p class="account-copy" data-site-i18n-en="Sign in to save and access your work." data-site-i18n-fr="Connectez-vous pour sauvegarder et retrouver vos productions.">Connectez-vous pour sauvegarder et retrouver vos productions.</p>
         <form method="post" class="account-form">
             <label for="email">Email</label>
             <input id="email" name="email" type="email" required autocomplete="username">
-            <label for="password">Mot de passe</label>
+            <label for="password" data-site-i18n-en="Password" data-site-i18n-fr="Mot de passe">Mot de passe</label>
             <input id="password" name="password" type="password" required autocomplete="current-password">
-            <a class="account-form-link" href="forgot-password.php">Mot de passe oublié&nbsp;?</a>
-            <button type="submit">Se connecter</button>
+            <a class="account-form-link" href="forgot-password.php">
+                <i class="fa-solid fa-key" aria-hidden="true"></i>
+                <span data-site-i18n-en="Forgot password?" data-site-i18n-fr="Mot de passe oublié&nbsp;?">Mot de passe oublié&nbsp;?</span>
+            </a>
+            <button type="submit" data-site-i18n-en="Sign in" data-site-i18n-fr="Se connecter">Se connecter</button>
         </form>
         <?php if ($error !== ''): ?>
             <p class="account-message error"><?= htmlspecialchars($error, ENT_QUOTES, 'UTF-8') ?></p>
         <?php endif; ?>
         <?php if ($verificationRequired): ?>
-            <p class="account-footer"><a href="verify-email.php">Renvoyer l’email de vérification</a></p>
+            <p class="account-footer"><a href="verify-email.php" data-site-i18n-en="Resend the verification email" data-site-i18n-fr="Renvoyer l’email de vérification">Renvoyer l’email de vérification</a></p>
         <?php endif; ?>
-        <p class="account-footer"><a href="signup.php">Créer un compte</a></p>
-    </section>
+        <div class="account-signup-action">
+            <p data-site-i18n-en="New to Learning Designer?" data-site-i18n-fr="Pas encore de compte&nbsp;?">Pas encore de compte&nbsp;?</p>
+            <a class="account-secondary-button" href="signup.php">
+                <i class="fa-solid fa-user-plus" aria-hidden="true"></i>
+                <span data-site-i18n-en="Create an account" data-site-i18n-fr="Créer un compte">Créer un compte</span>
+            </a>
+        </div>
+        </section>
+    </div>
 </main>
+<?php render_site_footer(); ?>
 </body>
 </html>

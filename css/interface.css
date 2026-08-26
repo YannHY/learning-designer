@@ -8,7 +8,7 @@
   --line: #e5e7eb;
   --text: #1f2937;
   --muted: #5e6b7c;
-  --primary: #145bb4;
+  --primary: #245a8f;
   --focus: #0a58ca;
   --shadow-soft: 0 12px 32px rgba(19, 39, 68, 0.08);
   --shadow-card: 0 8px 24px rgba(15, 23, 42, 0.08);
@@ -62,10 +62,18 @@
   --danger-bg:     #fde8ea;
   --danger-border: #f5b8bc;
 
-  /* ── Bouton primaire ─────────────────────────────── */
-  --btn-primary-from:   #2a7be1;
-  --btn-primary-to:     #135cb9;
-  --btn-primary-border: #0d4f9e;
+  /* ── Actions ─────────────────────────────────────── */
+  --action-primary:          #285f96;
+  --action-primary-hover:    #204f7d;
+  --action-primary-border:   #204f7d;
+  --action-secondary-bg:     #f8fafb;
+  --action-secondary-border: #c8d2db;
+  --action-secondary-text:   #40576b;
+  --action-secondary-hover:  #edf2f5;
+  --action-focus:            rgba(40, 95, 150, 0.28);
+  --btn-primary-from:        var(--action-primary);
+  --btn-primary-to:          var(--action-primary);
+  --btn-primary-border:      var(--action-primary-border);
 
   /* ── Alerte / avertissement ──────────────────────── */
   --warning-bg:     #fff4cc;
@@ -80,7 +88,7 @@
   --shadow-menu:        0 8px 20px rgba(26, 35, 53, 0.20);
   --shadow-modal:       0 18px 42px rgba(0, 0, 0, 0.20);
   --shadow-picker:      0 12px 32px rgba(26, 35, 53, 0.22);
-  --shadow-btn-primary: 0 10px 20px rgba(20, 91, 180, 0.22);
+  --shadow-btn-primary: 0 5px 14px rgba(32, 79, 125, 0.16);
 
   /* ── Transitions ─────────────────────────────────── */
   --transition-fast: 120ms ease;
@@ -387,9 +395,9 @@ html body.designer-page h1.brand-title {
   border: 1px solid var(--btn-primary-border);
   border-radius: 999px;
   padding: 0;
-  background: linear-gradient(180deg, var(--btn-primary-from), var(--btn-primary-to));
+  background: var(--action-primary);
   color: #ffffff;
-  box-shadow: 0 6px 14px rgba(20, 91, 180, 0.22);
+  box-shadow: 0 4px 12px rgba(32, 79, 125, 0.2);
   cursor: pointer;
   transition:
     background var(--transition-fast),
@@ -398,8 +406,8 @@ html body.designer-page h1.brand-title {
 }
 
 .top-panel-toggle:hover {
-  background: linear-gradient(180deg, #3a87e7, #0f4f9f);
-  border-color: #0b478e;
+  background: var(--action-primary-hover);
+  border-color: var(--action-primary-border);
   color: #ffffff;
 }
 
@@ -2222,8 +2230,8 @@ body.fullscreen-editor-open {
 }
 
 .btn-primary {
-  background: linear-gradient(180deg, var(--btn-primary-from), var(--btn-primary-to));
-  border-color: var(--btn-primary-border);
+  background: var(--action-primary);
+  border-color: var(--action-primary-border);
   color: #fff;
   font-weight: 600;
   box-shadow: none;
@@ -2245,19 +2253,19 @@ body.fullscreen-editor-open {
 }
 
 .btn-primary:hover {
-  background: linear-gradient(180deg, var(--btn-primary-from), var(--btn-primary-to));
-  border-color: var(--btn-primary-border);
+  background: var(--action-primary-hover);
+  border-color: var(--action-primary-border);
   color: #fff;
   -webkit-text-fill-color: #fff;
-  filter: brightness(1.08);
+  filter: none;
 }
 
 .btn-primary:focus-visible,
 .btn-primary:active {
   color: #fff;
   -webkit-text-fill-color: #fff;
-  background: linear-gradient(180deg, var(--btn-primary-from), var(--btn-primary-to));
-  border-color: var(--btn-primary-border);
+  background: var(--action-primary-hover);
+  border-color: var(--action-primary-border);
 }
 
 .btn-primary .btn-label,
@@ -2270,14 +2278,16 @@ body.fullscreen-editor-open {
    the one that creates — so Exporter carries the accent as an outline
    rather than a second solid blue competing for the same role. */
 .btn-outline {
-  border-color: color-mix(in srgb, var(--primary) 40%, var(--line));
-  color: var(--primary);
+  background: var(--action-secondary-bg);
+  border-color: var(--action-secondary-border);
+  color: var(--action-secondary-text);
   font-weight: 600;
 }
 
 .btn-outline:hover {
-  background: color-mix(in srgb, var(--primary) 8%, var(--panel));
-  border-color: var(--primary);
+  background: var(--action-secondary-hover);
+  border-color: color-mix(in srgb, var(--action-primary) 45%, var(--action-secondary-border));
+  color: var(--action-primary);
 }
 
 .btn-light {
@@ -4045,9 +4055,10 @@ body:has(#board:not(:empty)) .toolbar {
 .site-footer {
   display: block;
   padding: 28px;
-  border-top: 1px solid var(--line);
+  border-top: 0;
   margin-top: auto;
   font-size: 12px;
+  text-align: center;
   line-height: 1.6;
   color: var(--muted);
   position: relative;
@@ -4055,13 +4066,25 @@ body:has(#board:not(:empty)) .toolbar {
   pointer-events: auto;
 }
 
+.site-footer::before {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: min(var(--content-shell-width, 1180px), calc(100% - var(--content-shell-gutter, 36px)));
+  height: 1px;
+  transform: translateX(-50%);
+  background: linear-gradient(to right, transparent, var(--line) 14%, var(--line) 86%, transparent);
+  content: "";
+  opacity: 0.72;
+}
+
 .site-footer-copy-stack {
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
+  align-items: center;
   gap: 20px;
   width: 100%;
-  margin: 0;
+  margin: 0 auto;
 }
 
 .site-footer-copy {
@@ -4075,6 +4098,7 @@ body:has(#board:not(:empty)) .toolbar {
 .site-footer-links {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 8px;
   position: relative;
   z-index: 31;
@@ -4143,8 +4167,12 @@ body.designs-page .saved-shell {
 }
 
 [data-theme="dark"] .site-footer {
-  border-top-color: var(--line);
   color: #dce4f1;
+}
+
+[data-theme="dark"] .site-footer::before {
+  background: linear-gradient(to right, transparent, var(--line) 22%, var(--line) 78%, transparent);
+  opacity: 0.2;
 }
 
 [data-theme="dark"] .site-footer-link {
@@ -4365,26 +4393,10 @@ body.designs-page .saved-shell {
   box-shadow: 0 20px 48px rgba(15, 23, 42, 0.13);
 }
 
-/* ── Button primary: shimmer on hover ──────────────────────── */
+/* ── Button primary ────────────────────────────────────────── */
 .btn-primary {
   overflow: hidden;
   position: relative;
-}
-.btn-primary::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(
-    105deg,
-    transparent 38%,
-    rgba(255, 255, 255, 0.28) 50%,
-    transparent 62%
-  );
-  transform: translateX(-100%) skewX(-12deg);
-  pointer-events: none;
-}
-.btn-primary:hover::after {
-  animation: shimmer 0.65s ease forwards;
 }
 
 /* ── Nav: stronger glass ───────────────────────────────────── */
@@ -4457,7 +4469,7 @@ html[data-theme="dark"] body {
   --line:    rgba(129, 124, 112, 0.42);
   --text:    #f1efe9;
   --muted:   #aaa59a;
-  --primary: #6ab0ff;
+  --primary: #78a6ca;
   --focus:   #88c4ff;
 
   /* ── Text hierarchy ── */
@@ -4490,13 +4502,18 @@ html[data-theme="dark"] body {
   --danger-bg:     rgba(248, 81, 73, 0.12);
   --danger-border: rgba(248, 81, 73, 0.28);
 
-  /* ── Primary button ──
-     Shifted one step darker than the original #388bfd/#1f6feb: white label
-     only reached 3.34:1 on the light end of that gradient. Now 4.63:1 at the
-     top and 6.39:1 at the bottom. */
-  --btn-primary-from:   #1f6feb;
-  --btn-primary-to:     #1559c7;
-  --btn-primary-border: #1158c7;
+  /* ── Actions ── */
+  --action-primary:          #3f78a8;
+  --action-primary-hover:    #396f9d;
+  --action-primary-border:   #6d9fc5;
+  --action-secondary-bg:     rgba(255, 255, 255, 0.035);
+  --action-secondary-border: rgba(199, 210, 229, 0.24);
+  --action-secondary-text:   #d4dde6;
+  --action-secondary-hover:  rgba(255, 255, 255, 0.08);
+  --action-focus:            rgba(109, 159, 197, 0.34);
+  --btn-primary-from:        var(--action-primary);
+  --btn-primary-to:          var(--action-primary);
+  --btn-primary-border:      var(--action-primary-border);
 
   /* ── Warnings / tooltips ── */
   --warning-bg:     rgba(187, 128, 9, 0.14);
@@ -4511,7 +4528,7 @@ html[data-theme="dark"] body {
   --shadow-menu:        0 8px 20px  rgba(0, 0, 0, 0.6);
   --shadow-modal:       0 18px 42px rgba(0, 0, 0, 0.6);
   --shadow-picker:      0 12px 32px rgba(0, 0, 0, 0.6);
-  --shadow-btn-primary: 0 10px 20px rgba(31, 111, 235, 0.38);
+  --shadow-btn-primary: 0 5px 14px rgba(0, 0, 0, 0.24);
 }
 
 /* ── Structural surfaces ── */
@@ -4622,23 +4639,25 @@ html[data-theme="dark"] body {
    action fell back to a plain dark button. Restore the fill at matching
    specificity. */
 [data-theme="dark"] .btn-primary {
-  background: linear-gradient(180deg, var(--btn-primary-from), var(--btn-primary-to));
-  border-color: var(--btn-primary-border);
+  background: var(--action-primary);
+  border-color: var(--action-primary-border);
   color: #fff;
 }
 [data-theme="dark"] .btn-primary:hover {
-  background: linear-gradient(180deg, var(--btn-primary-from), var(--btn-primary-to));
-  filter: brightness(1.08);
+  background: var(--action-primary-hover);
+  filter: none;
 }
 /* Must sit after [data-theme="dark"] .btn, which matches .btn-outline too and
    would otherwise strip the accent back to neutral body text. */
 [data-theme="dark"] .btn-outline {
-  color: var(--primary);
-  border-color: color-mix(in srgb, var(--primary) 55%, var(--line));
+  background: var(--action-secondary-bg);
+  color: var(--action-secondary-text);
+  border-color: var(--action-secondary-border);
 }
 [data-theme="dark"] .btn-outline:hover {
-  background: color-mix(in srgb, var(--primary) 16%, var(--panel));
-  border-color: var(--primary);
+  background: var(--action-secondary-hover);
+  border-color: color-mix(in srgb, var(--action-primary) 55%, var(--action-secondary-border));
+  color: #e3eaf0;
 }
 [data-theme="dark"] .btn-light {
   background: rgba(36, 35, 31, 0.92);
@@ -4685,9 +4704,10 @@ html[data-theme="dark"] body {
   border-color: var(--line);
 }
 [data-theme="dark"] .top-panel-toggle {
-  background: linear-gradient(180deg, #3a87e7, #145bb4);
-  border-color: #72b0ff;
+  background: var(--action-primary);
+  border-color: var(--action-primary-border);
   color: #ffffff;
+  box-shadow: 0 0 0 2px rgba(109, 159, 197, 0.14), 0 4px 12px rgba(0, 0, 0, 0.28);
 }
 [data-theme="dark"] .layout-toggle {
   background: #2a2823;

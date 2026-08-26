@@ -60,9 +60,9 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" referrerpolicy="no-referrer">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="stylesheet" href="css/interface.css?v=20260823-import-models">
+    <link rel="stylesheet" href="css/interface.css?v=20260826-title-blue">
     <link rel="stylesheet" href="css/account-ui.css?v=20260520-4">
-    <link rel="stylesheet" href="css/account-pages.css?v=20260825-password-reset">
+    <link rel="stylesheet" href="css/account-pages.css?v=20260826-title-blue">
 </head>
 <body class="login-page">
 <?php render_site_nav('forgot_password'); ?>
@@ -79,12 +79,14 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
             <p class="account-message error" role="alert"><?= h($error) ?></p>
         <?php endif; ?>
 
-        <form method="post" class="account-form">
-            <label for="email">Email</label>
-            <input id="email" name="email" type="email" required autocomplete="email" value="<?= h($email) ?>">
-            <button type="submit">Envoyer le lien</button>
-        </form>
-        <p class="account-footer"><a href="login.php">Revenir à la connexion</a></p>
+        <?php if ($message === ''): ?>
+            <form method="post" class="account-form">
+                <label for="email">Email</label>
+                <input id="email" name="email" type="email" required autocomplete="email" value="<?= h($email) ?>">
+                <button type="submit">Envoyer le lien</button>
+            </form>
+            <p class="account-footer"><a href="login.php">Revenir à la connexion</a></p>
+        <?php endif; ?>
     </section>
 </main>
 </body>

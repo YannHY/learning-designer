@@ -43,11 +43,13 @@ foreach ($stmt->fetchAll() as $row) {
     }
 
     $title = trim((string)($meta['name'] ?? ''));
+    $titleIsDefault = false;
     if ($title === '') {
         $title = trim((string)$row['title']);
     }
     if ($title === '') {
         $title = 'Production sans titre';
+        $titleIsDefault = true;
     }
 
     $description = trim((string)($meta['description'] ?? ''));
@@ -63,6 +65,7 @@ foreach ($stmt->fetchAll() as $row) {
     $license = creative_commons_license((string)($row['license_code'] ?? ''));
     $items[] = [
         'title' => $title,
+        'title_is_default' => $titleIsDefault,
         'description' => $description,
         'author' => (string)$row['username'],
         'token' => (string)$row['share_token'],
@@ -80,10 +83,10 @@ function share_designed_minutes(array $meta): int
     return max(0, (int)($meta['designedMinutes'] ?? 0));
 }
 
-function share_format_minutes(int $minutes): string
+function share_format_minutes(int $minutes, string $language = 'fr'): string
 {
     if ($minutes <= 0) {
-        return 'Durée non précisée';
+        return $language === 'en' ? 'Duration not specified' : 'Durée non précisée';
     }
     $hours = intdiv($minutes, 60);
     $rest = $minutes % 60;
@@ -96,8 +99,17 @@ function share_format_minutes(int $minutes): string
     return $rest . ' min';
 }
 
-function share_mode_label(string $mode): string
+function share_mode_label(string $mode, string $language = 'fr'): string
 {
+    if ($language === 'en') {
+        return match ($mode) {
+            'online' => 'Online',
+            'hybrid' => 'Hybrid',
+            'onsite' => 'Onsite',
+            default => 'Mode not specified',
+        };
+    }
+
     return match ($mode) {
         'online' => 'Distanciel',
         'hybrid' => 'Hybride',
@@ -106,9 +118,9 @@ function share_mode_label(string $mode): string
     };
 }
 
-function share_count_label(int $count, string $singular): string
+function share_count_label(int $count, string $singular, ?string $plural = null): string
 {
-    return $count . ' ' . $singular . ($count > 1 ? 's' : '');
+    return $count . ' ' . ($count === 1 ? $singular : ($plural ?? $singular . 's'));
 }
 ?>
 <!doctype html>
@@ -117,14 +129,14 @@ function share_count_label(int $count, string $singular): string
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="icon" href="assets/favicon.svg?v=20260804" type="image/svg+xml" sizes="any" />
-    <title>Designs partagés | Learning Designer</title>
+    <title data-site-i18n-en="Shared designs | Learning Designer" data-site-i18n-fr="Designs partagés | Learning Designer">Designs partagés | Learning Designer</title>
     <?php render_theme_boot_script(); ?>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" referrerpolicy="no-referrer" />
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="stylesheet" href="css/interface.css?v=20260823-import-models" />
+    <link rel="stylesheet" href="css/interface.css?v=20260826-title-blue" />
     <link rel="stylesheet" href="css/account-ui.css?v=20260520-4" />
-    <link rel="stylesheet" href="css/account-pages.css?v=20260825-autofill-sombre" />
+    <link rel="stylesheet" href="css/account-pages.css?v=20260826-title-blue" />
     <style>
       .shared-header {
         display: flex;
@@ -136,6 +148,7 @@ function share_count_label(int $count, string $singular): string
 
       .shared-shell {
         width: min(var(--content-shell-width, 1180px), calc(100vw - var(--content-shell-gutter, 36px)));
+        padding-bottom: 56px;
       }
 
       .shared-subtitle {
@@ -147,7 +160,7 @@ function share_count_label(int $count, string $singular): string
 
       .shared-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        grid-template-columns: repeat(3, minmax(0, 1fr));
         gap: var(--page-section-gap);
       }
 
@@ -267,7 +280,7 @@ function share_count_label(int $count, string $singular): string
 
       @media (max-width: 1140px) {
         .shared-grid {
-          grid-template-columns: 1fr;
+          grid-template-columns: repeat(2, minmax(0, 1fr));
         }
       }
 
@@ -275,6 +288,14 @@ function share_count_label(int $count, string $singular): string
         .shared-header {
           align-items: stretch;
           flex-direction: column;
+        }
+
+        .shared-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .shared-shell {
+          padding-bottom: 40px;
         }
       }
 
@@ -290,29 +311,33 @@ function share_count_label(int $count, string $singular): string
     <main class="shared-shell">
       <div class="shared-header">
         <div>
-          <h1 class="shared-title">Designs partagés</h1>
-          <p class="shared-subtitle">Explorez les designs partagés et importez ceux que vous souhaitez adapter.</p>
+          <h1 class="shared-title" data-site-i18n-en="Shared designs" data-site-i18n-fr="Designs partagés">Designs partagés</h1>
+          <p class="shared-subtitle" data-site-i18n-en="Explore shared designs and import the ones you want to adapt." data-site-i18n-fr="Explorez les designs partagés et importez ceux que vous souhaitez adapter.">Explorez les designs partagés et importez ceux que vous souhaitez adapter.</p>
         </div>
       </div>
 
       <?php if (!$items): ?>
-        <p class="shared-empty">Aucun design n’est encore visible dans la page de partage.</p>
+        <p class="shared-empty" data-site-i18n-en="No designs are currently visible in the shared designs catalog." data-site-i18n-fr="Aucun design n’est encore visible dans la page de partage.">Aucun design n’est encore visible dans la page de partage.</p>
       <?php else: ?>
-        <section class="shared-grid" aria-label="Designs publiés dans le catalogue">
+        <section class="shared-grid" aria-label="Designs publiés dans le catalogue" data-site-i18n-attr="aria-label" data-site-i18n-en="Designs published in the catalog" data-site-i18n-fr="Designs publiés dans le catalogue">
           <?php foreach ($items as $item): ?>
             <article class="shared-card">
               <div>
-                <h2 class="shared-card-title"><?= h($item['title']) ?></h2>
-                <p class="shared-card-copy">Par <?= h($item['author']) ?></p>
+                <?php if ($item['title_is_default']): ?>
+                  <h2 class="shared-card-title" data-site-i18n-en="Untitled design" data-site-i18n-fr="Production sans titre">Production sans titre</h2>
+                <?php else: ?>
+                  <h2 class="shared-card-title"><?= h($item['title']) ?></h2>
+                <?php endif; ?>
+                <p class="shared-card-copy"><span data-site-i18n-en="By" data-site-i18n-fr="Par">Par</span> <?= h($item['author']) ?></p>
               </div>
               <?php if ($item['description'] !== ''): ?>
                 <p class="shared-card-copy"><?= h($item['description']) ?></p>
               <?php endif; ?>
-              <div class="shared-meta" aria-label="Résumé du design">
-                <span class="shared-pill"><i class="fa-regular fa-folder" aria-hidden="true"></i><?= h(share_count_label((int)$item['session_count'], 'séance')) ?></span>
-                <span class="shared-pill"><i class="fa-solid fa-list-check" aria-hidden="true"></i><?= h(share_count_label((int)$item['activity_count'], 'activité')) ?></span>
-                <span class="shared-pill"><i class="fa-regular fa-clock" aria-hidden="true"></i><?= h(share_format_minutes((int)$item['duration'])) ?></span>
-                <span class="shared-pill"><i class="fa-solid fa-location-dot" aria-hidden="true"></i><?= h(share_mode_label($item['mode'])) ?></span>
+              <div class="shared-meta" aria-label="Résumé du design" data-site-i18n-attr="aria-label" data-site-i18n-en="Design summary" data-site-i18n-fr="Résumé du design">
+                <span class="shared-pill"><i class="fa-regular fa-folder" aria-hidden="true"></i><span data-site-i18n-en="<?= h(share_count_label((int)$item['session_count'], 'session')) ?>" data-site-i18n-fr="<?= h(share_count_label((int)$item['session_count'], 'séance')) ?>"><?= h(share_count_label((int)$item['session_count'], 'séance')) ?></span></span>
+                <span class="shared-pill"><i class="fa-solid fa-list-check" aria-hidden="true"></i><span data-site-i18n-en="<?= h(share_count_label((int)$item['activity_count'], 'activity', 'activities')) ?>" data-site-i18n-fr="<?= h(share_count_label((int)$item['activity_count'], 'activité')) ?>"><?= h(share_count_label((int)$item['activity_count'], 'activité')) ?></span></span>
+                <span class="shared-pill"><i class="fa-regular fa-clock" aria-hidden="true"></i><span data-site-i18n-en="<?= h(share_format_minutes((int)$item['duration'], 'en')) ?>" data-site-i18n-fr="<?= h(share_format_minutes((int)$item['duration'])) ?>"><?= h(share_format_minutes((int)$item['duration'])) ?></span></span>
+                <span class="shared-pill"><i class="fa-solid fa-location-dot" aria-hidden="true"></i><span data-site-i18n-en="<?= h(share_mode_label($item['mode'], 'en')) ?>" data-site-i18n-fr="<?= h(share_mode_label($item['mode'])) ?>"><?= h(share_mode_label($item['mode'])) ?></span></span>
                 <?php if ($item['license']): ?>
                   <a class="shared-pill" href="<?= h($item['license']['url']) ?>" target="_blank" rel="license noopener noreferrer"><i class="fa-brands fa-creative-commons" aria-hidden="true"></i><?= h($item['license']['label']) ?></a>
                 <?php endif; ?>

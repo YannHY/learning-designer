@@ -6,7 +6,11 @@
             <span class="site-footer-separator" aria-hidden="true">|</span>
             <a class="site-footer-link" id="footer-help-btn" href="help.php" data-site-i18n-en="Help" data-site-i18n-fr="Aide">Aide</a>
             <span class="site-footer-separator" aria-hidden="true">|</span>
-            <a class="site-footer-link" id="footer-share-btn" href="share.php" data-site-i18n-en="Shared designs" data-site-i18n-fr="Designs partagés">Designs partagés</a>
+            <a class="site-footer-link" id="footer-models-btn" href="models.php" data-site-i18n-en="Models" data-site-i18n-fr="Modèles">Modèles</a>
+            <span class="site-footer-separator" aria-hidden="true">|</span>
+            <a class="site-footer-link" id="footer-prompts-btn" href="prompts.php" data-site-i18n-en="Prompt library" data-site-i18n-fr="Bibliothèque de prompts">Bibliothèque de prompts</a>
+            <span class="site-footer-separator" aria-hidden="true">|</span>
+            <a class="site-footer-link" id="footer-cli-btn" href="help.php#cli" data-site-i18n-en="Skill and CLI" data-site-i18n-fr="Skill et CLI">Skill et CLI</a>
         </nav>
         <span class="site-footer-copy site-footer-license">2026 — <abbr title="Creative Commons Attribution - Partage dans les mêmes conditions" data-site-i18n-attr="title" data-site-i18n-en="Creative Commons Attribution-ShareAlike" data-site-i18n-fr="Creative Commons Attribution - Partage dans les mêmes conditions">CC BY-SA</abbr></span>
     </div>

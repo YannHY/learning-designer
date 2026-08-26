@@ -1,49 +1,70 @@
 # Learning Designer
 
-Application web de scénarisation pédagogique inspirée de l'[UCL Learning Designer](https://www.ucl.ac.uk/learning-designer/) et basée sur le travail de [François Jourde](https://github.com/jourde/learning-designer-revised).
+Learning Designer est une application libre pour concevoir, analyser et partager des scénarios pédagogiques.
 
-Elle permet de structurer une séquence en moments et activités, d'en analyser l'équilibre, puis de la sauvegarder, l'exporter ou la partager. Les designs peuvent aussi être créés et publiés avec une IA grâce au CLI `learning`.
+Elle aide à passer d'une intention pédagogique à une séquence exploitable : organiser les étapes, préciser les activités et les consignes, formuler les acquis d'apprentissage, estimer les durées et vérifier l'équilibre des modalités proposées aux élèves.
+
+Le projet est inspiré de l'[UCL Learning Designer](https://www.ucl.ac.uk/learning-designer/) et s'appuie sur le travail de [François Jourde](https://github.com/jourde/learning-designer-revised).
+
+## Ce que Learning Designer apporte
+
+- **Concevoir avec un cadre pédagogique commun** : chaque scénario est structuré en moments et activités, reliés à des types d'apprentissage, des modalités, des compétences numériques, des niveaux AIAS et des acquis issus de la taxonomie de Bloom.
+- **Partir d'un modèle plutôt que d'une page blanche** : 28 scénarios génériques, répartis en huit familles, sont prêts à être adaptés à une discipline et à un contexte.
+- **Relire un scénario sous plusieurs angles** : la répartition du temps et des types d'apprentissage aide à repérer les déséquilibres, les enchaînements trop denses ou les modalités trop peu variées.
+- **Partager et réutiliser les productions** : un design peut être sauvegardé dans un compte, publié par lien, consulté en lecture seule et proposé dans le catalogue public sous licence Creative Commons.
+- **Travailler avec les outils déjà utilisés** : les imports et exports permettent de poursuivre le travail dans un tableur, un traitement de texte, une plateforme web ou un autre outil compatible.
+- **Concevoir avec une IA sans perdre la structure pédagogique** : une Skill réutilisable, une bibliothèque de prompts et le CLI `learning` accompagnent la création, la validation et la publication des scénarios.
 
 ## Documentation
 
-- [Aide complète](./help.php) : prise en main, activités, analyses, sauvegarde, partage, import/export, Markdown, IA et CLI
-- [Modèles de scénarios](./models.php) : 28 scénarios génériques préremplis, répartis en huit familles
-- [Prompts pédagogiques](./prompts.php) : prompts prêts à copier pour enrichir un scénario avec une IA
+- [Aide complète](./help.php) : prise en main, conception, sauvegarde, partage et import/export
+- [Créer avec une IA, la Skill et le CLI](./help.php#cli) : trois manières d'utiliser un agent pour produire un scénario structuré
+- [Skill Learning Designer](./skills/learning-designer/SKILL.md) : méthode réutilisable par un agent compatible
+- [Modèles de scénarios](./models.php) : bibliothèque de scénarios génériques préremplis
+- [Bibliothèque de prompts](./prompts.php) : prompts prêts à copier pour analyser, adapter ou prolonger un scénario
 - [Comprendre le learning design](./learning-design.php) : principes et cadre pédagogique
 
-## Fonctionnalités
+## Concevoir avec une IA
 
-- conception de moments, d'activités et d'acquis d'apprentissage reliés à la taxonomie de Bloom ;
-- six types d'apprentissage, compétences numériques, consignes pour les élèves et niveaux AIAS 2.1 ;
-- vues liste, colonnes et grille, graphiques d'analyse et chronologie ;
-- bibliothèque de 28 modèles prêts à adapter, directement accessible depuis la fenêtre d'import ;
-- import de fichiers LDJ, JSON, CSV, Excel et Markdown ;
-- export en Markdown, HTML, JSON, Excel et Word, en version enseignant ou élève, avec sélection des moments ;
-- comptes, sauvegarde en ligne, publication par lien et catalogue public sous licence Creative Commons ;
-- mise en forme Markdown légère avec aperçu, raccourcis clavier et liens nommés dans les activités ;
-- interface bilingue français/anglais et thèmes clair/sombre ;
-- bibliothèque de cinq prompts pédagogiques avec copie en un clic ;
-- création, validation et publication depuis le terminal avec le CLI `learning`.
+Learning Designer propose trois niveaux d'intégration, selon le besoin :
+
+1. **Les prompts** servent à enrichir ponctuellement un scénario : différenciation, conception universelle de l'apprentissage, modèle SAMR, charge de travail ou création d'une fiche destinée aux élèves.
+2. **La Skill Learning Designer** donne à un agent une méthode de travail complète : recueillir les choix pédagogiques, construire le scénario avec le CLI, le valider, puis préparer sa publication.
+3. **Le CLI `learning`** permet de créer et modifier un design depuis le terminal, de contrôler sa structure, de transmettre le travail à Codex et de le publier ou le mettre à jour sur le site.
+
+La Skill ne se contente donc pas de générer du texte libre : elle guide l'agent vers le format attendu par l'application et impose une validation avant publication.
+
+### Installer le CLI
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/YannHY/learning-designer/main/install.sh | sh
+learning status
+```
+
+Quelques commandes utiles :
+
+```bash
+learning init mon-scenario.json
+learning add-moment mon-scenario.json --title "Découvrir"
+learning validate mon-scenario.json
+learning handoff mon-scenario.json
+learning login
+learning publish mon-scenario.json
+```
+
+Les instructions d'installation et d'utilisation de la Skill sont détaillées dans la section [Créer avec l'IA](./help.php#cli) de l'aide.
 
 ## Modèles de scénarios
 
-La page [Modèles de scénarios](./models.php) rassemble 28 scénarios génériques répartis en huit familles : entrer dans un apprentissage, comprendre, argumenter, s'entraîner, produire, évaluer, organiser et travailler avec l'IA.
+La page [Modèles de scénarios](./models.php) regroupe des structures pour entrer dans un apprentissage, comprendre, argumenter, s'entraîner, produire, évaluer, organiser une séquence ou travailler avec l'IA.
 
-Chaque modèle fournit une structure complète avec moments, activités, durées, types d'apprentissage, modalités, acquis Bloom, consignes et niveaux AIAS. Il peut être chargé directement depuis la fenêtre **Importer** du concepteur ou téléchargé au format JSON. Les jalons entre crochets, comme `[MATIÈRE]` ou `[NOTION 1]`, sont ensuite à remplacer par le contenu de la discipline.
+Chaque modèle contient déjà des moments, des activités, des durées, des modalités, des acquis et des consignes. Il peut être chargé directement dans le concepteur ou téléchargé au format JSON. Les jalons entre crochets, comme `[MATIÈRE]` ou `[NOTION 1]`, indiquent les éléments à contextualiser.
 
-## Enrichissement avec une IA
+## Importer, exporter et publier
 
-Une fois le scénario pédagogique généré, il peut être exporté, notamment au format Markdown, puis transmis à Claude, ChatGPT, Gemini ou une autre IA afin de l'enrichir, de l'améliorer, de le compléter ou de l'adapter.
+Learning Designer accepte les scénarios issus de son ancien format LDJ ainsi que des fichiers JSON, CSV, Excel et Markdown.
 
-La page [Prompts pédagogiques](./prompts.php) propose actuellement :
-
-- un prompt de révision d'un plan de cours basé sur la conception universelle de l'apprentissage (CUA), proposé par François Jourde ;
-- un prompt d'enrichissement par la différenciation pédagogique, proposé par Yann Houry ;
-- un prompt d'analyse et d'enrichissement selon le modèle SAMR ;
-- un prompt d'analyse de la charge de travail et de planification dans le calendrier ;
-- un prompt de génération d'une fiche d'activité destinée aux élèves.
-
-Les quatre prompts d'analyse et d'adaptation sont disponibles en français et en anglais. Le bouton de copie utilise automatiquement la langue active de l'interface. Le prompt de génération d'une fiche élève est actuellement proposé en français.
+Un scénario peut être exporté en Markdown, HTML, JSON, Excel ou Word. L'export peut produire une version enseignant ou élève et se limiter aux moments sélectionnés. La publication en ligne crée une page de consultation partageable ; les auteurs qui le souhaitent peuvent également rendre leur design visible dans le catalogue public.
 
 ## Installation locale
 
@@ -68,20 +89,15 @@ La configuration peut être fournie par variables d'environnement ou à partir d
 
 Conservez les secrets dans un fichier local non versionné, par exemple `learning-design-secret.php`, ou dans des variables d'environnement.
 
-## Fichiers principaux
+## Repères dans le dépôt
 
-- [index.php](./index.php) : page d’accueil ;
-- [designer.html](./designer.html) : interface de conception ;
-- [css](./css) : feuilles de style de l’application ;
-- [js](./js) : scripts JavaScript de l’application ;
-- [interface.js](./js/interface.js) et [interface.css](./css/interface.css) : logique et styles principaux de l’interface de conception ;
-- [help.php](./help.php) : documentation utilisateur ;
-- [models.php](./models.php) : bibliothèque et API JSON des modèles de scénarios ;
+- [designer.html](./designer.html) et [interface.js](./js/interface.js) : concepteur de scénarios ;
+- [models.php](./models.php) : bibliothèque et API JSON des modèles ;
 - [prompts.php](./prompts.php) : bibliothèque de prompts pédagogiques ;
-- [share.php](./share.php) : catalogue public des designs partagés ;
-- [view.php](./view.php) : consultation en lecture seule d'un design publié ;
-- [lib/bootstrap.php](./lib/bootstrap.php) : configuration, base de données et fonctions PHP communes ;
-- [bin/learning](./bin/learning) : CLI de création et de publication.
+- [share.php](./share.php) et [view.php](./view.php) : catalogue public et consultation des designs publiés ;
+- [skills/learning-designer](./skills/learning-designer) : Skill et configuration de l'agent ;
+- [bin/learning](./bin/learning) : CLI de création, de validation et de publication ;
+- [lib/bootstrap.php](./lib/bootstrap.php) : configuration, base de données et fonctions PHP communes.
 
 ## Crédits et licence
 

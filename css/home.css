@@ -95,8 +95,8 @@ body.home-page {
 
 .home-primary-action:hover,
 .home-primary-action:focus-visible {
-  background: #145bb4;
-  box-shadow: 0 16px 34px rgba(20, 91, 180, .23);
+  background: var(--action-primary);
+  box-shadow: var(--shadow-btn-primary);
   transform: translateY(-2px);
 }
 
@@ -695,7 +695,7 @@ body.home-page {
   grid-template-columns: minmax(0, 1.18fr) minmax(320px, .82fr);
   align-items: start;
   gap: clamp(54px, 7vw, 92px);
-  padding: clamp(56px, 7vw, 80px) 0;
+  padding: clamp(56px, 7vw, 80px) 0 clamp(112px, 10vw, 128px);
 }
 
 .home-quote {
@@ -860,16 +860,16 @@ body.home-page {
 }
 
 [data-theme="dark"] .home-primary-action {
-  background: linear-gradient(180deg, var(--btn-primary-from), var(--btn-primary-to));
+  background: var(--action-primary);
   color: #fff;
   box-shadow: var(--shadow-btn-primary);
 }
 
 [data-theme="dark"] .home-primary-action:hover,
 [data-theme="dark"] .home-primary-action:focus-visible {
-  background: linear-gradient(180deg, var(--btn-primary-from), var(--btn-primary-to));
+  background: var(--action-primary-hover);
   color: #fff;
-  filter: brightness(1.08);
+  filter: none;
 }
 
 /* The 11-inch iPad Pro is 1210 CSS px wide in landscape. */
@@ -909,7 +909,7 @@ body.home-page {
   .home-closing {
     grid-template-columns: 1fr;
     gap: 56px;
-    padding: 72px 0 84px;
+    padding: 72px 0 108px;
   }
 
   .home-quote {
@@ -970,7 +970,7 @@ body.home-page {
 @media (max-width: 600px) {
   .home-closing {
     gap: 44px;
-    padding: 44px 0 72px;
+    padding: 44px 0 96px;
   }
 
   .home-quote {

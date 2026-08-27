@@ -4227,7 +4227,7 @@ body:has(#board:not(:empty)) .toolbar {
 }
 
 .site-footer-link-row + .site-footer-link-row {
-  margin-top: 4px;
+  margin-top: 8px;
 }
 
 .site-footer-license {

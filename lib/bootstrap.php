@@ -1189,6 +1189,12 @@ function site_breadcrumb_items(string $active = ''): array
         'login' => [
             ['fr' => 'Connexion', 'en' => 'Sign in'],
         ],
+        'license' => [
+            ['fr' => 'Licence et réutilisation', 'en' => 'License and reuse'],
+        ],
+        'legal' => [
+            ['fr' => 'Mentions légales', 'en' => 'Legal notice'],
+        ],
         'forgot_password' => [
             ['fr' => 'Connexion', 'en' => 'Sign in', 'href' => 'login.php'],
             ['fr' => 'Mot de passe oublié', 'en' => 'Forgot password'],
@@ -1200,6 +1206,9 @@ function site_breadcrumb_items(string $active = ''): array
         'profile' => [
             ['fr' => 'Compte', 'en' => 'Account'],
             ['fr' => 'Profil', 'en' => 'Profile'],
+        ],
+        'privacy' => [
+            ['fr' => 'Politique de confidentialité', 'en' => 'Privacy policy'],
         ],
         'prompts' => [
             ['fr' => 'Aide', 'en' => 'Help', 'href' => 'help.php'],

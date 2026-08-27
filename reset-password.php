@@ -128,5 +128,6 @@ if ($db !== null && $requestMethod === 'POST') {
         <p class="account-footer"><a href="login.php">Revenir à la connexion</a></p>
     </section>
 </main>
+<?php render_site_footer(); ?>
 </body>
 </html>

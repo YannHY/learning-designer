@@ -103,11 +103,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <input id="password" name="password" type="password" minlength="8" required autocomplete="new-password">
             <button type="submit">Créer mon compte</button>
         </form>
+        <p class="account-privacy-notice">Les informations saisies sont nécessaires à la création et à la sécurisation du compte. Consultez la <a href="politique-confidentialite.php">politique de confidentialité</a> pour connaître leur utilisation et vos droits.</p>
         <?php if ($error !== ''): ?>
             <p class="account-message error"><?= htmlspecialchars($error, ENT_QUOTES, 'UTF-8') ?></p>
         <?php endif; ?>
         <p class="account-footer"><a href="login.php">J’ai déjà un compte</a></p>
     </section>
 </main>
+<?php render_site_footer(); ?>
 </body>
 </html>

@@ -170,5 +170,6 @@ if ($db !== null && $requestMethod === 'POST' && $submittedToken !== '') {
         <?php endif; ?>
     </section>
 </main>
+<?php render_site_footer(); ?>
 </body>
 </html>

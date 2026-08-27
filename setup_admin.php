@@ -76,5 +76,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <?php endif; ?>
     </section>
 </main>
+<?php render_site_footer(); ?>
 </body>
 </html>

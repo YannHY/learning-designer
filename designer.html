@@ -19,7 +19,7 @@
     <link rel="stylesheet" href="css/account-ui.css?v=20260729-2" />
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="stylesheet" href="css/interface.css?v=20260826-title-blue" />
+    <link rel="stylesheet" href="css/interface.css?v=20260827-fluid-toolbar-buttons-2" />
   </head>
   <body class="designer-page">
     <a id="skip-link" class="skip-link" href="#board">Aller au contenu principal</a>
@@ -144,6 +144,26 @@
                 <option id="opt-meta-delivery-onsite" value="onsite">Présentiel</option>
                 <option id="opt-meta-delivery-online" value="online">Distanciel</option>
                 <option id="opt-meta-delivery-hybrid" value="hybrid">Hybride</option>
+              </select>
+            </div>
+            <div class="form-row">
+              <label id="label-meta-level" for="meta-level">Niveau</label>
+              <select id="meta-level" class="panel-select">
+                <option value=""></option>
+                <optgroup id="optgroup-meta-level" label="France / Suisse">
+                  <option value="cp">CP / 3e</option>
+                  <option value="ce1">CE1 / 4e</option>
+                  <option value="ce2">CE2 / 5e</option>
+                  <option value="cm1">CM1 / 6e</option>
+                  <option value="cm2">CM2 / 7e</option>
+                  <option value="sixieme">6e / 8e</option>
+                  <option value="cinquieme">5e / 9e</option>
+                  <option value="quatrieme">4e / 10e</option>
+                  <option value="troisieme">3e / 11e</option>
+                  <option value="seconde">Seconde / Secondaire II – 1re année</option>
+                  <option value="premiere">Première / Secondaire II – 2e année</option>
+                  <option value="terminale">Terminale / Secondaire II – 3e année</option>
+                </optgroup>
               </select>
             </div>
             <div class="form-row">
@@ -629,8 +649,8 @@
     </div>
     <!-- Doit précéder interface.js, qui lit COMPETENCY_CATALOG_SOURCE au chargement. -->
     <script src="js/competency-catalog.js?v=20260825-catalogue-extrait"></script>
-    <script src="js/interface.js?v=20260825-catalogue-extrait"></script>
-    <script src="js/account-ui.js?v=20260824-skip-empty-autosave"></script>
+    <script src="js/interface.js?v=20260827-fluid-toolbar-buttons-2"></script>
+    <script src="js/account-ui.js?v=20260827-compact-toolbar"></script>
     <script>
       (function() {
         var html = document.documentElement;

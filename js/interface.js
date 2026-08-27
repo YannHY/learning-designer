@@ -64,6 +64,20 @@ const LOCATION_OPTIONS = [
   { value: "online", label: "Distanciel", short: "Dist.", icon: ICONS.online },
   { value: "hybrid", label: "Hybride", short: "Hybrid.", icon: ICONS.hybrid }
 ];
+const SCHOOL_LEVEL_OPTIONS = [
+  { value: "cp", label: "CP / 3e", france: "CP", swiss: "3e" },
+  { value: "ce1", label: "CE1 / 4e", france: "CE1", swiss: "4e" },
+  { value: "ce2", label: "CE2 / 5e", france: "CE2", swiss: "5e" },
+  { value: "cm1", label: "CM1 / 6e", france: "CM1", swiss: "6e" },
+  { value: "cm2", label: "CM2 / 7e", france: "CM2", swiss: "7e" },
+  { value: "sixieme", label: "6e / 8e", france: "6e", swiss: "8e" },
+  { value: "cinquieme", label: "5e / 9e", france: "5e", swiss: "9e" },
+  { value: "quatrieme", label: "4e / 10e", france: "4e", swiss: "10e" },
+  { value: "troisieme", label: "3e / 11e", france: "3e", swiss: "11e" },
+  { value: "seconde", label: "Seconde / Secondaire II – 1re année", france: "Seconde", swiss: "Secondaire II – 1re année" },
+  { value: "premiere", label: "Première / Secondaire II – 2e année", france: "Première", swiss: "Secondaire II – 2e année" },
+  { value: "terminale", label: "Terminale / Secondaire II – 3e année", france: "Terminale", swiss: "Secondaire II – 3e année" }
+];
 const PARTITION_TYPE_OPTIONS = [
   { type: "locationMode",    labelKey: "partitionTypeLocation", options: LOCATION_OPTIONS },
   { type: "groupMode",       labelKey: "partitionTypeGroup",    options: GROUP_MODE_OPTIONS },
@@ -358,6 +372,7 @@ const DEFAULT_META = {
   learningHours: 0,
   learningMinutes: 0,
   modeDelivery: "",
+  schoolLevel: "",
   sizeClass: "",
   designers: "",
   trainers: "",
@@ -434,6 +449,7 @@ const metaDesignedDaysInput = document.getElementById("meta-designed-days");
 const metaDesignedHoursInput = document.getElementById("meta-designed-hours");
 const metaDesignedMinutesInput = document.getElementById("meta-designed-minutes");
 const metaDeliverySelect = document.getElementById("meta-delivery");
+const metaLevelSelect = document.getElementById("meta-level");
 const metaDayHoursInput = document.getElementById("meta-day-hours");
 const metaSizeClassInput = document.getElementById("meta-size-class");
 const metaDesignersInput = document.getElementById("meta-designers");
@@ -567,6 +583,8 @@ const I18N = {
     metaDescriptionLabel: "Description",
     metaCommandLabel: "Commande institutionnelle",
     metaDeliveryLabel: "Mode",
+    metaLevelLabel: "Niveau",
+    metaLevelScaleLabel: "France / Suisse",
     metaSizeLabel: "Taille du groupe",
     metaDesignersLabel: "Concepteur(s)",
     metaTrainersLabel: "Enseignant(s)",
@@ -840,6 +858,8 @@ const I18N = {
     metaDescriptionLabel: "Description",
     metaCommandLabel: "Institutional brief",
     metaDeliveryLabel: "Mode",
+    metaLevelLabel: "Level",
+    metaLevelScaleLabel: "France / Switzerland",
     metaSizeLabel: "Group size",
     metaDesignersLabel: "Designer(s)",
     metaTrainersLabel: "Teacher(s)",
@@ -1515,6 +1535,8 @@ function applyLocalizedUI() {
   document.getElementById("label-meta-description").textContent = t("metaDescriptionLabel");
   document.getElementById("label-meta-command").textContent = t("metaCommandLabel");
   document.getElementById("label-meta-delivery").textContent = t("metaDeliveryLabel");
+  document.getElementById("label-meta-level").textContent = t("metaLevelLabel");
+  document.getElementById("optgroup-meta-level").label = t("metaLevelScaleLabel");
   document.getElementById("label-meta-size-class").textContent = t("metaSizeLabel");
   document.getElementById("label-meta-designers").textContent = t("metaDesignersLabel");
   document.getElementById("label-meta-trainers").textContent = t("metaTrainersLabel");
@@ -1687,7 +1709,7 @@ document.addEventListener("site-footer-ready", () => {
 });
 
 function updateResponsiveButtonLabels() {
-  const compactToolbar = window.innerWidth <= 640;
+  const compactToolbar = window.innerWidth <= 520;
   setButtonLabel(addSessionBtn, "fa-solid fa-plus", compactToolbar ? t("addMomentCompact") : t("addMoment"));
 }
 
@@ -1774,6 +1796,7 @@ function hydrateState(parsed, fallback = defaultState()) {
   if (!["", "onsite", "online", "hybrid"].includes(hydrated.meta.modeDelivery)) {
     hydrated.meta.modeDelivery = "";
   }
+  hydrated.meta.schoolLevel = lookupValue(hydrated.meta.schoolLevel, CSV_LEVEL_LOOKUP, "");
   if (hydrated.meta.activeTab === "timeline") hydrated.meta.activeTab = "settings";
   if (!["settings", "analysis", "chronology"].includes(hydrated.meta.activeTab)) {
     hydrated.meta.activeTab = "settings";
@@ -3485,6 +3508,7 @@ function renderTopPanel() {
     metaLearningHoursInput.value = state.meta.learningHours;
     metaLearningMinutesInput.value = state.meta.learningMinutes;
     metaDeliverySelect.value = state.meta.modeDelivery;
+    metaLevelSelect.value = state.meta.schoolLevel;
     metaDayHoursInput.value = getDayHours();
     metaSizeClassInput.value = state.meta.sizeClass;
     metaDesignersInput.value = state.meta.designers;
@@ -3604,6 +3628,10 @@ function labelForLocationMode(mode) {
   if (mode === "online") return t("modeOnline");
   if (mode === "hybrid") return t("modeHybrid");
   return t("modeOnsite");
+}
+
+function labelForSchoolLevel(level) {
+  return SCHOOL_LEVEL_OPTIONS.find((option) => option.value === level)?.label || "-";
 }
 
 function labelForEvaluationMode(mode) {
@@ -3771,6 +3799,7 @@ function buildMarkdownExport(scope = "full", sessionIds = null) {
   const designed = splitMinutesToPedagogicalTime(totalExportDesignedMinutes(sessionIds), getDayHours());
   const lines = [`# ${state.meta.name || "Design Learning"}`, "", "## Paramètres", ""];
   lines.push(`- Mode: ${labelForLocationMode(state.meta.modeDelivery)}`);
+  lines.push(`- Niveau: ${labelForSchoolLevel(state.meta.schoolLevel)}`);
   lines.push(`- Taille du groupe: ${state.meta.sizeClass || "-"}`);
   lines.push(`- Concepteur(s): ${state.meta.designers || "-"}`);
   lines.push(`- Enseignant(s): ${state.meta.trainers || "-"}`);
@@ -3941,6 +3970,7 @@ function buildHtmlExportDocument(scope = "full", sessionIds = null) {
   <section>
     <h2>Paramètres</h2>
     <p><strong>Mode:</strong> ${escapeHtml(labelForLocationMode(state.meta.modeDelivery))}</p>
+    <p><strong>Niveau:</strong> ${escapeHtml(labelForSchoolLevel(state.meta.schoolLevel))}</p>
     <p><strong>Taille du groupe:</strong> ${escapeHtml(state.meta.sizeClass || "-")}</p>
     <p><strong>Concepteur(s):</strong> ${escapeHtml(state.meta.designers || "-")}</p>
     <p><strong>Enseignant(s):</strong> ${escapeHtml(state.meta.trainers || "-")}</p>
@@ -4360,6 +4390,7 @@ function buildFullWordBody(sessionIds = null) {
   body.push(wordParagraph("Paramètres", "Heading1"));
   body.push(wordFieldTable([
     ["Mode", labelForLocationMode(state.meta.modeDelivery)],
+    ["Niveau", labelForSchoolLevel(state.meta.schoolLevel)],
     ["Taille du groupe", state.meta.sizeClass || "-"],
     ["Concepteur(s)", state.meta.designers || "-"],
     ["Enseignant(s)", state.meta.trainers || "-"],
@@ -4593,6 +4624,7 @@ function buildSpreadsheetRows(scope = "full", sessionIds = null) {
           "",
           state.meta.name || "",
           labelForLocationMode(state.meta.modeDelivery),
+          labelForSchoolLevel(state.meta.schoolLevel),
           state.meta.sizeClass || "",
           state.meta.designers || "",
           state.meta.trainers || "",
@@ -4633,6 +4665,7 @@ function buildSpreadsheetRows(scope = "full", sessionIds = null) {
             .join(";"),
           state.meta.name || "",
           labelForLocationMode(state.meta.modeDelivery),
+          labelForSchoolLevel(state.meta.schoolLevel),
           state.meta.sizeClass || "",
           state.meta.designers || "",
           state.meta.trainers || "",
@@ -4672,6 +4705,7 @@ const SPREADSHEET_COLUMNS = [
   { key: "activity_competencies", label: "Compétences", width: 22 },
   { key: "design_title", label: "Titre du design", width: 22 },
   { key: "design_mode", label: "Mode du design", width: 16 },
+  { key: "design_level", label: "Niveau", width: 30 },
   { key: "design_group_size", label: "Taille du groupe", width: 16 },
   { key: "design_designers", label: "Concepteur(s)", width: 18 },
   { key: "design_trainers", label: "Enseignant(s)", width: 18 },
@@ -4890,6 +4924,16 @@ const CSV_LOCATION_LOOKUP = buildLookup([
   ["hybrid", I18N.fr.modeHybrid, I18N.en.modeHybrid, "hybride", "blended"]
 ]);
 
+const CSV_LEVEL_LOOKUP = buildLookup(
+  SCHOOL_LEVEL_OPTIONS.map((option) => [
+    option.value,
+    option.label,
+    option.label.replaceAll(" / ", "/"),
+    option.france,
+    option.swiss
+  ])
+);
+
 const CSV_EVAL_LOOKUP = buildLookup([
   ["none", I18N.fr.eval_none, I18N.en.eval_none, "aucune evaluation", "none"],
   ["diagnostic", I18N.fr.eval_diagnostic, I18N.en.eval_diagnostic],
@@ -5068,6 +5112,7 @@ function buildStateFromCsv(csvText) {
       const dayHours = Math.max(1, parseCsvInteger(read("design_day_hours"), DEFAULT_DAY_HOURS));
       imported.meta.name = read("design_title");
       imported.meta.modeDelivery = lookupValue(read("design_mode"), CSV_LOCATION_LOOKUP, "onsite");
+      imported.meta.schoolLevel = lookupValue(read("design_level"), CSV_LEVEL_LOOKUP, "");
       imported.meta.sizeClass = read("design_group_size").trim();
       imported.meta.designers = read("design_designers");
       imported.meta.trainers = read("design_trainers");
@@ -5261,6 +5306,9 @@ function buildStateFromMarkdown(markdownText) {
       const field = parseMarkdownFieldLine(line);
       if (field) {
         if (field.key === "mode") imported.meta.modeDelivery = lookupValue(field.value, CSV_LOCATION_LOOKUP, "");
+        if (["niveau", "level"].includes(field.key)) {
+          imported.meta.schoolLevel = lookupValue(field.value, CSV_LEVEL_LOOKUP, "");
+        }
         if (field.key === "taille du groupe") imported.meta.sizeClass = field.value;
         if (field.key === "concepteur(s)") imported.meta.designers = field.value;
         if (field.key === "enseignant(s)") imported.meta.trainers = field.value;
@@ -7186,6 +7234,10 @@ function bindTopPanelEvents() {
   });
   metaDeliverySelect.addEventListener("change", (event) => {
     state.meta.modeDelivery = event.target.value;
+    saveState();
+  });
+  metaLevelSelect.addEventListener("change", (event) => {
+    state.meta.schoolLevel = event.target.value;
     saveState();
   });
   metaDayHoursInput.addEventListener("input", (event) => {

@@ -214,6 +214,7 @@ function ld_model_design(array $model): array
             'learningHours' => intdiv($minutes, 60),
             'learningMinutes' => $minutes % 60,
             'modeDelivery' => (string)($model['mode'] ?? 'onsite'),
+            'schoolLevel' => '',
             'sizeClass' => '',
             'designers' => '',
             'trainers' => '',

@@ -63,6 +63,20 @@ $TRAINER_MODES  = ['present' => 'Enseignant présent', 'absent' => 'Enseignant a
 $SYNC_MODES     = ['sync' => 'Synchrone', 'async' => 'Asynchrone'];
 $LOCATION_MODES = ['onsite' => 'Présentiel', 'online' => 'Distanciel', 'hybrid' => 'Hybride'];
 $DELIVERY_MODES = ['onsite' => 'Présentiel', 'online' => 'Distanciel', 'hybrid' => 'Hybride'];
+$SCHOOL_LEVELS  = [
+    'cp' => 'CP / 3e',
+    'ce1' => 'CE1 / 4e',
+    'ce2' => 'CE2 / 5e',
+    'cm1' => 'CM1 / 6e',
+    'cm2' => 'CM2 / 7e',
+    'sixieme' => '6e / 8e',
+    'cinquieme' => '5e / 9e',
+    'quatrieme' => '4e / 10e',
+    'troisieme' => '3e / 11e',
+    'seconde' => 'Seconde / Secondaire II – 1re année',
+    'premiere' => 'Première / Secondaire II – 2e année',
+    'terminale' => 'Terminale / Secondaire II – 3e année',
+];
 $EVAL_MODES     = [
     'none'          => null,
     'diagnostic'    => 'Diagnostique',
@@ -435,6 +449,7 @@ $metaDesigners  = safeText($meta['designers'] ?? $meta['author'] ?? '');
 $metaTrainers   = safeText($meta['trainers'] ?? '');
 $metaDescription= safeText($meta['description'] ?? '');
 $metaDelivery   = safeText($meta['modeDelivery'] ?? '');
+$metaSchoolLevel= safeText($meta['schoolLevel'] ?? '');
 $metaClassSize  = safeText($meta['sizeClass'] ?? '');
 $metaLearningDays= (int)($meta['learningDays'] ?? 0);
 $metaLearningH  = (int)($meta['learningHours'] ?? 0);
@@ -866,6 +881,7 @@ $displayDesignedMinutes = $designedMinutes > 0 ? $designedMinutes : $totalMinute
   if ($displayDesignedMinutes > 0) $metaCards[] = ['Temps conçu', formatDuration($displayDesignedMinutes)];
   if ($learningMinutes > 0)        $metaCards[] = ['Temps d\'apprentissage', $learningTime];
   if ($metaDelivery !== '')  $metaCards[] = ['Mode', labelFor($DELIVERY_MODES, $metaDelivery, $metaDelivery)];
+  if ($metaSchoolLevel !== '') $metaCards[] = ['Niveau', labelFor($SCHOOL_LEVELS, $metaSchoolLevel, $metaSchoolLevel)];
   if ($metaClassSize !== '') $metaCards[] = ['Taille du groupe', $metaClassSize];
   ?>
   <?php if ($metaCards): ?>

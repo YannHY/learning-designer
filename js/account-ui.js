@@ -48,6 +48,7 @@
       "trainers",
       "personas",
       "modeDelivery",
+      "schoolLevel",
       "sizeClass"
     ];
     if (textFields.some((field) => String(meta[field] ?? "").trim() !== "")) return true;
@@ -219,12 +220,12 @@
         remoteUpdatedAt: data.design.updatedAt
       });
       setRemoteDesignUrl(data.design.id);
-      setAutoSaveStatus("success", tr("Sauvegarde auto ✓", "Auto-saved ✓"));
+      setAutoSaveStatus("success", tr("Enregistré ✓", "Saved ✓"));
     } catch (error) {
       if (error?.status === 409) {
         const updatedAt = error?.data?.design?.updatedAt;
         if (updatedAt) app()?.updateMeta?.({ remoteUpdatedAt: updatedAt });
-        setAutoSaveStatus("error", tr("Conflit détecté", "Conflict detected"));
+        setAutoSaveStatus("error", tr("Conflit", "Conflict"));
         app()?.showNotice?.(
           tr(
             "Conflit de sauvegarde : ce design a été modifié dans une autre fenêtre. La prochaine sauvegarde résoudra le conflit.",
@@ -234,7 +235,7 @@
         );
         return;
       }
-      setAutoSaveStatus("error", tr("Échec sauvegarde auto", "Auto-save failed"));
+      setAutoSaveStatus("error", tr("Échec", "Failed"));
       app()?.showNotice?.(tr("Échec de la sauvegarde automatique.", "Auto-save failed."), "error");
     }
   }

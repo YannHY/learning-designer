@@ -143,21 +143,23 @@ $levels = [
         .bloom-icon {
             display: grid;
             place-items: center;
-            color: rgba(255, 255, 255, 0.92);
+            color: color-mix(in srgb, var(--bloom-bg) 80%, #000 20%);
             font-size: 56px;
-            text-shadow: 0 2px 7px rgba(15, 23, 42, 0.14);
         }
         .bloom-level h2 {
             margin: 0;
             padding: 6px 10px;
             border-radius: 6px;
-            background: rgba(255, 255, 255, 0.92);
+            background: color-mix(in srgb, var(--bloom-bg) 80%, #000 20%);
             overflow-wrap: anywhere;
             white-space: nowrap;
             align-self: center;
             display: flex;
             align-items: center;
             justify-content: center;
+        }
+        html body.bloom-page .bloom-level h2 {
+            color: var(--bloom-ink);
         }
         .bloom-description {
             margin: 0;

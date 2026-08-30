@@ -939,6 +939,84 @@ function app_competency_catalog_source(): string
 }
 
 /**
+ * Renvoie le TSV des référentiels complémentaires depuis la même source de
+ * vérité que l'éditeur JavaScript.
+ */
+function app_competency_framework_catalog_source(): string
+{
+    static $source = null;
+    if (is_string($source)) {
+        return $source;
+    }
+
+    $path = __DIR__ . '/../js/competency-catalog.js';
+    if (!is_file($path)) {
+        error_log('Learning Designer : catalogue de cadres de compétences introuvable (' . $path . ').');
+        return $source = '';
+    }
+
+    $js = (string)file_get_contents($path);
+    if (!preg_match('/const\s+COMPETENCY_FRAMEWORK_CATALOG_SOURCE\s*=\s*String\.raw`(.*?)`;/s', $js, $matches)) {
+        error_log('Learning Designer : COMPETENCY_FRAMEWORK_CATALOG_SOURCE illisible dans ' . $path . '.');
+        return $source = '';
+    }
+
+    return $source = (string)$matches[1];
+}
+
+/**
+ * Renvoie les 362 énoncés de compétence bilingues de DigComp 3.0,
+ * répartis selon quatre niveaux de maîtrise.
+ */
+function app_competency_digcomp_detail_source(): string
+{
+    static $source = null;
+    if (is_string($source)) {
+        return $source;
+    }
+
+    $path = __DIR__ . '/../js/competency-digcomp-details.js';
+    if (!is_file($path)) {
+        error_log('Learning Designer : repères DigComp introuvables (' . $path . ').');
+        return $source = '';
+    }
+
+    $js = (string)file_get_contents($path);
+    if (!preg_match('/const\s+COMPETENCY_DIGCOMP_DETAIL_SOURCE\s*=\s*String\.raw`(.*?)`;/s', $js, $matches)) {
+        error_log('Learning Designer : COMPETENCY_DIGCOMP_DETAIL_SOURCE illisible dans ' . $path . '.');
+        return $source = '';
+    }
+
+    return $source = trim((string)$matches[1]);
+}
+
+/**
+ * Renvoie les descriptions et les 169 repères GreenComp
+ * (connaissances, aptitudes et attitudes).
+ */
+function app_competency_greencomp_detail_source(): string
+{
+    static $source = null;
+    if (is_string($source)) {
+        return $source;
+    }
+
+    $path = __DIR__ . '/../js/competency-greencomp-details.js';
+    if (!is_file($path)) {
+        error_log('Learning Designer : repères GreenComp introuvables (' . $path . ').');
+        return $source = '';
+    }
+
+    $js = (string)file_get_contents($path);
+    if (!preg_match('/const\s+COMPETENCY_GREENCOMP_DETAIL_SOURCE\s*=\s*String\.raw`(.*?)`;/s', $js, $matches)) {
+        error_log('Learning Designer : COMPETENCY_GREENCOMP_DETAIL_SOURCE illisible dans ' . $path . '.');
+        return $source = '';
+    }
+
+    return $source = trim((string)$matches[1]);
+}
+
+/**
  * Applique le thème sombre avant le premier rendu.
  *
  * Le script de navigation attend DOMContentLoaded pour lire le thème, ce qui
@@ -1211,7 +1289,7 @@ function site_breadcrumb_items(string $active = ''): array
         ],
         'competencies' => [
             ['fr' => 'Aide', 'en' => 'Help', 'href' => 'help.php'],
-            ['fr' => 'Compétences numériques', 'en' => 'Digital Competencies'],
+            ['fr' => 'Référentiels de compétences', 'en' => 'Competency frameworks'],
         ],
         'help' => [
             ['fr' => 'Aide', 'en' => 'Help'],

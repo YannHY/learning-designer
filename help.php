@@ -424,7 +424,7 @@ PROMPT;
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" referrerpolicy="no-referrer">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="stylesheet" href="css/interface.css?v=20260826-title-blue">
+    <link rel="stylesheet" href="css/interface.css?v=20260830-compact-source-link">
     <link rel="stylesheet" href="css/account-ui.css?v=20260520-4">
     <link rel="stylesheet" href="css/account-pages.css?v=20260826-title-blue">
 </head>
@@ -520,7 +520,7 @@ PROMPT;
                             <tr><td>Description de l’activité</td><td>Texte libre</td><td>Décrit l’intention pédagogique, le déroulement et l’organisation de l’activité du point de vue de l’enseignant.</td></tr>
                             <tr><td>Consignes pour les élèves</td><td>Texte libre</td><td>Formule les actions attendues dans un langage directement adressé aux élèves : étapes, production attendue et critères utiles.</td></tr>
                             <tr><td>Ressources</td><td>Liens Markdown dans les textes</td><td>Associe les supports, documents, vidéos ou outils avec la syntaxe <code>[titre](URL)</code>.</td></tr>
-                            <tr><td>Compétences</td><td>Une ou plusieurs compétences numériques</td><td>Relie l’activité au référentiel numérique intégré.</td></tr>
+                            <tr><td>Compétences</td><td>Une ou plusieurs compétences issues de sept cadres</td><td>Relie l’activité à Florimont, au Socle commun, à GreenComp, à DigComp, au CRCN, à Pix ou à Pix IA.</td></tr>
                         </tbody>
                     </table>
                 </div>
@@ -578,14 +578,19 @@ PROMPT;
                     <div class="help-card"><strong><span class="help-card-icon"><i class="fa-solid fa-hammer" aria-hidden="true"></i></span>Créer</strong><span>Concevoir, élaborer, formuler, produire.</span></div>
                 </div>
                 <p class="help-spaced">La page <a href="bloom.php">Taxonomie de Bloom</a> donne accès au tableau complet des verbes. Dans l’éditeur, chaque acquis reste modifiable et peut être supprimé.</p>
-                <h3 id="competences-numeriques">Référentiel de compétences numériques</h3>
-                <p>Le site intègre le référentiel de compétences numériques utilisé à l’Institut Florimont. Il rassemble 95 compétences organisées selon trois niveaux progressifs. Chaque activité peut être reliée à une ou plusieurs compétences, ce qui rend la progression numérique visible dans le scénario.</p>
+                <h3 id="competences-numeriques">Cadres de compétences</h3>
+                <p>Dans chaque activité, le bouton <strong>Sélectionner des compétences</strong> permet d’abord de choisir un cadre, puis un domaine et une ou plusieurs compétences. Sept cadres sont disponibles : Florimont, le Socle commun, GreenComp, DigComp 3.0, le CRCN, Pix et Pix IA.</p>
                 <div class="help-grid three">
-                    <div class="help-card"><strong><span class="help-card-icon"><i class="fa-solid fa-seedling" aria-hidden="true"></i></span>Acquérir</strong><span>Bases de la vie numérique scolaire : appareil, recherche, organisation, communication et premiers usages créatifs.</span></div>
-                    <div class="help-card"><strong><span class="help-card-icon"><i class="fa-solid fa-trowel" aria-hidden="true"></i></span>Approfondir</strong><span>Veille, collaboration, données simples, programmation visuelle, IA et création multimédia plus autonome.</span></div>
-                    <div class="help-card"><strong><span class="help-card-icon"><i class="fa-solid fa-wand-magic-sparkles" aria-hidden="true"></i></span>Créer</strong><span>Projets avancés : données, Python, sites web, podcasts, 3D, réalité augmentée et productions collaboratives.</span></div>
+                    <div class="help-card"><strong><span class="help-card-icon"><i class="fa-solid fa-school" aria-hidden="true"></i></span>Florimont</strong><span>95 compétences numériques progressives réparties entre Acquérir, Approfondir et Créer.</span></div>
+                    <div class="help-card"><strong><span class="help-card-icon"><i class="fa-solid fa-landmark" aria-hidden="true"></i></span>Socle commun</strong><span>135 compétences détaillées, réparties en cinq domaines et dix-huit sous-domaines.</span></div>
+                    <div class="help-card"><strong><span class="help-card-icon"><i class="fa-solid fa-leaf" aria-hidden="true"></i></span>GreenComp</strong><span>12 compétences européennes enrichies de 169 repères de connaissances, aptitudes et attitudes.</span></div>
+                    <div class="help-card"><strong><span class="help-card-icon"><i class="fa-solid fa-globe" aria-hidden="true"></i></span>DigComp 3.0</strong><span>362 énoncés bilingues sélectionnables individuellement, regroupés en 21 compétences et quatre niveaux de maîtrise.</span></div>
+                    <div class="help-card"><strong><span class="help-card-icon"><i class="fa-solid fa-shield-halved" aria-hidden="true"></i></span>CRCN</strong><span>16 compétences du cadre de référence français des compétences numériques.</span></div>
+                    <div class="help-card"><strong><span class="help-card-icon"><i class="fa-solid fa-certificate" aria-hidden="true"></i></span>Pix</strong><span>16 compétences numériques transversales utilisées par Pix pour l’évaluation et la formation.</span></div>
+                    <div class="help-card"><strong><span class="help-card-icon"><i class="fa-solid fa-robot" aria-hidden="true"></i></span>Pix IA</strong><span>16 compétences complémentaires sur les fondements, les usages et les enjeux de l’intelligence artificielle.</span></div>
                 </div>
-                <p class="help-spaced">La page <a href="competencies.php">Compétences numériques</a> présente l’ensemble du référentiel. Lorsque vous êtes connecté, elle peut signaler les compétences déjà mobilisées dans vos designs enregistrés.</p>
+                <p class="help-spaced">Les 169 repères GreenComp précisent les compétences de ce cadre sans être comptés comme des compétences supplémentaires. Dans DigComp 3.0, chacun des 362 énoncés codés CS peut en revanche être sélectionné individuellement, comme une compétence Florimont. Le texte anglais officiel est conservé et une traduction française propre à l’application est proposée ; la Commission européenne n’est pas responsable de cette traduction. Pix et Pix IA sont deux référentiels complémentaires : le second ne remplace pas le référentiel Pix général. La page <a href="competencies.php">Référentiels de compétences</a> permet de consulter les sept catalogues complets, de les filtrer, de les rechercher et d’ouvrir leur source de référence.</p>
+                <p>Dans les énoncés DigComp 3.0, <strong>[AI-E]</strong> indique que l’intelligence artificielle est explicitement mentionnée et <strong>[AI-I]</strong> qu’elle est implicitement pertinente.</p>
             </article>
 
             <article class="help-section" id="vues-analyses">
@@ -1024,7 +1029,7 @@ window.helpPromptTranslations = <?= json_encode([
     ],
 ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) ?>;
 </script>
-<script src="js/help-i18n.js?v=20260823-aias-numbers"></script>
+<script src="js/help-i18n.js?v=20260830-digcomp-statements"></script>
 <script>
 var initialHelpLanguage = 'fr';
 try {

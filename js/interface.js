@@ -288,6 +288,8 @@ function parseCompetencyCatalog(source) {
 
     data.push({
       id: `competency:${currentLevel.id}:${numberRaw.trim()}`,
+      frameworkId: "florimont",
+      groupId: currentLevel.id,
       platform: currentLevel.id,
       category,
       sectionFr: section,
@@ -315,14 +317,246 @@ function parseCompetencyCatalog(source) {
   return { data, categories, tabs };
 }
 
-const {
-  data: SELECTABLE_TOOLS_DATA,
-  categories: SELECTABLE_TOOL_CATEGORY_LABELS,
-  tabs: TOOL_PICKER_TABS
-} = parseCompetencyCatalog(mergeCompetencyCatalogTranslations(
+function parseAdditionalCompetencyFrameworkCatalog(source) {
+  const data = [];
+  const frameworks = [];
+  let framework = null;
+  let group = null;
+  let subgroup = null;
+
+  String(source ?? "").split("\n").forEach((rawLine) => {
+    const line = String(rawLine ?? "").replace(/\r/g, "");
+    if (!line.trim()) return;
+
+    if (line.startsWith("# framework\t")) {
+      const [, id = "", labelFr = "", labelEn = "", sourceUrl = ""] = line.split("\t");
+      framework = { id, labelFr, labelEn, sourceUrl, groups: [] };
+      frameworks.push(framework);
+      group = null;
+      subgroup = null;
+      return;
+    }
+
+    if (line.startsWith("## group\t") && framework) {
+      const [, id = "", labelFr = "", labelEn = ""] = line.split("\t");
+      group = { id, labelFr, labelEn };
+      framework.groups.push(group);
+      subgroup = null;
+      return;
+    }
+
+    if (line.startsWith("### subgroup\t") && framework && group) {
+      const [, id = "", labelFr = "", labelEn = ""] = line.split("\t");
+      subgroup = { id, labelFr, labelEn: labelEn || labelFr };
+      return;
+    }
+
+    if (!framework || !group) return;
+    const [code = "", labelFr = "", descFr = "", labelEn = "", descEn = ""] = line.split("\t");
+    if (!code.trim() || !labelFr.trim()) return;
+    const sectionFr = subgroup?.labelFr || group.labelFr;
+    const sectionEn = subgroup?.labelEn || group.labelEn;
+    const categoryId = subgroup ? `${group.id}:${subgroup.id}` : group.id;
+    data.push({
+      id: `competency:${framework.id}:${code.trim()}`,
+      frameworkId: framework.id,
+      groupId: group.id,
+      platform: framework.id,
+      category: `${framework.id}:${categoryId}`,
+      sectionFr,
+      sectionEn,
+      appFr: "",
+      appEn: "",
+      levelLabelFr: framework.labelFr,
+      levelLabelEn: framework.labelEn,
+      levelBadge: framework.labelFr,
+      number: code.trim(),
+      displayCode: code.trim(),
+      shortCode: `${framework.labelFr} ${code.trim()}`,
+      shortCodeFr: `${framework.labelFr} ${code.trim()}`,
+      shortCodeEn: `${framework.labelEn} ${code.trim()}`,
+      legacyShortCode: "",
+      labelFr: labelFr.trim(),
+      labelEn: labelEn.trim() || labelFr.trim(),
+      descFr: descFr.trim(),
+      descEn: descEn.trim() || descFr.trim()
+    });
+  });
+
+  return { data, frameworks };
+}
+
+function attachFrameworkDetails(data, frameworkId, source) {
+  const byId = new Map(data.map((item) => [item.id, item]));
+  String(source ?? "").split("\n").forEach((rawLine) => {
+    const line = String(rawLine ?? "").replace(/\r/g, "");
+    if (!line.trim()) return;
+    const [code = "", kind = "", orderRaw = "", textFr = "", textEn = ""] = line.split("\t");
+    const item = byId.get(`competency:${frameworkId}:${code.trim()}`);
+    const text = textFr.trim();
+    if (!item || !text) return;
+    if (kind === "description") {
+      item.descFr = text;
+      return;
+    }
+    if (!["knowledge", "skills", "attitudes", "basic", "intermediate", "advanced", "highly_advanced"].includes(kind)) return;
+    if (!Array.isArray(item.details)) item.details = [];
+    item.details.push({
+      kind,
+      order: Number.parseInt(orderRaw, 10) || item.details.length + 1,
+      textFr: text,
+      textEn: textEn.trim() || text
+    });
+  });
+}
+
+const florimontCatalog = parseCompetencyCatalog(mergeCompetencyCatalogTranslations(
   COMPETENCY_CATALOG_SOURCE,
   COMPETENCY_CATALOG_EN_SOURCE
 ));
+const additionalFrameworkCatalog = parseAdditionalCompetencyFrameworkCatalog(
+  COMPETENCY_FRAMEWORK_CATALOG_SOURCE
+);
+attachFrameworkDetails(
+  additionalFrameworkCatalog.data,
+  "greencomp",
+  typeof COMPETENCY_GREENCOMP_DETAIL_SOURCE === "undefined"
+    ? ""
+    : COMPETENCY_GREENCOMP_DETAIL_SOURCE
+);
+attachFrameworkDetails(
+  additionalFrameworkCatalog.data,
+  "digcomp",
+  typeof COMPETENCY_DIGCOMP_DETAIL_SOURCE === "undefined"
+    ? ""
+    : COMPETENCY_DIGCOMP_DETAIL_SOURCE
+);
+
+const DIGCOMP_LEVEL_LABELS = {
+  basic: { fr: "Niveau élémentaire", en: "Basic level" },
+  intermediate: { fr: "Niveau intermédiaire", en: "Intermediate level" },
+  advanced: { fr: "Niveau avancé", en: "Advanced level" },
+  highly_advanced: { fr: "Niveau hautement avancé", en: "Highly advanced level" }
+};
+
+const GREENCOMP_TYPE_LABELS = {
+  knowledge: { code: "K", fr: "Connaissance", en: "Knowledge" },
+  skills: { code: "S", fr: "Aptitude", en: "Skill" },
+  attitudes: { code: "A", fr: "Attitude", en: "Attitude" }
+};
+
+function expandGreenCompIndicators(items) {
+  return items.flatMap((parent) => {
+    if (parent.frameworkId !== "greencomp" || !Array.isArray(parent.details) || !parent.details.length) {
+      return [parent];
+    }
+
+    const hiddenParent = { ...parent, pickerHidden: true };
+    const indicators = parent.details.map((detail) => {
+      const type = GREENCOMP_TYPE_LABELS[detail.kind];
+      if (!type) return null;
+      const order = Number.parseInt(detail.order, 10) || 1;
+      const indicatorCode = `GC${parent.number}.${type.code}${String(order).padStart(2, "0")}`;
+      const textFr = String(detail.textFr || "").trim();
+      const textEn = String(detail.textEn || textFr).trim();
+      if (!textFr) return null;
+      return {
+        ...parent,
+        id: `competency:greencomp:${indicatorCode}`,
+        category: `greencomp:${parent.number}`,
+        sectionFr: `${parent.number}. ${parent.labelFr}`,
+        sectionEn: `${parent.number}. ${parent.labelEn}`,
+        number: indicatorCode,
+        displayCode: indicatorCode,
+        shortCode: indicatorCode,
+        shortCodeFr: indicatorCode,
+        shortCodeEn: indicatorCode,
+        legacyShortCode: indicatorCode,
+        labelFr: textFr,
+        labelEn: textEn,
+        descFr: type.fr,
+        descEn: type.en,
+        parentLabelFr: `${parent.number}. ${parent.labelFr}`,
+        parentLabelEn: `${parent.number}. ${parent.labelEn}`,
+        parentDescFr: parent.descFr,
+        parentDescEn: parent.descEn,
+        indicatorKind: detail.kind,
+        indicatorOrder: order,
+        details: [],
+        isCompetencyIndicator: true
+      };
+    }).filter(Boolean);
+    return [hiddenParent, ...indicators];
+  });
+}
+
+function expandDigCompStatements(items) {
+  return items.flatMap((parent) => {
+    if (parent.frameworkId !== "digcomp" || !Array.isArray(parent.details) || !parent.details.length) {
+      return [parent];
+    }
+
+    const hiddenParent = { ...parent, pickerHidden: true };
+    const statements = parent.details.map((detail) => {
+      const textFr = String(detail.textFr || "").trim();
+      const textEn = String(detail.textEn || textFr).trim();
+      const frMatch = textFr.match(/^(CS\d+\.\d+\.\d+)\s*·\s*(.+)$/u);
+      const enMatch = textEn.match(/^(CS\d+\.\d+\.\d+)\s*·\s*(.+)$/u);
+      if (!frMatch || !enMatch || frMatch[1] !== enMatch[1]) return null;
+      const statementCode = frMatch[1];
+      const level = DIGCOMP_LEVEL_LABELS[detail.kind] || { fr: detail.kind, en: detail.kind };
+      return {
+        ...parent,
+        id: `competency:digcomp:${statementCode}`,
+        category: `digcomp:${parent.number}`,
+        sectionFr: `${parent.number}. ${parent.labelFr}`,
+        sectionEn: `${parent.number}. ${parent.labelEn}`,
+        number: statementCode,
+        displayCode: statementCode,
+        shortCode: statementCode,
+        shortCodeFr: statementCode,
+        shortCodeEn: statementCode,
+        legacyShortCode: statementCode,
+        labelFr: frMatch[2],
+        labelEn: enMatch[2],
+        descFr: level.fr,
+        descEn: level.en,
+        parentLabelFr: `${parent.number}. ${parent.labelFr}`,
+        parentLabelEn: `${parent.number}. ${parent.labelEn}`,
+        parentDescFr: parent.descFr,
+        parentDescEn: parent.descEn,
+        statementKind: detail.kind,
+        statementOrder: detail.order,
+        details: [],
+        isCompetencyStatement: true
+      };
+    }).filter(Boolean);
+    return [hiddenParent, ...statements];
+  });
+}
+
+const additionalSelectableTools = expandDigCompStatements(
+  expandGreenCompIndicators(additionalFrameworkCatalog.data)
+);
+const COMPETENCY_FRAMEWORKS = [
+  {
+    id: "florimont",
+    labelFr: "Florimont",
+    labelEn: "Florimont",
+    sourceUrl: "competencies.php#framework-florimont",
+    groups: florimontCatalog.tabs.map((tab) => ({
+      id: tab.id,
+      labelFr: tab.labelFr,
+      labelEn: tab.labelEn
+    }))
+  },
+  ...additionalFrameworkCatalog.frameworks
+];
+const SELECTABLE_TOOLS_DATA = [
+  ...florimontCatalog.data,
+  ...additionalSelectableTools
+];
+const SELECTABLE_TOOL_CATEGORY_LABELS = florimontCatalog.categories;
 
 const SELECTABLE_TOOL_IDS_SET = new Set(SELECTABLE_TOOLS_DATA.map(tool => tool.id));
 const COMPETENCY_REFERENCE_MAP = SELECTABLE_TOOLS_DATA.reduce((map, tool) => {
@@ -358,33 +592,139 @@ const COMPETENCY_LEVEL_STYLES = {
     border: "#86efac",
     text: "#166534",
     active: "#bbf7d0"
+  },
+  socle: {
+    bg: "#fff7ed",
+    border: "#fdba74",
+    text: "#9a3412",
+    active: "#ffedd5"
+  },
+  greencomp: {
+    bg: "#ecfdf5",
+    border: "#6ee7b7",
+    text: "#047857",
+    active: "#d1fae5"
+  },
+  digcomp: {
+    bg: "#eff6ff",
+    border: "#93c5fd",
+    text: "#1d4ed8",
+    active: "#dbeafe"
+  },
+  crcn: {
+    bg: "#fdf2f8",
+    border: "#f9a8d4",
+    text: "#be185d",
+    active: "#fce7f3"
+  },
+  pix: {
+    bg: "#ecfeff",
+    border: "#67e8f9",
+    text: "#155e75",
+    active: "#cffafe"
+  },
+  "pix-ia": {
+    bg: "#fff7ed",
+    border: "#fdba74",
+    text: "#9a3412",
+    active: "#ffedd5"
   }
 };
 
-function getCompetencyStyle(level) {
+const COMPETENCY_DOMAIN_STYLES = [
+  {
+    bg: "#fff7ed",
+    border: "#fdba74",
+    text: "#9a3412",
+    active: "#ffedd5"
+  },
+  {
+    bg: "#ecfeff",
+    border: "#67e8f9",
+    text: "#155e75",
+    active: "#cffafe"
+  },
+  {
+    bg: "#f5f3ff",
+    border: "#c4b5fd",
+    text: "#6d28d9",
+    active: "#ede9fe"
+  },
+  {
+    bg: "#ecfdf5",
+    border: "#6ee7b7",
+    text: "#047857",
+    active: "#d1fae5"
+  },
+  {
+    bg: "#fdf2f8",
+    border: "#f9a8d4",
+    text: "#be185d",
+    active: "#fce7f3"
+  }
+];
+
+const COMPETENCY_DOMAIN_INDEX = {
+  "domaine-1": 0,
+  valeurs: 0,
+  information: 0,
+  fondements: 0,
+  "domaine-2": 1,
+  complexite: 1,
+  communication: 1,
+  usages: 1,
+  "domaine-3": 2,
+  avenirs: 2,
+  creation: 2,
+  enjeux: 2,
+  "domaine-4": 3,
+  action: 3,
+  protection: 3,
+  "domaine-5": 4,
+  problemes: 4,
+  environnement: 4
+};
+
+function getCompetencyStyle(level, groupId = "") {
+  const primaryGroupId = String(groupId).split(":")[0];
+  const domainIndex = COMPETENCY_DOMAIN_INDEX[primaryGroupId];
+  if (level !== "florimont" && Number.isInteger(domainIndex)) {
+    return COMPETENCY_DOMAIN_STYLES[domainIndex];
+  }
   return COMPETENCY_LEVEL_STYLES[level] || COMPETENCY_LEVEL_STYLES.acquerir;
 }
 
-function applyCompetencyTheme(element, level) {
+function applyCompetencyTheme(element, level, groupId = "") {
   if (!element) return;
-  const theme = getCompetencyStyle(level);
+  const theme = getCompetencyStyle(level, groupId);
   element.style.setProperty("--competency-bg", theme.bg);
   element.style.setProperty("--competency-border", theme.border);
   element.style.setProperty("--competency-text", theme.text);
   element.style.setProperty("--competency-active", theme.active);
 }
 
+function applyFrenchTypography(value) {
+  return String(value ?? "")
+    .replace(/,\s*(…|\.{3})/g, "$1")
+    .replace(/[ \u00a0]*([:;])/g, "\u00a0$1");
+}
+
 function competencyTooltip(toolDef, lang) {
   if (!toolDef) return "";
   const label = formatCompetencyLabel(toolDef, lang);
-  const details = lang === "en" ? toolDef.descEn : toolDef.descFr;
+  const rawDetails = lang === "en" ? toolDef.descEn : toolDef.descFr;
+  const details = lang === "en" ? rawDetails : applyFrenchTypography(rawDetails);
   return [label, details].filter(Boolean).join(" — ");
 }
 
 function formatCompetencyLabel(toolDef, lang = currentLang()) {
   if (!toolDef) return "";
   const label = lang === "en" ? toolDef.labelEn : toolDef.labelFr;
-  return `${toolDef.number}. ${label}`;
+  const formattedLabel = lang === "en" ? label : applyFrenchTypography(label);
+  if (toolDef.isCompetencyStatement || toolDef.isCompetencyIndicator) {
+    return `${toolDef.displayCode || toolDef.number} · ${formattedLabel}`;
+  }
+  return `${toolDef.displayCode || toolDef.number}. ${formattedLabel}`;
 }
 
 function formatCompetencyShortCode(toolDef, lang = currentLang()) {
@@ -761,7 +1101,9 @@ const I18N = {
     activityAdded: "Activité ajoutée.",
     sessionDeleted: "Séance supprimée.",
     selectTools: "Sélectionner des compétences",
-    toolPickerTitle: "Compétences numériques",
+    toolPickerTitle: "Sélectionner des compétences",
+    toolPickerFrameworkLabel: "Cadre de compétences",
+    toolPickerSource: "Consulter la source",
     toolPickerClose: "Fermer",
     toolsAriaLabel: "Compétences sélectionnées",
     removeToolAriaLabel: (name) => `Retirer ${name}`,
@@ -869,7 +1211,7 @@ const I18N = {
     infoP2: "(UCL Knowledge Lab, UCL Institute of Education, 2013-2026).",
     infoP3: "Traitement local par défaut : les données restent dans votre navigateur, sauf si vous vous connectez et enregistrez explicitement une production sur votre compte.",
     infoP4: "Yann Houry &amp; François Jourde (2026) • CC BY-SA<br />Code source : <a href=\"https://github.com/jourde\" target=\"_blank\" rel=\"noopener noreferrer\">https://github.com/jourde</a>",
-    infoP5: "Les compétences numériques proposées dans l'application sont issues du référentiel interne fourni au format Excel.",
+    infoP5: "Le sélecteur propose sept cadres : Florimont, Socle commun, GreenComp, DigComp, CRCN, Pix et Pix IA.",
     noData: "Aucune donnée",
     learningDaysLabel: "Jours d'apprentissage",
     learningHoursLabel: "Heures d'apprentissage",
@@ -1031,7 +1373,9 @@ const I18N = {
     activityAdded: "Activity added.",
     sessionDeleted: "Session deleted.",
     selectTools: "Select competencies",
-    toolPickerTitle: "Digital competencies",
+    toolPickerTitle: "Select competencies",
+    toolPickerFrameworkLabel: "Competency framework",
+    toolPickerSource: "View source",
     toolPickerClose: "Close",
     toolsAriaLabel: "Selected competencies",
     removeToolAriaLabel: (name) => `Remove ${name}`,
@@ -1139,7 +1483,7 @@ const I18N = {
     infoP2: "(UCL Knowledge Lab, UCL Institute of Education, 2013-2026).",
     infoP3: "Local processing by default: data stays in your browser unless you sign in and explicitly save a design to your account.",
     infoP4: "Yann Houry &amp; François Jourde (2026) • CC BY-SA<br />Source code: <a href=\"https://github.com/jourde\" target=\"_blank\" rel=\"noopener noreferrer\">https://github.com/jourde</a>",
-    infoP5: "The digital competencies offered in the app come from the internal reference workbook provided in Excel format.",
+    infoP5: "The picker includes seven frameworks: Florimont, the French common core, GreenComp, DigComp, CRCN, Pix, and Pix AI.",
     noData: "No data",
     learningDaysLabel: "Learning days",
     learningHoursLabel: "Learning hours",
@@ -2159,7 +2503,13 @@ let activeChoiceIndex = -1;
 
 let activeToolPicker = null;
 let activeToolPickerTrigger = null;
-let activeToolPickerTab = TOOL_PICKER_TABS[0]?.id || "acquerir";
+let activeToolPickerFramework = "florimont";
+let activeToolPickerTab = "acquerir";
+
+function getCompetencyFramework(frameworkId = activeToolPickerFramework) {
+  return COMPETENCY_FRAMEWORKS.find((framework) => framework.id === frameworkId)
+    || COMPETENCY_FRAMEWORKS[0];
+}
 
 function focusChoiceItem(index) {
   if (!activeChoiceItems.length) return;
@@ -2196,19 +2546,31 @@ function closeToolPicker(restoreFocus = false) {
   activeToolPickerTrigger = null;
 }
 
-function renderPickerBody(body, platform, activity) {
+function renderPickerBody(body, groupId, activity) {
   body.innerHTML = "";
   const lang = currentLang();
-  const categories = Object.keys(SELECTABLE_TOOL_CATEGORY_LABELS).filter(cat => cat.startsWith(platform));
+  const groupTools = SELECTABLE_TOOLS_DATA.filter(
+    (tool) => tool.frameworkId === activeToolPickerFramework
+      && tool.groupId === groupId
+      && !tool.pickerHidden
+  );
+  const categories = [...new Set(groupTools.map((tool) => tool.category))];
   categories.forEach(categoryKey => {
-    const categoryTitle = SELECTABLE_TOOL_CATEGORY_LABELS[categoryKey][lang];
-    const tools = SELECTABLE_TOOLS_DATA.filter(tool => tool.category === categoryKey);
+    const tools = groupTools.filter(tool => tool.category === categoryKey);
+    const fallbackCategory = tools[0]
+      ? { fr: tools[0].sectionFr, en: tools[0].sectionEn }
+      : null;
+    const categoryTitle = (SELECTABLE_TOOL_CATEGORY_LABELS[categoryKey] || fallbackCategory)?.[lang];
     if (categoryTitle) {
       const sectionTitle = document.createElement("div");
       sectionTitle.className = "tool-picker-section-title";
       sectionTitle.setAttribute("aria-hidden", "true");
-      sectionTitle.textContent = categoryTitle;
-      applyCompetencyTheme(sectionTitle, platform);
+      sectionTitle.textContent = lang === "en" ? categoryTitle : applyFrenchTypography(categoryTitle);
+      applyCompetencyTheme(
+        sectionTitle,
+        tools[0]?.platform || activeToolPickerFramework,
+        tools[0]?.groupId || groupId
+      );
       body.appendChild(sectionTitle);
     }
     tools.forEach(tool => {
@@ -2217,7 +2579,13 @@ function renderPickerBody(body, platform, activity) {
       item.className = "tool-picker-item";
       item.dataset.level = tool.platform;
       item.dataset.tooltip = competencyTooltip(tool, lang);
-      applyCompetencyTheme(item, tool.platform);
+      item.dataset.search = (tool.details || [])
+        .map((detail) => lang === "en" ? detail.textEn : detail.textFr)
+        .join(" ")
+        .concat(" ", lang === "en" ? tool.parentLabelEn || "" : tool.parentLabelFr || "")
+        .concat(" ", lang === "en" ? tool.parentDescEn || "" : tool.parentDescFr || "")
+        .toLowerCase();
+      applyCompetencyTheme(item, tool.platform, tool.groupId);
       const isSelected = activity.tools.includes(tool.id);
       if (isSelected) item.classList.add("selected");
       const checkBox = document.createElement("span");
@@ -2231,14 +2599,21 @@ function renderPickerBody(body, platform, activity) {
       textWrapper.className = "tool-picker-item-text";
       textWrapper.appendChild(nameEl);
       const appLabel = lang === "en" ? tool.appEn : tool.appFr;
-      const desc = lang === "en" ? tool.descEn : tool.descFr;
-      const helperText = [appLabel ? `${lang === "en" ? "App" : "App"}: ${appLabel}` : "", desc]
+      const rawDesc = lang === "en" ? tool.descEn : tool.descFr;
+      const desc = lang === "en" ? rawDesc : applyFrenchTypography(rawDesc);
+      const detailCount = Array.isArray(tool.details) ? tool.details.length : 0;
+      const detailSummary = detailCount
+        ? tool.platform === "digcomp"
+          ? (lang === "en" ? `${detailCount} bilingual competence statements` : `${detailCount} énoncés de compétence bilingues`)
+          : (lang === "en" ? `${detailCount} detailed indicators` : `${detailCount} repères détaillés`)
+        : "";
+      const helperText = [appLabel ? `${lang === "en" ? "App" : "App"}: ${appLabel}` : "", desc, detailSummary]
         .filter(Boolean)
         .join(" — ");
       if (helperText) {
         const descEl = document.createElement("span");
         descEl.className = "tool-picker-item-desc";
-        descEl.textContent = `(${helperText})`;
+        descEl.textContent = `(${lang === "en" ? helperText : applyFrenchTypography(helperText)})`;
         textWrapper.appendChild(descEl);
       }
       item.appendChild(checkBox);
@@ -2264,7 +2639,8 @@ function filterPickerItems(body, term) {
   body.querySelectorAll(".tool-picker-item").forEach(item => {
     const name = (item.querySelector(".tool-picker-item-name")?.textContent || "").toLowerCase();
     const desc = (item.querySelector(".tool-picker-item-desc")?.textContent || "").toLowerCase();
-    item.style.display = (!term || name.includes(term) || desc.includes(term)) ? "" : "none";
+    const details = item.dataset.search || "";
+    item.style.display = (!term || name.includes(term) || desc.includes(term) || details.includes(term)) ? "" : "none";
   });
   body.querySelectorAll(".tool-picker-section-title").forEach(title => {
     let next = title.nextElementSibling;
@@ -2277,15 +2653,44 @@ function filterPickerItems(body, term) {
   });
 }
 
-function switchPickerTab(platform, body, activity) {
-  activeToolPickerTab = platform;
+function switchPickerTab(groupId, body, activity) {
+  activeToolPickerTab = groupId;
   activeToolPicker.querySelectorAll(".tool-picker-tab").forEach(tab => {
-    const isActive = tab.dataset.platform === platform;
+    const isActive = tab.dataset.group === groupId;
     tab.classList.toggle("active", isActive);
+    tab.setAttribute("aria-selected", String(isActive));
   });
   const searchInput = activeToolPicker.querySelector(".tool-picker-search-input");
   if (searchInput) searchInput.value = "";
-  renderPickerBody(body, platform, activity);
+  renderPickerBody(body, groupId, activity);
+}
+
+function renderPickerTabs(tabsRow, body, activity) {
+  tabsRow.innerHTML = "";
+  const framework = getCompetencyFramework();
+  const groups = framework?.groups || [];
+  if (!groups.some((group) => group.id === activeToolPickerTab)) {
+    activeToolPickerTab = groups[0]?.id || "";
+  }
+  const lang = currentLang();
+  groups.forEach(({ id, labelFr, labelEn }) => {
+    const tab = document.createElement("button");
+    const isActive = id === activeToolPickerTab;
+    tab.type = "button";
+    tab.className = "tool-picker-tab" + (isActive ? " active" : "");
+    tab.dataset.group = id;
+    applyCompetencyTheme(
+      tab,
+      activeToolPickerFramework === "florimont" ? id : activeToolPickerFramework,
+      activeToolPickerFramework === "florimont" ? "" : id
+    );
+    tab.textContent = lang === "en" ? labelEn : labelFr;
+    tab.setAttribute("role", "tab");
+    tab.setAttribute("aria-selected", String(isActive));
+    tab.addEventListener("click", () => switchPickerTab(id, body, activity));
+    tabsRow.appendChild(tab);
+  });
+  renderPickerBody(body, activeToolPickerTab, activity);
 }
 
 function openToolPicker(trigger, activity) {
@@ -2295,8 +2700,8 @@ function openToolPicker(trigger, activity) {
   }
   closeToolPicker();
   closeChoiceMenu();
-  if (!TOOL_PICKER_TABS.some((tab) => tab.id === activeToolPickerTab)) {
-    activeToolPickerTab = TOOL_PICKER_TABS[0]?.id || "acquerir";
+  if (!COMPETENCY_FRAMEWORKS.some((framework) => framework.id === activeToolPickerFramework)) {
+    activeToolPickerFramework = COMPETENCY_FRAMEWORKS[0]?.id || "florimont";
   }
 
   const panel = document.createElement("div");
@@ -2321,26 +2726,53 @@ function openToolPicker(trigger, activity) {
   header.appendChild(closeBtn);
   panel.appendChild(header);
 
+  const lang = currentLang();
+  const frameworkRow = document.createElement("div");
+  frameworkRow.className = "tool-picker-framework";
+  const frameworkLabel = document.createElement("label");
+  frameworkLabel.className = "tool-picker-framework-label";
+  frameworkLabel.htmlFor = "tool-picker-framework-select";
+  frameworkLabel.textContent = t("toolPickerFrameworkLabel");
+  const frameworkSelect = document.createElement("select");
+  frameworkSelect.id = "tool-picker-framework-select";
+  frameworkSelect.className = "tool-picker-framework-select";
+  COMPETENCY_FRAMEWORKS.forEach((framework) => {
+    const option = document.createElement("option");
+    option.value = framework.id;
+    option.textContent = lang === "en" ? framework.labelEn : framework.labelFr;
+    option.selected = framework.id === activeToolPickerFramework;
+    frameworkSelect.appendChild(option);
+  });
+  const sourceLink = document.createElement("a");
+  sourceLink.className = "tool-picker-source-link";
+  sourceLink.target = "_blank";
+  sourceLink.rel = "noopener noreferrer";
+  sourceLink.textContent = t("toolPickerSource");
+  const updateSourceLink = () => {
+    const framework = getCompetencyFramework();
+    sourceLink.href = framework?.sourceUrl || "#";
+    sourceLink.classList.toggle("hidden", !framework?.sourceUrl);
+  };
+  updateSourceLink();
+  frameworkRow.appendChild(frameworkLabel);
+  frameworkRow.appendChild(frameworkSelect);
+  frameworkRow.appendChild(sourceLink);
+  panel.appendChild(frameworkRow);
+
   const tabsRow = document.createElement("div");
   tabsRow.className = "tool-picker-tabs";
   tabsRow.setAttribute("role", "tablist");
   const body = document.createElement("div");
   body.className = "tool-picker-body";
-
-  const lang = currentLang();
-  TOOL_PICKER_TABS.forEach(({ id, labelFr, labelEn }) => {
-    const tab = document.createElement("button");
-    tab.type = "button";
-    tab.className = "tool-picker-tab" + (id === activeToolPickerTab ? " active" : "");
-    tab.dataset.platform = id;
-    tab.dataset.level = id;
-    applyCompetencyTheme(tab, id);
-    tab.textContent = lang === "en" ? labelEn : labelFr;
-    tab.setAttribute("role", "tab");
-    tab.addEventListener("click", () => switchPickerTab(id, body, activity));
-    tabsRow.appendChild(tab);
+  frameworkSelect.addEventListener("change", () => {
+    activeToolPickerFramework = frameworkSelect.value;
+    activeToolPickerTab = getCompetencyFramework()?.groups?.[0]?.id || "";
+    const searchInput = panel.querySelector(".tool-picker-search-input");
+    if (searchInput) searchInput.value = "";
+    updateSourceLink();
+    renderPickerTabs(tabsRow, body, activity);
   });
-
+  renderPickerTabs(tabsRow, body, activity);
   panel.appendChild(tabsRow);
 
   const searchRow = document.createElement("div");
@@ -2356,12 +2788,14 @@ function openToolPicker(trigger, activity) {
   searchRow.appendChild(searchInput);
   panel.appendChild(searchRow);
 
-  renderPickerBody(body, activeToolPickerTab, activity);
   panel.appendChild(body);
 
   panel.addEventListener("keydown", (event) => {
     if (event.key === "Escape") { closeToolPicker(true); return; }
-    if (event.key === "ArrowDown" || event.key === "ArrowUp") {
+    if (
+      (event.key === "ArrowDown" || event.key === "ArrowUp")
+      && document.activeElement?.classList.contains("tool-picker-item")
+    ) {
       event.preventDefault();
       const items = Array.from(body.querySelectorAll(".tool-picker-item"));
       const idx = items.indexOf(document.activeElement);
@@ -2372,7 +2806,9 @@ function openToolPicker(trigger, activity) {
       items[next].focus();
     }
     if (event.key === "Tab") {
-      const focusables = Array.from(panel.querySelectorAll("button:not([disabled])"));
+      const focusables = Array.from(
+        panel.querySelectorAll("button:not([disabled]), select:not([disabled]), input:not([disabled]), a[href]")
+      ).filter((element) => !element.classList.contains("hidden") && element.offsetParent !== null);
       if (!focusables.length) return;
       const first = focusables[0];
       const last = focusables[focusables.length - 1];
@@ -2421,7 +2857,7 @@ function updateActivityToolsDisplay(trigger, activity) {
     chip.dataset.level = toolDef.platform;
     chip.dataset.tooltip = competencyTooltip(toolDef, lang);
     chip.setAttribute("role", "listitem");
-    applyCompetencyTheme(chip, toolDef.platform);
+    applyCompetencyTheme(chip, toolDef.platform, toolDef.groupId);
     const nameEl = document.createElement("span");
     nameEl.className = "tool-chip-name";
     const label = lang === "en" ? toolDef.labelEn : toolDef.labelFr;

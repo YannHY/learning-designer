@@ -435,6 +435,166 @@ function loadCompetencyCatalog(): array {
         }
     }
 
+    $frameworkDetails = [];
+    $detailSources = [
+        'greencomp' => app_competency_greencomp_detail_source(),
+        'digcomp' => app_competency_digcomp_detail_source(),
+    ];
+    foreach ($detailSources as $detailFrameworkId => $detailSource) {
+        foreach (preg_split('/\R/u', $detailSource) ?: [] as $detailLine) {
+            [$detailCode, $detailKind, $detailOrder, $detailTextFr, $detailTextEn]
+                = array_pad(explode("\t", (string)$detailLine, 5), 5, '');
+            $detailCode = trim($detailCode);
+            $detailKind = trim($detailKind);
+            $detailTextFr = trim($detailTextFr);
+            $detailTextEn = trim($detailTextEn) ?: $detailTextFr;
+            if ($detailCode === '' || $detailTextFr === '') continue;
+            if ($detailKind === 'description') {
+                $frameworkDetails[$detailFrameworkId][$detailCode]['description'] = $detailTextFr;
+                continue;
+            }
+            if (!in_array($detailKind, ['knowledge', 'skills', 'attitudes', 'basic', 'intermediate', 'advanced', 'highly_advanced'], true)) continue;
+            $frameworkDetails[$detailFrameworkId][$detailCode]['details'][] = [
+                'kind' => $detailKind,
+                'order' => max(1, (int)$detailOrder),
+                'textFr' => $detailTextFr,
+                'textEn' => $detailTextEn,
+            ];
+        }
+    }
+    $digCompStatementLevelLabels = [
+        'basic' => ['fr' => 'Niveau élémentaire', 'en' => 'Basic level'],
+        'intermediate' => ['fr' => 'Niveau intermédiaire', 'en' => 'Intermediate level'],
+        'advanced' => ['fr' => 'Niveau avancé', 'en' => 'Advanced level'],
+        'highly_advanced' => ['fr' => 'Niveau hautement avancé', 'en' => 'Highly advanced level'],
+    ];
+
+    $framework = null;
+    $group = null;
+    $subgroup = null;
+    foreach (preg_split('/\R/u', app_competency_framework_catalog_source()) ?: [] as $rawLine) {
+        $line = str_replace("\r", '', (string)$rawLine);
+        if (trim($line) === '') continue;
+
+        if (str_starts_with($line, "# framework\t")) {
+            [, $frameworkId, $frameworkLabelFr, $frameworkLabelEn]
+                = array_pad(explode("\t", $line, 5), 5, '');
+            $framework = [
+                'id' => trim($frameworkId),
+                'labelFr' => trim($frameworkLabelFr),
+                'labelEn' => trim($frameworkLabelEn),
+            ];
+            $group = null;
+            $subgroup = null;
+            continue;
+        }
+
+        if (str_starts_with($line, "## group\t") && is_array($framework)) {
+            [, $groupId, $groupLabelFr, $groupLabelEn]
+                = array_pad(explode("\t", $line, 4), 4, '');
+            $group = [
+                'id' => trim($groupId),
+                'labelFr' => trim($groupLabelFr),
+                'labelEn' => trim($groupLabelEn),
+            ];
+            $subgroup = null;
+            continue;
+        }
+
+        if (str_starts_with($line, "### subgroup\t") && is_array($framework) && is_array($group)) {
+            [, $subgroupId, $subgroupLabelFr, $subgroupLabelEn]
+                = array_pad(explode("\t", $line, 4), 4, '');
+            $subgroup = [
+                'id' => trim($subgroupId),
+                'labelFr' => trim($subgroupLabelFr),
+                'labelEn' => trim($subgroupLabelEn) !== '' ? trim($subgroupLabelEn) : trim($subgroupLabelFr),
+            ];
+            continue;
+        }
+
+        if (!is_array($framework) || !is_array($group)) continue;
+        [$code, $labelFr, $descFr, $labelEn, $descEn]
+            = array_pad(explode("\t", $line, 5), 5, '');
+        $code = trim($code);
+        $labelFr = trim($labelFr);
+        if ($code === '' || $labelFr === '') continue;
+        $labelEn = trim($labelEn) !== '' ? trim($labelEn) : $labelFr;
+        $descEn = trim($descEn) !== '' ? trim($descEn) : trim($descFr);
+        $id = 'competency:' . $framework['id'] . ':' . $code;
+        $shortCode = $framework['labelFr'] . ' ' . $code;
+        $shortCodeEn = $framework['labelEn'] . ' ' . $code;
+        $entry = [
+            'id' => $id,
+            'platform' => $framework['id'],
+            'category' => $framework['id'] . ':' . $group['id'] . (is_array($subgroup) ? ':' . $subgroup['id'] : ''),
+            'sectionFr' => $subgroup['labelFr'] ?? $group['labelFr'],
+            'sectionEn' => $subgroup['labelEn'] ?? $group['labelEn'],
+            'appFr' => '',
+            'appEn' => '',
+            'levelLabelFr' => $framework['labelFr'],
+            'levelLabelEn' => $framework['labelEn'],
+            'levelBadge' => $framework['labelFr'],
+            'number' => $code,
+            'sectionNumber' => 0,
+            'sectionRoman' => '',
+            'shortCode' => $shortCode,
+            'shortCodeEn' => $shortCodeEn,
+            'legacyShortCode' => '',
+            'labelFr' => $labelFr,
+            'labelEn' => $labelEn,
+            'descFr' => trim($descFr),
+            'descEn' => $descEn,
+        ];
+        if (isset($frameworkDetails[$framework['id']][$code])) {
+            $frameworkDetail = $frameworkDetails[$framework['id']][$code];
+            if (!empty($frameworkDetail['description'])) {
+                $entry['descFr'] = $frameworkDetail['description'];
+            }
+            $entry['details'] = $frameworkDetail['details'] ?? [];
+        }
+
+        foreach ([$id, $shortCode, $shortCodeEn, $labelFr, $labelEn] as $token) {
+            $normalized = normalizeCompetencyToken($token);
+            if ($normalized !== '') {
+                $catalog[$normalized] = $entry;
+            }
+        }
+
+        if ($framework['id'] === 'digcomp' && !empty($entry['details'])) {
+            foreach ($entry['details'] as $detail) {
+                $detailTextFr = trim((string)($detail['textFr'] ?? ''));
+                $detailTextEn = trim((string)($detail['textEn'] ?? $detailTextFr));
+                if (
+                    !preg_match('/^(CS\d+\.\d+\.\d+)\s*·\s*(.+)$/u', $detailTextFr, $frMatch)
+                    || !preg_match('/^(CS\d+\.\d+\.\d+)\s*·\s*(.+)$/u', $detailTextEn, $enMatch)
+                    || $frMatch[1] !== $enMatch[1]
+                ) {
+                    continue;
+                }
+                $statementCode = $frMatch[1];
+                $levelLabels = $digCompStatementLevelLabels[(string)($detail['kind'] ?? '')]
+                    ?? ['fr' => (string)($detail['kind'] ?? ''), 'en' => (string)($detail['kind'] ?? '')];
+                $statement = $entry;
+                $statement['id'] = 'competency:digcomp:' . $statementCode;
+                $statement['number'] = $statementCode;
+                $statement['shortCode'] = $statementCode;
+                $statement['shortCodeEn'] = $statementCode;
+                $statement['legacyShortCode'] = $statementCode;
+                $statement['labelFr'] = trim($frMatch[2]);
+                $statement['labelEn'] = trim($enMatch[2]);
+                $statement['descFr'] = $levelLabels['fr'] . ' · ' . $code . '. ' . $labelFr;
+                $statement['descEn'] = $levelLabels['en'] . ' · ' . $code . '. ' . $labelEn;
+                unset($statement['details']);
+                foreach ([$statement['id'], $statementCode, $statement['labelFr'], $statement['labelEn']] as $token) {
+                    $normalized = normalizeCompetencyToken((string)$token);
+                    if ($normalized !== '') {
+                        $catalog[$normalized] = $statement;
+                    }
+                }
+            }
+        }
+    }
+
     return $catalog;
 }
 
@@ -443,10 +603,43 @@ function competencyForReference(string $reference): ?array {
     return $catalog[normalizeCompetencyToken($reference)] ?? null;
 }
 
-function competencyStyle(string $level): array {
-    return match ($level) {
+function competencyStyle(string $level, string $category = ''): array {
+    $levelStyle = match ($level) {
         'approfondir' => ['#ede9fe', '#c4b5fd', '#5b21b6', '#ddd6fe'],
         'creer' => ['#dcfce7', '#86efac', '#166534', '#bbf7d0'],
+        'acquerir' => ['#e0f2fe', '#7dd3fc', '#075985', '#bae6fd'],
+        default => null,
+    };
+    if (is_array($levelStyle)) {
+        return $levelStyle;
+    }
+
+    $categoryParts = explode(':', $category);
+    $groupId = $categoryParts[1] ?? '';
+    $domainIndexes = [
+        'domaine-1' => 0, 'valeurs' => 0, 'information' => 0, 'fondements' => 0,
+        'domaine-2' => 1, 'complexite' => 1, 'communication' => 1, 'usages' => 1,
+        'domaine-3' => 2, 'avenirs' => 2, 'creation' => 2, 'enjeux' => 2,
+        'domaine-4' => 3, 'action' => 3, 'protection' => 3,
+        'domaine-5' => 4, 'problemes' => 4, 'environnement' => 4,
+    ];
+    $domainStyles = [
+        ['#fff7ed', '#fdba74', '#9a3412', '#ffedd5'],
+        ['#ecfeff', '#67e8f9', '#155e75', '#cffafe'],
+        ['#f5f3ff', '#c4b5fd', '#6d28d9', '#ede9fe'],
+        ['#ecfdf5', '#6ee7b7', '#047857', '#d1fae5'],
+        ['#fdf2f8', '#f9a8d4', '#be185d', '#fce7f3'],
+    ];
+    if (isset($domainIndexes[$groupId])) {
+        return $domainStyles[$domainIndexes[$groupId]];
+    }
+
+    return match ($level) {
+        'greencomp' => ['#ecfdf5', '#6ee7b7', '#047857', '#d1fae5'],
+        'digcomp' => ['#eff6ff', '#93c5fd', '#1d4ed8', '#dbeafe'],
+        'crcn' => ['#fdf2f8', '#f9a8d4', '#be185d', '#fce7f3'],
+        'pix' => ['#ecfeff', '#67e8f9', '#155e75', '#cffafe'],
+        'pix-ia' => ['#fff7ed', '#fdba74', '#9a3412', '#ffedd5'],
         default => ['#e0f2fe', '#7dd3fc', '#075985', '#bae6fd'],
     };
 }
@@ -530,7 +723,7 @@ $displayDesignedMinutes = $designedMinutes > 0 ? $designedMinutes : $totalMinute
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="icon" href="assets/favicon.svg?v=20260804" type="image/svg+xml" sizes="any">
   <title><?= esc($title) ?> — Learning Designer</title>
-  <link rel="stylesheet" href="css/interface.css?v=20260826-title-blue">
+  <link rel="stylesheet" href="css/interface.css?v=20260830-frameworks">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" referrerpolicy="no-referrer">
   <style>
     :root {
@@ -1042,7 +1235,10 @@ $displayDesignedMinutes = $designedMinutes > 0 ? $designedMinutes : $totalMinute
           <?php foreach ($aTools as $toolId):
             $competency = competencyForReference($toolId);
             if ($competency) {
-                [$competencyBg, $competencyBorder, $competencyText, $competencyActive] = competencyStyle((string)$competency['platform']);
+                [$competencyBg, $competencyBorder, $competencyText, $competencyActive] = competencyStyle(
+                    (string)$competency['platform'],
+                    (string)($competency['category'] ?? '')
+                );
                 $toolLabel = (string)$competency['shortCode'];
                 $toolTitle = competencyTooltip($competency);
             } else {

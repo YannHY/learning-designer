@@ -87,12 +87,12 @@ Pour `add-activity`, utilise uniquement les valeurs contrôlées acceptées par 
 Valeurs sûres :
 - `--type` : `read`, `investigate`, `practice`, `produce`, `discuss`, `collaborate`
 - `--group` : `individual`, `subgroups`, `whole`
-- `--teacher` : `present`, `absent`
+- `--teaching` : `directed`, `guided`, `supported`, `independent`
 - `--evaluation` : `diagnostic`, `formative`, `summative`, `certificative`, `none`
 
 Pour `--pacing` et `--mode`, vérifie avec le CLI ou utilise les valeurs produites par les exemples qui fonctionnent. En présentiel synchrone, `--pacing synchronous` et `--mode presentiel` sont acceptables si le CLI les valide.
 
-Ne mets jamais de phrases longues dans les champs contrôlés comme `--group`, `--teacher`, `--evaluation`, `--type` ou `--pacing`.
+Ne mets jamais de phrases longues dans les champs contrôlés comme `--group`, `--teaching`, `--evaluation`, `--type` ou `--pacing`.
 
 Utilise `--description` pour décrire l’activité du point de vue pédagogique et `--instructions` pour les consignes directement adressées aux élèves. Place les critères, supports, rôle de l’enseignant, modalités de différenciation et autres détails dans `--notes`, `--objectives` ou `--intentions` selon leur portée.
 
@@ -298,12 +298,12 @@ For `add-activity`, use only controlled values accepted by the CLI.
 Safe values:
 - `--type`: `read`, `investigate`, `practice`, `produce`, `discuss`, `collaborate`
 - `--group`: `individual`, `subgroups`, `whole`
-- `--teacher`: `present`, `absent`
+- `--teaching`: `directed`, `guided`, `supported`, `independent`
 - `--evaluation`: `diagnostic`, `formative`, `summative`, `certificative`, `none`
 
 For `--pacing` and `--mode`, check the CLI or use values from working examples. For synchronous in-person teaching, `--pacing synchronous` and `--mode presentiel` are acceptable if the CLI validates them.
 
-Never put long sentences in controlled fields such as `--group`, `--teacher`, `--evaluation`, `--type`, or `--pacing`.
+Never put long sentences in controlled fields such as `--group`, `--teaching`, `--evaluation`, `--type`, or `--pacing`.
 
 Use `--description` for the pedagogical description of the activity and `--instructions` for directions addressed directly to students. Put criteria, resources, the teacher’s role, differentiation, and other details in `--notes`, `--objectives`, or `--intentions` according to their scope.
 
@@ -465,7 +465,7 @@ PROMPT;
 
                 <h3 id="learning-designer-scenario-visible">Learning Designer : rendre le scénario visible</h3>
                 <p>Le <a href="https://www.ucl.ac.uk/learning-designer/" title="Learning Designer">Learning Designer</a> original a été développé à l’University College London par l’équipe de Diana Laurillard pour aider les enseignants à concevoir des activités pédagogiques, à analyser leur équilibre et à partager leurs scénarisations. L’application présentée ici s’inscrit dans cette filiation : elle transforme un scénario pédagogique en une structure lisible, analysable et réutilisable.</p>
-                <p>L’outil rend vos choix explicites afin que vous puissiez les interroger&nbsp;:&nbsp;le temps prévu correspond-il au temps effectivement scénarisé&nbsp;? Quelle place est accordée à chaque type d’apprentissage&nbsp;? Les élèves pratiquent-ils, discutent-ils et produisent-ils, ou restent-ils surtout en situation d’acquisition&nbsp;? Les modalités de groupe, le rythme, la présence enseignante et les évaluations sont-ils cohérents avec les acquis visés&nbsp;?</p>
+                <p>L’outil rend vos choix explicites afin que vous puissiez les interroger&nbsp;:&nbsp;le temps prévu correspond-il au temps effectivement scénarisé&nbsp;? Quelle place est accordée à chaque type d’apprentissage&nbsp;? Les élèves pratiquent-ils, discutent-ils et produisent-ils, ou restent-ils surtout en situation d’acquisition&nbsp;? Les modalités de groupe, le rythme, le mode d’enseignement et les évaluations sont-ils cohérents avec les acquis visés&nbsp;?</p>
                 <div class="help-grid">
                     <div class="help-card">
                         <strong><span class="help-card-icon"><i class="fa-solid fa-pen-ruler" aria-hidden="true"></i></span>Un outil de conception</strong>
@@ -490,7 +490,7 @@ PROMPT;
                     <li><strong>Décrire le contexte.</strong> Renseignez le titre, la description, la commande institutionnelle, les objectifs d’enseignement, les concepteurs, les enseignants, la taille du groupe, la modalité et le temps d’apprentissage prévu. La durée peut être exprimée en jours, heures et minutes ; le nombre d’heures correspondant à une journée est configurable.</li>
                     <li><strong>Formuler les acquis attendus.</strong> Indiquez ce que les apprenants devront être capables de faire à la fin. Reliez si nécessaire chaque acquis à un niveau de la taxonomie révisée de Bloom et choisissez un verbe d’action observable.</li>
                     <li><strong>Structurer le parcours en moments.</strong> Un moment correspond à une phase cohérente de la séance ou de la séquence : lancement, exploration, entraînement, mise en commun, production ou évaluation.</li>
-                    <li><strong>Ajouter les activités.</strong> Pour chacune, précisez le type d’apprentissage, la durée, l’organisation du groupe, la présence de l’enseignant, le rythme, la modalité, l’évaluation, les consignes et les ressources.</li>
+                    <li><strong>Ajouter les activités.</strong> Pour chacune, précisez le type d’apprentissage, la durée, l’organisation du groupe, le mode d’enseignement, le rythme, la modalité, l’évaluation, les consignes et les ressources.</li>
                     <li><strong>Visualiser puis ajuster.</strong> Comparez le temps d’apprentissage prévu avec la somme des activités et observez les graphiques de répartition. Ces indicateurs éclairent votre décision ; ils ne remplacent pas votre jugement pédagogique.</li>
                 </ol>
                 <div class="help-callout">
@@ -512,20 +512,20 @@ PROMPT;
                             <tr><td>Type d’apprentissage</td><td>Lire, investiguer, pratiquer, produire, discuter, collaborer</td><td>Détermine la catégorie utilisée dans les graphiques d’analyse.</td></tr>
                             <tr><td>Durée</td><td>Nombre de minutes</td><td>Alimente le temps conçu, la chronologie et toutes les répartitions.</td></tr>
                             <tr><td>Groupe</td><td>Individuel, sous-groupes, groupe entier</td><td>Précise l’organisation sociale de l’activité.</td></tr>
-                            <tr><td>Enseignant</td><td>Présent ou absent</td><td>Indique si l’activité nécessite la présence de l’enseignant.</td></tr>
+                            <tr><td>Enseignement</td><td>Dirigé, guidé, accompagné ou en autonomie</td><td>Précise qui détermine la méthode, le déroulement et le rythme de l’activité.</td></tr>
                             <tr><td>Rythme</td><td>Synchrone ou asynchrone</td><td>Permet de distinguer les activités simultanées des activités réalisées au rythme de chacun.</td></tr>
                             <tr><td>Modalité</td><td>Présentiel, distanciel ou hybride</td><td>Décrit le lieu et le mode de participation.</td></tr>
                             <tr><td>Évaluation</td><td>Aucune, diagnostique, formative, sommative, certificative</td><td>Rend explicite la fonction évaluative de l’activité.</td></tr>
                             <tr><td>AIAS</td><td>À définir, non pertinent ou niveaux 1 à 5</td><td>Décrit le rôle de l’IA dans la tâche, indépendamment de sa fonction évaluative.</td></tr>
                             <tr><td>Description de l’activité</td><td>Texte libre</td><td>Décrit l’intention pédagogique, le déroulement et l’organisation de l’activité du point de vue de l’enseignant.</td></tr>
                             <tr><td>Consignes pour les élèves</td><td>Texte libre</td><td>Formule les actions attendues dans un langage directement adressé aux élèves : étapes, production attendue et critères utiles.</td></tr>
-                            <tr><td>Ressources</td><td>Notes et liens</td><td>Associe les supports, documents, vidéos, outils et autres informations utiles.</td></tr>
+                            <tr><td>Ressources</td><td>Liens Markdown dans les textes</td><td>Associe les supports, documents, vidéos ou outils avec la syntaxe <code>[titre](URL)</code>.</td></tr>
                             <tr><td>Compétences</td><td>Une ou plusieurs compétences numériques</td><td>Relie l’activité au référentiel numérique intégré.</td></tr>
                         </tbody>
                     </table>
                 </div>
                 <p>Le champ AIAS s’appuie sur <a href="https://aiassessmentscale.com/" target="_blank" rel="noopener noreferrer">The AI Assessment Scale 2.1</a>. Dans une activité, l’icône avec des étincelles signale ce réglage lié à l’intelligence artificielle. Après sélection, le bouton affiche directement le niveau choisi, de 1 à 5. Ces cinq niveaux décrivent des conceptions différentes de la tâche et ne constituent pas une progression.</p>
-                <p>Les descriptions, les consignes et les notes acceptent une mise en forme <a href="https://github.com/YannHY/cours/blob/master/Tech/Markdown/Apprendre%20le%20Markdown.md" title="Markdown">Markdown</a> légère. Une barre d’outils et un aperçu permettent de structurer plus facilement le texte. Des liens nommés peuvent être ajoutés à chaque activité pour associer documents, vidéos ou outils.</p>
+                <p>Les descriptions, les consignes et les notes acceptent une mise en forme <a href="https://github.com/YannHY/cours/blob/master/Tech/Markdown/Apprendre%20le%20Markdown.md" title="Markdown">Markdown</a> légère. Une barre d’outils et un aperçu permettent de structurer plus facilement le texte. Ajoutez les liens directement avec la syntaxe <code>[titre](URL)</code>.</p>
                 <h3>Raccourcis clavier Markdown</h3>
                 <p>Lorsque le curseur se trouve dans un champ compatible Markdown, utilisez <code>Cmd</code> sur macOS ou <code>Ctrl</code> sur Windows et Linux.</p>
                 <div class="help-table-wrap">
@@ -597,7 +597,7 @@ PROMPT;
                 <ul>
                     <li>les six types d’apprentissage ;</li>
                     <li>le travail individuel, en sous-groupes et en groupe entier ;</li>
-                    <li>la présence ou l’absence de l’enseignant ;</li>
+                    <li>les quatre modes d’enseignement ;</li>
                     <li>le rythme synchrone ou asynchrone ;</li>
                     <li>les modalités présentielle, distancielle et hybride ;</li>
                     <li>les formes d’évaluation.</li>
@@ -711,14 +711,13 @@ Objectifs généraux de la formation.
 ### 1.1 Investiguer
 - Durée: 30 min
 - Groupe: Sous-groupes
-- Enseignant: Présent
+- Enseignement: Enseignement guidé
 - Rythme: Synchrone
 - Modalité: Présentiel
 - Évaluation: Formative
 - AIAS: AIAS 3 · Collaboration avec l’IA
-- Description: Description de l'activité
+- Description: Consultez [cet exemple](https://example.com), puis comparez les propositions.
 - Consignes pour les élèves: Lisez les documents puis justifiez votre réponse.
-- Liens: Exemple (https://example.com)
 - Compétences: A6 - Exemple de compétence</pre>
                 </div>
                 <h3 id="markdown-numerotation">Règles de numérotation</h3>
@@ -735,7 +734,7 @@ Objectifs généraux de la formation.
                         <tbody>
                             <tr><td>Type</td><td><code>Non défini</code>, <code>Lire / Regarder / Écouter</code>, <code>Investiguer</code>, <code>Pratiquer</code>, <code>Produire</code>, <code>Discuter</code>, <code>Collaborer</code></td></tr>
                             <tr><td>Groupe</td><td><code>Groupe entier</code>, <code>Sous-groupes</code>, <code>Individuel</code></td></tr>
-                            <tr><td>Enseignant</td><td><code>Présent</code>, <code>Absent</code></td></tr>
+                            <tr><td>Enseignement</td><td><code>Enseignement dirigé</code>, <code>Enseignement guidé</code>, <code>Enseignement accompagné</code>, <code>Enseignement en autonomie</code></td></tr>
                             <tr><td>Rythme</td><td><code>Synchrone</code>, <code>Asynchrone</code></td></tr>
                             <tr><td>Modalité</td><td><code>Présentiel</code>, <code>Distanciel</code>, <code>Hybride</code></td></tr>
                             <tr><td>Évaluation</td><td><code>Aucune</code>, <code>Diagnostique</code>, <code>Formative</code>, <code>Sommative</code>, <code>Certificative</code></td></tr>
@@ -746,7 +745,7 @@ Objectifs généraux de la formation.
                 <h3 id="markdown-modifications">Ce que vous pouvez modifier</h3>
                 <p>Vous pouvez modifier le titre, les paramètres, la description, la commande institutionnelle, les objectifs, les acquis d’apprentissage, les titres et contenus des moments, ainsi que les activités et tous leurs champs.</p>
                 <h3 id="markdown-libelles">Libellés à conserver</h3>
-                <p>Évitez de changer les libellés fixes <code>## Paramètres</code>, <code>## Séances</code>, <code>- Durée:</code>, <code>- Groupe:</code>, <code>- Enseignant:</code>, <code>- Rythme:</code>, <code>- Modalité:</code>, <code>- Évaluation:</code>, <code>- AIAS:</code>, <code>- Description:</code> et <code>- Consignes pour les élèves:</code>. S’ils changent trop, certaines informations risquent de ne plus être reconnues.</p>
+                <p>Évitez de changer les libellés fixes <code>## Paramètres</code>, <code>## Séances</code>, <code>- Durée:</code>, <code>- Groupe:</code>, <code>- Enseignement:</code>, <code>- Rythme:</code>, <code>- Modalité:</code>, <code>- Évaluation:</code>, <code>- AIAS:</code>, <code>- Description:</code> et <code>- Consignes pour les élèves:</code>. S’ils changent trop, certaines informations risquent de ne plus être reconnues.</p>
                 <h3 id="markdown-import">Procédure d’import</h3>
                 <ol>
                     <li>Ouvrez Learning Designer.</li>
@@ -899,7 +898,7 @@ learning login</pre>
                         <p>Une activité précise le type d’apprentissage, ses paramètres, sa description pédagogique et les consignes directement adressées aux élèves.</p>
                         <div class="help-code-wrap">
                             <button class="help-copy-btn" type="button" aria-label="Copier la commande" title="Copier"><i class="fa-regular fa-copy" aria-hidden="true"></i></button>
-                            <pre class="help-code">learning add-activity design.json --type investigate --duration 30 --group subgroups --teacher present --pacing sync --mode onsite --evaluation formative --aias 3 --competencies A6,P34 --description "Comparer trois exemples d'usages de l'IA." --instructions "Relevez deux points communs et une différence."</pre>
+                            <pre class="help-code">learning add-activity design.json --type investigate --duration 30 --group subgroups --teaching guided --pacing sync --mode onsite --evaluation formative --aias 3 --competencies A6,P34 --description "Comparer trois exemples d'usages de l'IA." --instructions "Relevez deux points communs et une différence."</pre>
                         </div>
                     </div>
                     <div>

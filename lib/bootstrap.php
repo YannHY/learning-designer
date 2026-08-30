@@ -896,7 +896,46 @@ function app_competency_catalog_source(): string
         return $source = '';
     }
 
-    return $source = (string)$matches[1];
+    $sourceFr = (string)$matches[1];
+    if (!preg_match('/const\s+COMPETENCY_CATALOG_EN_SOURCE\s*=\s*String\.raw`(.*?)`;/s', $js, $translationMatches)) {
+        error_log('Learning Designer : traductions anglaises du catalogue de compétences illisibles dans ' . $path . '.');
+        return $source = $sourceFr;
+    }
+
+    $translations = [];
+    $levelId = '';
+    foreach (preg_split('/\R/u', (string)$translationMatches[1]) ?: [] as $line) {
+        $line = str_replace("\r", '', (string)$line);
+        if (trim($line) === '') continue;
+        if (str_starts_with($line, '# ')) {
+            $levelId = trim(substr($line, 2));
+            continue;
+        }
+        [$number, $labelEn, $descEn] = array_pad(explode("\t", $line, 3), 3, '');
+        if ($levelId !== '' && trim($number) !== '') {
+            $translations[$levelId . ':' . trim($number)] = [$labelEn, $descEn];
+        }
+    }
+
+    $merged = [];
+    $sourceLevelId = '';
+    foreach (preg_split('/\R/u', $sourceFr) ?: [] as $line) {
+        $line = str_replace("\r", '', (string)$line);
+        if (str_starts_with($line, '# ')) {
+            $sourceLevelId = trim((string)(explode("\t", substr($line, 2), 2)[0] ?? ''));
+            $merged[] = $line;
+            continue;
+        }
+        if (trim($line) === '') {
+            $merged[] = $line;
+            continue;
+        }
+        $number = trim((string)(explode("\t", $line, 4)[2] ?? ''));
+        [$labelEn, $descEn] = $translations[$sourceLevelId . ':' . $number] ?? ['', ''];
+        $merged[] = $line . "\t" . $labelEn . "\t" . $descEn;
+    }
+
+    return $source = implode("\n", $merged);
 }
 
 /**

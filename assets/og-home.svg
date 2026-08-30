@@ -1,0 +1,54 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" role="img" aria-labelledby="title description">
+  <title id="title">Learning Designer</title>
+  <desc id="description">Donnez forme aux expériences d’apprentissage</desc>
+  <defs>
+    <linearGradient id="background" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#ffffff"/>
+      <stop offset="1" stop-color="#eef3f7"/>
+    </linearGradient>
+    <filter id="wheel-shadow" x="-30%" y="-30%" width="160%" height="160%">
+      <feDropShadow dx="0" dy="22" stdDeviation="24" flood-color="#0f172a" flood-opacity=".14"/>
+    </filter>
+  </defs>
+
+  <rect width="1200" height="630" rx="30" fill="url(#background)"/>
+  <rect x="1" y="1" width="1198" height="628" rx="29" fill="none" stroke="#e1e7ed" stroke-width="2"/>
+
+  <g transform="translate(78 76)">
+    <g transform="translate(0 4)">
+      <circle cx="28" cy="28" r="20" fill="none" stroke="#5bddd3" stroke-width="16" stroke-dasharray="25 75" pathLength="100" transform="rotate(-90 28 28)"/>
+      <circle cx="28" cy="28" r="20" fill="none" stroke="#f19492" stroke-width="16" stroke-dasharray="8 92" stroke-dashoffset="-25" pathLength="100" transform="rotate(-90 28 28)"/>
+      <circle cx="28" cy="28" r="20" fill="none" stroke="#c498ec" stroke-width="16" stroke-dasharray="19 81" stroke-dashoffset="-33" pathLength="100" transform="rotate(-90 28 28)"/>
+      <circle cx="28" cy="28" r="20" fill="none" stroke="#a2d681" stroke-width="16" stroke-dasharray="12 88" stroke-dashoffset="-52" pathLength="100" transform="rotate(-90 28 28)"/>
+      <circle cx="28" cy="28" r="20" fill="none" stroke="#85b6f0" stroke-width="16" stroke-dasharray="22 78" stroke-dashoffset="-64" pathLength="100" transform="rotate(-90 28 28)"/>
+      <circle cx="28" cy="28" r="20" fill="none" stroke="#e7b959" stroke-width="16" stroke-dasharray="14 86" stroke-dashoffset="-86" pathLength="100" transform="rotate(-90 28 28)"/>
+    </g>
+    <text x="78" y="43" fill="#182433" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="31" font-weight="750" letter-spacing="-.7">Learning Designer</text>
+
+    <text x="0" y="171" fill="#245a8f" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="19" font-weight="800" letter-spacing="2.3">LE DESIGN PÉDAGOGIQUE, RENDU VISIBLE</text>
+    <text x="0" y="246" fill="#182433" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="39" font-weight="700" letter-spacing="-1.6">
+      <tspan x="0" dy="0">Donnez forme aux</tspan>
+      <tspan x="0" dy="52">expériences d’apprentissage</tspan>
+    </text>
+    <text x="0" y="419" fill="#526173" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="25" font-weight="450">
+      <tspan x="0" dy="0">Concevez, analysez et partagez des scénarios</tspan>
+      <tspan x="0" dy="37">pédagogiques centrés sur l’activité des élèves.</tspan>
+    </text>
+  </g>
+
+  <g transform="translate(972 315)" filter="url(#wheel-shadow)">
+    <circle r="151" fill="#ffffff" stroke="#dfe5eb" stroke-width="2"/>
+    <g transform="rotate(-90)">
+      <circle r="116" fill="none" stroke="#5bddd3" stroke-width="70" stroke-dasharray="27 73" pathLength="100"/>
+      <circle r="116" fill="none" stroke="#f19492" stroke-width="70" stroke-dasharray="16 84" stroke-dashoffset="-27" pathLength="100"/>
+      <circle r="116" fill="none" stroke="#c498ec" stroke-width="70" stroke-dasharray="21 79" stroke-dashoffset="-43" pathLength="100"/>
+      <circle r="116" fill="none" stroke="#a2d681" stroke-width="70" stroke-dasharray="12 88" stroke-dashoffset="-64" pathLength="100"/>
+      <circle r="116" fill="none" stroke="#85b6f0" stroke-width="70" stroke-dasharray="15 85" stroke-dashoffset="-76" pathLength="100"/>
+      <circle r="116" fill="none" stroke="#e7b959" stroke-width="70" stroke-dasharray="9 91" stroke-dashoffset="-91" pathLength="100"/>
+    </g>
+    <circle r="72" fill="#ffffff"/>
+    <text y="-5" fill="#182433" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="19" font-weight="750" text-anchor="middle">CONCEVOIR</text>
+    <text y="24" fill="#526173" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="16" font-weight="600" text-anchor="middle">ANALYSER</text>
+    <text y="49" fill="#526173" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="16" font-weight="600" text-anchor="middle">PARTAGER</text>
+  </g>
+</svg>

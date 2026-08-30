@@ -21,7 +21,7 @@ from pathlib import Path
 from typing import Any
 
 
-VERSION = "0.3.1"
+VERSION = "0.4.0"
 DEFAULT_DAY_HOURS = 7
 AIAS_VERSION = "2.1"
 DEFAULT_SITE = "https://www.ralentirtravaux.com/flo/learning-designer"
@@ -73,13 +73,30 @@ GROUP_ALIASES = {
     "solo": "individual",
 }
 
-PRESENCE_ALIASES = {
-    "present": "present",
-    "presente": "present",
-    "présente": "present",
-    "presentiel": "present",
-    "absent": "absent",
-    "absente": "absent",
+TEACHING_ALIASES = {
+    "undefined": "undefined",
+    "a-definir": "undefined",
+    "to-be-defined": "undefined",
+    "present": "undefined",
+    "presente": "undefined",
+    "directed": "directed",
+    "teacher-directed": "directed",
+    "dirige": "directed",
+    "enseignement-dirige": "directed",
+    "guided": "guided",
+    "teacher-guided": "guided",
+    "guide": "guided",
+    "enseignement-guide": "guided",
+    "supported": "supported",
+    "teacher-supported": "supported",
+    "accompagne": "supported",
+    "enseignement-accompagne": "supported",
+    "independent": "independent",
+    "independent-work": "independent",
+    "autonomie": "independent",
+    "enseignement-en-autonomie": "independent",
+    "absent": "independent",
+    "absente": "independent",
 }
 
 SYNC_ALIASES = {
@@ -237,7 +254,7 @@ def split_minutes(total: int, day_hours: int = DEFAULT_DAY_HOURS) -> tuple[int, 
     return days, hours, minutes
 
 
-def parse_links(raw_links: list[str]) -> list[dict[str, str]]:
+def parse_links_as_markdown(raw_links: list[str]) -> str:
     links = []
     for raw in raw_links:
         title = ""
@@ -251,8 +268,9 @@ def parse_links(raw_links: list[str]) -> list[dict[str, str]]:
         if url and not re.match(r"^[a-z][a-z0-9+.-]*:", url, re.I):
             url = f"https://{url}"
         if url:
-            links.append({"id": now_id("link"), "title": title, "url": url})
-    return links
+            safe_title = title.replace("\\", "\\\\").replace("[", "\\[").replace("]", "\\]")
+            links.append(f"[{safe_title}]({url})")
+    return "\n".join(links)
 
 
 def competency_id(reference: str) -> str:
@@ -354,13 +372,17 @@ def command_add_activity(args: argparse.Namespace) -> None:
     activity_type = normalize(args.type, ALIASES, "type")
     tools = [competency_id(item) for raw in args.competencies for item in raw.split(",")]
     tools = [item for item in tools if item]
+    description = (args.description or "").strip()
+    markdown_links = parse_links_as_markdown(args.link)
+    if markdown_links:
+        description = "\n\n".join(part for part in (description, markdown_links) if part)
     session["activities"].append(
         {
             "id": now_id("activity"),
             "type": activity_type,
             "duration": max(1, int(args.duration)),
             "groupMode": normalize(args.group, GROUP_ALIASES, "group"),
-            "teacherPresence": normalize(args.teacher, PRESENCE_ALIASES, "teacher"),
+            "teachingMode": normalize(args.teaching, TEACHING_ALIASES, "teaching"),
             "syncMode": normalize(args.pacing, SYNC_ALIASES, "pacing"),
             "locationMode": normalize(args.mode, LOCATION_ALIASES, "mode"),
             "evaluationMode": normalize(args.evaluation, EVAL_ALIASES, "evaluation"),
@@ -369,11 +391,10 @@ def command_add_activity(args: argparse.Namespace) -> None:
                 "status": "specified" if args.aias is not None else "undecided",
                 "level": args.aias,
             },
-            "description": args.description or "",
+            "description": description,
             "instructions": args.instructions or "",
             "notes": args.notes or "",
             "tools": tools,
-            "links": parse_links(args.link),
         }
     )
     save_document(path, document)
@@ -447,12 +468,15 @@ def summarize_document(document: dict[str, Any]) -> str:
             type_label = LEARNING_TYPES.get(activity.get("type"), ("Undefined", "Undefined"))[1]
             aias = activity.get("aias") if isinstance(activity.get("aias"), dict) else {}
             aias_label = f"AIAS {aias.get('level')}" if aias.get("status") == "specified" else aias.get("status", "undecided")
+            teaching_mode = activity.get("teachingMode")
+            if not teaching_mode:
+                teaching_mode = "independent" if activity.get("teacherPresence") == "absent" else "undefined"
             lines.append(
                 "   "
                 f"{session_index}.{activity_index} {type_label}, "
                 f"{activity.get('duration')} min, "
                 f"group={activity.get('groupMode')}, "
-                f"teacher={activity.get('teacherPresence')}, "
+                f"teaching={teaching_mode}, "
                 f"pacing={activity.get('syncMode')}, "
                 f"mode={activity.get('locationMode')}, "
                 f"assessment={activity.get('evaluationMode')}, "
@@ -475,7 +499,7 @@ def build_codex_prompt(document: dict[str, Any], args: argparse.Namespace) -> st
             f"You are Codex. Create or improve a Learning Designer pedagogical design in {target}.",
             "",
             "Use the Learning Designer structure: moments, learning activity type, duration, group mode,",
-            "teacher presence, pacing, delivery mode, assessment mode, Bloom learning outcomes,",
+            "teaching mode, pacing, delivery mode, assessment mode, Bloom learning outcomes,",
             "and digital competencies. Keep the design importable as Learning Designer JSON.",
             "",
             "Return:",
@@ -687,7 +711,12 @@ def build_parser() -> argparse.ArgumentParser:
     activity.add_argument("--type", required=True, help="read/investigate/practice/produce/discuss/collaborate")
     activity.add_argument("--duration", "--duree", "--durée", type=int, required=True)
     activity.add_argument("--group", "--groupe", default="whole")
-    activity.add_argument("--teacher", "--enseignant", default="present")
+    activity.add_argument(
+        "--teaching", "--enseignement", "--teacher", "--enseignant",
+        dest="teaching",
+        default="undefined",
+        help="directed/guided/supported/independent (or French equivalents)",
+    )
     activity.add_argument("--pacing", "--rythme", default="sync")
     activity.add_argument("--mode", default="onsite")
     activity.add_argument("--evaluation", "--évaluation", "--assessment", default="none")
@@ -703,7 +732,10 @@ def build_parser() -> argparse.ArgumentParser:
         default=[],
         help="Comma-separated digital competencies: A1,P6,C14 or competency ids",
     )
-    activity.add_argument("--link", "--lien", action="append", default=[], help="title=url or url")
+    activity.add_argument(
+        "--link", "--lien", action="append", default=[],
+        help="title=url or url; appended to the description as Markdown",
+    )
     activity.set_defaults(func=command_add_activity)
 
     outcome = sub.add_parser("outcome", aliases=["acquis"], help="Add a Bloom learning outcome")

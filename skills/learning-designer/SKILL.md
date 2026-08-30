@@ -115,14 +115,14 @@ $LEARNING add-moment design.json --title "MOMENT TITLE" --objectives "MOMENT OBJ
 Add each activity:
 
 ```bash
-$LEARNING add-activity design.json --moment 1 --type investigate --duration 15 --group subgroups --teacher present --pacing sync --mode onsite --evaluation formative --aias 3 --competencies A1,P6 --description "ACTIVITY DESCRIPTION" --instructions "INSTRUCTIONS FOR STUDENTS"
+$LEARNING add-activity design.json --moment 1 --type investigate --duration 15 --group subgroups --teaching guided --pacing sync --mode onsite --evaluation formative --aias 3 --competencies A1,P6 --description "ACTIVITY DESCRIPTION" --instructions "INSTRUCTIONS FOR STUDENTS"
 ```
 
 Use only CLI-controlled values for controlled fields. Safe values:
 
 - `type`: `read`, `investigate`, `practice`, `produce`, `discuss`, `collaborate`
 - `group`: `whole`, `subgroups`, `individual`
-- `teacher`: `present`, `absent`
+- `teaching`: `directed`, `guided`, `supported`, `independent`
 - `evaluation`: `none`, `diagnostic`, `formative`, `summative`, `certificative`
 - `aias`: optional AIAS level from `1` to `5`; omit it when the role of AI is still undecided
 - `competencies`: short codes such as `A1`, `P6`, `C14`, comma-separated
@@ -132,7 +132,7 @@ For `pacing` and `mode`, verify accepted values with the CLI or use values that 
 - `pacing`: `sync`, `async`, or `synchronous` depending on CLI version
 - `mode`: `onsite`, `online`, `hybrid`, or French aliases such as `presentiel`, depending on CLI version
 
-Never put long natural-language text in controlled fields such as `--group`, `--teacher`, `--evaluation`, `--type`, or `--pacing`.
+Never put long natural-language text in controlled fields such as `--group`, `--teaching`, `--evaluation`, `--type`, or `--pacing`.
 
 Use `--description` for the pedagogical description of the activity and `--instructions` for directions addressed directly to students. Put criteria, supports, teacher role, differentiation details, and other pedagogical detail in `--notes`, `--objectives`, or `--intentions` according to their scope.
 

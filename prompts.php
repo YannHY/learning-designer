@@ -1217,14 +1217,13 @@ Ces libellés doivent être conservés exactement en français :
 - `- Temps conçu:`
 - `- Durée:`
 - `- Groupe:`
-- `- Enseignant:`
+- `- Enseignement:`
 - `- Rythme:`
 - `- Modalité:`
 - `- Évaluation:`
 - `- AIAS:`
 - `- Description:`
 - `- Consignes pour les élèves:`
-- `- Liens:`
 - `- Compétences:`
 
 ### Valeurs contrôlées
@@ -1253,10 +1252,12 @@ Organisation du groupe :
 - `Sous-groupes`
 - `Individuel`
 
-Présence de l’enseignant :
+Enseignement :
 
-- `Présent`
-- `Absent`
+- `Enseignement dirigé`
+- `Enseignement guidé`
+- `Enseignement accompagné`
+- `Enseignement en autonomie`
 
 Rythme :
 
@@ -1294,9 +1295,8 @@ N’invente pas de synonymes et ne traduis jamais ces valeurs.
 8. Pour créer des sous-parties dans un contenu libre, utilise `####` ou du texte en gras.
 9. Dans les consignes, privilégie les listes numérotées.
 10. Évite les puces prenant la forme `- Nom: contenu` dans les textes libres, car elles pourraient être interprétées comme des champs techniques.
-11. Un lien doit être écrit ainsi : `- Liens: Titre de la ressource (https://example.com)`.
-12. N’utilise pas la syntaxe `[Titre](URL)` pour les liens structurés.
-13. S’il n’existe aucun lien ou aucune compétence, omets entièrement le champ correspondant.
+11. Écris les liens directement dans la description ou les consignes avec la syntaxe Markdown `[Titre](URL)`.
+12. S’il n’existe aucune compétence, omets entièrement le champ correspondant.
 
 ### Modèle à respecter
 
@@ -1339,7 +1339,7 @@ Objectifs généraux dans la langue demandée.
 ### 1.1 Lire / Regarder / Écouter
 - Durée: 15 min
 - Groupe: Individuel
-- Enseignant: Présent
+- Enseignement: Enseignement dirigé
 - Rythme: Synchrone
 - Modalité: Présentiel
 - Évaluation: Aucune évaluation
@@ -1350,7 +1350,7 @@ Objectifs généraux dans la langue demandée.
 ### 1.2 Pratiquer
 - Durée: 20 min
 - Groupe: Sous-groupes
-- Enseignant: Présent
+- Enseignement: Enseignement guidé
 - Rythme: Synchrone
 - Modalité: Présentiel
 - Évaluation: Formative
@@ -1361,7 +1361,7 @@ Objectifs généraux dans la langue demandée.
 ### 1.3 Produire
 - Durée: 25 min
 - Groupe: Individuel
-- Enseignant: Présent
+- Enseignement: Enseignement en autonomie
 - Rythme: Synchrone
 - Modalité: Présentiel
 - Évaluation: Formative
@@ -1467,14 +1467,13 @@ Keep the following labels exactly as written in French:
 - `- Temps conçu:`
 - `- Durée:`
 - `- Groupe:`
-- `- Enseignant:`
+- `- Enseignement:`
 - `- Rythme:`
 - `- Modalité:`
 - `- Évaluation:`
 - `- AIAS:`
 - `- Description:`
 - `- Consignes pour les élèves:`
-- `- Liens:`
 - `- Compétences:`
 
 ### Controlled values
@@ -1503,10 +1502,12 @@ Group organisation:
 - `Sous-groupes`
 - `Individuel`
 
-Teacher presence:
+Teaching mode:
 
-- `Présent`
-- `Absent`
+- `Enseignement dirigé`
+- `Enseignement guidé`
+- `Enseignement accompagné`
+- `Enseignement en autonomie`
 
 Pace:
 
@@ -1544,9 +1545,8 @@ Do not invent synonyms or translate these values.
 8. Use `####` or bold text for subsections within free-form content.
 9. Prefer numbered lists inside student instructions.
 10. Avoid bullets in the form `- Name: content` within free-form text because they may be interpreted as technical fields.
-11. Write a link as `- Liens: Resource title (https://example.com)`.
-12. Do not use `[Title](URL)` syntax for structured links.
-13. Omit the corresponding field entirely when there are no links or competencies.
+11. Write links directly in descriptions or instructions using Markdown syntax: `[Title](URL)`.
+12. Omit the competencies field entirely when there are no competencies.
 
 ### Required template
 
@@ -1589,7 +1589,7 @@ General objectives in the requested language.
 ### 1.1 Lire / Regarder / Écouter
 - Durée: 15 min
 - Groupe: Individuel
-- Enseignant: Présent
+- Enseignement: Enseignement dirigé
 - Rythme: Synchrone
 - Modalité: Présentiel
 - Évaluation: Aucune évaluation
@@ -1600,7 +1600,7 @@ General objectives in the requested language.
 ### 1.2 Pratiquer
 - Durée: 20 min
 - Groupe: Sous-groupes
-- Enseignant: Présent
+- Enseignement: Enseignement guidé
 - Rythme: Synchrone
 - Modalité: Présentiel
 - Évaluation: Formative
@@ -1611,7 +1611,7 @@ General objectives in the requested language.
 ### 1.3 Produire
 - Durée: 25 min
 - Groupe: Individuel
-- Enseignant: Présent
+- Enseignement: Enseignement en autonomie
 - Rythme: Synchrone
 - Modalité: Présentiel
 - Évaluation: Formative

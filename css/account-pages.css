@@ -414,13 +414,19 @@ h1, h2 {
 }
 .title-with-icon {
   display: flex;
-  align-items: center;
+  /* Les glyphes Font Awesome sont visuellement décentrés dans leur em-box :
+     la ligne de base donne un meilleur alignement optique avec Newsreader. */
+  align-items: baseline;
   gap: 10px;
 }
 .title-with-icon i {
+  display: inline-block;
+  flex: 0 0 1.25em;
+  width: 1.25em;
   color: inherit;
-  font-size: 0.9em;
+  font-size: 0.82em;
   line-height: 1;
+  text-align: center;
 }
 .account-copy {
   margin: 0 0 18px;

@@ -12,7 +12,9 @@
 //
 // Format : une ligne « # id<TAB>libellé FR<TAB>libellé EN » ouvre un niveau,
 // puis chaque ligne décrit une compétence :
-//   section<TAB>application<TAB>numéro<TAB>libellé<TAB>description
+//   section<TAB>application<TAB>numéro<TAB>libellé FR<TAB>description FR
+// La constante COMPETENCY_CATALOG_EN_SOURCE, indexée par niveau et numéro,
+// fournit les deux colonnes anglaises ajoutées par les lecteurs JS et PHP.
 
 const COMPETENCY_CATALOG_SOURCE = String.raw`# acquerir	Acquérir	Acquire
 Utilisation de l'iPad		1	Verrouiller et déverrouiller l'iPad	Garder l'iPad dans son cartable tant que l'enseignant ne recquiert pas son utilisation | Mettre en veille la tablette quand on a terminé
@@ -112,3 +114,102 @@ Créativité et expression		27	Traiter et modifier des images	Savoir modifier de
 Créativité et expression		28	Faire du montage vidéo	Utiliser un logiciel de montage en ligne comme Capcut pour des projets plus complexes que ceux produits avec iMovie | Réaliser des projets complexes du type booktube, reportage, web TV (utilisation d'un fond vert, prise de son, effets…)
 Créativité et expression		29	Utiliser la réalité augmentée ou créer des activités recourant à la réalité augmentée	Utilisation de différentes apps comme Reality Composer, FoxAR, ARMaker, Adobe Aero…
 Créativité et expression		30	Générer des objets exploitables en 3D ainsi que la réalité virtuelle	Réaliser un environnement immersif à partir d'une application accessible comme CoSpaces Edu | Concevoir ses propres objets 3D avec TinkerCAD ou SketchUp | Exporter un objet 3D au format standard (STL, OBJ) pour impression 3D ou visualisation`;
+
+const COMPETENCY_CATALOG_EN_SOURCE = String.raw`# acquerir
+1	Lock and unlock the iPad	Keep the iPad in the schoolbag until the teacher asks students to use it | Put the tablet to sleep when finished
+2	Know and protect login credentials	Know the main login credentials | Protect passwords and data with Touch ID | Enable password saving in Settings | Use the password manager
+3	Know the main multitasking gestures	Switch from one app to another with four fingers | Return to the Home Screen with four fingers | Undo or redo an action with three fingers | Perform the equivalent of a right-click with two fingers, or a standard click while holding the Control key
+4	Type efficiently and quickly	Improve touch-typing skills with Taptouche (type at least 40 words per minute) | Use text predictions | Create shortcuts
+5	Take care of equipment and solve basic problems	Store the iPad in the schoolbag | Put the schoolbag in a safe place | Clean the tablet regularly | Charge the iPad battery regularly to limit deterioration | Restart the iPad if it freezes or encounters a bug
+6	Search with Safari	Use a search engine to find information
+7	Know the essential websites	Use the most common websites (Pronote, the Institut website, online dictionaries, GeoGebra, Quizlet…) | Check grades and the homework diary on Pronote | View the timetable on Pronote
+8	Quickly and easily access the most frequently used websites	Create a bookmark, favourite, or Home Screen icon to quickly access the websites needed
+9	Read on the iPad	Read on the iPad, removing advertisements where appropriate | Read without distractions by using Reader mode | Export a web page as a PDF to highlight or annotate important passages
+10	View course materials in OneNote	Find the class notebook for each subject | Check the app regularly to read documents and corrections
+11	Find or submit an assignment in Teams	Find an assignment in Teams and submit work in Teams, knowing how to locate the completed work on the iPad or in Office 365
+12	Save, organise, and retrieve documents on the iPad or in OneDrive	Save documents in the appropriate folder, organised by subject | Name documents so they can be found easily | Know how to use file version history to retrieve an earlier version of a document
+13	Take notes with a keyboard or stylus	Use writing or note-taking apps (OneNote, Notability, Word…) | Add a section or page to a personal notebook in OneNote
+14	Share documents with teachers or other students	Share documents by email, Teams, or OneNote to collaborate or simply submit work
+15	Collaborate on documents in real time with other students	Invite a student or teacher to collaborate | Collaborate while respecting everyone's work | Use comments to suggest changes
+16	Share documents with the appropriate permission levels	Share a document with the required permissions (view, comment, edit)
+17	Reach the intended recipient	Ask questions or reply clearly and helpfully to a teacher or other students in Teams, notifying the recipient with an at-sign followed by their name
+18	Create a presentation for the class	Know the essential features of presentation software such as PowerPoint, Genially, or Canva
+19	Write an email	Structure an email correctly, including a subject line, an appropriate greeting, polite closing phrases, and a signature
+20	Attach a file	Attach files to an email, making sure that attachments are named correctly and do not exceed the size limit
+21	Respond appropriately to the situation	Reply to emails appropriately, using Reply All only when necessary, being polite, and following communication rules
+22	Send an email	Send a message with the Outlook email client, including forwarding messages
+23	Be familiar with common office applications	Know the main features of the Word word processor, PowerPoint presentation software, and Excel spreadsheet software
+24	Choose the appropriate application for a task	Know that Word is used to write text, PowerPoint to create a presentation, and so on
+25	Know the main rules for formatting text	Know the main text-formatting options, such as bold, italics, and text alignment
+26	Use iMovie to create short videos	Record a short film | Make basic edits, such as trimming a clip or inserting a title
+27	Use applications such as Voice Memos or GarageBand	Make a recording, such as a read-aloud, recitation, podcast, or audiobook
+28	Draw or create sketches and diagrams	Use applications such as Procreate or Freeform | Use an application to create a mind map
+29	Understand the concept of rights	Understand copyright, image rights, and royalty-free images | Define intellectual property
+30	Cite sources, respect image rights and copyright, and use royalty-free images	Act honestly and identify the source of information provided | Understand what plagiarism is
+# approfondir
+1	Personalise the working environment	Create and manage app folders | Use Focus mode to avoid distractions | Where appropriate, disable, limit, or select notifications
+2	Know and protect login credentials	Enable two-factor authentication whenever possible | Know the main privacy settings, including location services, access to personal data, and the use of cookies
+3	Master advanced multitasking gestures	Know all multitasking gestures | Display two apps at once with Split View and Slide Over | Drag and drop one or more files between apps | Use Spotlight to find information or open an app
+4	Type efficiently and quickly	Reach a typing speed of 60 words per minute | Use voice dictation features
+5	Take care of equipment and solve basic problems	Regularly back up important data | Make sure the iPad's storage space is not full
+6	Search with Safari	Use different search engines according to the task | Understand some of the principles that determine search-result rankings | Use advanced search operators | Assess the relevance and reliability of sources by distinguishing advertising from sponsored content and identifying trustworthy information
+7	Organise information monitoring	Use RSS feeds or subscribe to relevant newsletters | Know reliable resources and identify trustworthy sources, including fake news and disinformation
+8	Quickly and easily access the most frequently used websites	Organise favourites and digital resources
+9	Read on the iPad	Read and use ePub features such as annotations and the built-in dictionary
+10	View course materials in OneNote	Use Immersive Reader to support reading | Add a section or page
+11	Find or submit an assignment in Teams	Use more advanced Teams features such as Calendar and Meet Now | Find past or overdue assignments
+12	Save, organise, and retrieve documents on the iPad or in OneDrive	Use tags in the Files app to identify important files more quickly | Use the different view modes, including icons, list, and columns | Long-press a file to access key actions such as Get Info, Compress, Duplicate, and Share
+13	Take notes with a keyboard or stylus	Structure notes | Use colour coding | Insert images or recordings | Know the range of available tools, including the lasso, shape insertion, and AI features | Know other note-taking apps such as Apple Notes or Notability
+14	Share documents with teachers or other students	If shared work has been altered and passages deleted, use file history to recover them | Identify who made each change
+15	Collaborate on documents in real time with other students	Set permissions that change over time, from viewing to editing | Provide different versions according to the document's status: draft, review, and final | Restrict editing in specific parts of a document
+16	Create favourites in Outlook	Create favourites to find frequent recipients more quickly
+17	Create rules in Outlook	Create rules to find and organise emails more easily
+18	Create a signature in Outlook	Configure Outlook to insert a signature automatically at the end of an email
+19	Stay organised	Add calendar events with deadlines so that tasks are not forgotten | Invite another student to an event when working on a group project | Save an important email to OneNote
+20	Collect simple data	Collect data with a form created in Microsoft Forms | Create a small dashboard to analyse results, such as grades, or to collect information, such as dates relating to an event or a bibliography
+21	Organise and visually represent data	Use conditional formatting | Insert a simple chart, such as a pie chart or bar chart
+22	Perform simple calculations	Know simple formulas, such as calculating an average or counting data
+23	Format data	Apply basic formatting rules to make a spreadsheet easy to read
+24	Use the Calculator	Perform common calculations | Switch from the basic to the scientific calculator | Carry out conversions | Solve equations or plot graphs with Math Notes
+25	Become familiar with the interface	Navigate the interface and add sprites, backdrops, and code blocks
+26	Understand the concept of a block	Combine different types of blocks to create animations, simple games, or interactive stories
+27	Know the basics of programming	Use conditional instructions such as if… then | Use loops to repeat a series of instructions | Understand variables as a way to store and manipulate data
+28	Be familiar with common office applications	In addition to the Office 365 suite, including Word and PowerPoint, know the Apple equivalents and their distinctive features, such as Pages and Keynote
+29	Create enriched multimedia documents	Use Canva to create rich documents that include different media types, such as text, images, and sound | Present them orally without reading notes and within a set time
+30	Process and edit images	Crop and resize an image and adjust basic settings such as brightness and contrast | Apply simple filters and effects
+31	Use iMovie for video editing	Create longer and more polished films, including titles and transitions | Know the different video formats and how to compress or share them, particularly through Microsoft Stream
+32	Use applications such as Voice Memos or GarageBand	Record and edit audio content | Share productions and add an image or description in preparation for publication
+33	Draw or create sketches and diagrams	Develop greater proficiency with Procreate | Use Notes, insert a graph, and use its calculation features | Use mind-mapping applications such as Whimsical
+34	Use artificial intelligence	Ask relevant questions in a chatbot | Assess the relevance of the answers | Identify bias, stereotypes, and hallucinations
+35	Use multimodal AI systems	Use AI to generate text, images, or musical compositions
+# creer
+1	Use advanced browser features	Use profiles and tab groups; hide unwanted elements; display Reader; use translation, extensions, and the Share menu, for example to send a web page to OneNote
+2	Conduct in-depth research	Use Google Scholar to search by author or date, perform advanced searches, and receive alerts | Use JSTOR for advanced searches, Boolean operators, and tools such as Text Analyzer and the Understanding Series
+3	Conduct complex searches to find information	Use a reverse search engine to find the origin of an image, or the Wayback Machine to find an archived web page
+4	Use Wikipedia's advanced features	View a page's history, edits, discussions, tools, and more
+5	Organise course materials in OneNote	Archive, organise, and quickly retrieve documents in OneDrive by using a logical folder structure and consistent naming conventions
+6	Use Teams as a project-management tool	Create a channel or team for a project, assign roles, and track everyone's contributions through the discussion feed or document comments | Integrate resources such as a schedule, OneNote, and a shared calendar
+7	Set up a personal system for tracking tasks and projects	Create and maintain a digital to-do list in OneNote or Outlook | Create reminders, possibly using Apple's Reminders app
+8	Lead a short online meeting or presentation in Teams	Organise a simple video conference, including the invitation, agenda, and screen sharing, for a presentation or collaborative project | Manage roles such as speaking, moderating, and timekeeping, and use chat or emoji reactions
+9	Take an active role in communication	Create a guide or good-practice charter, for example by contributing to awareness campaigns about environmental issues or bullying | Organise an awareness workshop to identify and combat climate change, cyberbullying, or disinformation
+10	Apply the full range of skills and applications needed to communicate actively	Lead a collaborative digital project using Teams, Padlet, Trello, Notion, or similar tools | Organise shared resources and manage access to them
+11	Create an advanced collaborative multimedia production	Produce complex digital content, such as a collaborative website, web documentary, or collaborative podcast. See the Creativity and expression domain
+12	Use the web responsibly	Become familiar with the concept of digital identity | Pay attention to the traces left online and understand the implications and reach of written contributions
+13	Build enriched Word documents	Include a table of contents | Include correctly formatted citations using styles such as APA or MLA
+14	Analyse data with Excel	Use conditional formulas such as IF and COUNTIF and apply data validation | Create filters for personal or shared use | Create a chart suited to the type of data | Apply these skills to tasks such as creating a budget or tracking sports or scientific data
+15	Perform calculations in Excel	Know and combine several formulas, such as IF with AND, or OR with AVERAGE
+16	Know some advanced formulas	Master advanced formulas such as INDEX, MATCH, IFS, and VLOOKUP
+17	Insert equations	Use the equation editor in Word
+18	Develop greater proficiency with Scratch	Create a mini-game that applies previously acquired skills such as variables, conditions, loops, and multiple events | Take part in initiatives such as Nuit du Code or Algorea, or visit the fab lab
+19	Get started with Python	Write a simple linear program | Use variables, conditions, and loops | Insert comments to make code easier to read
+20	Automate tasks	Write simple scripts to automate repetitive tasks such as renaming files, sorting folders automatically, or generating lists | Where appropriate, use AI to help generate these scripts
+21	Contribute to the development of Vikidia or Wikipedia	Have an account and make simple edits where appropriate | Write for the encyclopaedia by using a neutral and objective tone, providing references, and knowing wiki syntax | Contribute to a collaborative project by correcting or moderating content and responding to edit requests
+22	Create a podcast or contribute to web radio	Use applications such as GarageBand or Soundtrap for complex or collaborative editing | In GarageBand, insert loops, sound effects, or music | Publish on a platform such as Spotify
+23	Create a website	Learn the basics of web development, including HTML and CSS | Know no-code tools | Create complex websites with WordPress or Wix
+24	Create complex animations	Use Procreate or Procreate Dreams to create complex animations, such as artworks or tutorials
+25	Use artificial intelligence to create rich, personal content	Generate images or audio documents, or write code, to produce complex projects
+26	Use common office applications to create rich content	Use applications such as PowerPoint or Keynote to create interactive presentations with a variety of animations and transitions
+27	Process and edit images	Edit images and use advanced image-editing software features | Know how to use layers, the lasso, and a range of other tools
+28	Edit video	Use online editing software such as CapCut for projects that are more complex than those produced with iMovie | Create complex projects such as booktubes, reports, or web TV productions using green screens, sound recording, effects, and more
+29	Use augmented reality or create augmented-reality activities	Use applications such as Reality Composer, FoxAR, ARMaker, and Adobe Aero
+30	Create usable 3D objects and virtual-reality experiences	Create an immersive environment with an accessible application such as CoSpaces Edu | Design original 3D objects with Tinkercad or SketchUp | Export a 3D object in a standard format such as STL or OBJ for 3D printing or visualisation`;

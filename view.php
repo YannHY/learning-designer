@@ -59,11 +59,22 @@ $LEARNING_TYPES = [
     'collaborate' => ['label' => 'Collaborer',               'color' => '#e7b959'],
 ];
 $GROUP_MODES    = ['whole' => 'Groupe entier', 'subgroups' => 'Sous-groupes', 'individual' => 'Individuel'];
+$TEACHING_MODES = [
+    'undefined' => 'Enseignement à définir',
+    'directed' => 'Enseignement dirigé',
+    'guided' => 'Enseignement guidé',
+    'supported' => 'Enseignement accompagné',
+    'independent' => 'Enseignement en autonomie',
+];
+// Compatibilité avec les scénarios publiés avant l'introduction des quatre modes.
 $TRAINER_MODES  = ['present' => 'Enseignant présent', 'absent' => 'Enseignant absent'];
 $SYNC_MODES     = ['sync' => 'Synchrone', 'async' => 'Asynchrone'];
 $LOCATION_MODES = ['onsite' => 'Présentiel', 'online' => 'Distanciel', 'hybrid' => 'Hybride'];
 $DELIVERY_MODES = ['onsite' => 'Présentiel', 'online' => 'Distanciel', 'hybrid' => 'Hybride'];
 $SCHOOL_LEVELS  = [
+    'petite_section' => 'Petite section (PS)',
+    'moyenne_section' => 'Moyenne section (MS) / 1re',
+    'grande_section' => 'Grande section (GS) / 2e',
     'cp' => 'CP / 3e',
     'ce1' => 'CE1 / 4e',
     'ce2' => 'CE2 / 5e',
@@ -345,6 +356,20 @@ function loadCompetencyCatalog(): array {
     $legacyCodeByLevel = ['acquerir' => 'A', 'approfondir' => 'P', 'creer' => 'C'];
     $currentLevel = null;
     $currentLevelSections = [];
+    $sectionEnByFr = [
+        "Utilisation de l'iPad" => 'Using the iPad',
+        'Productivité et organisation' => 'Productivity and organisation',
+        'Communication et collaboration' => 'Communication and collaboration',
+        'Données et programmation' => 'Data and programming',
+        'Créativité et expression' => 'Creativity and expression',
+        'Général' => 'General',
+    ];
+    $appEnByFr = [
+        'Partager' => 'Sharing',
+        'Écrire des emails' => 'Writing emails',
+        'Excel & calcul' => 'Excel & calculations',
+        'Programmation' => 'Programming',
+    ];
 
     foreach (preg_split('/\R/', $tsv) ?: [] as $rawLine) {
         $line = str_replace("\r", '', (string)$rawLine);
@@ -358,9 +383,8 @@ function loadCompetencyCatalog(): array {
         }
 
         if (!is_array($currentLevel)) continue;
-        $parts = explode("\t", $line);
-        [$sectionRaw, $appRaw, $numberRaw, $labelRaw] = array_pad(array_slice($parts, 0, 4), 4, '');
-        $descRaw = implode("\t", array_slice($parts, 4));
+        [$sectionRaw, $appRaw, $numberRaw, $labelFrRaw, $descFrRaw, $labelEnRaw, $descEnRaw]
+            = array_pad(explode("\t", $line, 7), 7, '');
         $section = trim($sectionRaw) !== '' ? trim($sectionRaw) : 'Général';
         $sectionIndex = array_search($section, $currentLevelSections, true);
         if ($sectionIndex === false) {
@@ -370,21 +394,24 @@ function loadCompetencyCatalog(): array {
         $sectionNumber = (int)$sectionIndex + 1;
         $sectionRoman = toRomanNumeral($sectionNumber);
         $competencyNumber = (int)$numberRaw;
-        $label = trim($labelRaw);
-        $description = trim($descRaw);
-        if ($competencyNumber <= 0 || $label === '' || $description === '') continue;
+        $labelFr = trim($labelFrRaw);
+        $descFr = trim($descFrRaw);
+        $labelEn = trim($labelEnRaw) !== '' ? trim($labelEnRaw) : $labelFr;
+        $descEn = trim($descEnRaw) !== '' ? trim($descEnRaw) : $descFr;
+        if ($competencyNumber <= 0 || $labelFr === '' || $descFr === '') continue;
 
         $id = 'competency:' . $currentLevel['id'] . ':' . trim($numberRaw);
         $shortCode = $currentLevel['labelFr'] . '-' . $sectionRoman . '-' . $competencyNumber;
+        $shortCodeEn = $currentLevel['labelEn'] . '-' . $sectionRoman . '-' . $competencyNumber;
         $legacyShortCode = ($legacyCodeByLevel[$currentLevel['id']] ?? substr($currentLevel['id'], 0, 1)) . $competencyNumber;
         $entry = [
             'id' => $id,
             'platform' => $currentLevel['id'],
             'category' => $currentLevel['id'] . ':' . normalizeCatalogSlug($section),
             'sectionFr' => $section,
-            'sectionEn' => $section,
+            'sectionEn' => $sectionEnByFr[$section] ?? $section,
             'appFr' => trim($appRaw),
-            'appEn' => trim($appRaw),
+            'appEn' => $appEnByFr[trim($appRaw)] ?? trim($appRaw),
             'levelLabelFr' => $currentLevel['labelFr'],
             'levelLabelEn' => $currentLevel['labelEn'],
             'levelBadge' => $badgeByLevel[$currentLevel['id']] ?? $currentLevel['id'],
@@ -392,14 +419,15 @@ function loadCompetencyCatalog(): array {
             'sectionNumber' => $sectionNumber,
             'sectionRoman' => $sectionRoman,
             'shortCode' => $shortCode,
+            'shortCodeEn' => $shortCodeEn,
             'legacyShortCode' => $legacyShortCode,
-            'labelFr' => $label,
-            'labelEn' => $label,
-            'descFr' => $description,
-            'descEn' => $description,
+            'labelFr' => $labelFr,
+            'labelEn' => $labelEn,
+            'descFr' => $descFr,
+            'descEn' => $descEn,
         ];
 
-        foreach ([$id, $shortCode, $legacyShortCode, $label] as $token) {
+        foreach ([$id, $shortCode, $shortCodeEn, $legacyShortCode, $labelFr, $labelEn] as $token) {
             $normalized = normalizeCompetencyToken($token);
             if ($normalized !== '') {
                 $catalog[$normalized] = $entry;
@@ -473,6 +501,7 @@ foreach ($sessions as $s) {
     foreach (($s['activities'] ?? []) as $act) {
         if (!is_array($act)) continue;
         $hasContext = labelFor($GROUP_MODES, (string)($act['groupMode'] ?? '')) !== ''
+            || labelFor($TEACHING_MODES, (string)($act['teachingMode'] ?? '')) !== ''
             || labelFor($TRAINER_MODES, (string)($act['teacherPresence'] ?? '')) !== ''
             || labelFor($SYNC_MODES, (string)($act['syncMode'] ?? '')) !== ''
             || labelFor($LOCATION_MODES, (string)($act['locationMode'] ?? '')) !== ''
@@ -971,7 +1000,10 @@ $displayDesignedMinutes = $designedMinutes > 0 ? $designedMinutes : $totalMinute
         $aiasChip = null;
         $gm = labelFor($GROUP_MODES, (string)($act['groupMode'] ?? ''));
         if ($gm !== '') $chips[] = $gm;
-        $tr = labelFor($TRAINER_MODES, (string)($act['teacherPresence'] ?? ''));
+        $tr = labelFor($TEACHING_MODES, (string)($act['teachingMode'] ?? ''));
+        if ($tr === '') {
+            $tr = labelFor($TRAINER_MODES, (string)($act['teacherPresence'] ?? ''));
+        }
         if ($tr !== '') $chips[] = $tr;
         $sm = labelFor($SYNC_MODES, (string)($act['syncMode'] ?? ''));
         if ($sm !== '') $chips[] = $sm;

@@ -19,7 +19,7 @@
     <link rel="stylesheet" href="css/account-ui.css?v=20260729-2" />
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="stylesheet" href="css/interface.css?v=20260827-fluid-toolbar-buttons-2" />
+    <link rel="stylesheet" href="css/interface.css?v=20260830-teaching-modes" />
   </head>
   <body class="designer-page">
     <a id="skip-link" class="skip-link" href="#board">Aller au contenu principal</a>
@@ -151,6 +151,9 @@
               <select id="meta-level" class="panel-select">
                 <option value=""></option>
                 <optgroup id="optgroup-meta-level" label="France / Suisse">
+                  <option value="petite_section">Petite section (PS)</option>
+                  <option value="moyenne_section">Moyenne section (MS) / 1re</option>
+                  <option value="grande_section">Grande section (GS) / 2e</option>
                   <option value="cp">CP / 3e</option>
                   <option value="ce1">CE1 / 4e</option>
                   <option value="ce2">CE2 / 5e</option>
@@ -390,16 +393,13 @@
             <input class="activity-duration" type="number" min="1" aria-label="Durée en minutes" />
           </span>
           <button class="choice-btn activity-group-mode-btn" type="button"></button>
-          <button class="choice-btn activity-trainer-mode-btn" type="button"></button>
+          <button class="choice-btn activity-teaching-mode-btn" type="button"></button>
           <button class="choice-btn activity-sync-mode-btn" type="button"></button>
           <button class="choice-btn activity-location-mode-btn" type="button"></button>
           <button class="choice-btn activity-evaluation-mode-btn" type="button"></button>
           <div class="activity-actions">
             <button class="icon-btn activity-aias-btn" type="button" title="AIAS" aria-label="AIAS" aria-haspopup="dialog" aria-expanded="false">
               <i class="fa-solid fa-wand-magic-sparkles" aria-hidden="true"></i>
-            </button>
-            <button class="icon-btn activity-links-btn" type="button" aria-haspopup="dialog" aria-expanded="false">
-              <i class="fa-solid fa-link" aria-hidden="true"></i>
             </button>
             <button class="icon-btn select-tools-btn" type="button" aria-haspopup="dialog" aria-expanded="false">
               <svg viewBox="0 0 24 24" aria-hidden="true" width="16" height="16">
@@ -415,7 +415,6 @@
           </div>
         </div>
         <div class="activity-tools hidden" role="list"></div>
-        <div class="activity-links hidden" role="list"></div>
         <div class="activity-text-fields">
           <div class="activity-field-group">
             <div class="activity-field-label activity-description-label">Description de l'activité</div>
@@ -608,26 +607,6 @@
       </div>
     </div>
 
-    <div id="activity-link-modal-backdrop" class="modal-backdrop hidden"
-         role="dialog" aria-modal="true" aria-hidden="true"
-         aria-labelledby="activity-link-modal-title">
-      <div class="modal activity-link-modal">
-        <h2 id="activity-link-modal-title" class="modal-title">Ajouter un lien</h2>
-        <div class="activity-link-modal-fields">
-          <label for="activity-link-title-input" id="activity-link-title-label">Titre</label>
-          <input id="activity-link-title-input" class="panel-select modal-text-input" type="text" maxlength="140" />
-          <label for="activity-link-url-input" id="activity-link-url-label">Lien</label>
-          <input id="activity-link-url-input" class="panel-select modal-text-input" type="url" placeholder="https://…" />
-          <p id="activity-link-modal-error" class="modal-inline-error hidden" role="alert"></p>
-        </div>
-        <div id="activity-link-list" class="activity-link-list" role="list"></div>
-        <div class="modal-actions">
-          <button id="activity-link-cancel-btn" class="btn btn-light" type="button">Fermer</button>
-          <button id="activity-link-save-btn" class="btn btn-primary" type="button">Ajouter</button>
-        </div>
-      </div>
-    </div>
-
     <div id="aias-modal-backdrop" class="modal-backdrop hidden"
          role="dialog" aria-modal="true" aria-hidden="true"
          aria-labelledby="aias-modal-title" aria-describedby="aias-modal-intro">
@@ -647,9 +626,9 @@
         </div>
       </div>
     </div>
-    <!-- Doit précéder interface.js, qui lit COMPETENCY_CATALOG_SOURCE au chargement. -->
-    <script src="js/competency-catalog.js?v=20260825-catalogue-extrait"></script>
-    <script src="js/interface.js?v=20260827-fluid-toolbar-buttons-2"></script>
+    <!-- Doit précéder interface.js, qui lit les catalogues FR et EN au chargement. -->
+    <script src="js/competency-catalog.js?v=20260830-catalogue-en"></script>
+    <script src="js/interface.js?v=20260830-competency-chips-en"></script>
     <script src="js/account-ui.js?v=20260827-compact-toolbar"></script>
     <script>
       (function() {

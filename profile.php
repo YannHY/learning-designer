@@ -199,7 +199,7 @@ function e(string $value): string
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="stylesheet" href="css/interface.css?v=20260826-title-blue">
     <link rel="stylesheet" href="css/account-ui.css?v=20260520-4">
-    <link rel="stylesheet" href="css/account-pages.css?v=20260826-title-blue">
+    <link rel="stylesheet" href="css/account-pages.css?v=20260829-profile-icons-2">
 </head>
 <body class="profile-page">
 <?php render_site_nav('profile'); ?>
@@ -207,7 +207,7 @@ function e(string $value): string
     <section class="account-card wide">
         <div class="account-topbar">
             <div>
-                <h1 id="profile-title" class="title-with-icon"><i class="fa-regular fa-user" aria-hidden="true"></i>Profil</h1>
+                <h1 id="profile-title" class="title-with-icon"><i class="fa-solid fa-user" aria-hidden="true"></i>Profil</h1>
             </div>
         </div>
         <p class="account-copy"><span id="profile-role-label">Rôle</span>&nbsp;: <?= e((string)$me['role']) ?>.</p>
@@ -222,7 +222,7 @@ function e(string $value): string
         <div class="account-grid">
             <form method="post" class="account-form panel">
                 <input type="hidden" name="action" value="identity">
-                <h2 id="profile-info-title" class="title-with-icon"><i class="fa-regular fa-address-card" aria-hidden="true"></i>Informations</h2>
+                <h2 id="profile-info-title" class="title-with-icon"><i class="fa-solid fa-address-card" aria-hidden="true"></i>Informations</h2>
                 <div class="field">
                     <label id="profile-username-label" for="username">Nom d’utilisateur</label>
                     <input id="username" name="username" type="text" value="<?= e((string)$me['username']) ?>" required>
@@ -353,7 +353,7 @@ function e(string $value): string
 
         <form method="post" class="account-form panel danger-panel" data-confirm-fr="Supprimer définitivement votre compte ?" data-confirm-en="Permanently delete your account?" onsubmit="return window.confirm(this.dataset.confirm || this.dataset.confirmFr);">
             <input type="hidden" name="action" value="delete_account">
-            <h2 id="profile-delete-title" class="title-with-icon"><i class="fa-regular fa-trash-can" aria-hidden="true"></i>Supprimer mon compte</h2>
+            <h2 id="profile-delete-title" class="title-with-icon"><i class="fa-solid fa-trash-can" aria-hidden="true"></i>Supprimer mon compte</h2>
             <p id="profile-delete-copy" class="account-copy">Toutes vos productions seront supprimées avec votre compte.</p>
             <div class="field">
                 <label id="profile-delete-password-label" for="delete_current_password">Mot de passe actuel</label>

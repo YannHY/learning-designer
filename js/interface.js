@@ -26,8 +26,10 @@ const ICONS = {
   whole: fontAwesomeIcon("fa-solid fa-users"),
   subgroups: fontAwesomeIcon("fa-solid fa-user-group"),
   individual: fontAwesomeIcon("fa-solid fa-user"),
-  present: fontAwesomeIcon("fa-solid fa-user-check"),
-  absent: fontAwesomeIcon("fa-solid fa-user-slash"),
+  directed: fontAwesomeIcon("fa-solid fa-person-chalkboard"),
+  guided: fontAwesomeIcon("fa-solid fa-route"),
+  supported: fontAwesomeIcon("fa-solid fa-hand-holding-hand"),
+  independent: fontAwesomeIcon("fa-solid fa-person-walking"),
   sync: fontAwesomeIcon("fa-regular fa-clock"),
   async: fontAwesomeIcon("fa-regular fa-calendar-days"),
   onsite: fontAwesomeIcon("fa-solid fa-school"),
@@ -51,10 +53,44 @@ const GROUP_MODE_OPTIONS = [
   { value: "subgroups", label: "Sous-groupes", short: "Sous-g.", icon: ICONS.subgroups },
   { value: "individual", label: "Individuel", short: "Indiv.", icon: ICONS.individual }
 ];
-const TRAINER_OPTIONS = [
-  { value: "present", label: "Présent", short: "Présent", icon: ICONS.present },
-  { value: "absent", label: "Absent", short: "Absent", icon: ICONS.absent }
+const TEACHING_OPTIONS = [
+  {
+    value: "directed",
+    label: "Enseignement dirigé",
+    description: "L’enseignant détermine ce qui se passe à chaque instant, que ce soit en expliquant, en démontrant ou en guidant les élèves pas à pas dans une tâche. Les élèves suivent.",
+    short: "Dirigé",
+    icon: ICONS.directed
+  },
+  {
+    value: "guided",
+    label: "Enseignement guidé",
+    description: "Les élèves réalisent la tâche ; l’enseignant fixe la méthode et intervient tout au long pour relancer, corriger et maintenir le cap.",
+    short: "Guidé",
+    icon: ICONS.guided
+  },
+  {
+    value: "supported",
+    label: "Enseignement accompagné",
+    description: "Les élèves décident de la manière de procéder et de leur rythme ; l’enseignant répond aux sollicitations ou lorsque le travail s’égare, mais ne le dirige pas.",
+    short: "Accompagné",
+    icon: ICONS.supported
+  },
+  {
+    value: "independent",
+    label: "Enseignement en autonomie",
+    description: "Les élèves déterminent leur approche, leur progression et leur rythme dans une tâche conçue par l’enseignant. Aucun accompagnement pendant le travail.",
+    short: "Autonomie",
+    icon: ICONS.independent
+  }
 ];
+const UNDEFINED_TEACHING_OPTION = {
+  value: "undefined",
+  label: "À définir",
+  description: "",
+  short: "À définir",
+  icon: ICONS.undefined
+};
+const TEACHING_VALUES = new Set(TEACHING_OPTIONS.map((option) => option.value));
 const SYNC_OPTIONS = [
   { value: "sync", label: "Synchrone", short: "Sync", icon: ICONS.sync },
   { value: "async", label: "Asynchrone", short: "Async", icon: ICONS.async }
@@ -65,6 +101,9 @@ const LOCATION_OPTIONS = [
   { value: "hybrid", label: "Hybride", short: "Hybrid.", icon: ICONS.hybrid }
 ];
 const SCHOOL_LEVEL_OPTIONS = [
+  { value: "petite_section", label: "Petite section (PS)", france: "PS", swiss: "" },
+  { value: "moyenne_section", label: "Moyenne section (MS) / 1re", france: "MS", swiss: "1re" },
+  { value: "grande_section", label: "Grande section (GS) / 2e", france: "GS", swiss: "2e" },
   { value: "cp", label: "CP / 3e", france: "CP", swiss: "3e" },
   { value: "ce1", label: "CE1 / 4e", france: "CE1", swiss: "4e" },
   { value: "ce2", label: "CE2 / 5e", france: "CE2", swiss: "5e" },
@@ -82,7 +121,7 @@ const PARTITION_TYPE_OPTIONS = [
   { type: "locationMode",    labelKey: "partitionTypeLocation", options: LOCATION_OPTIONS },
   { type: "groupMode",       labelKey: "partitionTypeGroup",    options: GROUP_MODE_OPTIONS },
   { type: "syncMode",        labelKey: "partitionTypeSync",     options: SYNC_OPTIONS },
-  { type: "teacherPresence", labelKey: "partitionTypePresence", options: TRAINER_OPTIONS },
+  { type: "teachingMode", labelKey: "partitionTypeTeaching", options: TEACHING_OPTIONS },
 ];
 const EVAL_OPTIONS = [
   { value: "none", label: "Aucune", short: "Aucune", icon: ICONS.none },
@@ -144,12 +183,54 @@ function toRomanNumeral(value) {
   return result;
 }
 
+function mergeCompetencyCatalogTranslations(source, translations) {
+  const byId = {};
+  let levelId = "";
+  String(translations ?? "").split("\n").forEach((rawLine) => {
+    const line = String(rawLine ?? "").replace(/\r/g, "");
+    if (!line.trim()) return;
+    if (line.startsWith("# ")) {
+      levelId = line.slice(2).trim();
+      return;
+    }
+    const [number = "", labelEn = "", descEn = ""] = line.split("\t");
+    if (levelId && number.trim()) byId[`${levelId}:${number.trim()}`] = [labelEn, descEn];
+  });
+
+  let sourceLevelId = "";
+  return String(source ?? "").split("\n").map((rawLine) => {
+    const line = String(rawLine ?? "").replace(/\r/g, "");
+    if (line.startsWith("# ")) {
+      sourceLevelId = (line.slice(2).split("\t")[0] || "").trim();
+      return line;
+    }
+    if (!line.trim()) return line;
+    const number = (line.split("\t")[2] || "").trim();
+    const [labelEn = "", descEn = ""] = byId[`${sourceLevelId}:${number}`] || [];
+    return `${line}\t${labelEn}\t${descEn}`;
+  }).join("\n");
+}
+
 function parseCompetencyCatalog(source) {
   const data = [];
   const categories = {};
   const tabs = [];
   const badgeByLevel = { acquerir: "N1", approfondir: "N2", creer: "N3" };
   const legacyCodeByLevel = { acquerir: "A", approfondir: "P", creer: "C" };
+  const sectionEnByFr = {
+    "Utilisation de l'iPad": "Using the iPad",
+    "Productivité et organisation": "Productivity and organisation",
+    "Communication et collaboration": "Communication and collaboration",
+    "Données et programmation": "Data and programming",
+    "Créativité et expression": "Creativity and expression",
+    "Général": "General"
+  };
+  const appEnByFr = {
+    "Partager": "Sharing",
+    "Écrire des emails": "Writing emails",
+    "Excel & calcul": "Excel & calculations",
+    "Programmation": "Programming"
+  };
   let currentLevel = null;
   let currentLevelSections = null;
 
@@ -166,9 +247,12 @@ function parseCompetencyCatalog(source) {
     }
 
     if (!currentLevel) return;
-    const [sectionRaw = "", appRaw = "", numberRaw = "", labelRaw = "", ...descParts] = line.split("\t");
-    const descRaw = descParts.join("\t");
+    const [
+      sectionRaw = "", appRaw = "", numberRaw = "", labelFrRaw = "", descFrRaw = "",
+      labelEnRaw = "", descEnRaw = ""
+    ] = line.split("\t");
     const section = sectionRaw.trim() || "Général";
+    const sectionEn = sectionEnByFr[section] || section;
     const category = `${currentLevel.id}:${normalizeCatalogSlug(section)}`;
     let sectionIndex = currentLevelSections.indexOf(section);
     if (sectionIndex === -1) {
@@ -178,9 +262,11 @@ function parseCompetencyCatalog(source) {
     const sectionNumber = sectionIndex + 1;
     const sectionRoman = toRomanNumeral(sectionNumber);
     const competencyNumber = Number(numberRaw);
-    const label = labelRaw.trim();
-    const description = descRaw.trim();
-    if (!Number.isFinite(competencyNumber) || !label || !description) {
+    const labelFr = labelFrRaw.trim();
+    const descFr = descFrRaw.trim();
+    const labelEn = labelEnRaw.trim() || labelFr;
+    const descEn = descEnRaw.trim() || descFr;
+    if (!Number.isFinite(competencyNumber) || !labelFr || !descFr) {
       console.warn("Invalid competency catalog row", {
         lineNumber: index + 1,
         level: currentLevel.id,
@@ -190,13 +276,14 @@ function parseCompetencyCatalog(source) {
     }
     categories[category] ||= {
       fr: `${sectionRoman} - ${section}`,
-      en: `${sectionRoman} - ${section}`,
+      en: `${sectionRoman} - ${sectionEn}`,
       plainFr: section,
-      plainEn: section,
+      plainEn: sectionEn,
       number: sectionNumber,
       roman: sectionRoman
     };
-    const shortCode = `${currentLevel.labelFr}-${sectionRoman}-${competencyNumber}`;
+    const shortCodeFr = `${currentLevel.labelFr}-${sectionRoman}-${competencyNumber}`;
+    const shortCodeEn = `${currentLevel.labelEn}-${sectionRoman}-${competencyNumber}`;
     const legacyShortCode = `${legacyCodeByLevel[currentLevel.id] || currentLevel.id.charAt(0).toUpperCase()}${competencyNumber}`;
 
     data.push({
@@ -204,21 +291,24 @@ function parseCompetencyCatalog(source) {
       platform: currentLevel.id,
       category,
       sectionFr: section,
-      sectionEn: section,
+      sectionEn,
       appFr: appRaw.trim(),
-      appEn: appRaw.trim(),
+      appEn: appEnByFr[appRaw.trim()] || appRaw.trim(),
       levelLabelFr: currentLevel.labelFr,
       levelLabelEn: currentLevel.labelEn,
       levelBadge: badgeByLevel[currentLevel.id] || currentLevel.id,
       number: competencyNumber,
       sectionNumber,
       sectionRoman,
-      shortCode,
+      // `shortCode` reste l'alias français historique pour les imports existants.
+      shortCode: shortCodeFr,
+      shortCodeFr,
+      shortCodeEn,
       legacyShortCode,
-      labelFr: label,
-      labelEn: label,
-      descFr: description,
-      descEn: description
+      labelFr,
+      labelEn,
+      descFr,
+      descEn
     });
   });
 
@@ -229,13 +319,17 @@ const {
   data: SELECTABLE_TOOLS_DATA,
   categories: SELECTABLE_TOOL_CATEGORY_LABELS,
   tabs: TOOL_PICKER_TABS
-} = parseCompetencyCatalog(COMPETENCY_CATALOG_SOURCE);
+} = parseCompetencyCatalog(mergeCompetencyCatalogTranslations(
+  COMPETENCY_CATALOG_SOURCE,
+  COMPETENCY_CATALOG_EN_SOURCE
+));
 
 const SELECTABLE_TOOL_IDS_SET = new Set(SELECTABLE_TOOLS_DATA.map(tool => tool.id));
 const COMPETENCY_REFERENCE_MAP = SELECTABLE_TOOLS_DATA.reduce((map, tool) => {
   [
     tool.id,
     tool.shortCode,
+    tool.shortCodeEn,
     tool.legacyShortCode,
     tool.labelFr,
     tool.labelEn
@@ -291,6 +385,11 @@ function formatCompetencyLabel(toolDef, lang = currentLang()) {
   if (!toolDef) return "";
   const label = lang === "en" ? toolDef.labelEn : toolDef.labelFr;
   return `${toolDef.number}. ${label}`;
+}
+
+function formatCompetencyShortCode(toolDef, lang = currentLang()) {
+  if (!toolDef) return "";
+  return lang === "en" ? toolDef.shortCodeEn : toolDef.shortCodeFr;
 }
 
 let uid = 0;
@@ -509,13 +608,6 @@ const exportPreviewDetails = document.getElementById("export-preview-details");
 const exportPreviewLabel = document.getElementById("export-preview-label");
 const exportResultText = document.getElementById("export-result-text");
 const exportResultCopyBtn = document.getElementById("export-result-copy-btn");
-const activityLinkModalBackdrop = document.getElementById("activity-link-modal-backdrop");
-const activityLinkTitleInput = document.getElementById("activity-link-title-input");
-const activityLinkUrlInput = document.getElementById("activity-link-url-input");
-const activityLinkList = document.getElementById("activity-link-list");
-const activityLinkError = document.getElementById("activity-link-modal-error");
-const activityLinkCancelBtn = document.getElementById("activity-link-cancel-btn");
-const activityLinkSaveBtn = document.getElementById("activity-link-save-btn");
 const aiasModalBackdrop = document.getElementById("aias-modal-backdrop");
 const aiasModalTitle = document.getElementById("aias-modal-title");
 const aiasModalIntro = document.getElementById("aias-modal-intro");
@@ -528,8 +620,6 @@ const LD_STORAGE_KEY_PREFIX = "ld_state_v2_";
 const LD_LANGUAGE_STORAGE_KEY = "learningDesignerLang";
 let activeStorageKey = null;
 let storageScopeReady = false;
-let activeActivityLinkTrigger = null;
-let activeActivityLinkActivity = null;
 let activeAiasTrigger = null;
 let activeAiasActivity = null;
 
@@ -676,19 +766,9 @@ const I18N = {
     toolsAriaLabel: "Compétences sélectionnées",
     removeToolAriaLabel: (name) => `Retirer ${name}`,
     toolCount: (n) => n === 1 ? "1 compétence" : `${n} compétences`,
-    manageLinks: "Insérer un lien",
-    activityLinksTitle: "Liens de l'activité",
-    activityLinkTitleLabel: "Titre",
-    activityLinkUrlLabel: "Lien",
-    activityLinkAdd: "Ajouter",
-    activityLinkEmpty: "Aucun lien ajouté pour cette activité.",
-    activityLinkCount: (n) => n === 1 ? "1 lien" : `${n} liens`,
-    removeLinkAriaLabel: (name) => `Retirer le lien ${name}`,
-    activityLinkErrorRequired: "Renseignez un titre et un lien.",
-    activityLinkErrorInvalid: "Le lien saisi n'est pas valide.",
     groupTitleType: "Type d'apprentissage",
     groupTitleGroup: "Groupe",
-    groupTitleTrainer: "Enseignant",
+    groupTitleTeaching: "Enseignement",
     groupTitlePacing: "Rythme",
     groupTitleMode: "Modalité",
     groupTitleEvaluation: "Évaluation",
@@ -751,7 +831,7 @@ const I18N = {
     an01: "Un ou plusieurs graphiques peuvent être incorrects, car une ou plusieurs activités n’ont pas de durée valide.",
     an02: "Les graphiques ne peuvent pas être calculés, car aucune durée d’activité n’est définie.",
     an03: "Le graphe social peut être incorrect, car un ou plusieurs types d’apprentissage n’ont pas de taille de groupe définie.",
-    an04: "Le graphique « Enseignant » peut être incorrect, car une ou plusieurs activités n’ont pas ce paramètre défini.",
+    an04: "Le graphique « Enseignement » peut être incorrect, car une ou plusieurs activités n’ont pas ce paramètre défini.",
     an05: "Le graphique « Rythme » peut être incorrect, car une ou plusieurs activités n’ont pas ce paramètre défini.",
     an06: "Le graphique « Modalité » peut être incorrect, car une ou plusieurs activités n’ont pas ce paramètre défini.",
     an07: "Le temps conçu dépasse le temps d’apprentissage déclaré.",
@@ -767,10 +847,15 @@ const I18N = {
     group_whole: "Groupe entier",
     group_subgroups: "Sous-groupes",
     group_individual: "Individuel",
-    trainer_present: "Présent",
-    trainer_absent: "Absent",
-    teacherPresentLabel: "Enseignant présent",
-    teacherAbsentLabel: "Enseignant absent",
+    teaching_undefined: "À définir",
+    teaching_directed: "Enseignement dirigé",
+    teaching_directed_description: "L’enseignant détermine ce qui se passe à chaque instant, que ce soit en expliquant, en démontrant ou en guidant les élèves pas à pas dans une tâche. Les élèves suivent.",
+    teaching_guided: "Enseignement guidé",
+    teaching_guided_description: "Les élèves réalisent la tâche ; l’enseignant fixe la méthode et intervient tout au long pour relancer, corriger et maintenir le cap.",
+    teaching_supported: "Enseignement accompagné",
+    teaching_supported_description: "Les élèves décident de la manière de procéder et de leur rythme ; l’enseignant répond aux sollicitations ou lorsque le travail s’égare, mais ne le dirige pas.",
+    teaching_independent: "Enseignement en autonomie",
+    teaching_independent_description: "Les élèves déterminent leur approche, leur progression et leur rythme dans une tâche conçue par l’enseignant. Aucun accompagnement pendant le travail.",
     sync_sync: "Synchrone",
     sync_async: "Asynchrone",
     eval_none: "Aucune évaluation",
@@ -808,7 +893,7 @@ const I18N = {
     partitionTypeLocation: "Localisation",
     partitionTypeGroup: "Mode groupe",
     partitionTypeSync: "Synchronicité",
-    partitionTypePresence: "Présence enseignant",
+    partitionTypeTeaching: "Enseignement",
     partitionTotal: "Total",
     partitionSession: "Session",
     viewGrid: "Grille",
@@ -817,7 +902,7 @@ const I18N = {
     gridColLocation: "Lieu",
     gridColGroup: "Groupe",
     gridColSync: "Sync",
-    gridColTeacher: "Enseignant",
+    gridColTeaching: "Enseignement",
     gridColEval: "Évaluation",
     gridColAias: "AIAS",
     gridColDesc: "Description",
@@ -951,19 +1036,9 @@ const I18N = {
     toolsAriaLabel: "Selected competencies",
     removeToolAriaLabel: (name) => `Remove ${name}`,
     toolCount: (n) => n === 1 ? "1 competency" : `${n} competencies`,
-    manageLinks: "Insert link",
-    activityLinksTitle: "Activity links",
-    activityLinkTitleLabel: "Title",
-    activityLinkUrlLabel: "Link",
-    activityLinkAdd: "Add",
-    activityLinkEmpty: "No links added for this activity.",
-    activityLinkCount: (n) => n === 1 ? "1 link" : `${n} links`,
-    removeLinkAriaLabel: (name) => `Remove link ${name}`,
-    activityLinkErrorRequired: "Enter both a title and a link.",
-    activityLinkErrorInvalid: "The link entered is not valid.",
     groupTitleType: "Learning type",
     groupTitleGroup: "Group",
-    groupTitleTrainer: "Teacher",
+    groupTitleTeaching: "Teaching",
     groupTitlePacing: "Pacing",
     groupTitleMode: "Mode",
     groupTitleEvaluation: "Assessment",
@@ -1026,7 +1101,7 @@ const I18N = {
     an01: "One or more graphs might not display correctly, because one or more activities do not have a valid duration.",
     an02: "Graphs cannot be computed, because no activity duration is set.",
     an03: "The social learning graph might not display correctly, because one or more learning types do not have group size set.",
-    an04: "The “Teacher presence” graph might be inaccurate, because one or more activities are missing this setting.",
+    an04: "The “Teaching” graph might be inaccurate, because one or more activities are missing this setting.",
     an05: "The “Pacing” graph might be inaccurate, because one or more activities are missing this setting.",
     an06: "The “Delivery mode” graph might be inaccurate, because one or more activities are missing this setting.",
     an07: "Designed time exceeds declared learning time.",
@@ -1042,10 +1117,15 @@ const I18N = {
     group_whole: "Whole class",
     group_subgroups: "Sub-groups",
     group_individual: "Individual",
-    trainer_present: "Present",
-    trainer_absent: "Absent",
-    teacherPresentLabel: "Teacher present",
-    teacherAbsentLabel: "Teacher absent",
+    teaching_undefined: "To be defined",
+    teaching_directed: "Teacher-directed",
+    teaching_directed_description: "The teacher determines what happens at each moment, whether by explaining, demonstrating, or taking pupils through a task step by step. Pupils follow.",
+    teaching_guided: "Teacher-guided",
+    teaching_guided_description: "Pupils carry out the task; the teacher sets the method and intervenes throughout to prompt, correct and keep the work on track.",
+    teaching_supported: "Teacher-supported",
+    teaching_supported_description: "Pupils decide how to proceed and set their own pace; the teacher responds when asked or when the work goes astray, but does not direct it.",
+    teaching_independent: "Independent work",
+    teaching_independent_description: "Pupils determine their own approach, sequence and pace within a task the teacher has designed. No guidance during the work.",
     sync_sync: "Synchronous",
     sync_async: "Asynchronous",
     eval_none: "No assessment",
@@ -1083,7 +1163,7 @@ const I18N = {
     partitionTypeLocation: "Location",
     partitionTypeGroup: "Group mode",
     partitionTypeSync: "Synchronicity",
-    partitionTypePresence: "Teacher presence",
+    partitionTypeTeaching: "Teaching",
     partitionTotal: "Total",
     partitionSession: "Session",
     viewGrid: "Grid",
@@ -1092,7 +1172,7 @@ const I18N = {
     gridColLocation: "Location",
     gridColGroup: "Group",
     gridColSync: "Sync",
-    gridColTeacher: "Teacher",
+    gridColTeaching: "Teaching",
     gridColEval: "Assessment",
     gridColAias: "AIAS",
     gridColDesc: "Description",
@@ -1460,11 +1540,13 @@ function refreshLocalizedCatalogs() {
     option.short = shortLabel(option.label);
   });
 
-  TRAINER_OPTIONS.forEach((option) => {
-    if (option.value === "present") option.label = t("trainer_present");
-    if (option.value === "absent") option.label = t("trainer_absent");
+  TEACHING_OPTIONS.forEach((option) => {
+    option.label = t(`teaching_${option.value}`);
+    option.description = t(`teaching_${option.value}_description`);
     option.short = shortLabel(option.label);
   });
+  UNDEFINED_TEACHING_OPTION.label = t("teaching_undefined");
+  UNDEFINED_TEACHING_OPTION.short = shortLabel(UNDEFINED_TEACHING_OPTION.label);
 
   SYNC_OPTIONS.forEach((option) => {
     if (option.value === "sync") option.label = t("sync_sync");
@@ -1649,17 +1731,6 @@ function applyLocalizedUI() {
   if (exportResultCopyBtn) exportResultCopyBtn.textContent = t("copy");
   exportModalCancelBtn.textContent = t("close");
   exportModalConfirmBtn.textContent = t("download");
-  const activityLinkTitle = document.getElementById("activity-link-modal-title");
-  if (activityLinkTitle) activityLinkTitle.textContent = t("activityLinksTitle");
-  const activityLinkTitleLabel = document.getElementById("activity-link-title-label");
-  if (activityLinkTitleLabel) activityLinkTitleLabel.textContent = t("activityLinkTitleLabel");
-  const activityLinkUrlLabel = document.getElementById("activity-link-url-label");
-  if (activityLinkUrlLabel) activityLinkUrlLabel.textContent = t("activityLinkUrlLabel");
-  if (activityLinkTitleInput) activityLinkTitleInput.placeholder = t("activityLinkTitleLabel");
-  if (activityLinkUrlInput) activityLinkUrlInput.placeholder = "https://…";
-  if (activityLinkList) activityLinkList.dataset.empty = t("activityLinkEmpty");
-  if (activityLinkCancelBtn) activityLinkCancelBtn.textContent = t("close");
-  if (activityLinkSaveBtn) activityLinkSaveBtn.textContent = t("activityLinkAdd");
   if (aiasModalTitle) aiasModalTitle.textContent = t("aiasFieldLabel");
   if (aiasModalIntro) aiasModalIntro.textContent = t("aiasPanelIntro");
   if (aiasModalLevels) aiasModalLevels.setAttribute("aria-label", t("aiasLevelsAriaLabel"));
@@ -1740,7 +1811,7 @@ function hydrateState(parsed, fallback = defaultState()) {
           : []
     },
     partitionLineConfig: Array.isArray(parsed.partitionLineConfig)
-      ? parsed.partitionLineConfig
+      ? normalizePartitionLineConfig(parsed.partitionLineConfig)
       : defaultPartitionLineConfig(),
     sessions: parsed.sessions.map((session) => ({
       id: session?.id || nextId(),
@@ -1756,6 +1827,7 @@ function hydrateState(parsed, fallback = defaultState()) {
               type: activity?.type || "undefined",
               duration: Math.max(1, Number(activity?.duration) || 1),
               groupMode: activity?.groupMode,
+              teachingMode: activity?.teachingMode,
               teacherPresence: activity?.teacherPresence,
               syncMode: activity?.syncMode,
               locationMode: activity?.locationMode,
@@ -2057,7 +2129,10 @@ function colorForType(typeId) {
 }
 
 function getOption(options, value) {
-  return options.find((opt) => opt.value === value) || options[0];
+  const option = options.find((opt) => opt.value === value);
+  if (option) return option;
+  if (options === TEACHING_OPTIONS) return UNDEFINED_TEACHING_OPTION;
+  return options[0];
 }
 
 function setChoiceButton(button, options, value) {
@@ -2350,7 +2425,7 @@ function updateActivityToolsDisplay(trigger, activity) {
     const nameEl = document.createElement("span");
     nameEl.className = "tool-chip-name";
     const label = lang === "en" ? toolDef.labelEn : toolDef.labelFr;
-    nameEl.textContent = toolDef.shortCode;
+    nameEl.textContent = formatCompetencyShortCode(toolDef, lang);
     const removeBtn = document.createElement("button");
     removeBtn.type = "button";
     removeBtn.className = "tool-chip-remove";
@@ -2371,139 +2446,6 @@ function updateActivityToolsDisplay(trigger, activity) {
   });
 }
 
-function updateActivityLinksDisplay(trigger, activity) {
-  if (!trigger) return;
-  const card = trigger.closest(".activity-card");
-  if (!card) return;
-  const count = Array.isArray(activity.links) ? activity.links.length : 0;
-  trigger.dataset.count = count;
-  trigger.classList.toggle("has-links", count > 0);
-  trigger.setAttribute("aria-label", count > 0
-    ? `${t("manageLinks")} (${t("activityLinkCount")(count)})`
-    : t("manageLinks"));
-  const linksRow = card.querySelector(".activity-links");
-  if (!linksRow) return;
-  linksRow.classList.toggle("hidden", count === 0);
-  linksRow.setAttribute("aria-label", t("activityLinksTitle"));
-  linksRow.innerHTML = "";
-  (activity.links || []).forEach((link) => {
-    const chip = document.createElement("span");
-    chip.className = "activity-link-chip";
-    chip.setAttribute("role", "listitem");
-    const anchor = document.createElement("a");
-    anchor.className = "activity-link-chip-anchor";
-    anchor.href = normalizeExternalUrl(link.url);
-    anchor.target = "_blank";
-    anchor.rel = "noopener noreferrer";
-    anchor.textContent = link.title;
-    const removeBtn = document.createElement("button");
-    removeBtn.type = "button";
-    removeBtn.className = "activity-link-chip-remove";
-    removeBtn.setAttribute("aria-label", t("removeLinkAriaLabel")(link.title));
-    removeBtn.textContent = "×";
-    removeBtn.addEventListener("click", (event) => {
-      event.stopPropagation();
-      activity.links = (activity.links || []).filter((item) => item.id !== link.id);
-      saveState();
-      updateActivityLinksDisplay(trigger, activity);
-      if (activeActivityLinkActivity === activity) {
-        renderActivityLinkList(activity);
-      }
-    });
-    chip.appendChild(anchor);
-    chip.appendChild(removeBtn);
-    linksRow.appendChild(chip);
-  });
-}
-
-function renderActivityLinkList(activity) {
-  if (!activityLinkList) return;
-  activityLinkList.innerHTML = "";
-  activityLinkList.dataset.empty = t("activityLinkEmpty");
-  (activity.links || []).forEach((link) => {
-    const item = document.createElement("div");
-    item.className = "activity-link-list-item";
-    item.setAttribute("role", "listitem");
-    const main = document.createElement("div");
-    main.className = "activity-link-list-main";
-    const anchor = document.createElement("a");
-    anchor.className = "activity-link-list-title";
-    anchor.href = normalizeExternalUrl(link.url);
-    anchor.target = "_blank";
-    anchor.rel = "noopener noreferrer";
-    anchor.textContent = link.title;
-    const url = document.createElement("div");
-    url.className = "activity-link-list-url";
-    url.textContent = link.url;
-    main.appendChild(anchor);
-    main.appendChild(url);
-    const removeBtn = document.createElement("button");
-    removeBtn.type = "button";
-    removeBtn.className = "btn btn-light";
-    removeBtn.textContent = "×";
-    removeBtn.setAttribute("aria-label", t("removeLinkAriaLabel")(link.title));
-    removeBtn.addEventListener("click", () => {
-      activity.links = (activity.links || []).filter((item) => item.id !== link.id);
-      saveState();
-      renderActivityLinkList(activity);
-      updateActivityLinksDisplay(activeActivityLinkTrigger, activity);
-    });
-    item.appendChild(main);
-    item.appendChild(removeBtn);
-    activityLinkList.appendChild(item);
-  });
-}
-
-function setActivityLinkError(message = "") {
-  if (!activityLinkError) return;
-  activityLinkError.textContent = message;
-  activityLinkError.classList.toggle("hidden", !message);
-}
-
-function openActivityLinkModal(trigger, activity) {
-  activeActivityLinkTrigger = trigger;
-  activeActivityLinkActivity = activity;
-  if (activityLinkTitleInput) activityLinkTitleInput.value = "";
-  if (activityLinkUrlInput) activityLinkUrlInput.value = "";
-  setActivityLinkError("");
-  renderActivityLinkList(activity);
-  if (trigger) trigger.setAttribute("aria-expanded", "true");
-  openModal(activityLinkModalBackdrop, "#activity-link-title-input");
-}
-
-function closeActivityLinkModal() {
-  if (activeActivityLinkTrigger) {
-    activeActivityLinkTrigger.setAttribute("aria-expanded", "false");
-  }
-  setActivityLinkError("");
-  closeModal(activityLinkModalBackdrop);
-  activeActivityLinkTrigger = null;
-  activeActivityLinkActivity = null;
-}
-
-function confirmActivityLink() {
-  if (!activeActivityLinkActivity) return;
-  const title = toPlainTextareaValue(activityLinkTitleInput?.value || "").trim();
-  const url = normalizeExternalUrl(activityLinkUrlInput?.value || "");
-  if (!title || !url) {
-    setActivityLinkError(title || String(activityLinkUrlInput?.value || "").trim()
-      ? t("activityLinkErrorInvalid")
-      : t("activityLinkErrorRequired"));
-    return;
-  }
-  activeActivityLinkActivity.links = [
-    ...(Array.isArray(activeActivityLinkActivity.links) ? activeActivityLinkActivity.links : []),
-    { id: nextId(), title, url }
-  ];
-  saveState();
-  renderActivityLinkList(activeActivityLinkActivity);
-  updateActivityLinksDisplay(activeActivityLinkTrigger, activeActivityLinkActivity);
-  setActivityLinkError("");
-  activityLinkTitleInput.value = "";
-  activityLinkUrlInput.value = "";
-  activityLinkTitleInput.focus();
-}
-
 function openChoiceMenu(trigger, options, currentValue, onSelect) {
   if (activeChoiceMenu && activeChoiceTrigger === trigger) {
     closeChoiceMenu(true);
@@ -2514,6 +2456,7 @@ function openChoiceMenu(trigger, options, currentValue, onSelect) {
   const menu = document.createElement("div");
   const menuId = `choice-menu-${nextId()}`;
   menu.className = "choice-menu";
+  menu.classList.toggle("choice-menu-with-descriptions", options.some((option) => option.description));
   menu.id = menuId;
   menu.setAttribute("role", "listbox");
   menu.setAttribute("aria-label", trigger.dataset.groupTitle || trigger.title || "Options");
@@ -2531,8 +2474,22 @@ function openChoiceMenu(trigger, options, currentValue, onSelect) {
     const item = document.createElement("button");
     item.type = "button";
     item.className = `choice-menu-item${option.value === currentValue ? " active" : ""}`;
-    item.innerHTML = `${option.icon}<span>${option.label}</span>`;
+    item.innerHTML = option.icon;
+    const text = document.createElement("span");
+    text.className = "choice-menu-item-text";
+    const label = document.createElement("span");
+    label.className = "choice-menu-item-label";
+    label.textContent = option.label;
+    text.appendChild(label);
+    if (option.description) {
+      const description = document.createElement("span");
+      description.className = "choice-menu-item-description";
+      description.textContent = option.description;
+      text.appendChild(description);
+    }
+    item.appendChild(text);
     item.setAttribute("role", "option");
+    item.setAttribute("aria-label", [option.label, option.description].filter(Boolean).join(". "));
     item.setAttribute("tabindex", "-1");
     item.setAttribute("aria-selected", option.value === currentValue ? "true" : "false");
     item.addEventListener("click", () => {
@@ -2618,10 +2575,8 @@ function normalizeActivity(activity) {
   activity.instructions = toPlainTextareaValue(activity.instructions);
   activity.aias = normalizeAiasState(activity.aias ?? activity.aiasLevel);
   delete activity.aiasLevel;
-  if (!Array.isArray(activity.links)) activity.links = [];
-  activity.links = activity.links
-    .map(normalizeActivityLinkEntry)
-    .filter(Boolean);
+  activity.description = migrateLegacyActivityLinks(activity.description, activity.links);
+  delete activity.links;
   if (!Array.isArray(activity.tools)) activity.tools = [];
   activity.tools = activity.tools
     .map((reference) => {
@@ -2640,9 +2595,10 @@ function normalizeActivity(activity) {
       activity.groupMode = "whole";
     }
   }
-  if (activity.teacherPresence !== "present" && activity.teacherPresence !== "absent") {
-    activity.teacherPresence = "present";
+  if (!TEACHING_VALUES.has(activity.teachingMode)) {
+    activity.teachingMode = activity.teacherPresence === "absent" ? "independent" : "undefined";
   }
+  delete activity.teacherPresence;
   if (activity.syncMode !== "sync" && activity.syncMode !== "async") {
     activity.syncMode = "sync";
   }
@@ -2658,6 +2614,20 @@ function normalizeActivity(activity) {
   ) {
     activity.evaluationMode = "none";
   }
+}
+
+function normalizePartitionLineConfig(lines) {
+  return lines.map((line) => {
+    if (!line || typeof line !== "object") return line;
+    if (line.type !== "teacherPresence") return { ...line };
+    const value = line.value === "absent" ? "independent" : "undefined";
+    return {
+      ...line,
+      type: "teachingMode",
+      value,
+      label: labelForTeachingMode(value)
+    };
+  });
 }
 
 function defaultAiasState() {
@@ -2858,6 +2828,25 @@ function normalizeActivityLinkEntry(link) {
   };
 }
 
+function escapeMarkdownLinkLabel(value) {
+  return String(value || "")
+    .replaceAll("\\", "\\\\")
+    .replaceAll("[", "\\[")
+    .replaceAll("]", "\\]");
+}
+
+function migrateLegacyActivityLinks(description, links) {
+  const normalizedDescription = toPlainTextareaValue(description);
+  if (!Array.isArray(links) || !links.length) return normalizedDescription;
+  const markdownLinks = links
+    .map(normalizeActivityLinkEntry)
+    .filter(Boolean)
+    .map((link) => `[${escapeMarkdownLinkLabel(link.title)}](${link.url})`)
+    .filter((markdownLink) => !normalizedDescription.includes(markdownLink));
+  if (!markdownLinks.length) return normalizedDescription;
+  return [normalizedDescription.trim(), markdownLinks.join("\n")].filter(Boolean).join("\n\n");
+}
+
 function normalizeExternalUrl(value) {
   const raw = String(value || "").trim();
   if (!raw) return "";
@@ -2923,7 +2912,7 @@ function buildAnalysisMetrics() {
     overall: 0,
     byType: {},
     byLocation: {},
-    byTeacher: {},
+    byTeaching: {},
     bySync: {},
     byEvaluation: {},
     byGroup: {}
@@ -2938,7 +2927,7 @@ function buildAnalysisMetrics() {
       metrics.activities.push(activity);
       metrics.byType[activity.type] = (metrics.byType[activity.type] || 0) + duration;
       metrics.byLocation[activity.locationMode] = (metrics.byLocation[activity.locationMode] || 0) + duration;
-      metrics.byTeacher[activity.teacherPresence] = (metrics.byTeacher[activity.teacherPresence] || 0) + duration;
+      metrics.byTeaching[activity.teachingMode] = (metrics.byTeaching[activity.teachingMode] || 0) + duration;
       metrics.bySync[activity.syncMode] = (metrics.bySync[activity.syncMode] || 0) + duration;
       metrics.byEvaluation[evaluationKey] = (metrics.byEvaluation[evaluationKey] || 0) + duration;
       metrics.byGroup[activity.groupMode] = (metrics.byGroup[activity.groupMode] || 0) + duration;
@@ -3251,8 +3240,8 @@ function getAnalysisAlerts(metrics) {
   const hasInvalidGroupMode = activities.some(
     (activity) => !["whole", "subgroups", "individual"].includes(activity.groupMode)
   );
-  const hasInvalidTrainerMode = activities.some(
-    (activity) => !["present", "absent"].includes(activity.teacherPresence)
+  const hasInvalidTeachingMode = activities.some(
+    (activity) => !TEACHING_VALUES.has(activity.teachingMode)
   );
   const hasInvalidSyncMode = activities.some(
     (activity) => !["sync", "async"].includes(activity.syncMode)
@@ -3265,7 +3254,7 @@ function getAnalysisAlerts(metrics) {
   if (hasInvalidDuration) alerts.push({ id: "AN-01", level: "warning", message: t("an01") });
   if (designedMinutes <= 0) alerts.push({ id: "AN-02", level: "warning", message: t("an02") });
   if (hasInvalidGroupMode) alerts.push({ id: "AN-03", level: "warning", message: t("an03") });
-  if (hasInvalidTrainerMode) alerts.push({ id: "AN-04", level: "warning", message: t("an04") });
+  if (hasInvalidTeachingMode) alerts.push({ id: "AN-04", level: "warning", message: t("an04") });
   if (hasInvalidSyncMode) alerts.push({ id: "AN-05", level: "warning", message: t("an05") });
   if (hasInvalidLocationMode) alerts.push({ id: "AN-06", level: "warning", message: t("an06") });
   if (learningMinutes > 0 && designedMinutes > learningMinutes) {
@@ -3328,13 +3317,16 @@ function renderAnalysisPanel() {
   renderConic(analysisDeliveryPie, deliveryData);
   renderLegend(analysisDeliveryLegend, deliveryData);
 
-  const teacherDefs = [
-    { key: "present", label: t("teacherPresentLabel"), color: "#7a6854" },
-    { key: "absent", label: t("teacherAbsentLabel"), color: "#c5b59f" }
+  const teachingDefs = [
+    { key: "directed", label: t("teaching_directed"), color: "#67513f" },
+    { key: "guided", label: t("teaching_guided"), color: "#8b6f52" },
+    { key: "supported", label: t("teaching_supported"), color: "#b09470" },
+    { key: "independent", label: t("teaching_independent"), color: "#d2c2aa" },
+    { key: "undefined", label: t("teaching_undefined"), color: "#d1d5db" }
   ];
-  const teacherData = buildSegments(teacherDefs, metrics.byTeacher);
-  renderConic(analysisTeacherPie, teacherData);
-  renderLegend(analysisTeacherLegend, teacherData);
+  const teachingData = buildSegments(teachingDefs, metrics.byTeaching);
+  renderConic(analysisTeacherPie, teachingData);
+  renderLegend(analysisTeacherLegend, teachingData);
 
   const syncDefs = [
     { key: "sync", label: t("sync_sync"), color: "#ac7f8d" },
@@ -3435,7 +3427,7 @@ function renderPartitionView() {
           if (lineConfig.type === 'locationMode') return activity.locationMode === lineConfig.value;
           if (lineConfig.type === 'groupMode') return activity.groupMode === lineConfig.value;
           if (lineConfig.type === 'syncMode') return activity.syncMode === lineConfig.value;
-          if (lineConfig.type === 'teacherPresence') return activity.teacherPresence === lineConfig.value;
+          if (lineConfig.type === 'teachingMode') return activity.teachingMode === lineConfig.value;
           return false;
         })();
 
@@ -3607,8 +3599,8 @@ function labelForGroupMode(groupMode) {
   return t("group_individual");
 }
 
-function labelForTrainerMode(mode) {
-  return mode === "absent" ? t("trainer_absent") : t("trainer_present");
+function labelForTeachingMode(mode) {
+  return getOption(TEACHING_OPTIONS, mode)?.label || t("teaching_undefined");
 }
 
 function slidersToString(sliders) {
@@ -3860,19 +3852,13 @@ function buildMarkdownExport(scope = "full", sessionIds = null) {
       lines.push(`### ${sessionIndex + 1}.${activityIndex + 1} ${labelForType(activity.type)}`);
       lines.push(`- Durée: ${activity.duration} min`);
       lines.push(`- Groupe: ${labelForGroupMode(activity.groupMode)}`);
-      lines.push(`- Enseignant: ${labelForTrainerMode(activity.teacherPresence)}`);
+      lines.push(`- Enseignement: ${labelForTeachingMode(activity.teachingMode)}`);
       lines.push(`- Rythme: ${labelForSyncMode(activity.syncMode)}`);
       lines.push(`- Modalité: ${labelForLocationMode(activity.locationMode)}`);
       lines.push(`- Évaluation: ${labelForEvaluationMode(activity.evaluationMode)}`);
       lines.push(`- AIAS: ${aiasSummary(activity.aias)}`);
       lines.push(`- Description: ${activity.description || "-"}`);
       lines.push(`- Consignes pour les élèves: ${activity.instructions || "-"}`);
-      if (activity.links && activity.links.length) {
-        const linkLabels = activity.links
-          .map((link) => `${link.title} (${link.url})`)
-          .join(", ");
-        lines.push(`- Liens: ${linkLabels}`);
-      }
       if (activity.tools && activity.tools.length) {
         const toolLabels = activity.tools
           .map(id => SELECTABLE_TOOLS_DATA.find(t => t.id === id))
@@ -3941,14 +3927,13 @@ function buildHtmlExportDocument(scope = "full", sessionIds = null) {
             <h4>${sessionIndex + 1}.${activityIndex + 1} ${escapeHtml(labelForType(activity.type))}</h4>
             <p><strong>Durée:</strong> ${escapeHtml(activity.duration)} min</p>
             <p><strong>Groupe:</strong> ${escapeHtml(labelForGroupMode(activity.groupMode))}</p>
-            <p><strong>Enseignant:</strong> ${escapeHtml(labelForTrainerMode(activity.teacherPresence))}</p>
+            <p><strong>Enseignement:</strong> ${escapeHtml(labelForTeachingMode(activity.teachingMode))}</p>
             <p><strong>Rythme:</strong> ${escapeHtml(labelForSyncMode(activity.syncMode))}</p>
             <p><strong>Modalité:</strong> ${escapeHtml(labelForLocationMode(activity.locationMode))}</p>
             <p><strong>Évaluation:</strong> ${escapeHtml(labelForEvaluationMode(activity.evaluationMode))}</p>
             <p><strong>AIAS:</strong> ${escapeHtml(aiasSummary(activity.aias))}</p>
             <p><strong>Description:</strong> ${escapeHtmlWithBreaks(activity.description || "")}</p>
             <p><strong>Consignes pour les élèves:</strong> ${escapeHtmlWithBreaks(activity.instructions || "")}</p>
-            ${activity.links && activity.links.length ? `<p><strong>Liens:</strong> ${activity.links.map((link) => `<a href="${escapeHtml(normalizeExternalUrl(link.url))}" target="_blank" rel="noopener noreferrer">${escapeHtml(link.title)}</a>`).join(", ")}</p>` : ""}
             ${activity.tools && activity.tools.length ? `<p><strong>Compétences:</strong> ${escapeHtml(activity.tools.map(id => { const t = SELECTABLE_TOOLS_DATA.find(x => x.id === id); return t ? formatCompetencyLabel(t, "fr") : id; }).join(", "))}</p>` : ""}
           </li>
         `
@@ -4443,9 +4428,6 @@ function buildFullWordBody(sessionIds = null) {
       body.push(wordSpacer(80));
     }
     session.activities.forEach((activity, activityIndex) => {
-      const links = activity.links && activity.links.length
-        ? activity.links.map((link) => `[${link.title}](${link.url})`).join("\n")
-        : "";
       let toolLabels = "";
       if (activity.tools && activity.tools.length) {
         toolLabels = activity.tools
@@ -4458,14 +4440,13 @@ function buildFullWordBody(sessionIds = null) {
       body.push(wordFieldTable([
         ["Durée", `${activity.duration} min`],
         ["Groupe", labelForGroupMode(activity.groupMode)],
-        ["Enseignant", labelForTrainerMode(activity.teacherPresence)],
+        ["Enseignement", labelForTeachingMode(activity.teachingMode)],
         ["Rythme", labelForSyncMode(activity.syncMode)],
         ["Modalité", labelForLocationMode(activity.locationMode)],
         ["Évaluation", labelForEvaluationMode(activity.evaluationMode)],
         ["AIAS", aiasSummary(activity.aias)],
         ["Description", activity.description || "-"],
         ["Consignes pour les élèves", activity.instructions || "-"],
-        ["Liens", links || "-"],
         ["Compétences", toolLabels || "-"]
       ]));
       body.push(wordSpacer(activityIndex === session.activities.length - 1 ? 150 : 70));
@@ -4652,7 +4633,7 @@ function buildSpreadsheetRows(scope = "full", sessionIds = null) {
           labelForType(activity.type),
           activity.duration,
           labelForGroupMode(activity.groupMode),
-          labelForTrainerMode(activity.teacherPresence),
+          labelForTeachingMode(activity.teachingMode),
           labelForSyncMode(activity.syncMode),
           labelForLocationMode(activity.locationMode),
           labelForEvaluationMode(activity.evaluationMode),
@@ -4661,7 +4642,10 @@ function buildSpreadsheetRows(scope = "full", sessionIds = null) {
           activity.instructions || "",
           activity.notes || "",
           (activity.tools || [])
-            .map((id) => SELECTABLE_TOOLS_DATA.find((tool) => tool.id === id)?.shortCode || id)
+            .map((id) => {
+              const tool = SELECTABLE_TOOLS_DATA.find((candidate) => candidate.id === id);
+              return tool ? formatCompetencyShortCode(tool) : id;
+            })
             .join(";"),
           state.meta.name || "",
           labelForLocationMode(state.meta.modeDelivery),
@@ -4694,7 +4678,7 @@ const SPREADSHEET_COLUMNS = [
   { key: "learning_type", label: "Type d'apprentissage", width: 18 },
   { key: "duration_minutes", label: "Durée (minutes)", width: 16 },
   { key: "group_size", label: "Organisation du groupe", width: 18 },
-  { key: "trainer_presence", label: "Présence de l'enseignant", width: 20 },
+  { key: "teaching_mode", label: "Enseignement", width: 24 },
   { key: "pacing", label: "Rythme", width: 14 },
   { key: "delivery_mode", label: "Modalité", width: 14 },
   { key: "assessment", label: "Évaluation", width: 18 },
@@ -4889,6 +4873,15 @@ function buildSpreadsheetHeaderIndex(headerRow) {
     });
   });
 
+  if (headerIndex.teaching_mode == null) {
+    ["trainer_presence", "Présence de l'enseignant", "Teacher presence"].some((legacyHeader) => {
+      const legacyIndex = headerIndex[normalizeToken(legacyHeader)];
+      if (legacyIndex == null) return false;
+      headerIndex.teaching_mode = legacyIndex;
+      return true;
+    });
+  }
+
   return headerIndex;
 }
 
@@ -4908,9 +4901,12 @@ const CSV_GROUP_LOOKUP = buildLookup([
   ["individual", I18N.fr.group_individual, I18N.en.group_individual]
 ]);
 
-const CSV_TRAINER_LOOKUP = buildLookup([
-  ["present", I18N.fr.trainer_present, I18N.en.trainer_present, I18N.fr.teacherPresentLabel, I18N.en.teacherPresentLabel],
-  ["absent", I18N.fr.trainer_absent, I18N.en.trainer_absent, I18N.fr.teacherAbsentLabel, I18N.en.teacherAbsentLabel]
+const CSV_TEACHING_LOOKUP = buildLookup([
+  ["directed", I18N.fr.teaching_directed, I18N.en.teaching_directed, "teacher directed"],
+  ["guided", I18N.fr.teaching_guided, I18N.en.teaching_guided, "teacher guided"],
+  ["supported", I18N.fr.teaching_supported, I18N.en.teaching_supported, "teacher supported"],
+  ["independent", I18N.fr.teaching_independent, I18N.en.teaching_independent, "independent work", "absent", "enseignant absent", "teacher absent"],
+  ["undefined", I18N.fr.teaching_undefined, I18N.en.teaching_undefined, "present", "enseignant present", "teacher present"]
 ]);
 
 const CSV_SYNC_LOOKUP = buildLookup([
@@ -5055,7 +5051,7 @@ function buildStateFromLegacyLdj(parsed) {
               String(legacyActivity?.groupSizeSameAsSession) === "true",
               sessionGroupSize
             ),
-            teacherPresence: String(legacyActivity?.tutorAvailable) === "true" ? "present" : "absent",
+            teachingMode: String(legacyActivity?.tutorAvailable) === "true" ? "undefined" : "independent",
             syncMode: String(legacyActivity?.syncActivity) === "true" ? "sync" : "async",
             locationMode: String(legacyActivity?.onlineActivity) === "true" ? "online" : "onsite",
             evaluationMode: parseLegacyEvaluationType(legacyActivity?.assessmentType),
@@ -5064,8 +5060,7 @@ function buildStateFromLegacyLdj(parsed) {
               legacyActivity?.instructions ?? legacyActivity?.studentInstructions
             ).trim(),
             notes: "",
-            tools: [],
-            links: []
+            tools: []
           };
 
           const activityResources = Array.isArray(legacyActivity?.resources)
@@ -5160,7 +5155,7 @@ function buildStateFromCsv(csvText) {
       read("learning_type"),
       read("duration_minutes"),
       read("group_size"),
-      read("trainer_presence"),
+      read("teaching_mode") || read("trainer_presence"),
       read("pacing"),
       read("delivery_mode"),
       read("assessment"),
@@ -5177,7 +5172,7 @@ function buildStateFromCsv(csvText) {
       type: lookupValue(read("learning_type"), CSV_TYPE_LOOKUP, "read"),
       duration,
       groupMode: lookupValue(read("group_size"), CSV_GROUP_LOOKUP, "whole"),
-      teacherPresence: lookupValue(read("trainer_presence"), CSV_TRAINER_LOOKUP, "present"),
+      teachingMode: lookupValue(read("teaching_mode") || read("trainer_presence"), CSV_TEACHING_LOOKUP, "undefined"),
       syncMode: lookupValue(read("pacing"), CSV_SYNC_LOOKUP, "sync"),
       locationMode: lookupValue(read("delivery_mode"), CSV_LOCATION_LOOKUP, "onsite"),
       evaluationMode: lookupValue(read("assessment"), CSV_EVAL_LOOKUP, "none"),
@@ -5382,7 +5377,7 @@ function buildStateFromMarkdown(markdownText) {
           type: lookupValue(activityHeading[1], CSV_TYPE_LOOKUP, "undefined"),
           duration: 1,
           groupMode: "whole",
-          teacherPresence: "present",
+          teachingMode: "undefined",
           syncMode: "sync",
           locationMode: "onsite",
           evaluationMode: "none",
@@ -5390,8 +5385,7 @@ function buildStateFromMarkdown(markdownText) {
           description: "",
           instructions: "",
           notes: "",
-          tools: [],
-          links: []
+          tools: []
         };
         index += 1;
         continue;
@@ -5421,7 +5415,9 @@ function buildStateFromMarkdown(markdownText) {
         if (field) {
           if (field.key === "duree") currentActivity.duration = Math.max(1, parseCsvInteger(field.value, 1));
           if (field.key === "groupe") currentActivity.groupMode = lookupValue(field.value, CSV_GROUP_LOOKUP, "whole");
-          if (field.key === "enseignant") currentActivity.teacherPresence = lookupValue(field.value, CSV_TRAINER_LOOKUP, "present");
+          if (["enseignement", "teaching", "enseignant", "teacher"].includes(field.key)) {
+            currentActivity.teachingMode = lookupValue(field.value, CSV_TEACHING_LOOKUP, "undefined");
+          }
           if (field.key === "rythme") currentActivity.syncMode = lookupValue(field.value, CSV_SYNC_LOOKUP, "sync");
           if (field.key === "modalite") currentActivity.locationMode = lookupValue(field.value, CSV_LOCATION_LOOKUP, "onsite");
           if (field.key === "evaluation") currentActivity.evaluationMode = lookupValue(field.value, CSV_EVAL_LOOKUP, "none");
@@ -6493,7 +6489,11 @@ function buildGridActivityRow(session, act, aIdx) {
     { opts: LOCATION_OPTIONS,  val: act.locationMode,    key: "locationMode" },
     { opts: GROUP_MODE_OPTIONS, val: act.groupMode,       key: "groupMode" },
     { opts: SYNC_OPTIONS,       val: act.syncMode,        key: "syncMode" },
-    { opts: TRAINER_OPTIONS,    val: act.teacherPresence, key: "teacherPresence" },
+    {
+      opts: [UNDEFINED_TEACHING_OPTION, ...TEACHING_OPTIONS],
+      val: act.teachingMode,
+      key: "teachingMode"
+    },
     { opts: EVAL_OPTIONS,       val: act.evaluationMode,  key: "evaluationMode" },
   ];
   selectCols.forEach(({ opts, val, key }) => {
@@ -6622,7 +6622,7 @@ function renderGridView() {
     { cls: "grid-col-loc",     label: t("gridColLocation") },
     { cls: "grid-col-group",   label: t("gridColGroup") },
     { cls: "grid-col-sync",    label: t("gridColSync") },
-    { cls: "grid-col-teacher", label: t("gridColTeacher") },
+    { cls: "grid-col-teaching", label: t("gridColTeaching") },
     { cls: "grid-col-eval",    label: t("gridColEval") },
     { cls: "grid-col-aias",    label: t("gridColAias") },
     { cls: "grid-col-desc",    label: t("gridColDesc") },
@@ -6657,10 +6657,10 @@ function renderGridView() {
     addActBtn.addEventListener("click", () => {
       session.activities.push({
         id: nextId(), type: "undefined", duration: 10,
-        groupMode: "whole", teacherPresence: "present",
+        groupMode: "whole", teachingMode: "undefined",
         syncMode: "sync", locationMode: "onsite",
         evaluationMode: "none", aias: defaultAiasState(),
-        description: "", instructions: "", notes: "", tools: [], links: []
+        description: "", instructions: "", notes: "", tools: []
       });
       saveState(); renderGridView(); renderTopPanel(); renderPartitionView();
     });
@@ -6700,9 +6700,6 @@ function render() {
   restoreAllFullscreenExpandableFields();
   closeChoiceMenu();
   closeToolPicker();
-  if (activeActivityLinkActivity || !activityLinkModalBackdrop.classList.contains("hidden")) {
-    closeActivityLinkModal();
-  }
   if (activeAiasActivity || !aiasModalBackdrop.classList.contains("hidden")) {
     closeAiasModal();
   }
@@ -6867,16 +6864,14 @@ function render() {
       const typeBtn = activityFrag.querySelector(".activity-type-btn");
       const durationInput = activityFrag.querySelector(".activity-duration");
       const groupModeBtn = activityFrag.querySelector(".activity-group-mode-btn");
-      const trainerModeBtn = activityFrag.querySelector(".activity-trainer-mode-btn");
+      const teachingModeBtn = activityFrag.querySelector(".activity-teaching-mode-btn");
       const syncModeBtn = activityFrag.querySelector(".activity-sync-mode-btn");
       const locationModeBtn = activityFrag.querySelector(".activity-location-mode-btn");
       const evaluationModeBtn = activityFrag.querySelector(".activity-evaluation-mode-btn");
       const activityAiasBtn = activityFrag.querySelector(".activity-aias-btn");
-      const activityLinksBtn = activityFrag.querySelector(".activity-links-btn");
       const typeLabel = activityFrag.querySelector(".activity-type-label");
       const durationLabel = activityFrag.querySelector(".activity-duration-label");
       const groupLabel = activityFrag.querySelector(".activity-group-label");
-      const trainerLabel = activityFrag.querySelector(".activity-trainer-label");
       const syncLabel = activityFrag.querySelector(".activity-sync-label");
       const locationLabel = activityFrag.querySelector(".activity-location-label");
       const evaluationLabel = activityFrag.querySelector(".activity-evaluation-label");
@@ -6897,13 +6892,13 @@ function render() {
       activityCard.setAttribute("aria-label", `${t("activityLabel")} ${activityIndex + 1}. ${t("activityMoveHint")}`);
       typeBtn.dataset.groupTitle = t("groupTitleType");
       groupModeBtn.dataset.groupTitle = t("groupTitleGroup");
-      trainerModeBtn.dataset.groupTitle = t("groupTitleTrainer");
+      teachingModeBtn.dataset.groupTitle = t("groupTitleTeaching");
       syncModeBtn.dataset.groupTitle = t("groupTitlePacing");
       locationModeBtn.dataset.groupTitle = t("groupTitleMode");
       evaluationModeBtn.dataset.groupTitle = t("groupTitleEvaluation");
       setChoiceButton(typeBtn, ACTIVITY_TYPE_OPTIONS, activity.type);
       setChoiceButton(groupModeBtn, GROUP_MODE_OPTIONS, activity.groupMode);
-      setChoiceButton(trainerModeBtn, TRAINER_OPTIONS, activity.teacherPresence);
+      setChoiceButton(teachingModeBtn, TEACHING_OPTIONS, activity.teachingMode);
       setChoiceButton(syncModeBtn, SYNC_OPTIONS, activity.syncMode);
       setChoiceButton(locationModeBtn, LOCATION_OPTIONS, activity.locationMode);
       setChoiceButton(evaluationModeBtn, EVAL_OPTIONS, activity.evaluationMode);
@@ -6911,7 +6906,6 @@ function render() {
       if (typeLabel) typeLabel.textContent = t("groupTitleType");
       if (durationLabel) durationLabel.textContent = currentLang() === "en" ? "Duration" : "Durée";
       if (groupLabel) groupLabel.textContent = t("groupTitleGroup");
-      if (trainerLabel) trainerLabel.textContent = t("groupTitleTrainer");
       if (syncLabel) syncLabel.textContent = t("groupTitlePacing");
       if (locationLabel) locationLabel.textContent = t("groupTitleMode");
       if (evaluationLabel) evaluationLabel.textContent = t("groupTitleEvaluation");
@@ -6928,12 +6922,8 @@ function render() {
       if (instructionsLabel) instructionsLabel.textContent = t("activityInstructionsLabel");
       deleteActivityBtn.title = t("deleteActivity");
       deleteActivityBtn.setAttribute("aria-label", deleteActivityBtn.title);
-      activityLinksBtn.title = t("manageLinks");
-      activityLinksBtn.setAttribute("aria-haspopup", "dialog");
-      activityLinksBtn.setAttribute("aria-expanded", "false");
       activityAiasBtn.addEventListener("click", () => openAiasModal(activityAiasBtn, activity));
       updateActivityToolsDisplay(selectToolsBtn, activity);
-      updateActivityLinksDisplay(activityLinksBtn, activity);
       activityCard.addEventListener("dragstart", (event) => {
         if (isInteractiveTarget(event.target)) {
           event.preventDefault();
@@ -7010,11 +7000,11 @@ function render() {
           renderPartitionView();
       });
 
-      bindChoiceControl(trainerModeBtn, TRAINER_OPTIONS, () => activity.teacherPresence, (nextValue) => {
-          activity.teacherPresence = nextValue;
+      bindChoiceControl(teachingModeBtn, TEACHING_OPTIONS, () => activity.teachingMode, (nextValue) => {
+          activity.teachingMode = nextValue;
           saveState();
           renderTopPanel();
-          setChoiceButton(trainerModeBtn, TRAINER_OPTIONS, activity.teacherPresence);
+          setChoiceButton(teachingModeBtn, TEACHING_OPTIONS, activity.teachingMode);
           renderPartitionView();
       });
 
@@ -7076,15 +7066,6 @@ function render() {
         }
         if (e.key === "Escape") closeToolPicker(true);
       });
-      activityLinksBtn.addEventListener("click", () => openActivityLinkModal(activityLinksBtn, activity));
-      activityLinksBtn.addEventListener("keydown", (event) => {
-        if (event.key === "Enter" || event.key === " " || event.key === "ArrowDown") {
-          event.preventDefault();
-          openActivityLinkModal(activityLinksBtn, activity);
-        }
-        if (event.key === "Escape") closeActivityLinkModal();
-      });
-
       activitiesWrap.appendChild(activityFrag);
     });
 
@@ -7099,7 +7080,7 @@ function render() {
         type: "undefined",
         duration: 10,
         groupMode: "whole",
-        teacherPresence: "present",
+        teachingMode: "undefined",
         syncMode: "sync",
         locationMode: "onsite",
         evaluationMode: "none",
@@ -7107,8 +7088,7 @@ function render() {
         description: "",
         instructions: "",
         notes: "",
-        tools: [],
-        links: []
+        tools: []
       });
       saveState();
       render();
@@ -7277,22 +7257,9 @@ function bindTopPanelEvents() {
   bloomModalBackdrop.addEventListener("click", (e) => {
     if (e.target === bloomModalBackdrop) closeModal(bloomModalBackdrop);
   });
-  activityLinkCancelBtn.addEventListener("click", closeActivityLinkModal);
-  activityLinkSaveBtn.addEventListener("click", confirmActivityLink);
-  activityLinkModalBackdrop.addEventListener("click", (event) => {
-    if (event.target === activityLinkModalBackdrop) closeActivityLinkModal();
-  });
   aiasModalCloseBtn.addEventListener("click", closeAiasModal);
   aiasModalBackdrop.addEventListener("click", (event) => {
     if (event.target === aiasModalBackdrop) closeAiasModal();
-  });
-  activityLinkTitleInput.addEventListener("input", () => setActivityLinkError(""));
-  activityLinkUrlInput.addEventListener("input", () => setActivityLinkError(""));
-  activityLinkUrlInput.addEventListener("keydown", (event) => {
-    if (event.key === "Enter") {
-      event.preventDefault();
-      confirmActivityLink();
-    }
   });
   langSelect.addEventListener("change", (event) => {
     state.meta.uiLanguage = event.target.value === "en" ? "en" : "fr";

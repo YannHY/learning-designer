@@ -27,6 +27,20 @@ function parse_competency_catalog(string $source): array
     $legacyCodeByLevel = ['acquerir' => 'A', 'approfondir' => 'P', 'creer' => 'C'];
     $currentLevel = null;
     $currentAppByLevel = [];
+    $sectionEnByFr = [
+        "Utilisation de l'iPad" => 'Using the iPad',
+        'Productivité et organisation' => 'Productivity and organisation',
+        'Communication et collaboration' => 'Communication and collaboration',
+        'Données et programmation' => 'Data and programming',
+        'Créativité et expression' => 'Creativity and expression',
+        'Général' => 'General',
+    ];
+    $appEnByFr = [
+        'Partager' => 'Sharing',
+        'Écrire des emails' => 'Writing emails',
+        'Excel & calcul' => 'Excel & calculations',
+        'Programmation' => 'Programming',
+    ];
 
     foreach (preg_split('/\R/u', $source) ?: [] as $line) {
         $line = trim((string)$line, "\r");
@@ -51,11 +65,14 @@ function parse_competency_catalog(string $source): array
             continue;
         }
 
-        [$sectionRaw, $appRaw, $numberRaw, $labelRaw, $descriptionRaw] = array_pad(explode("\t", $line, 5), 5, '');
+        [$sectionRaw, $appRaw, $numberRaw, $labelFrRaw, $descFrRaw, $labelEnRaw, $descEnRaw]
+            = array_pad(explode("\t", $line, 7), 7, '');
         $number = (int)trim($numberRaw);
-        $label = trim($labelRaw);
-        $description = trim($descriptionRaw);
-        if ($number <= 0 || $label === '' || $description === '') {
+        $labelFr = trim($labelFrRaw);
+        $descFr = trim($descFrRaw);
+        $labelEn = trim($labelEnRaw) !== '' ? trim($labelEnRaw) : $labelFr;
+        $descEn = trim($descEnRaw) !== '' ? trim($descEnRaw) : $descFr;
+        if ($number <= 0 || $labelFr === '' || $descFr === '') {
             continue;
         }
 
@@ -76,14 +93,20 @@ function parse_competency_catalog(string $source): array
             'levelId' => $levelId,
             'levelFr' => $currentLevel['labelFr'],
             'levelEn' => $currentLevel['labelEn'],
-            'section' => $section,
+            'sectionFr' => $section,
+            'sectionEn' => $sectionEnByFr[$section] ?? $section,
             'sectionRoman' => $sectionRoman,
             'app' => $currentAppByLevel[$levelId],
             'number' => $number,
             'shortCode' => $currentLevel['labelFr'] . '-' . $sectionRoman . '-' . $number,
+            'shortCodeEn' => $currentLevel['labelEn'] . '-' . $sectionRoman . '-' . $number,
             'legacyCode' => ($legacyCodeByLevel[$levelId] ?? strtoupper(substr($levelId, 0, 1))) . $number,
-            'label' => $label,
-            'description' => $description,
+            'labelFr' => $labelFr,
+            'labelEn' => $labelEn,
+            'descFr' => $descFr,
+            'descEn' => $descEn,
+            'appFr' => $currentAppByLevel[$levelId],
+            'appEn' => $appEnByFr[$currentAppByLevel[$levelId]] ?? $currentAppByLevel[$levelId],
         ];
     }
 
@@ -121,7 +144,7 @@ $items = $catalog['items'];
 $total = count($items);
 $referenceMap = [];
 foreach ($items as $item) {
-    foreach ([$item['id'], $item['shortCode'], $item['legacyCode'], $item['label']] as $reference) {
+    foreach ([$item['id'], $item['shortCode'], $item['shortCodeEn'], $item['legacyCode'], $item['labelFr'], $item['labelEn']] as $reference) {
         $reference = trim((string)$reference);
         if ($reference !== '') {
             $referenceMap[mb_strtolower($reference, 'UTF-8')] = $item['id'];
@@ -154,13 +177,14 @@ foreach ($items as $item) {
 }
 $sectionGroups = [];
 foreach ($items as $item) {
-    $sectionKey = $item['levelId'] . ':' . $item['sectionRoman'] . ':' . $item['section'];
+    $sectionKey = $item['levelId'] . ':' . $item['sectionRoman'] . ':' . $item['sectionFr'];
     if (!isset($sectionGroups[$sectionKey])) {
         $sectionGroups[$sectionKey] = [
             'levelId' => $item['levelId'],
             'levelFr' => $item['levelFr'],
             'levelEn' => $item['levelEn'],
-            'section' => $item['section'],
+            'sectionFr' => $item['sectionFr'],
+            'sectionEn' => $item['sectionEn'],
             'sectionRoman' => $item['sectionRoman'],
             'items' => [],
         ];
@@ -669,7 +693,7 @@ foreach ($sectionGroups as $sectionKey => $group) {
                             <td colspan="4">
                                 <button class="competencies-section-toggle" type="button" aria-expanded="true" data-section-toggle="<?= h($sectionKey) ?>">
                                     <span class="competencies-section-heading">
-                                        <span class="competencies-section-title"><?= h($group['sectionRoman']) ?> - <?= h($group['section']) ?></span>
+                                        <span class="competencies-section-title" data-i18n-fr="<?= h($group['sectionRoman'] . ' - ' . $group['sectionFr']) ?>" data-i18n-en="<?= h($group['sectionRoman'] . ' - ' . $group['sectionEn']) ?>"><?= h($group['sectionRoman']) ?> - <?= h($group['sectionFr']) ?></span>
                                     </span>
                                     <span class="competencies-section-meta">
                                         <i class="fa-solid fa-chevron-down competencies-chevron" aria-hidden="true"></i>
@@ -692,9 +716,9 @@ foreach ($sectionGroups as $sectionKey => $group) {
                                         <span class="competencies-used-empty" aria-label="Connexion requise">-</span>
                                     <?php endif; ?>
                                 </td>
-                                <td><span class="competency-code competency-code-<?= h($item['levelId']) ?>" title="<?= h($item['shortCode']) ?>"><?= h($item['legacyCode']) ?></span></td>
-                                <td class="competencies-label"><?= h((string)$item['number']) ?>. <?= h($item['label']) ?></td>
-                                <td class="competencies-description"><?= h(str_replace(' | ', ' · ', $item['description'])) ?></td>
+                                <td><span class="competency-code competency-code-<?= h($item['levelId']) ?>" title="<?= h($item['shortCode']) ?>" data-i18n-attr="title" data-i18n-fr="<?= h($item['shortCode']) ?>" data-i18n-en="<?= h($item['shortCodeEn']) ?>"><?= h($item['legacyCode']) ?></span></td>
+                                <td class="competencies-label" data-i18n-fr="<?= h((string)$item['number'] . '. ' . $item['labelFr']) ?>" data-i18n-en="<?= h((string)$item['number'] . '. ' . $item['labelEn']) ?>"><?= h((string)$item['number']) ?>. <?= h($item['labelFr']) ?></td>
+                                <td class="competencies-description" data-i18n-fr="<?= h(str_replace(' | ', ' · ', $item['descFr'])) ?>" data-i18n-en="<?= h(str_replace(' | ', ' · ', $item['descEn'])) ?>"><?= h(str_replace(' | ', ' · ', $item['descFr'])) ?></td>
                             </tr>
                         <?php endforeach; ?>
                     <?php endforeach; ?>

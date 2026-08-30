@@ -13,7 +13,8 @@ require_once __DIR__ . '/lib/bootstrap.php';
  *   t     type d'apprentissage : read | investigate | practice | produce | discuss | collaborate
  *   d     durée en minutes
  *   g     groupe    : whole (défaut) | subgroups | individual
- *   tp    enseignant: present (défaut) | absent
+ *   tm    enseignement : directed | guided | supported | independent
+ *   tp    ancien raccourci conservé : absent devient independent, present devient undefined
  *   sync  rythme    : sync (défaut) | async
  *   loc   modalité  : onsite (défaut) | online | hybrid
  *   ev    évaluation: none (défaut) | diagnostic | formative | summative | certificative
@@ -121,12 +122,19 @@ function ld_model_activity(array $spec, string $prefix): array
         $aiasState = ['version' => LD_MODEL_AIAS_VERSION, 'status' => 'undecided', 'level' => null];
     }
 
+    $teachingMode = (string)($spec['tm'] ?? '');
+    if (!in_array($teachingMode, ['directed', 'guided', 'supported', 'independent'], true)) {
+        $teachingMode = (string)($spec['tp'] ?? 'present') === 'absent'
+            ? 'independent'
+            : 'undefined';
+    }
+
     return [
         'id' => $prefix,
         'type' => (string)($spec['t'] ?? 'undefined'),
         'duration' => max(1, (int)($spec['d'] ?? 5)),
         'groupMode' => (string)($spec['g'] ?? 'whole'),
-        'teacherPresence' => (string)($spec['tp'] ?? 'present'),
+        'teachingMode' => $teachingMode,
         'syncMode' => (string)($spec['sync'] ?? 'sync'),
         'locationMode' => (string)($spec['loc'] ?? 'onsite'),
         'evaluationMode' => (string)($spec['ev'] ?? 'none'),
@@ -135,7 +143,6 @@ function ld_model_activity(array $spec, string $prefix): array
         'instructions' => (string)($spec['inst'] ?? ''),
         'notes' => (string)($spec['notes'] ?? ''),
         'tools' => [],
-        'links' => [],
     ];
 }
 

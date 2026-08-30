@@ -4,6 +4,11 @@ require_once __DIR__ . '/lib/bootstrap.php';
 
 // La navigation lit la session : elle doit démarrer avant tout HTML.
 app_start_session();
+
+$homeTitle = 'Learning Designer | Concevoir des expériences d’apprentissage';
+$homeDescription = 'Learning Designer aide les enseignants à concevoir, analyser et partager des scénarios pédagogiques.';
+$homeUrl = rtrim(app_base_url(), '/') . '/';
+$homeOgImageUrl = rtrim(app_base_url(), '/') . '/assets/og-home.png';
 ?>
 <!doctype html>
 <html lang="fr">
@@ -11,8 +16,21 @@ app_start_session();
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="icon" href="assets/favicon.svg?v=20260804" type="image/svg+xml" sizes="any">
-    <meta name="description" content="Learning Designer aide les enseignants à concevoir, analyser et partager des scénarios pédagogiques.">
-    <title>Learning Designer | Concevoir des expériences d’apprentissage</title>
+    <meta name="description" content="<?= h($homeDescription) ?>">
+    <link rel="canonical" href="<?= h($homeUrl) ?>">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="Learning Designer">
+    <meta property="og:locale" content="fr_FR">
+    <meta property="og:title" content="<?= h($homeTitle) ?>">
+    <meta property="og:description" content="<?= h($homeDescription) ?>">
+    <meta property="og:url" content="<?= h($homeUrl) ?>">
+    <meta property="og:image" content="<?= h($homeOgImageUrl) ?>">
+    <meta property="og:image:secure_url" content="<?= h($homeOgImageUrl) ?>">
+    <meta property="og:image:type" content="image/png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:image:alt" content="Learning Designer — Donnez forme aux expériences d’apprentissage">
+    <title><?= h($homeTitle) ?></title>
     <?php render_theme_boot_script(); ?>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" referrerpolicy="no-referrer">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -138,8 +156,8 @@ app_start_session();
                         data-site-i18n-en="See the balance"
                         data-site-i18n-fr="Voyez l’équilibre">Voyez l’équilibre</h2>
                 </div>
-                <p data-site-i18n-en="Visual summaries reveal the distribution of learning types, individual and group work, teacher presence and the overall timeline. They make it easier to spot what deserves another look."
-                   data-site-i18n-fr="Les synthèses visuelles montrent la répartition des types d’apprentissage, du travail individuel ou collectif, de la présence enseignante et du temps. Elles font apparaître ce qui mérite d’être rééquilibré.">Les synthèses visuelles montrent la répartition des types d’apprentissage, du travail individuel ou collectif, de la présence enseignante et du temps. Elles font apparaître ce qui mérite d’être rééquilibré.</p>
+                <p data-site-i18n-en="Visual summaries reveal the distribution of learning types, individual and group work, teaching modes and the overall timeline. They make it easier to spot what deserves another look."
+                   data-site-i18n-fr="Les synthèses visuelles montrent la répartition des types d’apprentissage, du travail individuel ou collectif, des modes d’enseignement et du temps. Elles font apparaître ce qui mérite d’être rééquilibré.">Les synthèses visuelles montrent la répartition des types d’apprentissage, du travail individuel ou collectif, des modes d’enseignement et du temps. Elles font apparaître ce qui mérite d’être rééquilibré.</p>
                 <a class="home-inline-action" href="help.php#vues-analyses">
                     <span data-site-i18n-en="Explore visual analysis" data-site-i18n-fr="Découvrir les analyses visuelles">Découvrir les analyses visuelles</span>
                     <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>

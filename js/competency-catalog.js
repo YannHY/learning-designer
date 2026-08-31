@@ -224,165 +224,165 @@ const COMPETENCY_CATALOG_EN_SOURCE = String.raw`# acquerir
 //   ### subgroup<TAB>id<TAB>libellé FR<TAB>libellé EN (facultatif)
 //   code<TAB>libellé FR<TAB>description FR<TAB>libellé EN<TAB>description EN
 
-const COMPETENCY_FRAMEWORK_CATALOG_SOURCE = String.raw`# framework	socle	Socle commun	French common core	https://www.education.gouv.fr/sites/default/files/2025-04/csp---socle-commun-de-connaissances-de-comp-tences-et-de-culture-439941.pdf
-## group	domaine-1	Domaine 1 · Langages pour penser et communiquer	Domain 1 · Langages pour penser et communiquer
-### subgroup	sous-domaine-1	Langue française à l'oral et à l'écrit	Langue française à l'oral et à l'écrit
-D1.1.1	Parler, communiquer, argumenter à l'oral de façon claire et organisée.
-D1.1.2	Adapter son niveau de langue et son discours à la situation.
-D1.1.3	Écouter et prendre en compte ses interlocuteurs.
-D1.1.4	Adapter sa lecture et la moduler en fonction de la nature et de la difficulté du texte.
-D1.1.5	Pour construire ou vérifier le sens de ce qui est lu, combiner avec pertinence et de façon critique les informations explicites et implicites issues de la lecture.
-D1.1.6	Découvrir le plaisir de lire.
-D1.1.7	S'exprimer à l'écrit pour raconter, décrire, expliquer ou argumenter de façon claire et organisée.
-D1.1.8	Lorsque c'est nécessaire, reprendre ses écrits pour rechercher la formulation qui convient le mieux et préciser ses intentions et sa pensée.
-D1.1.9	Utiliser à bon escient les principales règles grammaticales et orthographiques.
-D1.1.10	Employer à l'écrit comme à l'oral un vocabulaire juste et précis.
-D1.1.11	Dans des situations variées, recourir, de manière spontanée et avec efficacité, à la lecture comme à l'écriture.
-D1.1.12	Apprendre que la langue française a des origines diverses et qu'elle est toujours en évolution.
-D1.1.13	Être sensibilisé à l'histoire et aux origines latines et grecques de la langue française.
-### subgroup	sous-domaine-2	Langues étrangères et régionales	Langues étrangères et régionales
-D1.2.1	Pratiquer au moins deux langues vivantes étrangères ou, le cas échéant, une langue étrangère et une langue régionale.
-D1.2.2	Comprendre des messages oraux et écrits.
-D1.2.3	S'exprimer et communiquer à l'oral et à l'écrit de manière simple mais efficace.
-D1.2.4	S'engager volontiers dans le dialogue et prendre part activement à des conversations.
-D1.2.5	Adapter son niveau de langue et son discours à la situation.
-D1.2.6	Écouter et prendre en compte ses interlocuteurs.
-D1.2.7	Maîtriser suffisamment le code de la langue pratiquée pour s'insérer dans une communication liée à la vie quotidienne : vocabulaire, prononciation, construction des phrases.
-D1.2.8	Posséder des connaissances sur le contexte culturel propre à cette langue (modes de vie, organisations sociales, traditions, expressions artistiques...).
-### subgroup	sous-domaine-3	Langages mathématiques, scientifiques et informatiques	Langages mathématiques, scientifiques et informatiques
-D1.3.1	Utiliser les principes du système de numération décimal et les langages formels (lettres, symboles...) propres aux mathématiques et aux disciplines scientifiques, notamment pour effectuer des calculs et modéliser des situations.
-D1.3.2	Lire des plans et se repérer sur des cartes.
-D1.3.3	Produire et utiliser des représentations d'objets, d'expériences, de phénomènes naturels tels que schémas, croquis, maquettes, patrons ou figures géométriques.
-D1.3.4	Lire, interpréter, commenter, produire des tableaux, des graphiques et des diagrammes organisant des données de natures diverses.
-D1.3.5	Savoir que des langages informatiques sont utilisés pour programmer des outils numériques et réaliser des traitements automatiques de données.
-D1.3.6	Connaître les principes de base de l'algorithmique et de la conception des programmes informatiques.
-D1.3.7	Mettre en œuvre les principes de base de l'algorithmique et de la conception de programmes informatiques pour créer des applications simples.
-### subgroup	sous-domaine-4	Langages des arts et du corps	Langages des arts et du corps
-D1.4.1	Apprendre à s'exprimer et communiquer par les arts, de manière individuelle et collective, en concevant et réalisant des productions, visuelles, plastiques, sonores ou verbales.
-D1.4.2	Connaître et comprendre les particularités des différents langages artistiques employés.
-D1.4.3	Justifier ses intentions et ses choix en s'appuyant sur des notions d'analyse d'œuvres.
-D1.4.4	S'exprimer par des activités physiques, sportives ou artistiques impliquant le corps.
-D1.4.5	Apprendre le contrôle et la maîtrise de soi.
-## group	domaine-2	Domaine 2 · Méthodes et outils pour apprendre	Domain 2 · Méthodes et outils pour apprendre
-### subgroup	sous-domaine-1	Organisation du travail personnel	Organisation du travail personnel
-D2.1.1	Se projeter dans le temps, anticiper, planifier ses tâches.
-D2.1.2	Gérer les étapes d'une production, écrite ou non, mémoriser ce qui doit l'être.
-D2.1.3	Comprendre le sens des consignes.
-D2.1.4	Savoir qu'un même mot peut avoir des sens différents selon les disciplines.
-D2.1.5	Pour acquérir des connaissances et des compétences, mettre en œuvre les capacités essentielles que sont l'attention, la mémorisation, la mobilisation de ressources, la concentration, l'aptitude à l'échange et au questionnement, le respect des consignes et la gestion de l'effort.
-D2.1.6	Savoir identifier un problème, s'engager dans une démarche de résolution, mobiliser les connaissances nécessaires, analyser et exploiter les erreurs, mettre à l'essai plusieurs solutions, accorder une importance particulière aux corrections.
-D2.1.7	Savoir se constituer des outils personnels grâce à des écrits de travail, y compris numériques : notamment prise de notes, brouillons, fiches, lexiques, nomenclatures, cartes mentales, plans, croquis, et s'en servir pour s'entraîner, réviser, mémoriser.
-### subgroup	sous-domaine-2	Coopération et réalisation de projets	Coopération et réalisation de projets
-D2.2.1	Travailler en équipe, partager des tâches, s'engager dans un dialogue constructif, accepter la contradiction tout en défendant son point de vue, faire preuve de diplomatie, négocier et rechercher un consensus.
-D2.2.2	Apprendre à gérer un projet, qu'il soit individuel ou collectif.
-D2.2.3	En planifier les tâches, en fixer les étapes et évaluer l'atteinte des objectifs.
-D2.2.4	Savoir que la classe, l'école, l'établissement sont des lieux de collaboration, d'entraide et de mutualisation des savoirs.
-D2.2.5	Aider celui qui ne sait pas comme apprendre des autres.
-D2.2.6	Utiliser des outils numériques pour contribuer à ces modalités d'organisation, d'échange et de collaboration.
-### subgroup	sous-domaine-3	Médias, démarches de recherche et de traitement de l'information	Médias, démarches de recherche et de traitement de l'information
-D2.3.1	Connaître des éléments d'histoire de l'écrit et de ses différents supports.
-D2.3.2	Comprendre les modes de production et le rôle de l'image.
-D2.3.3	Savoir utiliser de façon réfléchie des outils de recherche, notamment sur Internet.
-D2.3.4	Apprendre à confronter différentes sources et à évaluer la validité des contenus.
-D2.3.5	Savoir traiter les informations collectées, les organiser, les mémoriser sous des formats appropriés et les mettre en forme.
-D2.3.6	Mettre en relation les informations collectées pour construire ses connaissances.
-D2.3.7	Apprendre à utiliser avec discernement les outils numériques de communication et d'information côtoyés au quotidien, en respectant les règles sociales de leur usage et toutes leurs potentialités pour apprendre et travailler.
-D2.3.8	Accéder à un usage sûr, légal et éthique pour produire, recevoir et diffuser de l'information.
-D2.3.9	Développer une culture numérique.
-D2.3.10	Identifier les différents médias (presse écrite, audiovisuelle et Web) et en connaître la nature.
-D2.3.11	Comprendre les enjeux des médias et leur fonctionnement général afin d'acquérir une distance critique et une autonomie suffisantes dans leur usage.
-### subgroup	sous-domaine-4	Outils numériques pour échanger et communiquer	Outils numériques pour échanger et communiquer
-D2.4.1	Savoir mobiliser différents outils numériques pour créer des documents intégrant divers médias et les publier ou les transmettre, afin qu'ils soient consultables et utilisables par d'autres.
-D2.4.2	Savoir réutiliser des productions collaboratives pour enrichir ses propres réalisations, dans le respect des règles du droit d'auteur.
-D2.4.3	Utiliser les espaces collaboratifs et apprendre à communiquer notamment par le biais des réseaux sociaux dans le respect de soi et des autres.
-D2.4.4	Comprendre la différence entre sphères publique et privée.
-D2.4.5	Savoir ce qu'est une identité numérique et être attentif aux traces laissées.
-## group	domaine-3	Domaine 3 · Formation de la personne et du citoyen	Domain 3 · Formation de la personne et du citoyen
-### subgroup	sous-domaine-1	Expression de la sensibilité et des opinions, respect des autres	Expression de la sensibilité et des opinions, respect des autres
-D3.1.1	Exprimer ses sentiments et ses émotions en utilisant un vocabulaire précis.
-D3.1.2	Exploiter ses facultés intellectuelles et physiques en ayant confiance en sa capacité à réussir et à progresser.
-D3.1.3	Apprendre à résoudre les conflits sans agressivité, à éviter le recours à la violence grâce à sa maîtrise de moyens d'expression, de communication et d'argumentation.
-D3.1.4	Respecter les opinions et la liberté d'autrui, identifier et rejeter toute forme d'intimidation ou d'emprise.
-D3.1.5	Apprendre à mettre à distance préjugés et stéréotypes et être capable d'apprécier les personnes qui sont différentes de soi et de vivre avec elles.
-D3.1.6	Être capable de faire preuve d'empathie et de bienveillance.
-### subgroup	sous-domaine-2	La règle et le droit	La règle et le droit
-D3.2.1	Comprendre et respecter les règles communes, notamment les règles de civilité, au sein de la classe, de l'école ou de l'établissement, qui autorisent et contraignent à la fois et qui engagent l'ensemble de la communauté éducative.
-D3.2.2	Participer à la définition des règles communes dans le cadre adéquat.
-D3.2.3	Connaître le rôle éducatif et la gradation des sanctions ainsi que les grands principes et institutions de la justice.
-D3.2.4	Comprendre comment, dans une société démocratique, des valeurs communes garantissent les libertés individuelles et collectives, trouvent force d'application dans des règles et dans le système du droit, que les citoyens peuvent faire évoluer selon des procédures organisées.
-D3.2.5	Connaître les grandes déclarations des droits de l'homme (notamment la Déclaration des droits de l'homme et du citoyen de 1789, la Déclaration universelle des droits de l'homme de 1948), la Convention européenne de sauvegarde des droits de l'homme, la Convention internationale des droits de l'enfant de 1989 et les principes fondateurs de la République française.
-D3.2.6	Connaître le sens du principe de laïcité.
-D3.2.7	Mesurer la profondeur historique de la laïcité et son importance pour la démocratie dans notre pays.
-D3.2.8	Comprendre que la laïcité garantit la liberté de conscience, fondée sur l'autonomie du jugement de chacun, et institue des règles permettant de vivre ensemble pacifiquement.
-D3.2.9	Connaître les principales règles du fonctionnement institutionnel de l'Union européenne et les grands objectifs du projet européen.
-### subgroup	sous-domaine-3	Réflexion et discernement	Réflexion et discernement
-D3.3.1	Être attentif à la portée de ses paroles et à la responsabilité de ses actes.
-D3.3.2	Fonder et défendre ses jugements en s'appuyant sur sa réflexion et sur sa maîtrise de l'argumentation.
-D3.3.3	Comprendre les choix moraux que chacun fait dans sa vie.
-D3.3.4	Pouvoir discuter de choix moraux ainsi que de quelques grands problèmes éthiques liés notamment aux évolutions sociales, scientifiques ou techniques.
-D3.3.5	Vérifier la validité d'une information et distinguer ce qui est objectif et ce qui est subjectif.
-D3.3.6	Apprendre à justifier ses choix et à confronter ses propres jugements avec ceux des autres.
-D3.3.7	Savoir remettre en cause ses jugements initiaux après un débat argumenté.
-D3.3.8	Distinguer son intérêt particulier de l'intérêt général.
-D3.3.9	Mettre en application et respecter les grands principes républicains.
-### subgroup	sous-domaine-4	Responsabilité, sens de l'engagement et de l'initiative	Responsabilité, sens de l'engagement et de l'initiative
-D3.4.1	Coopérer et faire preuve de responsabilité vis-à-vis d'autrui.
-D3.4.2	Respecter les engagements pris envers soi-même et envers les autres.
-D3.4.3	Comprendre l'importance du respect des contrats dans la vie civile.
-D3.4.4	Comprendre l'importance de s'impliquer dans la vie scolaire (actions et projets collectifs, instances), d'avoir recours aux outils de la démocratie (ordre du jour, compte rendu, votes notamment) et de s'engager aux côtés des autres dans les différents aspects de la vie collective et de l'environnement.
-D3.4.5	Savoir prendre des initiatives, entreprendre et mettre en œuvre des projets, après avoir évalué les conséquences de son action.
-D3.4.6	Préparer son orientation future et sa vie d'adulte.
-## group	domaine-4	Domaine 4 · Systèmes naturels et systèmes techniques	Domain 4 · Systèmes naturels et systèmes techniques
-### subgroup	sous-domaine-1	Démarches scientifiques	Démarches scientifiques
-D4.1.1	Savoir mener une démarche d'investigation.
-D4.1.2	Décrire et questionner ses observations.
-D4.1.3	Prélever, organiser et traiter l'information utile.
-D4.1.4	Formuler des hypothèses, les tester et les éprouver.
-D4.1.5	Manipuler, explorer plusieurs pistes, procéder par essais et erreurs.
-D4.1.6	Modéliser pour représenter une situation.
-D4.1.7	Analyser, argumenter, mener différents types de raisonnements (par analogie, déduction logique...).
-D4.1.8	Rendre compte de sa démarche.
-D4.1.9	Exploiter et communiquer les résultats de mesures ou de recherches en utilisant les langages scientifiques à bon escient.
-D4.1.10	Pratiquer le calcul, mental et écrit, exact et approché.
-D4.1.11	Estimer et contrôler les résultats, notamment en utilisant les ordres de grandeur.
-D4.1.12	Résoudre des problèmes impliquant des grandeurs variées (géométriques, physiques, économiques...), en particulier des situations de proportionnalité.
-D4.1.13	Interpréter des résultats statistiques et les représenter graphiquement.
-### subgroup	sous-domaine-2	Conception, création, réalisation	Conception, création, réalisation
-D4.2.1	Imaginer, concevoir et fabriquer des objets et des systèmes techniques.
-D4.2.2	Mettre en œuvre observation, imagination, créativité, sens de l'esthétique et de la qualité, talent et habileté manuels, sens pratique, et solliciter les savoirs et compétences scientifiques, technologiques et artistiques pertinents.
-### subgroup	sous-domaine-3	Responsabilités individuelles et collectives	Responsabilités individuelles et collectives
-D4.3.1	Connaître l'importance d'un comportement responsable vis-à-vis de l'environnement et de la santé et comprendre ses responsabilités individuelle et collective.
-D4.3.2	Prendre conscience de l'impact de l'activité humaine sur l'environnement, de ses conséquences sanitaires et de la nécessité de préserver les ressources naturelles et la diversité des espèces.
-D4.3.3	Prendre conscience de la nécessité d'un développement plus juste et plus attentif à ce qui est laissé aux générations futures.
-D4.3.4	Savoir que la santé repose notamment sur des fonctions biologiques coordonnées, susceptibles d'être perturbées par des facteurs physiques, chimiques, biologiques et sociaux de l'environnement, et que certains de ces facteurs de risques dépendent de conduites sociales et de choix personnels.
-D4.3.5	Être conscient des enjeux de bien-être et de santé des pratiques alimentaires et physiques.
-D4.3.6	Observer les règles élémentaires de sécurité liées aux techniques et produits rencontrés dans la vie quotidienne.
-## group	domaine-5	Domaine 5 · Représentations du monde et activité humaine	Domain 5 · Représentations du monde et activité humaine
-### subgroup	sous-domaine-1	L'espace et le temps	L'espace et le temps
-D5.1.1	Identifier les grandes questions et les principaux enjeux du développement humain.
-D5.1.2	Être capable d'appréhender les causes et les conséquences des inégalités, les sources de conflits et les solidarités, ou encore les problématiques mondiales concernant l'environnement, les ressources, les échanges, l'énergie, la démographie et le climat.
-D5.1.3	Comprendre que les lectures du passé éclairent le présent et permettent de l'interpréter.
-D5.1.4	Se repérer dans l'espace à différentes échelles.
-D5.1.5	Comprendre les grands espaces physiques et humains et les principales caractéristiques géographiques de la Terre, du continent européen et du territoire national : organisation et localisations, ensembles régionaux, outre-mer.
-D5.1.6	Savoir situer un lieu ou un ensemble géographique en utilisant des cartes, en les comparant et en produisant soi-même des représentations graphiques.
-### subgroup	sous-domaine-2	Organisations et représentations du monde	Organisations et représentations du monde
-D5.2.1	Lire des paysages, identifier ce qu'ils révèlent des atouts et des contraintes du milieu ainsi que de l'activité humaine, passée et présente.
-D5.2.2	Établir des liens entre l'espace et l'organisation des sociétés.
-D5.2.3	Exprimer à l'écrit et à l'oral son ressenti face à une œuvre littéraire ou artistique.
-D5.2.4	Étayer ses analyses et ses jugements portés sur l'œuvre.
-D5.2.5	Formuler des hypothèses sur ses significations et en proposer une interprétation en s'appuyant notamment sur ses aspects formels et esthétiques.
-D5.2.6	Justifier ses intentions et ses choix expressifs, en s'appuyant sur quelques notions d'analyse des œuvres.
-D5.2.7	S'approprier, de façon directe ou indirecte, notamment dans le cadre de sorties scolaires culturelles, des œuvres littéraires et artistiques appartenant au patrimoine national et mondial comme à la création contemporaine.
-### subgroup	sous-domaine-3	Invention, élaboration, production	Invention, élaboration, production
-D5.3.1	Imaginer, concevoir et réaliser des productions de natures diverses, y compris littéraires et artistiques.
-D5.3.2	Mettre en œuvre des principes de conception et de fabrication d'objets ou les démarches et les techniques de création.
-D5.3.3	Tenir compte des contraintes des matériaux et des processus de production en respectant l'environnement.
-D5.3.4	Mobiliser son imagination et sa créativité au service d'un projet personnel ou collectif.
-D5.3.5	Développer son jugement, son goût, sa sensibilité, ses émotions esthétiques.
-D5.3.6	Connaître les contraintes et les libertés qui s'exercent dans le cadre des activités physiques et sportives ou artistiques personnelles et collectives.
-D5.3.7	Savoir en tirer parti et gérer son activité physique et sa production ou sa performance artistiques pour les améliorer, progresser et se perfectionner.
-D5.3.8	Chercher et utiliser des techniques pertinentes, construire des stratégies pour réaliser une performance sportive.
-D5.3.9	Dans le cadre d'activités et de projets collectifs, prendre sa place dans le groupe en étant attentif aux autres pour coopérer ou s'affronter dans un cadre réglementé.
+const COMPETENCY_FRAMEWORK_CATALOG_SOURCE = String.raw`# framework	socle	Socle commun	French Common Core of Knowledge, Skills and Culture	https://www.education.gouv.fr/sites/default/files/2025-04/csp---socle-commun-de-connaissances-de-comp-tences-et-de-culture-439941.pdf
+## group	domaine-1	Domaine 1 · Langages pour penser et communiquer	Domain 1 · Languages for thinking and communicating
+### subgroup	sous-domaine-1	Langue française à l'oral et à l'écrit	Spoken and written French
+D1.1.1	Parler, communiquer, argumenter à l'oral de façon claire et organisée.		Speak, communicate and argue orally in a clear and organised manner.
+D1.1.2	Adapter son niveau de langue et son discours à la situation.		Adapt one’s register and speech to the situation.
+D1.1.3	Écouter et prendre en compte ses interlocuteurs.		Listen to and take account of others.
+D1.1.4	Adapter sa lecture et la moduler en fonction de la nature et de la difficulté du texte.		Adapt and vary one’s reading according to the nature and difficulty of the text.
+D1.1.5	Pour construire ou vérifier le sens de ce qui est lu, combiner avec pertinence et de façon critique les informations explicites et implicites issues de la lecture.		To construct or verify the meaning of a text, combine explicit and implicit information from the reading appropriately and critically.
+D1.1.6	Découvrir le plaisir de lire.		Discover the pleasure of reading.
+D1.1.7	S'exprimer à l'écrit pour raconter, décrire, expliquer ou argumenter de façon claire et organisée.		Express oneself in writing to narrate, describe, explain or argue in a clear and organised manner.
+D1.1.8	Lorsque c'est nécessaire, reprendre ses écrits pour rechercher la formulation qui convient le mieux et préciser ses intentions et sa pensée.		When necessary, revise one’s writing to find the most appropriate wording and clarify one’s intentions and thinking.
+D1.1.9	Utiliser à bon escient les principales règles grammaticales et orthographiques.		Use the main rules of grammar and spelling appropriately.
+D1.1.10	Employer à l'écrit comme à l'oral un vocabulaire juste et précis.		Use accurate and precise vocabulary in writing and speech.
+D1.1.11	Dans des situations variées, recourir, de manière spontanée et avec efficacité, à la lecture comme à l'écriture.		Use reading and writing spontaneously and effectively in a variety of situations.
+D1.1.12	Apprendre que la langue française a des origines diverses et qu'elle est toujours en évolution.		Learn that the French language has diverse origins and continues to evolve.
+D1.1.13	Être sensibilisé à l'histoire et aux origines latines et grecques de la langue française.		Develop an awareness of the history and the Latin and Greek origins of the French language.
+### subgroup	sous-domaine-2	Langues étrangères et régionales	Foreign and regional languages
+D1.2.1	Pratiquer au moins deux langues vivantes étrangères ou, le cas échéant, une langue étrangère et une langue régionale.		Use at least two modern foreign languages or, where applicable, one foreign language and one regional language.
+D1.2.2	Comprendre des messages oraux et écrits.		Understand spoken and written messages.
+D1.2.3	S'exprimer et communiquer à l'oral et à l'écrit de manière simple mais efficace.		Express oneself and communicate simply but effectively in speech and writing.
+D1.2.4	S'engager volontiers dans le dialogue et prendre part activement à des conversations.		Engage willingly in dialogue and participate actively in conversations.
+D1.2.5	Adapter son niveau de langue et son discours à la situation.		Adapt one’s register and speech to the situation.
+D1.2.6	Écouter et prendre en compte ses interlocuteurs.		Listen to and take account of others.
+D1.2.7	Maîtriser suffisamment le code de la langue pratiquée pour s'insérer dans une communication liée à la vie quotidienne : vocabulaire, prononciation, construction des phrases.		Master the language sufficiently to communicate in everyday situations, including vocabulary, pronunciation and sentence construction.
+D1.2.8	Posséder des connaissances sur le contexte culturel propre à cette langue (modes de vie, organisations sociales, traditions, expressions artistiques...).		Have knowledge of the cultural context of the language, including lifestyles, social organisations, traditions and artistic expression.
+### subgroup	sous-domaine-3	Langages mathématiques, scientifiques et informatiques	Mathematical, scientific and computer languages
+D1.3.1	Utiliser les principes du système de numération décimal et les langages formels (lettres, symboles...) propres aux mathématiques et aux disciplines scientifiques, notamment pour effectuer des calculs et modéliser des situations.		Use the principles of the decimal number system and the formal languages specific to mathematics and science, including letters and symbols, particularly to perform calculations and model situations.
+D1.3.2	Lire des plans et se repérer sur des cartes.		Read plans and find one’s way on maps.
+D1.3.3	Produire et utiliser des représentations d'objets, d'expériences, de phénomènes naturels tels que schémas, croquis, maquettes, patrons ou figures géométriques.		Produce and use representations of objects, experiments and natural phenomena, such as diagrams, sketches, models, nets and geometric figures.
+D1.3.4	Lire, interpréter, commenter, produire des tableaux, des graphiques et des diagrammes organisant des données de natures diverses.		Read, interpret, comment on and produce tables, graphs and diagrams that organise different kinds of data.
+D1.3.5	Savoir que des langages informatiques sont utilisés pour programmer des outils numériques et réaliser des traitements automatiques de données.		Know that computer languages are used to program digital tools and process data automatically.
+D1.3.6	Connaître les principes de base de l'algorithmique et de la conception des programmes informatiques.		Know the basic principles of algorithms and computer program design.
+D1.3.7	Mettre en œuvre les principes de base de l'algorithmique et de la conception de programmes informatiques pour créer des applications simples.		Apply the basic principles of algorithms and computer program design to create simple applications.
+### subgroup	sous-domaine-4	Langages des arts et du corps	Languages of the arts and the body
+D1.4.1	Apprendre à s'exprimer et communiquer par les arts, de manière individuelle et collective, en concevant et réalisant des productions, visuelles, plastiques, sonores ou verbales.		Learn to express and communicate through the arts, individually and collectively, by designing and producing visual, plastic, sound-based or verbal works.
+D1.4.2	Connaître et comprendre les particularités des différents langages artistiques employés.		Know and understand the distinctive features of the different artistic languages used.
+D1.4.3	Justifier ses intentions et ses choix en s'appuyant sur des notions d'analyse d'œuvres.		Justify one’s intentions and choices using concepts from the analysis of works of art.
+D1.4.4	S'exprimer par des activités physiques, sportives ou artistiques impliquant le corps.		Express oneself through physical, sporting or artistic activities involving the body.
+D1.4.5	Apprendre le contrôle et la maîtrise de soi.		Learn self-control and self-mastery.
+## group	domaine-2	Domaine 2 · Méthodes et outils pour apprendre	Domain 2 · Methods and tools for learning
+### subgroup	sous-domaine-1	Organisation du travail personnel	Organising one’s own work
+D2.1.1	Se projeter dans le temps, anticiper, planifier ses tâches.		Think ahead, anticipate and plan tasks over time.
+D2.1.2	Gérer les étapes d'une production, écrite ou non, mémoriser ce qui doit l'être.		Manage the stages of a written or other production and memorise what needs to be retained.
+D2.1.3	Comprendre le sens des consignes.		Understand the meaning of instructions.
+D2.1.4	Savoir qu'un même mot peut avoir des sens différents selon les disciplines.		Know that the same word can have different meanings across subjects.
+D2.1.5	Pour acquérir des connaissances et des compétences, mettre en œuvre les capacités essentielles que sont l'attention, la mémorisation, la mobilisation de ressources, la concentration, l'aptitude à l'échange et au questionnement, le respect des consignes et la gestion de l'effort.		To acquire knowledge and skills, use essential abilities such as attention, memorisation, mobilisation of resources, concentration, exchanging and asking questions, following instructions and managing effort.
+D2.1.6	Savoir identifier un problème, s'engager dans une démarche de résolution, mobiliser les connaissances nécessaires, analyser et exploiter les erreurs, mettre à l'essai plusieurs solutions, accorder une importance particulière aux corrections.		Identify a problem, engage in a problem-solving process, draw on the necessary knowledge, analyse and learn from errors, try several solutions and give particular attention to corrections.
+D2.1.7	Savoir se constituer des outils personnels grâce à des écrits de travail, y compris numériques : notamment prise de notes, brouillons, fiches, lexiques, nomenclatures, cartes mentales, plans, croquis, et s'en servir pour s'entraîner, réviser, mémoriser.		Develop personal tools through working notes, including digital ones—such as notes, drafts, revision cards, glossaries, nomenclatures, mind maps, plans and sketches—and use them to practise, revise and memorise.
+### subgroup	sous-domaine-2	Coopération et réalisation de projets	Cooperation and project work
+D2.2.1	Travailler en équipe, partager des tâches, s'engager dans un dialogue constructif, accepter la contradiction tout en défendant son point de vue, faire preuve de diplomatie, négocier et rechercher un consensus.		Work in a team, share tasks, engage in constructive dialogue, accept disagreement while defending one’s point of view, show diplomacy, negotiate and seek consensus.
+D2.2.2	Apprendre à gérer un projet, qu'il soit individuel ou collectif.		Learn to manage an individual or collective project.
+D2.2.3	En planifier les tâches, en fixer les étapes et évaluer l'atteinte des objectifs.		Plan its tasks, set its stages and assess whether its objectives have been achieved.
+D2.2.4	Savoir que la classe, l'école, l'établissement sont des lieux de collaboration, d'entraide et de mutualisation des savoirs.		Know that the classroom, school and educational institution are places for collaboration, mutual support and sharing knowledge.
+D2.2.5	Aider celui qui ne sait pas comme apprendre des autres.		Help those who do not know and learn from others.
+D2.2.6	Utiliser des outils numériques pour contribuer à ces modalités d'organisation, d'échange et de collaboration.		Use digital tools to support these forms of organisation, exchange and collaboration.
+### subgroup	sous-domaine-3	Médias, démarches de recherche et de traitement de l'information	Media, information research and processing methods
+D2.3.1	Connaître des éléments d'histoire de l'écrit et de ses différents supports.		Know key elements in the history of writing and its different media.
+D2.3.2	Comprendre les modes de production et le rôle de l'image.		Understand how images are produced and the role they play.
+D2.3.3	Savoir utiliser de façon réfléchie des outils de recherche, notamment sur Internet.		Use research tools thoughtfully, particularly on the internet.
+D2.3.4	Apprendre à confronter différentes sources et à évaluer la validité des contenus.		Learn to compare different sources and assess the validity of their content.
+D2.3.5	Savoir traiter les informations collectées, les organiser, les mémoriser sous des formats appropriés et les mettre en forme.		Process collected information, organise and memorise it in appropriate formats, and present it clearly.
+D2.3.6	Mettre en relation les informations collectées pour construire ses connaissances.		Connect collected information in order to build knowledge.
+D2.3.7	Apprendre à utiliser avec discernement les outils numériques de communication et d'information côtoyés au quotidien, en respectant les règles sociales de leur usage et toutes leurs potentialités pour apprendre et travailler.		Learn to use everyday digital communication and information tools discerningly, respecting the social rules governing their use and drawing on their full potential for learning and work.
+D2.3.8	Accéder à un usage sûr, légal et éthique pour produire, recevoir et diffuser de l'information.		Adopt safe, legal and ethical practices when producing, receiving and sharing information.
+D2.3.9	Développer une culture numérique.		Develop digital literacy.
+D2.3.10	Identifier les différents médias (presse écrite, audiovisuelle et Web) et en connaître la nature.		Identify different media—print, audiovisual and web-based—and understand their nature.
+D2.3.11	Comprendre les enjeux des médias et leur fonctionnement général afin d'acquérir une distance critique et une autonomie suffisantes dans leur usage.		Understand the issues surrounding media and how they generally operate in order to develop critical distance and sufficient autonomy in their use.
+### subgroup	sous-domaine-4	Outils numériques pour échanger et communiquer	Digital tools for sharing and communicating
+D2.4.1	Savoir mobiliser différents outils numériques pour créer des documents intégrant divers médias et les publier ou les transmettre, afin qu'ils soient consultables et utilisables par d'autres.		Use different digital tools to create documents combining various media and publish or send them so that others can access and use them.
+D2.4.2	Savoir réutiliser des productions collaboratives pour enrichir ses propres réalisations, dans le respect des règles du droit d'auteur.		Reuse collaborative productions to enrich one’s own work while respecting copyright rules.
+D2.4.3	Utiliser les espaces collaboratifs et apprendre à communiquer notamment par le biais des réseaux sociaux dans le respect de soi et des autres.		Use collaborative spaces and learn to communicate, particularly through social networks, while respecting oneself and others.
+D2.4.4	Comprendre la différence entre sphères publique et privée.		Understand the difference between the public and private spheres.
+D2.4.5	Savoir ce qu'est une identité numérique et être attentif aux traces laissées.		Know what a digital identity is and be mindful of the traces one leaves behind.
+## group	domaine-3	Domaine 3 · Formation de la personne et du citoyen	Domain 3 · Personal and civic development
+### subgroup	sous-domaine-1	Expression de la sensibilité et des opinions, respect des autres	Expressing feelings and opinions and respecting others
+D3.1.1	Exprimer ses sentiments et ses émotions en utilisant un vocabulaire précis.		Express feelings and emotions using precise vocabulary.
+D3.1.2	Exploiter ses facultés intellectuelles et physiques en ayant confiance en sa capacité à réussir et à progresser.		Use one’s intellectual and physical abilities with confidence in one’s capacity to succeed and progress.
+D3.1.3	Apprendre à résoudre les conflits sans agressivité, à éviter le recours à la violence grâce à sa maîtrise de moyens d'expression, de communication et d'argumentation.		Learn to resolve conflicts without aggression and avoid violence by mastering means of expression, communication and argumentation.
+D3.1.4	Respecter les opinions et la liberté d'autrui, identifier et rejeter toute forme d'intimidation ou d'emprise.		Respect the opinions and freedom of others and identify and reject all forms of intimidation or coercive control.
+D3.1.5	Apprendre à mettre à distance préjugés et stéréotypes et être capable d'apprécier les personnes qui sont différentes de soi et de vivre avec elles.		Learn to step back from prejudice and stereotypes and to appreciate and live alongside people who are different from oneself.
+D3.1.6	Être capable de faire preuve d'empathie et de bienveillance.		Demonstrate empathy and kindness.
+### subgroup	sous-domaine-2	La règle et le droit	Rules and the law
+D3.2.1	Comprendre et respecter les règles communes, notamment les règles de civilité, au sein de la classe, de l'école ou de l'établissement, qui autorisent et contraignent à la fois et qui engagent l'ensemble de la communauté éducative.		Understand and respect common rules, particularly rules of civility in the classroom and school, which both permit and constrain and involve the entire educational community.
+D3.2.2	Participer à la définition des règles communes dans le cadre adéquat.		Participate in defining common rules in the appropriate setting.
+D3.2.3	Connaître le rôle éducatif et la gradation des sanctions ainsi que les grands principes et institutions de la justice.		Know the educational role and graduated nature of sanctions, as well as the main principles and institutions of justice.
+D3.2.4	Comprendre comment, dans une société démocratique, des valeurs communes garantissent les libertés individuelles et collectives, trouvent force d'application dans des règles et dans le système du droit, que les citoyens peuvent faire évoluer selon des procédures organisées.		Understand how, in a democratic society, shared values safeguard individual and collective freedoms, are enforced through rules and the legal system, and can be changed by citizens through established procedures.
+D3.2.5	Connaître les grandes déclarations des droits de l'homme (notamment la Déclaration des droits de l'homme et du citoyen de 1789, la Déclaration universelle des droits de l'homme de 1948), la Convention européenne de sauvegarde des droits de l'homme, la Convention internationale des droits de l'enfant de 1989 et les principes fondateurs de la République française.		Know the major declarations of human rights—particularly the 1789 Declaration of the Rights of Man and of the Citizen and the 1948 Universal Declaration of Human Rights—the European Convention on Human Rights, the 1989 Convention on the Rights of the Child, and the founding principles of the French Republic.
+D3.2.6	Connaître le sens du principe de laïcité.		Understand the meaning of the principle of secularism (laïcité).
+D3.2.7	Mesurer la profondeur historique de la laïcité et son importance pour la démocratie dans notre pays.		Appreciate the historical depth of secularism and its importance for democracy in France.
+D3.2.8	Comprendre que la laïcité garantit la liberté de conscience, fondée sur l'autonomie du jugement de chacun, et institue des règles permettant de vivre ensemble pacifiquement.		Understand that secularism guarantees freedom of conscience, based on the autonomy of each person’s judgement, and establishes rules that enable people to live together peacefully.
+D3.2.9	Connaître les principales règles du fonctionnement institutionnel de l'Union européenne et les grands objectifs du projet européen.		Know the main rules governing the institutions of the European Union and the principal aims of the European project.
+### subgroup	sous-domaine-3	Réflexion et discernement	Reflection and discernment
+D3.3.1	Être attentif à la portée de ses paroles et à la responsabilité de ses actes.		Be mindful of the impact of one’s words and the responsibility attached to one’s actions.
+D3.3.2	Fonder et défendre ses jugements en s'appuyant sur sa réflexion et sur sa maîtrise de l'argumentation.		Form and defend judgements through reflection and a command of argumentation.
+D3.3.3	Comprendre les choix moraux que chacun fait dans sa vie.		Understand the moral choices each person makes in life.
+D3.3.4	Pouvoir discuter de choix moraux ainsi que de quelques grands problèmes éthiques liés notamment aux évolutions sociales, scientifiques ou techniques.		Discuss moral choices and major ethical issues, particularly those connected with social, scientific or technological change.
+D3.3.5	Vérifier la validité d'une information et distinguer ce qui est objectif et ce qui est subjectif.		Verify the validity of information and distinguish objective from subjective content.
+D3.3.6	Apprendre à justifier ses choix et à confronter ses propres jugements avec ceux des autres.		Learn to justify one’s choices and compare one’s judgements with those of others.
+D3.3.7	Savoir remettre en cause ses jugements initiaux après un débat argumenté.		Reconsider one’s initial judgements after reasoned debate.
+D3.3.8	Distinguer son intérêt particulier de l'intérêt général.		Distinguish one’s personal interest from the general interest.
+D3.3.9	Mettre en application et respecter les grands principes républicains.		Apply and respect the fundamental principles of the French Republic.
+### subgroup	sous-domaine-4	Responsabilité, sens de l'engagement et de l'initiative	Responsibility, commitment and initiative
+D3.4.1	Coopérer et faire preuve de responsabilité vis-à-vis d'autrui.		Cooperate and act responsibly towards others.
+D3.4.2	Respecter les engagements pris envers soi-même et envers les autres.		Honour commitments made to oneself and to others.
+D3.4.3	Comprendre l'importance du respect des contrats dans la vie civile.		Understand the importance of honouring contracts in civic life.
+D3.4.4	Comprendre l'importance de s'impliquer dans la vie scolaire (actions et projets collectifs, instances), d'avoir recours aux outils de la démocratie (ordre du jour, compte rendu, votes notamment) et de s'engager aux côtés des autres dans les différents aspects de la vie collective et de l'environnement.		Understand the importance of taking part in school life through collective actions, projects and representative bodies; using democratic tools such as agendas, minutes and votes; and engaging with others in the different aspects of collective life and the environment.
+D3.4.5	Savoir prendre des initiatives, entreprendre et mettre en œuvre des projets, après avoir évalué les conséquences de son action.		Take initiative, undertake and carry out projects after assessing the consequences of one’s actions.
+D3.4.6	Préparer son orientation future et sa vie d'adulte.		Prepare for one’s future educational and career path and adult life.
+## group	domaine-4	Domaine 4 · Systèmes naturels et systèmes techniques	Domain 4 · Natural and technical systems
+### subgroup	sous-domaine-1	Démarches scientifiques	Scientific inquiry
+D4.1.1	Savoir mener une démarche d'investigation.		Carry out an investigative process.
+D4.1.2	Décrire et questionner ses observations.		Describe and question one’s observations.
+D4.1.3	Prélever, organiser et traiter l'information utile.		Select, organise and process useful information.
+D4.1.4	Formuler des hypothèses, les tester et les éprouver.		Formulate hypotheses and test them rigorously.
+D4.1.5	Manipuler, explorer plusieurs pistes, procéder par essais et erreurs.		Manipulate, explore several avenues and proceed by trial and error.
+D4.1.6	Modéliser pour représenter une situation.		Use modelling to represent a situation.
+D4.1.7	Analyser, argumenter, mener différents types de raisonnements (par analogie, déduction logique...).		Analyse, argue and use different forms of reasoning, including analogy and logical deduction.
+D4.1.8	Rendre compte de sa démarche.		Report on one’s approach.
+D4.1.9	Exploiter et communiquer les résultats de mesures ou de recherches en utilisant les langages scientifiques à bon escient.		Use scientific language appropriately to interpret and communicate the results of measurements or research.
+D4.1.10	Pratiquer le calcul, mental et écrit, exact et approché.		Perform mental and written calculations, both exact and approximate.
+D4.1.11	Estimer et contrôler les résultats, notamment en utilisant les ordres de grandeur.		Estimate and check results, particularly by using orders of magnitude.
+D4.1.12	Résoudre des problèmes impliquant des grandeurs variées (géométriques, physiques, économiques...), en particulier des situations de proportionnalité.		Solve problems involving varied quantities—geometric, physical, economic and others—particularly proportional relationships.
+D4.1.13	Interpréter des résultats statistiques et les représenter graphiquement.		Interpret statistical results and represent them graphically.
+### subgroup	sous-domaine-2	Conception, création, réalisation	Designing, creating and making
+D4.2.1	Imaginer, concevoir et fabriquer des objets et des systèmes techniques.		Imagine, design and make objects and technical systems.
+D4.2.2	Mettre en œuvre observation, imagination, créativité, sens de l'esthétique et de la qualité, talent et habileté manuels, sens pratique, et solliciter les savoirs et compétences scientifiques, technologiques et artistiques pertinents.		Apply observation, imagination, creativity, a sense of aesthetics and quality, manual talent and skill, and practical judgement, while drawing on relevant scientific, technological and artistic knowledge and skills.
+### subgroup	sous-domaine-3	Responsabilités individuelles et collectives	Individual and collective responsibilities
+D4.3.1	Connaître l'importance d'un comportement responsable vis-à-vis de l'environnement et de la santé et comprendre ses responsabilités individuelle et collective.		Understand the importance of responsible behaviour towards the environment and health, and understand one’s individual and collective responsibilities.
+D4.3.2	Prendre conscience de l'impact de l'activité humaine sur l'environnement, de ses conséquences sanitaires et de la nécessité de préserver les ressources naturelles et la diversité des espèces.		Recognise the impact of human activity on the environment, its consequences for health, and the need to preserve natural resources and species diversity.
+D4.3.3	Prendre conscience de la nécessité d'un développement plus juste et plus attentif à ce qui est laissé aux générations futures.		Recognise the need for development that is fairer and more attentive to what is left for future generations.
+D4.3.4	Savoir que la santé repose notamment sur des fonctions biologiques coordonnées, susceptibles d'être perturbées par des facteurs physiques, chimiques, biologiques et sociaux de l'environnement, et que certains de ces facteurs de risques dépendent de conduites sociales et de choix personnels.		Know that health depends in particular on coordinated biological functions that can be disrupted by physical, chemical, biological and social environmental factors, and that some of these risk factors depend on social behaviours and personal choices.
+D4.3.5	Être conscient des enjeux de bien-être et de santé des pratiques alimentaires et physiques.		Be aware of the wellbeing and health implications of eating habits and physical activity.
+D4.3.6	Observer les règles élémentaires de sécurité liées aux techniques et produits rencontrés dans la vie quotidienne.		Follow basic safety rules relating to techniques and products encountered in everyday life.
+## group	domaine-5	Domaine 5 · Représentations du monde et activité humaine	Domain 5 · Representations of the world and human activity
+### subgroup	sous-domaine-1	L'espace et le temps	Space and time
+D5.1.1	Identifier les grandes questions et les principaux enjeux du développement humain.		Identify the major questions and key challenges of human development.
+D5.1.2	Être capable d'appréhender les causes et les conséquences des inégalités, les sources de conflits et les solidarités, ou encore les problématiques mondiales concernant l'environnement, les ressources, les échanges, l'énergie, la démographie et le climat.		Understand the causes and consequences of inequalities, sources of conflict and solidarity, and global issues concerning the environment, resources, trade, energy, demography and climate.
+D5.1.3	Comprendre que les lectures du passé éclairent le présent et permettent de l'interpréter.		Understand that interpretations of the past shed light on the present and help us interpret it.
+D5.1.4	Se repérer dans l'espace à différentes échelles.		Locate oneself in space at different scales.
+D5.1.5	Comprendre les grands espaces physiques et humains et les principales caractéristiques géographiques de la Terre, du continent européen et du territoire national : organisation et localisations, ensembles régionaux, outre-mer.		Understand the major physical and human spaces and the main geographical features of Earth, Europe and France, including their organisation and locations, regional groupings and overseas territories.
+D5.1.6	Savoir situer un lieu ou un ensemble géographique en utilisant des cartes, en les comparant et en produisant soi-même des représentations graphiques.		Locate a place or geographical area using maps, comparing them and producing one’s own graphic representations.
+### subgroup	sous-domaine-2	Organisations et représentations du monde	Organisations and representations of the world
+D5.2.1	Lire des paysages, identifier ce qu'ils révèlent des atouts et des contraintes du milieu ainsi que de l'activité humaine, passée et présente.		Read landscapes and identify what they reveal about the assets and constraints of the environment and about past and present human activity.
+D5.2.2	Établir des liens entre l'espace et l'organisation des sociétés.		Establish links between space and the organisation of societies.
+D5.2.3	Exprimer à l'écrit et à l'oral son ressenti face à une œuvre littéraire ou artistique.		Express one’s response to a literary or artistic work in writing and speech.
+D5.2.4	Étayer ses analyses et ses jugements portés sur l'œuvre.		Support one’s analyses and judgements of a work.
+D5.2.5	Formuler des hypothèses sur ses significations et en proposer une interprétation en s'appuyant notamment sur ses aspects formels et esthétiques.		Formulate hypotheses about a work’s meanings and propose an interpretation based in particular on its formal and aesthetic features.
+D5.2.6	Justifier ses intentions et ses choix expressifs, en s'appuyant sur quelques notions d'analyse des œuvres.		Justify one’s intentions and expressive choices using concepts from the analysis of works.
+D5.2.7	S'approprier, de façon directe ou indirecte, notamment dans le cadre de sorties scolaires culturelles, des œuvres littéraires et artistiques appartenant au patrimoine national et mondial comme à la création contemporaine.		Engage directly or indirectly—including through cultural school visits—with literary and artistic works from national and world heritage as well as contemporary creation.
+### subgroup	sous-domaine-3	Invention, élaboration, production	Invention, development and production
+D5.3.1	Imaginer, concevoir et réaliser des productions de natures diverses, y compris littéraires et artistiques.		Imagine, design and produce works of various kinds, including literary and artistic works.
+D5.3.2	Mettre en œuvre des principes de conception et de fabrication d'objets ou les démarches et les techniques de création.		Apply principles for designing and making objects, or creative methods and techniques.
+D5.3.3	Tenir compte des contraintes des matériaux et des processus de production en respectant l'environnement.		Take account of the constraints of materials and production processes while respecting the environment.
+D5.3.4	Mobiliser son imagination et sa créativité au service d'un projet personnel ou collectif.		Use imagination and creativity in support of a personal or collective project.
+D5.3.5	Développer son jugement, son goût, sa sensibilité, ses émotions esthétiques.		Develop judgement, taste, sensitivity and aesthetic emotions.
+D5.3.6	Connaître les contraintes et les libertés qui s'exercent dans le cadre des activités physiques et sportives ou artistiques personnelles et collectives.		Know the constraints and freedoms involved in individual and collective physical, sporting or artistic activities.
+D5.3.7	Savoir en tirer parti et gérer son activité physique et sa production ou sa performance artistiques pour les améliorer, progresser et se perfectionner.		Use them effectively and manage one’s physical activity and artistic production or performance in order to improve, progress and refine it.
+D5.3.8	Chercher et utiliser des techniques pertinentes, construire des stratégies pour réaliser une performance sportive.		Seek and use appropriate techniques and build strategies to achieve a sporting performance.
+D5.3.9	Dans le cadre d'activités et de projets collectifs, prendre sa place dans le groupe en étant attentif aux autres pour coopérer ou s'affronter dans un cadre réglementé.		In collective activities and projects, take one’s place in the group while being attentive to others in order to cooperate or compete within an agreed set of rules.
 # framework	greencomp	GreenComp	GreenComp	https://op.europa.eu/fr/publication-detail/-/publication/bc83061d-74ec-11ec-9136-01aa75ed71a1/language-fr
 ## group	valeurs	1 · Incarner les valeurs de la durabilité	1 · Embodying sustainability values
 1.1	Accorder de la valeur à la durabilité	Réfléchir aux valeurs personnelles, identifier leur variation et évaluer leur adéquation avec les valeurs de durabilité.	Valuing sustainability	Reflect on personal values, identify how they vary and assess how they align with sustainability values.

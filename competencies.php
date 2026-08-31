@@ -217,6 +217,7 @@ function attach_framework_details(array &$items, string $frameworkId, string $so
         $index = $indexesByCode[$code];
         if ($kind === 'description') {
             $items[$index]['descFr'] = $textFr;
+            $items[$index]['descEn'] = $textEn;
             continue;
         }
         if (!in_array($kind, ['knowledge', 'skills', 'attitudes', 'basic', 'intermediate', 'advanced', 'highly_advanced'], true)) {
@@ -1100,11 +1101,7 @@ foreach ($sectionGroups as $sectionKey => $group) {
         <input id="competency-search" class="competencies-search" type="search" placeholder="Rechercher…" data-i18n-attr="placeholder" data-i18n-fr="Rechercher…" data-i18n-en="Search…">
         <div class="competencies-filters" role="group" aria-label="Filtrer par cadre" data-i18n-attr="aria-label" data-i18n-fr="Filtrer par cadre" data-i18n-en="Filter by framework">
             <?php foreach ($levels as $level): ?>
-                <?php $filterLabelEn = match ($level['id']) {
-                    'socle' => 'Common core',
-                    'crcn' => 'CRCN',
-                    default => $level['labelEn'],
-                }; ?>
+                <?php $filterLabelEn = $level['id'] === 'crcn' ? 'CRCN' : $level['labelEn']; ?>
                 <button class="competencies-filter-btn" type="button" data-level-filter="<?= h($level['id']) ?>" aria-pressed="false">
                     <span class="competencies-dot competencies-dot-<?= h($level['id']) ?>" aria-hidden="true"></span>
                     <span data-level-fr="<?= h($level['labelFr']) ?>" data-level-en="<?= h($filterLabelEn) ?>"><?= h($level['labelFr']) ?></span>
@@ -1137,7 +1134,12 @@ foreach ($sectionGroups as $sectionKey => $group) {
                                     </span>
                                 </button>
                                 <?php if ($levelGroup['sourceUrl'] !== ''): ?>
-                                    <a class="competencies-framework-source" href="<?= h($levelGroup['sourceUrl']) ?>" target="_blank" rel="noopener noreferrer"><span data-i18n-fr="Consulter la source" data-i18n-en="View source">Consulter la source</span> ↗</a>
+                                    <?php
+                                    $sourceUrlEn = $levelGroup['levelId'] === 'greencomp'
+                                        ? str_replace(['/fr/publication-detail/', '/language-fr'], ['/en/publication-detail/', '/language-en'], $levelGroup['sourceUrl'])
+                                        : $levelGroup['sourceUrl'];
+                                    ?>
+                                    <a class="competencies-framework-source" href="<?= h($levelGroup['sourceUrl']) ?>" target="_blank" rel="noopener noreferrer" data-i18n-attr="href" data-i18n-fr="<?= h($levelGroup['sourceUrl']) ?>" data-i18n-en="<?= h($sourceUrlEn) ?>"><span data-i18n-fr="Consulter la source" data-i18n-en="View source">Consulter la source</span> ↗</a>
                                 <?php endif; ?>
                             </div>
                         </td>
@@ -1200,9 +1202,9 @@ foreach ($sectionGroups as $sectionKey => $group) {
                             <tr class="competencies-item-row domain-colored" style="<?= h(competency_style_css($itemDomainStyle)) ?>" data-row-shade="<?= $index % 2 === 1 ? 'alt' : 'base' ?>" data-section="<?= h($sectionKey) ?>" data-level="<?= h($item['levelId']) ?>" data-parent-group="<?= h($frameworkParentKey) ?>" data-search="<?= h(competency_search_text($item)) ?>">
                                 <td class="competencies-used-cell">
                                     <?php if ($currentUser): ?>
-                                        <input class="competencies-used-check" type="checkbox" disabled <?= isset($usedCompetencyIds[$item['id']]) ? 'checked' : '' ?> aria-label="<?= h('Compétence utilisée : ' . $item['legacyCode']) ?>">
+                                        <input class="competencies-used-check" type="checkbox" disabled <?= isset($usedCompetencyIds[$item['id']]) ? 'checked' : '' ?> aria-label="<?= h('Compétence utilisée : ' . $item['legacyCode']) ?>" data-i18n-attr="aria-label" data-i18n-fr="<?= h('Compétence utilisée : ' . $item['legacyCode']) ?>" data-i18n-en="<?= h('Used competency: ' . $item['legacyCode']) ?>">
                                     <?php else: ?>
-                                        <span class="competencies-used-empty" aria-label="Connexion requise">-</span>
+                                        <span class="competencies-used-empty" aria-label="Connexion requise" data-i18n-attr="aria-label" data-i18n-fr="Connexion requise" data-i18n-en="Sign-in required">-</span>
                                     <?php endif; ?>
                                 </td>
                                 <td><span class="competency-code" title="<?= h($item['shortCode']) ?>" data-i18n-attr="title" data-i18n-fr="<?= h($item['shortCode']) ?>" data-i18n-en="<?= h($item['shortCodeEn']) ?>"><?= h($item['legacyCode']) ?></span></td>
@@ -1286,14 +1288,45 @@ document.addEventListener('DOMContentLoaded', function () {
     var collapsedSections = new Set();
     var collapsedLevels = new Set();
 
+    function levelFromHash() {
+        var match = window.location.hash.match(/^#framework-([a-z0-9-]+)$/i);
+        if (!match) return 'all';
+        return filterButtons.some(function (button) {
+            return button.dataset.levelFilter === match[1];
+        }) ? match[1] : 'all';
+    }
+
+    function syncFilterButtons() {
+        filterButtons.forEach(function (button) {
+            var isActive = button.dataset.levelFilter === activeLevel;
+            button.classList.toggle('is-active', isActive);
+            button.setAttribute('aria-pressed', isActive ? 'true' : 'false');
+        });
+    }
+
+    function syncFrameworkHash() {
+        var hash = activeLevel === 'all' ? '' : '#framework-' + activeLevel;
+        var url = window.location.pathname + window.location.search + hash;
+        window.history.replaceState(null, '', url);
+    }
+
     function normalize(value) {
         return String(value || '').toLocaleLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
     }
 
-    function applyFrenchTypography(value) {
-        return String(value || '')
-            .replace(/,\s*(…|\.{3})/g, '$1')
-            .replace(/[ \u00a0]*([:;])/g, '\u00a0$1');
+    function applyLanguageTypography(value, lang) {
+        var text = String(value || '').replace(/,\s*(…|\.{3})/g, '$1');
+        return text.replace(/[ \u00a0\u202f]*([:;]|[!?]+)(?!\/\/)/g, function (match, punctuation, offset, source) {
+            var previous = source.charAt(offset - 1);
+            var next = source.charAt(offset + match.length);
+            if (punctuation === ':' && /\d/.test(previous) && /\d/.test(next)) {
+                return punctuation;
+            }
+            if (lang === 'en') {
+                return punctuation;
+            }
+            return (punctuation === ':' ? '\u00a0' : '\u202f') + punctuation;
+        });
     }
 
     function filterRows() {
@@ -1379,13 +1412,16 @@ document.addEventListener('DOMContentLoaded', function () {
         button.addEventListener('click', function () {
             var selectedLevel = button.dataset.levelFilter || 'all';
             activeLevel = activeLevel === selectedLevel ? 'all' : selectedLevel;
-            filterButtons.forEach(function (candidate) {
-                var isActive = candidate === button && activeLevel !== 'all';
-                candidate.classList.toggle('is-active', isActive);
-                candidate.setAttribute('aria-pressed', isActive ? 'true' : 'false');
-            });
+            syncFilterButtons();
+            syncFrameworkHash();
             filterRows();
         });
+    });
+
+    window.addEventListener('hashchange', function () {
+        activeLevel = levelFromHash();
+        syncFilterButtons();
+        filterRows();
     });
 
     if (searchInput) {
@@ -1398,9 +1434,7 @@ document.addEventListener('DOMContentLoaded', function () {
         document.querySelectorAll('[data-i18n-fr]').forEach(function (el) {
             var value = lang === 'en' ? el.dataset.i18nEn : el.dataset.i18nFr;
             if (!value) return;
-            if (lang !== 'en') {
-                value = applyFrenchTypography(value);
-            }
+            value = applyLanguageTypography(value, lang);
             var attrs = (el.dataset.i18nAttr || '').split(',').map(function (attr) {
                 return attr.trim();
             }).filter(Boolean);
@@ -1413,9 +1447,8 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         });
         document.querySelectorAll('[data-level-fr]').forEach(function (el) {
-            el.textContent = lang === 'en'
-                ? el.dataset.levelEn
-                : applyFrenchTypography(el.dataset.levelFr);
+            var value = lang === 'en' ? el.dataset.levelEn : el.dataset.levelFr;
+            el.textContent = applyLanguageTypography(value, lang);
         });
     }
 
@@ -1426,6 +1459,10 @@ document.addEventListener('DOMContentLoaded', function () {
         lang = 'fr';
     }
     applyPageLanguage(lang);
+
+    activeLevel = levelFromHash();
+    syncFilterButtons();
+    filterRows();
 
     var langSelect = document.getElementById('lang-select');
     if (langSelect) {

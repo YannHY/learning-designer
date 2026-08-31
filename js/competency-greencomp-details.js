@@ -1,186 +1,186 @@
 // Descriptions et repères issus de l’annexe 2 du référentiel officiel GreenComp FR.
 // Pages imprimées 42 à 53 (pages PDF 45 à 56).
-// Format : code<TAB>type (description|knowledge|skills|attitudes)<TAB>ordre<TAB>texte FR
+// Format : code<TAB>type (description|knowledge|skills|attitudes)<TAB>ordre<TAB>texte FR<TAB>official English text
 const COMPETENCY_GREENCOMP_DETAIL_SOURCE = String.raw`
-1.1	description	0	Réfléchir aux valeurs personnelles; déterminer et expliquer comment les valeurs varient selon les individus et dans le temps tout en évaluant de façon critique comment elles se concilient avec les valeurs de la durabilité
-1.1	knowledge	1	Connaît les principaux points de vue sur la durabilité: anthropocentrisme (centré sur l’humain), technocentrisme (solutions technologiques à des problèmes écologiques) et écocentrisme (centré sur la nature), et la manière dont ils influencent les hypothèses et les arguments.
-1.1	knowledge	2	Connaît les principales valeurs et les principaux principes à la base des modèles socioéconomiques et leur relation avec la durabilité.
-1.1	knowledge	3	Sait que les valeurs et les principes influencent l’action qui peut nuire, ne pas nuire, restaurer ou régénérer l’environnement.
-1.1	knowledge	4	Sait que les différentes cultures et générations peuvent attacher plus ou moins d’importance à la durabilité en fonction de leurs systèmes de valeurs.
-1.1	knowledge	5	Sait que lorsque la demande humaine de ressources est motivée par la cupidité, l’indifférence et l’individualisme débridé, cela a des conséquences négatives sur l’environnement.
-1.1	knowledge	6	Sait comment la position d’une personne dans la société influence ses valeurs personnelles.
-1.1	skills	1	Peut évaluer de manière critique et comparer les valeurs et principes de la durabilité sous-jacents dans les arguments, les actions, les politiques et les revendications politiques.
-1.1	skills	2	Peut évaluer les problèmes et les actions sur la base des valeurs et principes de la durabilité.
-1.1	skills	3	Peut aligner ses choix et actions personnels sur les valeurs et principes de la durabilité.
-1.1	skills	4	Peut exprimer et négocier les valeurs, les principes et les objectifs de la durabilité tout en admettant différents points de vue.
-1.1	skills	5	Peut reconnaître et inclure les valeurs des communautés, notamment des minorités, dans le cadrage des problèmes et la prise de décisions en matière de durabilité.
-1.1	attitudes	1	A tendance à agir conformément à des valeurs et des principes au service de la durabilité.
-1.1	attitudes	2	Est disposé à partager et clarifier ses points de vue sur les valeurs de la durabilité.
-1.1	attitudes	3	A l’esprit ouvert aux autres et à leur vision du monde.
-1.1	attitudes	4	Est prêt à critiquer et accorder de la valeur à différents contextes culturels en fonction de leur incidence sur la durabilité.
-1.2	description	0	Favoriser l’équité et la justice pour les générations actuelles et à venir, et mettre ce que l'on apprend des générations précédentes au service de la durabilité
-1.2	knowledge	1	Sait que les concepts éthiques et la justice pour les générations actuelles et à venir sont liés à la protection de la nature.
-1.2	knowledge	2	Sait ce qu’est la justice environnementale, autrement dit prendre en considération les intérêts et les capacités des autres espèces et des écosystèmes environnementaux.
-1.2	knowledge	3	Connaît l’importance de la préservation de la nature pour les générations à venir et pour la nature elle-même.
-1.2	knowledge	4	Sait que les individus et les communautés encouragent la durabilité de différentes manières et à des degrés divers.
-1.2	skills	1	Peut appliquer l’équité et la justice pour les générations actuelles et à venir comme critères pour la préservation de l’environnement et l’utilisation des ressources naturelles.
-1.2	skills	2	Peut évaluer et remettre en question ses besoins personnels pour gérer les ressources de manière prudente en vue d’atteindre des objectifs et des intérêts communs à plus long terme.
-1.2	skills	3	Peut respecter, comprendre et apprécier différentes cultures en relation avec la durabilité, notamment les cultures minoritaires, les traditions et les systèmes de connaissances locaux et autochtones.
-1.2	skills	4	Peut aider à parvenir à un consensus sur la durabilité de manière inclusive.
-1.2	attitudes	1	Est déterminé à diminuer la consommation matérielle.
-1.2	attitudes	2	A un sentiment d’appartenance à une humanité commune et de solidarité avec les générations à venir.
-1.2	attitudes	3	Est déterminé à respecter les intérêts des générations à venir.
-1.3	description	0	Reconnaître que les êtres humains font partie de la nature; et respecter les besoins et les droits des autres espèces et de la nature elle-même afin de rétablir des écosystèmes sains et résilients et de les régénérer.
-1.3	knowledge	1	Connaît les principales parties de l’environnement naturel (géosphère, biosphère, hydrosphère, cryosphère et atmosphère) et sait que les organismes vivants et les éléments non vivants sont étroitement liés et dépendent les uns des autres.
-1.3	knowledge	2	Sait que notre bien-être, notre santé et notre sécurité dépendent du bien-être de la nature.
-1.3	knowledge	3	Sait que les personnes font partie de la nature et que le clivage entre les systèmes humains et écologiques est arbitraire.
-1.3	knowledge	4	Sait que les êtres humains façonnent les écosystèmes et que les activités humaines peuvent rapidement et irréversiblement endommager les écosystèmes.
-1.3	knowledge	5	Sait qu’endommager et épuiser les ressources naturelles peut entraîner des catastrophes et des conflits (par exemple, perte de biodiversité, sécheresses, migrations de masse et guerres).
-1.3	knowledge	6	Sait qu’il est nécessaire de découpler la production des ressources naturelles et le bien-être de la consommation.
-1.3	skills	1	Peut évaluer sa propre incidence sur la nature et considère la protection de la nature comme une tâche essentielle pour tout un chacun.
-1.3	skills	2	Peut voir et imaginer les êtres humains vivant ensemble et respectant les autres formes de vie.
-1.3	skills	3	Peut reconnaître la diversité culturelle dans les limites planétaires.
-1.3	skills	4	Peut trouver des occasions de passer du temps dans la nature et d’aider à la restaurer.
-1.3	skills	5	Peut reconnaître les processus et les actions qui évitent ou réduisent l’utilisation de ressources naturelles.
-1.3	attitudes	1	Se soucie de l’existence d’une relation harmonieuse entre la nature et les êtres humains.
-1.3	attitudes	2	Est critique à l’égard de la notion qui veut que les êtres humains soient plus importants que les autres formes de vie.
-1.3	attitudes	3	Fait preuve d’empathie à l’égard de toutes les formes de vie.
-1.3	attitudes	4	Est sensible au rôle de la nature dans notre bien-être, notre santé et notre sécurité.
-1.3	attitudes	5	S’efforce en permanence de restaurer la nature.
-2.1	description	0	Aborder un problème de durabilité sous tous les angles; prendre en considération le temps, l’espace et le contexte afin de comprendre comment les éléments interagissent au sein des systèmes et entre ceux-ci
-2.1	knowledge	1	Sait que chaque action humaine à des incidences environnementales, sociales, culturelles et économiques.
-2.1	knowledge	2	Sait que les actions humaines influencent l’issue des événements dans le temps et dans l’espace, menant à des résultats positifs, neutres ou négatifs.
-2.1	knowledge	3	Connaît la réflexion sur le cycle de vie et sa pertinence pour la production et la consommation durables.
-2.1	knowledge	4	Connaît les principaux concepts et aspects des systèmes complexes (synthèse, émergence, interconnectivité, boucles de rétroaction et effets en cascade) et leurs implications pour la durabilité.
-2.1	knowledge	5	Connaît les ODD des Nations unies et est conscient des interconnexions et des éventuelles tensions entre les différents objectifs.
-2.1	skills	1	Peut décrire la durabilité comme un concept holistique qui inclut des aspects environnementaux, économiques, sociaux et culturels.
-2.1	skills	2	Peut évaluer les interactions entre les aspects environnementaux, économiques, sociaux et culturels de l’action pour la durabilité, des événements et des crises (par exemple, migration causée par le changement climatique ou guerres causées par le manque de ressources).
-2.1	skills	3	Peut évaluer comment les êtres humains et la nature interagissent dans l’espace et dans le temps.
-2.1	skills	4	Peut utiliser la réflexion sur le cycle de vie pour analyser les risques et les avantages de l’action humaine.
-2.1	skills	5	Peut reconnaître, au sein d’un système, les défis et les possibilités qui sont le plus susceptibles de susciter un changement en faveur de la durabilité.
-2.1	attitudes	1	Reconnaît les causes profondes de la non-durabilité dont les êtres humains sont responsables, telles que le changement climatique.
-2.1	attitudes	2	A une compréhension holistique des connexions et des interactions entre les événements naturels et les actions humaines.
-2.1	attitudes	3	Se préoccupe des incidences à court et à long terme de ses actions personnelles sur autrui et sur la planète.
-2.1	attitudes	4	Se soucie des conséquences systémiques des crises environnementales sur les générations actuelles et à venir et sur les autres espèces.
-2.1	attitudes	5	Se préoccupe des effets en cascade imprévisibles de l’action humaine.
-2.2	description	0	Évaluer les informations et les arguments, recenser les idées préconçues, remettre en cause l’inertie, et réfléchir à la manière dont les origines personnelles, sociales et culturelles influencent la pensée et les conclusions
-2.2	knowledge	1	Sait que notre compréhension de la durabilité est en constante évolution.
-2.2	knowledge	2	Sait que plusieurs biais peuvent influencer le discours sur la durabilité, y compris le raisonnement, la communication et les discours politiques.
-2.2	knowledge	3	Sait que les discours dominants peuvent façonner la formulation des problèmes de durabilité.
-2.2	knowledge	4	Sait que les allégations de durabilité sans preuves solides sont souvent de simples stratégies de communication, aussi appelées «écoblanchiment».
-2.2	knowledge	5	Sait que pour venir à bout des habitudes non durables, il faut une remise en cause de l’inertie, au niveau individuel et collectif, par les organisations et en politique.
-2.2	skills	1	Peut appliquer un raisonnement personnel pour répondre à la critique et aux arguments sur des questions de durabilité.
-2.2	skills	2	Peut analyser et apprécier des arguments, des idées, des actions et des scénarios afin de déterminer s’ils sont conformes aux preuves et aux valeurs sur le plan de la durabilité.
-2.2	skills	3	Peut passer au crible les sources d’information et les canaux de communication sur la durabilité afin d’évaluer la qualité de l’information qu’ils fournissent.
-2.2	skills	4	Peut réfléchir aux origines et aux motifs des décisions, de l’action et des modes de vie afin de comparer les avantages et les coûts individuels aux avantages et aux coûts sociétaux.
-2.2	skills	5	Peut examiner différentes sources de preuves et évaluer leur fiabilité afin de se faire une opinion sur la durabilité.
-2.2	attitudes	1	Est curieux au sujet des liens entre l’environnement, l’action humaine et la durabilité.
-2.2	attitudes	2	Croit en la science même en l’absence des connaissances requises pour comprendre pleinement les allégations scientifiques.
-2.2	attitudes	3	Adopte un point de vue basé sur des données probantes et est prêt à revoir celui-ci lorsque de nouvelles données font leur apparition.
-2.2	attitudes	4	Est disposé à accepter et discuter des questions, problèmes et possibilités de la durabilité.
-2.2	attitudes	5	Est sceptique quant aux informations sur la durabilité avant de vérifier leur source et de se renseigner sur d’éventuels intérêts particuliers.
-2.3	description	0	Exposer les défis actuels ou potentiels comme étant un problème de durabilité en termes de difficulté, de personnes concernées, de portée temporelle et géographique, afin de définir des approches adaptées pour prévoir et prévenir les problèmes, et pour atténuer les problèmes existants et s’y adapter.
-2.3	knowledge	1	Sait que les problèmes de durabilité sont souvent complexes et que certains d’entre eux ne peuvent être totalement résolus.
-2.3	knowledge	2	Sait que les mesures et l’action en réponse à un problème de durabilité dépendent de la manière dont le problème est cadré (par/avec/pour qui, où, quand, pourquoi).
-2.3	knowledge	3	Sait que pour reconnaître des actions justes et inclusives, il est nécessaire de considérer les problèmes de durabilité du point de vue de différentes parties prenantes.
-2.3	knowledge	4	Sait que les problèmes de durabilité vont de problèmes relativement simples à des problèmes complexes et qu’établir leur type aide à trouver des approches adaptées.
-2.3	knowledge	5	Sait que les problèmes de durabilité actuels ou potentiels peuvent évoluer rapidement et doivent donc être fréquemment redéfinis et recadrés.
-2.3	skills	1	Peut prendre en considération les points de vue de plusieurs parties prenantes, en tenant compte de toutes les formes de vie et de l’environnement pour cadrer les défis de durabilité actuels et potentiels.
-2.3	skills	2	Peut appliquer une approche flexible, systémique, fondée sur le cycle de vie et adaptative au moment de cadrer les défis de durabilité actuels et potentiels.
-2.3	skills	3	Peut établir une approche transdisciplinaire afin de cadrer les défis actuels et potentiels en matière de durabilité.
-2.3	skills	4	Peut explorer de manière continue les problématiques d’une question de durabilité pour élargir l’éventail d’alternatives et de solutions.
-2.3	skills	5	Peut déterminer des approches appropriées pour atténuer, adapter et potentiellement résoudre des problèmes de durabilité.
-2.3	attitudes	1	S’efforce d’exploiter toutes les compétences en matière de durabilité au moment de cadrer les défis de durabilité actuels et potentiels.
-2.3	attitudes	2	Est déterminé à présenter un problème de durabilité comme un problème complexe plutôt que de le simplifier exagérément.
-2.3	attitudes	3	Tente de dissocier son propre jugement du processus de cadrage du problème.
-2.3	attitudes	4	Écoute activement et fait preuve d’empathie lorsqu’il collabore avec d’autres pour cadrer les défis actuels et potentiels en matière de durabilité.
-3.1	description	0	Envisager des avenirs durables alternatifs en imaginant et en élaborant des scénarios alternatifs et en déterminant les étapes nécessaires pour parvenir à un avenir durable jugé meilleur
-3.1	knowledge	1	Connaît la différence entre avenir attendu, avenir jugé meilleur et avenir alternatif pour les scénarios de durabilité.
-3.1	knowledge	2	Connaît la différence entre les approches à court, moyen et long terme et leurs implications pour les scénarios de durabilité.
-3.1	knowledge	3	Sait que l’élaboration de scénarios peut tenir compte d’événements passés et de signaux actuels de changement.
-3.1	knowledge	4	Sait que les scénarios peuvent éclairer la prise de décisions en faveur d’un avenir durable souhaité.
-3.1	knowledge	5	Sait que les effets causés par les êtres humains peuvent jouer un rôle majeur au moment de cartographier les scénarios des avenirs alternatifs et jugés meilleurs.
-3.1	skills	1	Peut envisager des futurs alternatifs qui trouvent leur fondement dans la science, la créativité et les valeurs au service de la durabilité.
-3.1	skills	2	Peut analyser et évaluer les futurs et leurs possibilités, limites et risques.
-3.1	skills	3	Peut déterminer des actions et des initiatives qui mènent à un avenir jugé meilleur.
-3.1	skills	4	Peut anticiper les futures implications en examinant les tendances passées et la situation actuelle.
-3.1	attitudes	1	Adopte une perspective à long terme au moment de planifier, apprécier et évaluer les actions pour la durabilité.
-3.1	attitudes	2	Se préoccupe de l’incidence de ses propres actions sur l’avenir.
-3.1	attitudes	3	Est conscient que les conséquences projetées sur lui-même et sur la population locale peuvent influencer les préférences pour certains scénarios plutôt que d’autres.
-3.1	attitudes	4	S’efforce de combiner méthodes rigoureuses de réflexion sur l’avenir et approches créatives et participatives.
-3.2	description	0	Gérer les transitions et les défis dans des situations complexes sur le plan de la durabilité et prendre des décisions liées à l’avenir malgré l’incertitude, l’ambiguïté et le risque
-3.2	knowledge	1	Sait que les actions humaines peuvent avoir des conséquences imprévisibles, incertaines et complexes sur l’environnement.
-3.2	knowledge	2	Sait qu’il n’existe pas de solution unique aux problèmes socioécologiques complexes, mais bien différentes alternatives en fonction du moment et du contexte.
-3.2	knowledge	3	Connaît les risques associés aux transformations de l’environnement naturel par les êtres humains.
-3.2	knowledge	4	Sait quels aspects du mode de vie personnel ont le plus d’incidence sur la durabilité et nécessitent une adaptation (par exemple, voyages aériens, utilisation de la voiture, consommation de viande, mode éphémère).
-3.2	knowledge	5	Connaît l’importance du lien entre les incidences locales et la durabilité mondiale.
-3.2	skills	1	Peut s’adapter à différentes approches lorsqu’il travaille sur la durabilité.
-3.2	skills	2	Peut reconnaître et s’adapter à différents modes de vie et habitudes de consommation afin d’utiliser moins de ressources naturelles.
-3.2	skills	3	Peut prendre en considération les circonstances locales lorsqu’il rencontre des problèmes et des possibilités en matière de durabilité.
-3.2	skills	4	Peut faire face à l’ambiguïté et à l’incertitude qui entourent les problèmes de durabilité dans sa réflexion sur les alternatives.
-3.2	attitudes	1	Reconnaît l’impact émotionnel du changement climatique, de la perte de biodiversité et de la paupérisation.
-3.2	attitudes	2	Est disposé à mettre un terme à des pratiques non durables et à essayer des solutions alternatives.
-3.2	attitudes	3	Envisage volontiers des options durables, même si elles sont contraires à ses intérêts personnels.
-3.2	attitudes	4	Est flexible, imaginatif et adaptable face aux changements environnementaux inattendus.
-3.2	attitudes	5	Gère bien les compromis dans les décisions en matière de durabilité au sein des domaines et entre ceux-ci (environnemental, social, économique, culturel et politique) et dans le temps et l’espace.
-3.3	description	0	Adopter un mode de pensée relationnel en explorant et en mettant en relation différentes disciplines, en utilisant la créativité et l’expérimentation avec des idées ou des méthodes inédites
-3.3	knowledge	1	Sait que les problèmes de durabilité doivent être abordés en combinant différentes disciplines, cultures de la connaissance et opinions divergentes pour amorcer un changement systémique.
-3.3	knowledge	2	Sait qu’il est important d’explorer et d’expérimenter de nouvelles voies et idées en réponse aux défis de durabilité complexes.
-3.3	knowledge	3	Connaît les principaux concepts d’une économie et d’une société circulaires.
-3.3	knowledge	4	Connaît les concepts de la durabilité et du développement durable, y compris les origines et l’évolution, les principales parties prenantes, les implications pour la société et la planète, la protection, la restauration et la régénération de l’environnement.
-3.3	skills	1	Peut utiliser les preuves et les recherches pour mieux comprendre, expliquer, prédire et gérer le changement en faveur de la durabilité.
-3.3	skills	2	Peut combiner connaissances et ressources pour faire face aux défis de durabilité.
-3.3	skills	3	Peut synthétiser des informations et données relatives à la durabilité provenant de différentes disciplines.
-3.3	skills	4	Peut appliquer de manière créative les concepts de l’économie circulaire, tels que privilégier la qualité plutôt que la quantité et réutiliser et réparer.
-3.3	skills	5	Peut accepter des opinions divergentes.
-3.3	attitudes	1	A tendance à expérimenter et n’a pas peur d’échouer face aux défis de durabilité.
-3.3	attitudes	2	Est ouvert à la réflexion dans la norme et en dehors de celle-ci en relation avec la durabilité.
-3.3	attitudes	3	Est déterminé à envisager les défis et possibilités en matière de durabilité sous différents angles.
-3.3	attitudes	4	Ose faire des choix inhabituels.
-4.1	description	0	S'orienter dans le système politique, déterminer qui est responsable sur le plan politique et a l’obligation de rendre des comptes pour les comportements non durables, et exiger des politiques efficaces au service de la durabilité
-4.1	knowledge	1	Sait comment les systèmes politiques, y compris leurs composantes, devraient fonctionner en faveur de la durabilité.
-4.1	knowledge	2	Connaît les parties prenantes politiques pertinentes pour la durabilité au sein de sa communauté.
-4.1	knowledge	3	Sait comment entrer en contact avec les parties prenantes politiques et économiques afin de cocréer des politiques de durabilité avec les représentants de la population locale.
-4.1	knowledge	4	Connaît les politiques qui attribuent la responsabilité des dommages environnementaux (par exemple, le principe du pollueur-payeur).
-4.1	skills	1	Peut analyser comment les structures de pouvoir et les systèmes politiques exercent une influence.
-4.1	skills	2	Peut participer à la prise de décisions démocratique et à des activités civiques pour le développement durable.
-4.1	skills	3	Peut déterminer les parties prenantes sociales, politiques et économiques pertinentes au sein de sa communauté ou région afin de remédier à un problème de durabilité.
-4.1	skills	4	Peut proposer des trajectoires alternatives pour la durabilité.
-4.1	attitudes	1	Est déterminé à devenir un agent de changement pour parvenir à la durabilité.
-4.1	attitudes	2	S’attend à ce que les pouvoirs publics et les institutions publiques servent le bien commun.
-4.1	attitudes	3	Exige une responsabilité politique pour les comportements non durables.
-4.1	attitudes	4	Est déterminé à remettre en question l’efficacité des politiques en faveur de la durabilité.
-4.2	description	0	Agir pour le changement en collaboration avec d’autres
-4.2	knowledge	1	Connaît les principales parties prenantes de la durabilité au sein de sa communauté et sait comment les contacter.
-4.2	knowledge	2	Sait que travailler avec d’autres pour promouvoir la nature et encourager l’équité nécessite de respecter la démocratie.
-4.2	knowledge	3	Sait comment travailler avec divers participants pour créer des visions inclusives pour un avenir plus durable.
-4.2	knowledge	4	Sait qu’il est important de doter les individus et les organisations des moyens de travailler de manière collaborative.
-4.2	skills	1	Peut créer différentes coalitions pour remédier à des problèmes épineux relatifs à la durabilité.
-4.2	skills	2	Peut créer des processus transparents, inclusifs et axés sur la communauté locale.
-4.2	skills	3	Peut créer des possibilités d’action conjointe entre les communautés, les secteurs et les régions.
-4.2	skills	4	Peut travailler collectivement dans le cadre de processus de changement en faveur de la durabilité.
-4.2	skills	5	Peut reconnaître les forces des parties concernées.
-4.2	skills	6	Peut agir conformément aux thèses partagées sur des avenirs durables.
-4.2	attitudes	1	Est disposé à s’unir à d’autres pour s’opposer à l’inertie.
-4.2	attitudes	2	Est motivé pour collaborer afin de façonner des avenirs durables inclusifs.
-4.2	attitudes	3	Privilégie les valeurs et les intérêts de durabilité au moment d’entreprendre une action collective.
-4.2	attitudes	4	Veut rendre à la collectivité et à la nature.
-4.2	attitudes	5	Est déterminé à changer pour un avenir plus inclusif et plus juste.
-4.3	description	0	Déterminer son propre potentiel d'action pour la durabilité et contribuer activement à améliorer les perspectives pour la communauté locale et pour la planète
-4.3	knowledge	1	Connaît son propre potentiel à susciter un changement positif pour l’environnement.
-4.3	knowledge	2	Sait que des mesures préventives devraient être prises lorsque certaines actions ou l’inaction peuvent nuire à la santé humaine et à toutes les formes de vie (principe de précaution).
-4.3	knowledge	3	Sait que les individus ont une obligation à l’égard de la société et de l’environnement.
-4.3	knowledge	4	Sait que le maintien du statu quo et l’inaction sont aussi des choix.
-4.3	knowledge	5	Sait que chaque action a une incidence, même si elle n’est pas immédiate.
-4.3	skills	1	Peut appliquer les principes suivants: utiliser moins de ressources, faire mieux avec moins de ressources, et réutiliser les mêmes ressources.
-4.3	skills	2	Prend des initiatives personnelles et persévère afin d’atteindre les objectifs de durabilité même dans des contextes d’incertitude.
-4.3	skills	3	Peut agir rapidement, même en cas de doute et d’imprévu, en gardant à l’esprit le principe de précaution.
-4.3	skills	4	Peut mobiliser les autres en vue d’adopter des choix plus durables.
-4.3	skills	5	Peut surmonter sa propre résistance au changement.
-4.3	skills	6	Peut reconnaître un réseau de parties concernées pertinentes.
-4.3	attitudes	1	Se soucie proactivement de la planète.
-4.3	attitudes	2	Est disposé à agir pour tenter de résoudre des problèmes de durabilité complexes.
-4.3	attitudes	3	Est partisan d’une prise en charge individuelle et collective pour les personnes dans le besoin et pour la planète.
-4.3	attitudes	4	Est convaincu qu’il est possible d’anticiper et d’influencer des changements durables.
-4.3	attitudes	5	Est conscient que l’action quotidienne compte.
+1.1	description	0	Réfléchir aux valeurs personnelles; déterminer et expliquer comment les valeurs varient selon les individus et dans le temps tout en évaluant de façon critique comment elles se concilient avec les valeurs de la durabilité	To reflect on personal values; identify and explain how values vary among people and over time, while critically evaluating how they align with sustainability values.
+1.1	knowledge	1	Connaît les principaux points de vue sur la durabilité: anthropocentrisme (centré sur l’humain), technocentrisme (solutions technologiques à des problèmes écologiques) et écocentrisme (centré sur la nature), et la manière dont ils influencent les hypothèses et les arguments.	Knows the main views on sustainability: anthropocentrism (human-centric), technocentrism (technological solutions to ecological problems) and ecocentrism (nature-centred), and how they influence assumptions and arguments.
+1.1	knowledge	2	Connaît les principales valeurs et les principaux principes à la base des modèles socioéconomiques et leur relation avec la durabilité.	Knows the main values and principles underpinning socio-economic models and their relation to sustainability.
+1.1	knowledge	3	Sait que les valeurs et les principes influencent l’action qui peut nuire, ne pas nuire, restaurer ou régénérer l’environnement.	Knows that values and principles influence action that can damage, does not harm, restores or regenerates the environment.
+1.1	knowledge	4	Sait que les différentes cultures et générations peuvent attacher plus ou moins d’importance à la durabilité en fonction de leurs systèmes de valeurs.	Knows that various cultures and generations may attach more or less importance to sustainability depending on their value systems.
+1.1	knowledge	5	Sait que lorsque la demande humaine de ressources est motivée par la cupidité, l’indifférence et l’individualisme débridé, cela a des conséquences négatives sur l’environnement.	Knows that when human demand for resources is driven by greed, indifference and unfettered individualism, this has negative consequences for the environment.
+1.1	knowledge	6	Sait comment la position d’une personne dans la société influence ses valeurs personnelles.	Knows how one's position in society influences personal values.
+1.1	skills	1	Peut évaluer de manière critique et comparer les valeurs et principes de la durabilité sous-jacents dans les arguments, les actions, les politiques et les revendications politiques.	Can critically assess and compare underlying sustainability values and principles in arguments, action, policies and political claims.
+1.1	skills	2	Peut évaluer les problèmes et les actions sur la base des valeurs et principes de la durabilité.	Can evaluate issues and action based on sustainability values and principles.
+1.1	skills	3	Peut aligner ses choix et actions personnels sur les valeurs et principes de la durabilité.	Can bring personal choices and action in line with sustainability values and principles.
+1.1	skills	4	Peut exprimer et négocier les valeurs, les principes et les objectifs de la durabilité tout en admettant différents points de vue.	Can articulate and negotiate sustainability values, principles and objectives while recognising different viewpoints.
+1.1	skills	5	Peut reconnaître et inclure les valeurs des communautés, notamment des minorités, dans le cadrage des problèmes et la prise de décisions en matière de durabilité.	Can identify and include values of communities, including minorities, in problem framing and decision making on sustainability.
+1.1	attitudes	1	A tendance à agir conformément à des valeurs et des principes au service de la durabilité.	Is prone to acting in line with values and principles for sustainability.
+1.1	attitudes	2	Est disposé à partager et clarifier ses points de vue sur les valeurs de la durabilité.	Is willing to share and clarify views on sustainability values.
+1.1	attitudes	3	A l’esprit ouvert aux autres et à leur vision du monde.	Is open-minded to others and their world-views.
+1.1	attitudes	4	Est prêt à critiquer et accorder de la valeur à différents contextes culturels en fonction de leur incidence sur la durabilité.	Is ready to critique and value various cultural contexts depending on their impact on sustainability.
+1.2	description	0	Favoriser l’équité et la justice pour les générations actuelles et à venir, et mettre ce que l'on apprend des générations précédentes au service de la durabilité	To support equity and justice for current and future generations and learn from previous generations for sustainability.
+1.2	knowledge	1	Sait que les concepts éthiques et la justice pour les générations actuelles et à venir sont liés à la protection de la nature.	Knows that ethical concepts and justice for current and future generations are related to protecting nature.
+1.2	knowledge	2	Sait ce qu’est la justice environnementale, autrement dit prendre en considération les intérêts et les capacités des autres espèces et des écosystèmes environnementaux.	Knows about environmental justice, namely considering the interests and capabilities of other species and environmental ecosystems.
+1.2	knowledge	3	Connaît l’importance de la préservation de la nature pour les générations à venir et pour la nature elle-même.	Knows the importance of preserving nature for future generations for its own sake.
+1.2	knowledge	4	Sait que les individus et les communautés encouragent la durabilité de différentes manières et à des degrés divers.	Knows that individuals and communities differ in how and how much they can promote sustainability.
+1.2	skills	1	Peut appliquer l’équité et la justice pour les générations actuelles et à venir comme critères pour la préservation de l’environnement et l’utilisation des ressources naturelles.	Can apply equity and justice for current and future generations as criteria for environmental preservation and the use of natural resources.
+1.2	skills	2	Peut évaluer et remettre en question ses besoins personnels pour gérer les ressources de manière prudente en vue d’atteindre des objectifs et des intérêts communs à plus long terme.	Can assess and question personal needs to carefully manage resources in the pursuit of longer-term goals and common interests.
+1.2	skills	3	Peut respecter, comprendre et apprécier différentes cultures en relation avec la durabilité, notamment les cultures minoritaires, les traditions et les systèmes de connaissances locaux et autochtones.	Can respect, understand and appreciate various cultures in relation to sustainability, including minority cultures, local and indigenous traditions and knowledge systems.
+1.2	skills	4	Peut aider à parvenir à un consensus sur la durabilité de manière inclusive.	Can help build consensus on sustainability in an inclusive manner.
+1.2	attitudes	1	Est déterminé à diminuer la consommation matérielle.	Is committed to decreasing material consumption.
+1.2	attitudes	2	A un sentiment d’appartenance à une humanité commune et de solidarité avec les générations à venir.	Has a sense of belonging to a common humanity and of solidarity with future generations.
+1.2	attitudes	3	Est déterminé à respecter les intérêts des générations à venir.	Is committed to respecting the interests of future generations.
+1.3	description	0	Reconnaître que les êtres humains font partie de la nature; et respecter les besoins et les droits des autres espèces et de la nature elle-même afin de rétablir des écosystèmes sains et résilients et de les régénérer.	To acknowledge that humans are part of nature; and to respect the needs and rights of other species and of nature itself in order to restore and regenerate healthy and resilient ecosystems.
+1.3	knowledge	1	Connaît les principales parties de l’environnement naturel (géosphère, biosphère, hydrosphère, cryosphère et atmosphère) et sait que les organismes vivants et les éléments non vivants sont étroitement liés et dépendent les uns des autres.	Knows about the main parts of the natural environment (geosphere, biosphere, hydrosphere, cryosphere and atmosphere) and that living organisms and non-living components are closely linked and depend on each other.
+1.3	knowledge	2	Sait que notre bien-être, notre santé et notre sécurité dépendent du bien-être de la nature.	Knows that our wellbeing, health and security depend on the wellbeing of nature.
+1.3	knowledge	3	Sait que les personnes font partie de la nature et que le clivage entre les systèmes humains et écologiques est arbitraire.	Knows that people are part of nature and that the divide between human and ecological systems is arbitrary.
+1.3	knowledge	4	Sait que les êtres humains façonnent les écosystèmes et que les activités humaines peuvent rapidement et irréversiblement endommager les écosystèmes.	Knows that humans shape ecosystems and that human activities can rapidly and irreversibly damage ecosystems.
+1.3	knowledge	5	Sait qu’endommager et épuiser les ressources naturelles peut entraîner des catastrophes et des conflits (par exemple, perte de biodiversité, sécheresses, migrations de masse et guerres).	Knows that damaging and exhausting natural resources can lead to disasters and conflicts (e.g. loss of biodiversity, draughts, mass migration and war).
+1.3	knowledge	6	Sait qu’il est nécessaire de découpler la production des ressources naturelles et le bien-être de la consommation.	Knows about the need to decouple production from natural resources and wellbeing from consumption.
+1.3	skills	1	Peut évaluer sa propre incidence sur la nature et considère la protection de la nature comme une tâche essentielle pour tout un chacun.	Can assess own impact on nature and consider the protection of nature an essential task for every individual.
+1.3	skills	2	Peut voir et imaginer les êtres humains vivant ensemble et respectant les autres formes de vie.	Can see and imagine humans living together and respecting other life forms.
+1.3	skills	3	Peut reconnaître la diversité culturelle dans les limites planétaires.	Can acknowledge cultural diversity within planetary limits.
+1.3	skills	4	Peut trouver des occasions de passer du temps dans la nature et d’aider à la restaurer.	Can find opportunities to spend time in nature and helps to restore it.
+1.3	skills	5	Peut reconnaître les processus et les actions qui évitent ou réduisent l’utilisation de ressources naturelles.	Can identify processes or action that avoid or reduce the use of natural resources.
+1.3	attitudes	1	Se soucie de l’existence d’une relation harmonieuse entre la nature et les êtres humains.	Cares about a harmonious relationship existing between nature and humans.
+1.3	attitudes	2	Est critique à l’égard de la notion qui veut que les êtres humains soient plus importants que les autres formes de vie.	Is critical towards the notion that humans are more important than other life forms.
+1.3	attitudes	3	Fait preuve d’empathie à l’égard de toutes les formes de vie.	Shows empathy with all life forms.
+1.3	attitudes	4	Est sensible au rôle de la nature dans notre bien-être, notre santé et notre sécurité.	Is appreciative of nature’s role in our wellbeing, health and security.
+1.3	attitudes	5	S’efforce en permanence de restaurer la nature.	Continuously strives to restore nature.
+2.1	description	0	Aborder un problème de durabilité sous tous les angles; prendre en considération le temps, l’espace et le contexte afin de comprendre comment les éléments interagissent au sein des systèmes et entre ceux-ci	To approach a sustainability problem from all sides; to consider time, space and context in order to understand how elements interact within and between systems.
+2.1	knowledge	1	Sait que chaque action humaine à des incidences environnementales, sociales, culturelles et économiques.	Knows that every human action has environmental, social, cultural and economic impacts.
+2.1	knowledge	2	Sait que les actions humaines influencent l’issue des événements dans le temps et dans l’espace, menant à des résultats positifs, neutres ou négatifs.	Knows that human action influences outcomes across time and space, leading to positive, neutral or negative results.
+2.1	knowledge	3	Connaît la réflexion sur le cycle de vie et sa pertinence pour la production et la consommation durables.	Knows about life cycle thinking and its relevance for sustainable production and consumption.
+2.1	knowledge	4	Connaît les principaux concepts et aspects des systèmes complexes (synthèse, émergence, interconnectivité, boucles de rétroaction et effets en cascade) et leurs implications pour la durabilité.	Knows the main concepts and aspects of complex systems (synthesis, emergence, interconnectedness, feedback loops and cascade effects) and their implications for sustainability.
+2.1	knowledge	5	Connaît les ODD des Nations unies et est conscient des interconnexions et des éventuelles tensions entre les différents objectifs.	Knows the United Nations SDGs and is aware of interconnections and possible tensions between individual goals.
+2.1	skills	1	Peut décrire la durabilité comme un concept holistique qui inclut des aspects environnementaux, économiques, sociaux et culturels.	Can describe sustainability as a holistic concept that includes environmental, economic, social, and cultural issues.
+2.1	skills	2	Peut évaluer les interactions entre les aspects environnementaux, économiques, sociaux et culturels de l’action pour la durabilité, des événements et des crises (par exemple, migration causée par le changement climatique ou guerres causées par le manque de ressources).	Can assess interactions between environmental, economic, social, and cultural aspects of sustainability action, events and crises (e.g. migration caused by climate change or wars caused by resource scarcity).
+2.1	skills	3	Peut évaluer comment les êtres humains et la nature interagissent dans l’espace et dans le temps.	Can assess how humans and nature interact across space and time.
+2.1	skills	4	Peut utiliser la réflexion sur le cycle de vie pour analyser les risques et les avantages de l’action humaine.	Can use life cycle thinking to analyse the risks and benefits of human action.
+2.1	skills	5	Peut reconnaître, au sein d’un système, les défis et les possibilités qui sont le plus susceptibles de susciter un changement en faveur de la durabilité.	Can identify in a system those challenges and opportunities that have the greatest potential to trigger change for sustainability.
+2.1	attitudes	1	Reconnaît les causes profondes de la non-durabilité dont les êtres humains sont responsables, telles que le changement climatique.	Acknowledges the root causes of unsustainability for which humans are responsible, such as climate change.
+2.1	attitudes	2	A une compréhension holistique des connexions et des interactions entre les événements naturels et les actions humaines.	Has a holistic grasp of connections and interactions between natural events and human actions.
+2.1	attitudes	3	Se préoccupe des incidences à court et à long terme de ses actions personnelles sur autrui et sur la planète.	Is concerned about the short- and long-term impacts of personal actions on others and the planet.
+2.1	attitudes	4	Se soucie des conséquences systémiques des crises environnementales sur les générations actuelles et à venir et sur les autres espèces.	Cares about systemic consequences of environmental crises for current and future generations and for other species.
+2.1	attitudes	5	Se préoccupe des effets en cascade imprévisibles de l’action humaine.	Is concerned about unpredictable cascade effects of human action.
+2.2	description	0	Évaluer les informations et les arguments, recenser les idées préconçues, remettre en cause l’inertie, et réfléchir à la manière dont les origines personnelles, sociales et culturelles influencent la pensée et les conclusions	To assess information and arguments*, identify assumptions, challenge the status quo, and reflect on how personal, social and cultural backgrounds influence thinking and conclusions.
+2.2	knowledge	1	Sait que notre compréhension de la durabilité est en constante évolution.	Knows that our understanding of sustainability is always evolving.
+2.2	knowledge	2	Sait que plusieurs biais peuvent influencer le discours sur la durabilité, y compris le raisonnement, la communication et les discours politiques.	Knows that various biases can influence the discourse on sustainability, including reasoning, communication and political narratives.
+2.2	knowledge	3	Sait que les discours dominants peuvent façonner la formulation des problèmes de durabilité.	Knows that predominant narratives can shape the formulation of sustainability problems.
+2.2	knowledge	4	Sait que les allégations de durabilité sans preuves solides sont souvent de simples stratégies de communication, aussi appelées «écoblanchiment».	Knows sustainability claims without robust evidence are often mere communication strategies, also known as greenwashing.
+2.2	knowledge	5	Sait que pour venir à bout des habitudes non durables, il faut une remise en cause de l’inertie, au niveau individuel et collectif, par les organisations et en politique.	Knows that tackling unsustainable patterns requires challenging the status quo, at individual and collective level, by organisations and in politics.
+2.2	skills	1	Peut appliquer un raisonnement personnel pour répondre à la critique et aux arguments sur des questions de durabilité.	Can apply personal reasoning to address criticism and arguments on sustainability matters.
+2.2	skills	2	Peut analyser et apprécier des arguments, des idées, des actions et des scénarios afin de déterminer s’ils sont conformes aux preuves et aux valeurs sur le plan de la durabilité.	Can analyse and assess arguments, ideas, actions and scenarios to determine whether they are in line with evidence and values in terms of sustainability.
+2.2	skills	3	Peut passer au crible les sources d’information et les canaux de communication sur la durabilité afin d’évaluer la qualité de l’information qu’ils fournissent.	Can scrutinise information sources and communication channels on sustainability to assess the quality of the information they provide.
+2.2	skills	4	Peut réfléchir aux origines et aux motifs des décisions, de l’action et des modes de vie afin de comparer les avantages et les coûts individuels aux avantages et aux coûts sociétaux.	Can reflect on the roots and motives of decisions, action and lifestyles to compare individual benefits and costs with societal benefits and costs.
+2.2	skills	5	Peut examiner différentes sources de preuves et évaluer leur fiabilité afin de se faire une opinion sur la durabilité.	Can look at various sources of evidence and assess their reliability to form opinions about sustainability.
+2.2	attitudes	1	Est curieux au sujet des liens entre l’environnement, l’action humaine et la durabilité.	Is curious and inquisitive about the links between the environment, human action and sustainability.
+2.2	attitudes	2	Croit en la science même en l’absence des connaissances requises pour comprendre pleinement les allégations scientifiques.	Trusts science even when lacking some of the knowledge required to fully understand scientific claims.
+2.2	attitudes	3	Adopte un point de vue basé sur des données probantes et est prêt à revoir celui-ci lorsque de nouvelles données font leur apparition.	Takes an evidence-based perspective and is ready to revise it when new data emerge.
+2.2	attitudes	4	Est disposé à accepter et discuter des questions, problèmes et possibilités de la durabilité.	Is willing to accept and discuss sustainability questions, issues and opportunities.
+2.2	attitudes	5	Est sceptique quant aux informations sur la durabilité avant de vérifier leur source et de se renseigner sur d’éventuels intérêts particuliers.	Is sceptical about information on sustainability before verifying its source and investigating potential vested interests.
+2.3	description	0	Exposer les défis actuels ou potentiels comme étant un problème de durabilité en termes de difficulté, de personnes concernées, de portée temporelle et géographique, afin de définir des approches adaptées pour prévoir et prévenir les problèmes, et pour atténuer les problèmes existants et s’y adapter.	To formulate current or potential challenges as a sustainability problem in terms of difficulty, people involved, time and geographical scope, in order to identify suitable approaches to anticipating and preventing problems, and to mitigating and adapting to already existing problems.
+2.3	knowledge	1	Sait que les problèmes de durabilité sont souvent complexes et que certains d’entre eux ne peuvent être totalement résolus.	Knows that sustainability problems are often complex and that some cannot be solved entirely.
+2.3	knowledge	2	Sait que les mesures et l’action en réponse à un problème de durabilité dépendent de la manière dont le problème est cadré (par/avec/pour qui, où, quand, pourquoi).	Knows that measures and action to address a sustainability problem depend on how the problem is framed (by/with/for whom, where, when, why).
+2.3	knowledge	3	Sait que pour reconnaître des actions justes et inclusives, il est nécessaire de considérer les problèmes de durabilité du point de vue de différentes parties prenantes.	Knows that to identify fair and inclusive actions, it is necessary to look at sustainability problems from different stakeholder perspectives.
+2.3	knowledge	4	Sait que les problèmes de durabilité vont de problèmes relativement simples à des problèmes complexes et qu’établir leur type aide à trouver des approches adaptées.	Knows that sustainability issues range from relatively simple to complex problems and that establishing their type helps find suitable approaches.
+2.3	knowledge	5	Sait que les problèmes de durabilité actuels ou potentiels peuvent évoluer rapidement et doivent donc être fréquemment redéfinis et recadrés.	Knows that current or potential sustainability problems can quickly evolve and therefore need to be frequently redefined and reframed.
+2.3	skills	1	Peut prendre en considération les points de vue de plusieurs parties prenantes, en tenant compte de toutes les formes de vie et de l’environnement pour cadrer les défis de durabilité actuels et potentiels.	Can factor in perspectives of multiple stakeholders, considering all life forms and the environment to frame current and potential sustainability challenges.
+2.3	skills	2	Peut appliquer une approche flexible, systémique, fondée sur le cycle de vie et adaptative au moment de cadrer les défis de durabilité actuels et potentiels.	Can apply a flexible, systemic, life cycle and adaptive approach when framing current and potential sustainability challenges.
+2.3	skills	3	Peut établir une approche transdisciplinaire afin de cadrer les défis actuels et potentiels en matière de durabilité.	Can establish a transdisciplinary approach to framing current and potential sustainability challenges.
+2.3	skills	4	Peut explorer de manière continue les problématiques d’une question de durabilité pour élargir l’éventail d’alternatives et de solutions.	Can continuously explore the problematics of a sustainability issue to broaden the range of alternatives and solutions.
+2.3	skills	5	Peut déterminer des approches appropriées pour atténuer, adapter et potentiellement résoudre des problèmes de durabilité.	Can identify appropriate approaches to mitigate, adapt and potentially solve sustainability problems.
+2.3	attitudes	1	S’efforce d’exploiter toutes les compétences en matière de durabilité au moment de cadrer les défis de durabilité actuels et potentiels.	Strives to tap into all sustainability competences when framing current and potential sustainability challenges.
+2.3	attitudes	2	Est déterminé à présenter un problème de durabilité comme un problème complexe plutôt que de le simplifier exagérément.	Is committed to presenting a sustainability problem as a complex one rather than oversimplifying it.
+2.3	attitudes	3	Tente de dissocier son propre jugement du processus de cadrage du problème.	Tries to detach one’s own judgement from the process of framing the problem.
+2.3	attitudes	4	Écoute activement et fait preuve d’empathie lorsqu’il collabore avec d’autres pour cadrer les défis actuels et potentiels en matière de durabilité.	Listens actively and shows empathy when collaborating with others to frame current and potential sustainability challenges.
+3.1	description	0	Envisager des avenirs durables alternatifs en imaginant et en élaborant des scénarios alternatifs et en déterminant les étapes nécessaires pour parvenir à un avenir durable jugé meilleur	To envision alternative sustainable futures by imagining and developing alternative scenarios and identifying the steps needed to achieve a preferred sustainable future
+3.1	knowledge	1	Connaît la différence entre avenir attendu, avenir jugé meilleur et avenir alternatif pour les scénarios de durabilité.	Knows the difference between expected, preferred and alternative futures for sustainability scenarios.
+3.1	knowledge	2	Connaît la différence entre les approches à court, moyen et long terme et leurs implications pour les scénarios de durabilité.	Knows the difference between short , medium and long term approaches and their implications for sustainability scenarios.
+3.1	knowledge	3	Sait que l’élaboration de scénarios peut tenir compte d’événements passés et de signaux actuels de changement.	Knows that scenario development can factor in past events and current signals of change.
+3.1	knowledge	4	Sait que les scénarios peuvent éclairer la prise de décisions en faveur d’un avenir durable souhaité.	Knows that scenarios can inform decision making for a desired sustainable future.
+3.1	knowledge	5	Sait que les effets causés par les êtres humains peuvent jouer un rôle majeur au moment de cartographier les scénarios des avenirs alternatifs et jugés meilleurs.	Knows that effects caused by humans play a major role when mapping alternative and preferred future scenarios.
+3.1	skills	1	Peut envisager des futurs alternatifs qui trouvent leur fondement dans la science, la créativité et les valeurs au service de la durabilité.	Can envisage alternative futures for sustainability that are grounded in science, creativity and values for sustainability.
+3.1	skills	2	Peut analyser et évaluer les futurs et leurs possibilités, limites et risques.	Can analyse and evaluate futures and their opportunities, limitations and risks.
+3.1	skills	3	Peut déterminer des actions et des initiatives qui mènent à un avenir jugé meilleur.	Can identify action and initiatives that lead to a preferred future.
+3.1	skills	4	Peut anticiper les futures implications en examinant les tendances passées et la situation actuelle.	Can anticipate future implications by looking at past trends and present conditions.
+3.1	attitudes	1	Adopte une perspective à long terme au moment de planifier, apprécier et évaluer les actions pour la durabilité.	Has a long-term perspective when planning, assessing and evaluating sustainability actions.
+3.1	attitudes	2	Se préoccupe de l’incidence de ses propres actions sur l’avenir.	Is concerned about the impact of one’s own action on the future.
+3.1	attitudes	3	Est conscient que les conséquences projetées sur lui-même et sur la population locale peuvent influencer les préférences pour certains scénarios plutôt que d’autres.	Is aware that the projected consequences on self and community may influence preferences for certain scenarios above others.
+3.1	attitudes	4	S’efforce de combiner méthodes rigoureuses de réflexion sur l’avenir et approches créatives et participatives.	Seeks to combine rigorous methods for thinking about the future with creative and participatory approaches.
+3.2	description	0	Gérer les transitions et les défis dans des situations complexes sur le plan de la durabilité et prendre des décisions liées à l’avenir malgré l’incertitude, l’ambiguïté et le risque	To manage transitions and challenges in complex sustainability situations and make decisions related to the future in the face of uncertainty, ambiguity and risk. **
+3.2	knowledge	1	Sait que les actions humaines peuvent avoir des conséquences imprévisibles, incertaines et complexes sur l’environnement.	Knows that human actions may have unpredictable, uncertain and complex consequences on the environment.
+3.2	knowledge	2	Sait qu’il n’existe pas de solution unique aux problèmes socioécologiques complexes, mais bien différentes alternatives en fonction du moment et du contexte.	Knows that there is no single solution to complex socioecological problems, but rather different alternatives depending on time and context.
+3.2	knowledge	3	Connaît les risques associés aux transformations de l’environnement naturel par les êtres humains.	Knows about risks associated with transformations of the natural environment by humans.
+3.2	knowledge	4	Sait quels aspects du mode de vie personnel ont le plus d’incidence sur la durabilité et nécessitent une adaptation (par exemple, voyages aériens, utilisation de la voiture, consommation de viande, mode éphémère).	Knows which aspects of personal lifestyle have higher impacts on sustainability and require adapting (e.g. air travel, car usage, meat consumption, fast fashion).
+3.2	knowledge	5	Connaît l’importance du lien entre les incidences locales et la durabilité mondiale.	Knows the importance of the link between local impacts and global sustainability.
+3.2	skills	1	Peut s’adapter à différentes approches lorsqu’il travaille sur la durabilité.	Can adapt to different approaches when working on sustainability.
+3.2	skills	2	Peut reconnaître et s’adapter à différents modes de vie et habitudes de consommation afin d’utiliser moins de ressources naturelles.	Can identify and adapt to different lifestyles and consumption patterns to use fewer natural resources.
+3.2	skills	3	Peut prendre en considération les circonstances locales lorsqu’il rencontre des problèmes et des possibilités en matière de durabilité.	Can take into account local circumstances when dealing with sustainability issues and opportunities.
+3.2	skills	4	Peut faire face à l’ambiguïté et à l’incertitude qui entourent les problèmes de durabilité dans sa réflexion sur les alternatives.	Can navigate the ambiguity and uncertainty around sustainability issues while thinking about alternatives.
+3.2	attitudes	1	Reconnaît l’impact émotionnel du changement climatique, de la perte de biodiversité et de la paupérisation.	Acknowledges the emotional impact of climate change, loss of biodiversity and impoverishment.
+3.2	attitudes	2	Est disposé à mettre un terme à des pratiques non durables et à essayer des solutions alternatives.	Is willing to discontinue unsustainable practices and try alternative solutions.
+3.2	attitudes	3	Envisage volontiers des options durables, même si elles sont contraires à ses intérêts personnels.	Is comfortable considering sustainable options, even if competing with personal interests.
+3.2	attitudes	4	Est flexible, imaginatif et adaptable face aux changements environnementaux inattendus.	Is flexible, resourceful and adaptable in coping with unexpected environmental changes.
+3.2	attitudes	5	Gère bien les compromis dans les décisions en matière de durabilité au sein des domaines et entre ceux-ci (environnemental, social, économique, culturel et politique) et dans le temps et l’espace.	Copes with trade-offs in decisions on sustainability within and across domains (environmental, social, economic, cultural, political) and across time and space.
+3.3	description	0	Adopter un mode de pensée relationnel en explorant et en mettant en relation différentes disciplines, en utilisant la créativité et l’expérimentation avec des idées ou des méthodes inédites	To adopt a relational way of thinking by exploring and linking different disciplines, using creativity and experimentation with novel ideas or methods.
+3.3	knowledge	1	Sait que les problèmes de durabilité doivent être abordés en combinant différentes disciplines, cultures de la connaissance et opinions divergentes pour amorcer un changement systémique.	Knows that sustainability problems must be tackled by combining different disciplines, knowledge cultures and divergent views to initiate systemic change.
+3.3	knowledge	2	Sait qu’il est important d’explorer et d’expérimenter de nouvelles voies et idées en réponse aux défis de durabilité complexes.	Knows the importance of exploring and experimenting with new avenues and ideas to tackle complex sustainability challenges.
+3.3	knowledge	3	Connaît les principaux concepts d’une économie et d’une société circulaires.	Knows the main concepts of a circular economy and society.
+3.3	knowledge	4	Connaît les concepts de la durabilité et du développement durable, y compris les origines et l’évolution, les principales parties prenantes, les implications pour la société et la planète, la protection, la restauration et la régénération de l’environnement.	Knows about sustainability and sustainable development concepts, including origins and further developments, main stakeholders, implications for society and the planet, environmental protection, restoration and regeneration.
+3.3	skills	1	Peut utiliser les preuves et les recherches pour mieux comprendre, expliquer, prédire et gérer le changement en faveur de la durabilité.	Can use evidence and research to better understand, explain, predict and manage change for sustainability.
+3.3	skills	2	Peut combiner connaissances et ressources pour faire face aux défis de durabilité.	Can combine knowledge and resources to tackle sustainability challenges.
+3.3	skills	3	Peut synthétiser des informations et données relatives à la durabilité provenant de différentes disciplines.	Can synthesise sustainability-related information and data from different disciplines.
+3.3	skills	4	Peut appliquer de manière créative les concepts de l’économie circulaire, tels que privilégier la qualité plutôt que la quantité et réutiliser et réparer.	Can creatively apply circular economy concepts, such as valuing quality over quantity and reusing and repairing.
+3.3	skills	5	Peut accepter des opinions divergentes.	Can accommodate divergent opinions.
+3.3	attitudes	1	A tendance à expérimenter et n’a pas peur d’échouer face aux défis de durabilité.	Is prone to experiment and not afraid to fail when faced with sustainability challenges.
+3.3	attitudes	2	Est ouvert à la réflexion dans la norme et en dehors de celle-ci en relation avec la durabilité.	Embraces thinking both inside and outside of norms in relation to sustainability.
+3.3	attitudes	3	Est déterminé à envisager les défis et possibilités en matière de durabilité sous différents angles.	Is committed to considering sustainability challenges and opportunities from different angles.
+3.3	attitudes	4	Ose faire des choix inhabituels.	Dares to make unusual choices.
+4.1	description	0	S'orienter dans le système politique, déterminer qui est responsable sur le plan politique et a l’obligation de rendre des comptes pour les comportements non durables, et exiger des politiques efficaces au service de la durabilité	To navigate the political system, identify political responsibility and accountability for unsustainable behaviour, and demand effective policies for sustainability.
+4.1	knowledge	1	Sait comment les systèmes politiques, y compris leurs composantes, devraient fonctionner en faveur de la durabilité.	Knows how political systems, including their components, should work for sustainability.
+4.1	knowledge	2	Connaît les parties prenantes politiques pertinentes pour la durabilité au sein de sa communauté.	Knows the relevant political stakeholders for sustainability in one’s own community.
+4.1	knowledge	3	Sait comment entrer en contact avec les parties prenantes politiques et économiques afin de cocréer des politiques de durabilité avec les représentants de la population locale.	Knows how to engage with political and economic stakeholders to co-create sustainability policies with community representatives.
+4.1	knowledge	4	Connaît les politiques qui attribuent la responsabilité des dommages environnementaux (par exemple, le principe du pollueur-payeur).	Knows policies that assign responsibility for environmental damage (e.g. "polluter pays").
+4.1	skills	1	Peut analyser comment les structures de pouvoir et les systèmes politiques exercent une influence.	Can analyse how power structures and political systems exert influence.
+4.1	skills	2	Peut participer à la prise de décisions démocratique et à des activités civiques pour le développement durable.	Can engage in democratic decision making and civic activities for sustainable development.
+4.1	skills	3	Peut déterminer les parties prenantes sociales, politiques et économiques pertinentes au sein de sa communauté ou région afin de remédier à un problème de durabilité.	Can identify relevant social, political and economic stakeholders in one’s own community and region to address a sustainability problem.
+4.1	skills	4	Peut proposer des trajectoires alternatives pour la durabilité.	Can propose alternative pathways for sustainability.
+4.1	attitudes	1	Est déterminé à devenir un agent de changement pour parvenir à la durabilité.	Is committed to becoming an agent of change to achieve sustainability.
+4.1	attitudes	2	S’attend à ce que les pouvoirs publics et les institutions publiques servent le bien commun.	Expects governments and public institutions to serve the common good.
+4.1	attitudes	3	Exige une responsabilité politique pour les comportements non durables.	Demands political accountability for unsustainable behaviour.
+4.1	attitudes	4	Est déterminé à remettre en question l’efficacité des politiques en faveur de la durabilité.	Is committed to questioning the effectiveness of policies for sustainability.
+4.2	description	0	Agir pour le changement en collaboration avec d’autres	To act for change in collaboration with others.
+4.2	knowledge	1	Connaît les principales parties prenantes de la durabilité au sein de sa communauté et sait comment les contacter.	Knows the main sustainability stakeholders in one’s own community and how to contact them.
+4.2	knowledge	2	Sait que travailler avec d’autres pour promouvoir la nature et encourager l’équité nécessite de respecter la démocratie.	Knows that working with others to promote nature and support fairness requires respect for democracy.
+4.2	knowledge	3	Sait comment travailler avec divers participants pour créer des visions inclusives pour un avenir plus durable.	Knows how to work with diverse participants to create inclusive visions for a more sustainable future.
+4.2	knowledge	4	Sait qu’il est important de doter les individus et les organisations des moyens de travailler de manière collaborative.	Knows the importance of empowering individuals and organisations to work collaboratively.
+4.2	skills	1	Peut créer différentes coalitions pour remédier à des problèmes épineux relatifs à la durabilité.	Can build diverse coalitions to address wicked problems related to sustainability.
+4.2	skills	2	Peut créer des processus transparents, inclusifs et axés sur la communauté locale.	Can create transparent, inclusive and community-driven processes.
+4.2	skills	3	Peut créer des possibilités d’action conjointe entre les communautés, les secteurs et les régions.	Can create opportunities for joint action across communities, sectors and regions.
+4.2	skills	4	Peut travailler collectivement dans le cadre de processus de changement en faveur de la durabilité.	Can work collectively in sustainability change processes.
+4.2	skills	5	Peut reconnaître les forces des parties concernées.	Can identify stakeholders’ strengths.
+4.2	skills	6	Peut agir conformément aux thèses partagées sur des avenirs durables.	Can act in line with shared narratives on sustainable futures.
+4.2	attitudes	1	Est disposé à s’unir à d’autres pour s’opposer à l’inertie.	Is willing to engage with others to challenge the status quo.
+4.2	attitudes	2	Est motivé pour collaborer afin de façonner des avenirs durables inclusifs.	Is motivated to collaborate in order to shape inclusive sustainable futures.
+4.2	attitudes	3	Privilégie les valeurs et les intérêts de durabilité au moment d’entreprendre une action collective.	Prioritises sustainability values and interests when taking collective action.
+4.2	attitudes	4	Veut rendre à la collectivité et à la nature.	Wants to give back to the community and nature.
+4.2	attitudes	5	Est déterminé à changer pour un avenir plus inclusif et plus juste.	Is committed to change for a more inclusive and fair future.
+4.3	description	0	Déterminer son propre potentiel d'action pour la durabilité et contribuer activement à améliorer les perspectives pour la communauté locale et pour la planète	To identify own potential for sustainability and to actively contribute to improving prospects for the community and the planet
+4.3	knowledge	1	Connaît son propre potentiel à susciter un changement positif pour l’environnement.	Knows one’s own potential to bring about positive environmental change.
+4.3	knowledge	2	Sait que des mesures préventives devraient être prises lorsque certaines actions ou l’inaction peuvent nuire à la santé humaine et à toutes les formes de vie (principe de précaution).	Knows that preventive action should be taken when certain action or inaction may damage human health and all life forms (precautionary principle).
+4.3	knowledge	3	Sait que les individus ont une obligation à l’égard de la société et de l’environnement.	Knows that individuals have a commitment towards society and the environment.
+4.3	knowledge	4	Sait que le maintien du statu quo et l’inaction sont aussi des choix.	Knows that maintaining the status quo and inaction are also choices.
+4.3	knowledge	5	Sait que chaque action a une incidence, même si elle n’est pas immédiate.	Knows that every action has an impact even if not immediate.
+4.3	skills	1	Peut appliquer les principes suivants: utiliser moins de ressources, faire mieux avec moins de ressources, et réutiliser les mêmes ressources.	Can apply the following principles: using fewer resources, doing better with fewer resources, and reusing the same resources.
+4.3	skills	2	Prend des initiatives personnelles et persévère afin d’atteindre les objectifs de durabilité même dans des contextes d’incertitude.	Can take personal initiative and persist in achieving sustainability objectives even in contexts of uncertainty.
+4.3	skills	3	Peut agir rapidement, même en cas de doute et d’imprévu, en gardant à l’esprit le principe de précaution.	Can act promptly, even in the face of uncertainty and unforeseen events, keeping in mind the precautionary principle.
+4.3	skills	4	Peut mobiliser les autres en vue d’adopter des choix plus durables.	Can mobilise others to adopt more sustainable choices.
+4.3	skills	5	Peut surmonter sa propre résistance au changement.	Can overcome one’s own resistance to change.
+4.3	skills	6	Peut reconnaître un réseau de parties concernées pertinentes.	Can identify a network of relevant stakeholders.
+4.3	attitudes	1	Se soucie proactivement de la planète.	Cares proactively for the planet.
+4.3	attitudes	2	Est disposé à agir pour tenter de résoudre des problèmes de durabilité complexes.	Is willing to take action to try to solve complex sustainability problems.
+4.3	attitudes	3	Est partisan d’une prise en charge individuelle et collective pour les personnes dans le besoin et pour la planète.	Advocates for individual and collective care for those in need and for the planet.
+4.3	attitudes	4	Est convaincu qu’il est possible d’anticiper et d’influencer des changements durables.	Is confident about anticipating and influencing sustainable changes.
+4.3	attitudes	5	Est conscient que l’action quotidienne compte.	Recognises that everyday action matters.
 `;

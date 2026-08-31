@@ -397,6 +397,7 @@ function attachFrameworkDetails(data, frameworkId, source) {
     if (!item || !text) return;
     if (kind === "description") {
       item.descFr = text;
+      item.descEn = textEn.trim() || text;
       return;
     }
     if (!["knowledge", "skills", "attitudes", "basic", "intermediate", "advanced", "highly_advanced"].includes(kind)) return;
@@ -703,24 +704,33 @@ function applyCompetencyTheme(element, level, groupId = "") {
   element.style.setProperty("--competency-active", theme.active);
 }
 
-function applyFrenchTypography(value) {
-  return String(value ?? "")
-    .replace(/,\s*(…|\.{3})/g, "$1")
-    .replace(/[ \u00a0]*([:;])/g, "\u00a0$1");
+function applyLanguageTypography(value, lang = currentLang()) {
+  const text = String(value ?? "").replace(/,\s*(…|\.{3})/g, "$1");
+  return text.replace(/[ \u00a0\u202f]*([:;]|[!?]+)(?!\/\/)/g, (match, punctuation, offset, source) => {
+    const previous = source.charAt(offset - 1);
+    const next = source.charAt(offset + match.length);
+    if (punctuation === ":" && /\d/.test(previous) && /\d/.test(next)) {
+      return punctuation;
+    }
+    if (lang === "en") {
+      return punctuation;
+    }
+    return `${punctuation === ":" ? "\u00a0" : "\u202f"}${punctuation}`;
+  });
 }
 
 function competencyTooltip(toolDef, lang) {
   if (!toolDef) return "";
   const label = formatCompetencyLabel(toolDef, lang);
   const rawDetails = lang === "en" ? toolDef.descEn : toolDef.descFr;
-  const details = lang === "en" ? rawDetails : applyFrenchTypography(rawDetails);
+  const details = applyLanguageTypography(rawDetails, lang);
   return [label, details].filter(Boolean).join(" — ");
 }
 
 function formatCompetencyLabel(toolDef, lang = currentLang()) {
   if (!toolDef) return "";
   const label = lang === "en" ? toolDef.labelEn : toolDef.labelFr;
-  const formattedLabel = lang === "en" ? label : applyFrenchTypography(label);
+  const formattedLabel = applyLanguageTypography(label, lang);
   if (toolDef.isCompetencyStatement || toolDef.isCompetencyIndicator) {
     return `${toolDef.displayCode || toolDef.number} · ${formattedLabel}`;
   }
@@ -2565,7 +2575,7 @@ function renderPickerBody(body, groupId, activity) {
       const sectionTitle = document.createElement("div");
       sectionTitle.className = "tool-picker-section-title";
       sectionTitle.setAttribute("aria-hidden", "true");
-      sectionTitle.textContent = lang === "en" ? categoryTitle : applyFrenchTypography(categoryTitle);
+      sectionTitle.textContent = applyLanguageTypography(categoryTitle, lang);
       applyCompetencyTheme(
         sectionTitle,
         tools[0]?.platform || activeToolPickerFramework,
@@ -2600,7 +2610,7 @@ function renderPickerBody(body, groupId, activity) {
       textWrapper.appendChild(nameEl);
       const appLabel = lang === "en" ? tool.appEn : tool.appFr;
       const rawDesc = lang === "en" ? tool.descEn : tool.descFr;
-      const desc = lang === "en" ? rawDesc : applyFrenchTypography(rawDesc);
+      const desc = applyLanguageTypography(rawDesc, lang);
       const detailCount = Array.isArray(tool.details) ? tool.details.length : 0;
       const detailSummary = detailCount
         ? tool.platform === "digcomp"
@@ -2613,7 +2623,7 @@ function renderPickerBody(body, groupId, activity) {
       if (helperText) {
         const descEl = document.createElement("span");
         descEl.className = "tool-picker-item-desc";
-        descEl.textContent = `(${lang === "en" ? helperText : applyFrenchTypography(helperText)})`;
+        descEl.textContent = `(${applyLanguageTypography(helperText, lang)})`;
         textWrapper.appendChild(descEl);
       }
       item.appendChild(checkBox);
@@ -2750,8 +2760,14 @@ function openToolPicker(trigger, activity) {
   sourceLink.textContent = t("toolPickerSource");
   const updateSourceLink = () => {
     const framework = getCompetencyFramework();
-    sourceLink.href = framework?.sourceUrl || "#";
-    sourceLink.classList.toggle("hidden", !framework?.sourceUrl);
+    let sourceUrl = framework?.sourceUrl || "";
+    if (lang === "en" && framework?.id === "greencomp") {
+      sourceUrl = sourceUrl
+        .replace("/fr/publication-detail/", "/en/publication-detail/")
+        .replace("/language-fr", "/language-en");
+    }
+    sourceLink.href = sourceUrl || "#";
+    sourceLink.classList.toggle("hidden", !sourceUrl);
   };
   updateSourceLink();
   frameworkRow.appendChild(frameworkLabel);
@@ -8328,9 +8344,7 @@ window.learningDesignerApp = {
   }
 
   function formatTipText(text) {
-    const raw = String(text || "");
-    if (currentLang() !== "fr") return raw;
-    return raw.replace(/([^:\s])\s*:\s*(?!\/\/)/g, "$1\u00a0:\u00a0");
+    return applyLanguageTypography(text, currentLang());
   }
 
   function place(target) {

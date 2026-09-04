@@ -24,6 +24,22 @@ Le projet est inspiré de l'[UCL Learning Designer](https://www.ucl.ac.uk/learni
 - [Bibliothèque de prompts](./prompts.php) : prompts prêts à copier pour analyser, adapter ou prolonger un scénario
 - [Comprendre le learning design](./learning-design.php) : principes et cadre pédagogique
 
+## Recherche sur le site
+
+La loupe de la barre de navigation, ainsi que le raccourci `⌘K` sur macOS ou `Ctrl+K` sur les autres systèmes, ouvrent une recherche locale propulsée par [Pagefind](https://pagefind.app/). Aucun contenu de recherche n'est envoyé à un service tiers.
+
+L'index couvre les pages publiques de contenu (aide, modèles, prompts, référentiels, cadre pédagogique et pages d'information). Les comptes, l'administration, les designs privés et les pages de consultation dynamiques ne sont pas indexés.
+
+Après une modification du contenu, régénérez l'index :
+
+```bash
+./build-search-index.sh
+```
+
+Le script ouvre temporairement les pages en français puis en anglais, et crée deux index indépendants dans `pagefind/fr/` et `pagefind/en/`. Il n'existe toujours qu'une seule page source à maintenir : les rendus bilingues ne servent qu'à la construction de l'index et sont supprimés ensuite. Quand l'utilisateur change la langue de l'interface, la recherche bascule automatiquement vers l'index correspondant.
+
+Google Chrome ou Chromium, Node.js 22 (ou une version ultérieure) et PHP doivent être installés sur la machine qui construit l'index. Le dossier `pagefind/` généré est versionné afin que les deux index soient automatiquement déployés avec le reste du site. Après une régénération, ses modifications doivent donc être incluses dans le prochain déploiement.
+
 ## Concevoir avec une IA
 
 Learning Designer propose trois niveaux d'intégration, selon le besoin :

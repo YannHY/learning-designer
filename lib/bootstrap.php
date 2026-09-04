@@ -1077,6 +1077,9 @@ function render_site_nav(string $active = ''): void
                     <path fill="currentColor" d="M12 3c-4.97 0-9 4.03-9 9s4.03 9 9 9 9-4.03 9-9c0-.46-.04-.92-.1-1.36a5.389 5.389 0 0 1-4.4 2.26 5.403 5.403 0 0 1-3.14-9.8c-.44-.06-.9-.1-1.36-.1z"/>
                 </svg>
             </button>
+            <button id="site-search-open" class="nav-icon-btn site-search-open" type="button" aria-label="Rechercher sur le site" title="Rechercher sur le site" aria-keyshortcuts="Meta+K Control+K">
+                <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
+            </button>
             <div class="account-toolbar-cluster">
                 <a class="nav-icon-btn<?= $shareClass ?>" href="share.php" title="Partages" aria-label="Partages" data-site-i18n-attr="title,aria-label" data-site-i18n-en="Shared designs" data-site-i18n-fr="Partages">
                     <i class="fa-solid fa-share-nodes" aria-hidden="true"></i>
@@ -1267,6 +1270,7 @@ function render_site_nav(string $active = ''): void
         });
     });
     </script>
+    <script src="js/site-search.js?v=20260904-pagefind-path-v3"></script>
     <?php
 }
 

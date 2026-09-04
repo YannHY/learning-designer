@@ -1,0 +1,3 @@
+glob: "**/*.{php,html}"
+root_selector: main
+write_playground: false

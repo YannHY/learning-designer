@@ -425,7 +425,7 @@ PROMPT;
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="stylesheet" href="css/interface.css?v=20260830-compact-source-link">
-    <link rel="stylesheet" href="css/account-ui.css?v=20260520-4">
+    <link rel="stylesheet" href="css/account-ui.css?v=20260903-pagefind-dark">
     <link rel="stylesheet" href="css/account-pages.css?v=20260826-title-blue">
 </head>
 <body class="help-page">

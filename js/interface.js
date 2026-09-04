@@ -874,6 +874,16 @@ const importModelsFamily = document.getElementById("import-models-family");
 const importModelsList = document.getElementById("import-models-list");
 const importModelsStatus = document.getElementById("import-models-status");
 const importModelsLink = document.getElementById("import-models-link");
+const importModal = importModalBackdrop?.querySelector(".import-modal");
+const importModelPreview = document.getElementById("import-model-preview");
+const importModelPreviewEyebrow = document.getElementById("import-model-preview-eyebrow");
+const importModelPreviewTitle = document.getElementById("import-model-preview-title");
+const importModelPreviewSummary = document.getElementById("import-model-preview-summary");
+const importModelPreviewChips = document.getElementById("import-model-preview-chips");
+const importModelPreviewStatus = document.getElementById("import-model-preview-status");
+const importModelPreviewContent = document.getElementById("import-model-preview-content");
+const importModelPreviewBackBtn = document.getElementById("import-model-preview-back-btn");
+const importModelPreviewUseBtn = document.getElementById("import-model-preview-use-btn");
 const langSelect = document.getElementById("lang-select");
 const languageButton = document.querySelector(".nav-language-toggle");
 const srStatus = document.getElementById("sr-status");
@@ -1064,6 +1074,16 @@ const I18N = {
     importModelsUnitMoments: "moments",
     importModelsUnitActivities: "activités",
     importModelsToComplete: "À compléter :",
+    importModelPreviewButton: "Visualiser",
+    importModelUseButton: "Importer",
+    importModelPreviewEyebrow: "Aperçu du scénario",
+    importModelPreviewBack: "Retour aux modèles",
+    importModelPreviewLoading: "Chargement de l’aperçu…",
+    importModelPreviewError: "Impossible d’afficher l’aperçu de ce modèle.",
+    importModelPreviewObjectives: "Objectifs du moment",
+    importModelPreviewTeacher: "Déroulement",
+    importModelPreviewStudents: "Consigne aux élèves",
+    importModelPreviewActivity: "Activité {number}",
     importModelApplied: "Modèle chargé : {name}",
     importModelFailed: "Ce modèle n’a pas pu être chargé.",
     exportTitle: "Exporter le design",
@@ -1336,6 +1356,16 @@ const I18N = {
     importModelsUnitMoments: "moments",
     importModelsUnitActivities: "activities",
     importModelsToComplete: "To complete:",
+    importModelPreviewButton: "Preview",
+    importModelUseButton: "Import",
+    importModelPreviewEyebrow: "Scenario preview",
+    importModelPreviewBack: "Back to templates",
+    importModelPreviewLoading: "Loading preview…",
+    importModelPreviewError: "This template preview could not be displayed.",
+    importModelPreviewObjectives: "Moment objectives",
+    importModelPreviewTeacher: "Sequence",
+    importModelPreviewStudents: "Student instructions",
+    importModelPreviewActivity: "Activity {number}",
     importModelApplied: "Template loaded: {name}",
     importModelFailed: "This template could not be loaded.",
     exportTitle: "Export design",
@@ -2047,6 +2077,9 @@ function applyLocalizedUI() {
   if (importModelsFamilyLabel) importModelsFamilyLabel.textContent = t("importModelsFamilyLabel");
   if (importModelsSearch) importModelsSearch.placeholder = t("importModelsSearchPlaceholder");
   if (importModelsLink) importModelsLink.textContent = t("importModelsLink");
+  if (importModelPreviewEyebrow) importModelPreviewEyebrow.textContent = t("importModelPreviewEyebrow");
+  if (importModelPreviewBackBtn) setButtonLabel(importModelPreviewBackBtn, "fa-solid fa-arrow-left", t("importModelPreviewBack"));
+  if (importModelPreviewUseBtn) setButtonLabel(importModelPreviewUseBtn, "fa-solid fa-file-import", t("importModelUseButton"));
   if (importModalCancelBtn) importModalCancelBtn.textContent = t("close");
   if (importFileBtn) setButtonLabel(importFileBtn, "fa-solid fa-folder-open", t("importChooseFile"));
   if (importModalBackdrop && !importModalBackdrop.classList.contains("hidden")) {
@@ -6082,13 +6115,16 @@ function openImportPicker(format = "") {
 
 // ── Modèles de scénarios ─────────────────────────────────────────────────────
 
-const MODEL_CATALOG_URL = "models.php?format=json";
+const MODEL_CATALOG_URL = "models.php?format=json&v=3";
 
 let modelCatalog = null;
 let modelCatalogPromise = null;
 let modelCatalogFailed = false;
 let modelFilterQuery = "";
 let modelFilterFamily = "";
+let activeModelPreviewId = "";
+let activeModelPreviewTrigger = null;
+const modelPayloadCache = new Map();
 
 function modelLabel(entry, field) {
   const suffix = currentLang() === "en" ? "En" : "Fr";
@@ -6170,8 +6206,7 @@ function renderModelFamilyOptions() {
 }
 
 function buildModelCard(entry) {
-  const card = document.createElement("button");
-  card.type = "button";
+  const card = document.createElement("article");
   card.className = "import-model-card";
   card.dataset.modelId = entry.id;
   card.setAttribute("role", "listitem");
@@ -6218,12 +6253,33 @@ function buildModelCard(entry) {
   });
   if (types.childElementCount) card.appendChild(types);
 
-  if (Array.isArray(entry.placeholders) && entry.placeholders.length) {
+  const placeholders = currentLang() === "en"
+    ? (entry.placeholdersEn || entry.placeholders || [])
+    : (entry.placeholdersFr || entry.placeholders || []);
+  if (Array.isArray(placeholders) && placeholders.length) {
     const todo = document.createElement("span");
     todo.className = "import-model-todo";
-    todo.textContent = `${t("importModelsToComplete")} ${entry.placeholders.join(" · ")}`;
+    todo.textContent = `${t("importModelsToComplete")} ${placeholders.join(" · ")}`;
     card.appendChild(todo);
   }
+
+  const actions = document.createElement("span");
+  actions.className = "import-model-actions";
+
+  const previewButton = document.createElement("button");
+  previewButton.type = "button";
+  previewButton.className = "btn btn-light import-model-action";
+  previewButton.dataset.modelAction = "preview";
+  previewButton.innerHTML = `<span class="btn-label"><i class="fa-solid fa-eye btn-icon-inline" aria-hidden="true"></i>${escapeHtml(t("importModelPreviewButton"))}</span>`;
+
+  const useButton = document.createElement("button");
+  useButton.type = "button";
+  useButton.className = "btn btn-light import-model-action import-model-use-action";
+  useButton.dataset.modelAction = "apply";
+  useButton.innerHTML = `<span class="btn-label"><i class="fa-solid fa-file-import btn-icon-inline" aria-hidden="true"></i>${escapeHtml(t("importModelUseButton"))}</span>`;
+
+  actions.append(previewButton, useButton);
+  card.appendChild(actions);
 
   return card;
 }
@@ -6256,15 +6312,163 @@ function renderModelList() {
   matches.forEach((entry) => importModelsList.appendChild(buildModelCard(entry)));
 }
 
+async function loadModelPayload(modelId) {
+  const id = String(modelId || "");
+  if (!id) throw new Error("Missing model id");
+  const language = currentLang() === "en" ? "en" : "fr";
+  const cacheKey = `${language}:${id}`;
+  if (modelPayloadCache.has(cacheKey)) return modelPayloadCache.get(cacheKey);
+
+  const request = fetch(`${MODEL_CATALOG_URL}&model=${encodeURIComponent(id)}&lang=${language}`, {
+    headers: { Accept: "application/json" }
+  })
+    .then((response) => {
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+      return response.json();
+    })
+    .then((payload) => {
+      if (!payload?.design || !payload?.model) throw new Error("Invalid model");
+      return payload;
+    })
+    .catch((error) => {
+      modelPayloadCache.delete(cacheKey);
+      throw error;
+    });
+
+  modelPayloadCache.set(cacheKey, request);
+  return request;
+}
+
+function setModelPreviewVisible(visible) {
+  importModal?.classList.toggle("is-previewing-model", visible);
+  importModelPreview?.classList.toggle("hidden", !visible);
+  importModalBackdrop?.setAttribute(
+    "aria-labelledby",
+    visible ? "import-model-preview-title" : "import-modal-title"
+  );
+}
+
+function addModelPreviewChip(label) {
+  if (!importModelPreviewChips) return;
+  const chip = document.createElement("span");
+  chip.className = "import-model-chip";
+  chip.textContent = label;
+  importModelPreviewChips.appendChild(chip);
+}
+
+function addModelPreviewText(parent, label, value, className = "") {
+  const text = String(value || "").trim();
+  if (!text) return;
+  const block = document.createElement("div");
+  block.className = `import-model-preview-text ${className}`.trim();
+  const heading = document.createElement("strong");
+  heading.textContent = label;
+  const content = document.createElement("p");
+  content.textContent = text;
+  block.append(heading, content);
+  parent.appendChild(block);
+}
+
+function renderModelPreview(payload) {
+  const entry = payload.model;
+  const design = hydrateState(payload.design, null);
+  if (!design) throw new Error("Invalid model");
+
+  importModelPreviewTitle.textContent = modelLabel(entry, "title") || design.meta.name;
+  importModelPreviewSummary.textContent = modelLabel(entry, "summary");
+  importModelPreviewChips.textContent = "";
+  addModelPreviewChip(modelLabel(entry, "familyLabel"));
+  addModelPreviewChip(formatModelDuration(entry.minutes));
+  addModelPreviewChip(`${entry.momentCount} ${t("importModelsUnitMoments")}`);
+  addModelPreviewChip(`${entry.activityCount} ${t("importModelsUnitActivities")}`);
+  importModelPreviewContent.textContent = "";
+
+  design.sessions.forEach((session, sessionIndex) => {
+    const moment = document.createElement("section");
+    moment.className = "import-model-preview-moment";
+
+    const momentHeader = document.createElement("header");
+    momentHeader.className = "import-model-preview-moment-header";
+    const number = document.createElement("span");
+    number.className = "import-model-preview-moment-number";
+    number.textContent = String(sessionIndex + 1);
+    const title = document.createElement("h3");
+    const outlineMoment = entry.outline?.[sessionIndex];
+    title.textContent = currentLang() === "en"
+      ? (outlineMoment?.titleEn || session.title)
+      : (outlineMoment?.titleFr || outlineMoment?.title || session.title);
+    momentHeader.append(number, title);
+    moment.appendChild(momentHeader);
+    addModelPreviewText(moment, t("importModelPreviewObjectives"), session.objectives, "import-model-preview-objectives");
+
+    const activities = document.createElement("div");
+    activities.className = "import-model-preview-activities";
+    session.activities.forEach((activity, activityIndex) => {
+      const activityCard = document.createElement("article");
+      activityCard.className = `import-model-preview-activity type-${activity.type}`;
+
+      const activityHeader = document.createElement("header");
+      activityHeader.className = "import-model-preview-activity-header";
+      const activityName = document.createElement("strong");
+      activityName.textContent = t("importModelPreviewActivity").replace("{number}", String(activityIndex + 1));
+      const activityMeta = document.createElement("span");
+      activityMeta.className = "import-model-preview-activity-meta";
+      const typeLabel = document.createElement("span");
+      typeLabel.className = `import-model-preview-type type-${activity.type}`;
+      typeLabel.textContent = t(`lt_${activity.type}`);
+      const duration = document.createElement("span");
+      duration.textContent = formatModelDuration(activity.duration);
+      activityMeta.append(typeLabel, duration);
+      activityHeader.append(activityName, activityMeta);
+      activityCard.appendChild(activityHeader);
+      addModelPreviewText(activityCard, t("importModelPreviewTeacher"), activity.description);
+      addModelPreviewText(activityCard, t("importModelPreviewStudents"), activity.instructions, "import-model-preview-instructions");
+      activities.appendChild(activityCard);
+    });
+    moment.appendChild(activities);
+    importModelPreviewContent.appendChild(moment);
+  });
+}
+
+async function openModelPreview(modelId, trigger) {
+  activeModelPreviewId = String(modelId || "");
+  activeModelPreviewTrigger = trigger || null;
+  if (!activeModelPreviewId) return;
+  const requestedId = activeModelPreviewId;
+
+  setModelPreviewVisible(true);
+  importModelPreviewTitle.textContent = "";
+  importModelPreviewSummary.textContent = "";
+  importModelPreviewChips.textContent = "";
+  importModelPreviewContent.textContent = "";
+  importModelPreviewStatus.textContent = t("importModelPreviewLoading");
+  importModelPreviewStatus.classList.remove("import-model-preview-status-error");
+  importModelPreviewBackBtn?.focus();
+
+  try {
+    const payload = await loadModelPayload(requestedId);
+    if (activeModelPreviewId !== requestedId) return;
+    renderModelPreview(payload);
+    importModelPreviewStatus.textContent = "";
+  } catch (_) {
+    if (activeModelPreviewId !== requestedId) return;
+    importModelPreviewStatus.textContent = t("importModelPreviewError");
+    importModelPreviewStatus.classList.add("import-model-preview-status-error");
+  }
+}
+
+function closeModelPreview({ restoreFocus = true } = {}) {
+  setModelPreviewVisible(false);
+  activeModelPreviewId = "";
+  if (restoreFocus) activeModelPreviewTrigger?.focus();
+  activeModelPreviewTrigger = null;
+}
+
 async function applyModel(modelId) {
   const id = String(modelId || "");
   if (!id) return false;
   try {
-    const response = await fetch(`${MODEL_CATALOG_URL}&model=${encodeURIComponent(id)}`, {
-      headers: { Accept: "application/json" }
-    });
-    if (!response.ok) throw new Error(`HTTP ${response.status}`);
-    const payload = await response.json();
+    const payload = await loadModelPayload(id);
     const hydrated = hydrateState(payload?.design, null);
     if (!hydrated) throw new Error("Invalid model");
     hydrated.meta.uiLanguage = preferredInterfaceLanguage(currentLang());
@@ -6286,6 +6490,7 @@ async function applyModel(modelId) {
 }
 
 function openImportModal() {
+  closeModelPreview({ restoreFocus: false });
   modelFilterQuery = "";
   modelFilterFamily = "";
   if (importModelsSearch) importModelsSearch.value = "";
@@ -6306,6 +6511,7 @@ function openImportModal() {
 }
 
 function closeImportModal() {
+  closeModelPreview({ restoreFocus: false });
   closeModal(importModalBackdrop);
 }
 
@@ -6607,7 +6813,10 @@ document.addEventListener("keydown", (event) => {
   if (event.key === "Escape") {
     event.preventDefault();
     if (activeModalBackdrop === exportModalBackdrop) closeExportModal();
-    if (activeModalBackdrop === importModalBackdrop) closeImportModal();
+    if (activeModalBackdrop === importModalBackdrop) {
+      if (importModal?.classList.contains("is-previewing-model")) closeModelPreview();
+      else closeImportModal();
+    }
     if (activeModalBackdrop === infoModalBackdrop) closeInfoModal();
     if (activeModalBackdrop === aiasModalBackdrop) closeAiasModal();
     return;
@@ -8017,8 +8226,22 @@ importModelsFamily?.addEventListener("change", () => {
 
 importModelsList?.addEventListener("click", async (event) => {
   const card = event.target.closest(".import-model-card");
-  if (!card) return;
+  const action = event.target.closest("[data-model-action]");
+  if (!card || !action) return;
+  if (action.dataset.modelAction === "preview") {
+    openModelPreview(card.dataset.modelId, action);
+    return;
+  }
   const applied = await applyModel(card.dataset.modelId);
+  if (applied) closeImportModal();
+});
+
+importModelPreviewBackBtn?.addEventListener("click", () => {
+  closeModelPreview();
+});
+
+importModelPreviewUseBtn?.addEventListener("click", async () => {
+  const applied = await applyModel(activeModelPreviewId);
   if (applied) closeImportModal();
 });
 

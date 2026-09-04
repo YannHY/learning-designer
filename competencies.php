@@ -511,22 +511,22 @@ foreach ($sectionGroups as $sectionKey => $group) {
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" referrerpolicy="no-referrer">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="stylesheet" href="css/interface.css?v=20260830-compact-source-link">
+    <link rel="stylesheet" href="css/interface.css?v=20260904-content-rhythm">
     <link rel="stylesheet" href="css/account-ui.css?v=20260903-pagefind-dark">
-    <link rel="stylesheet" href="css/account-pages.css?v=20260826-title-blue">
+    <link rel="stylesheet" href="css/account-pages.css?v=20260904-content-rhythm">
     <style>
         body.competencies-page {
             background: #fff;
         }
         .competencies-shell {
             width: min(var(--content-shell-width, 1180px), calc(100vw - var(--content-shell-gutter, 36px)));
-            margin: 32px auto 64px;
+            margin: 40px auto 80px;
             display: grid;
             gap: var(--page-section-gap);
         }
         .competencies-header {
             display: grid;
-            gap: 10px;
+            gap: 14px;
             margin-bottom: 0;
         }
         .competencies-kicker {
@@ -546,7 +546,7 @@ foreach ($sectionGroups as $sectionKey => $group) {
             margin: 0;
             color: var(--muted);
             font-size: 15px;
-            line-height: 1.6;
+            line-height: var(--content-leading);
         }
         .competencies-filter-btn {
             display: inline-flex;
@@ -564,7 +564,7 @@ foreach ($sectionGroups as $sectionKey => $group) {
         .competencies-controls {
             display: flex;
             flex-wrap: wrap;
-            gap: 12px;
+            gap: 16px;
             align-items: center;
             margin: 0;
         }
@@ -572,7 +572,7 @@ foreach ($sectionGroups as $sectionKey => $group) {
             flex: 0 1 240px;
             width: 240px;
             min-width: 230px;
-            min-height: 42px;
+            min-height: 46px;
             border: 1px solid var(--line);
             border-radius: 8px;
             background: var(--panel);
@@ -585,7 +585,7 @@ foreach ($sectionGroups as $sectionKey => $group) {
             flex: 1 1 0;
             min-width: 0;
             flex-wrap: wrap;
-            gap: 8px;
+            gap: 10px;
             justify-content: flex-end;
         }
         .competencies-filter-btn {
@@ -658,7 +658,8 @@ foreach ($sectionGroups as $sectionKey => $group) {
         .competencies-table td {
             border-right: 1px solid #d9e0ea;
             border-bottom: 1px solid #d9e0ea;
-            padding: 8px 10px;
+            padding: 12px 14px;
+            line-height: 1.55;
             text-align: left;
             vertical-align: top;
         }
@@ -781,10 +782,10 @@ foreach ($sectionGroups as $sectionKey => $group) {
             cursor: pointer;
         }
         .competencies-level-toggle {
-            padding: 8px 10px;
+            padding: 11px 14px;
         }
         .competencies-section-toggle {
-            padding: 7px 10px 7px 12px;
+            padding: 10px 14px 10px 16px;
         }
         .competencies-section-heading {
             display: inline-flex;

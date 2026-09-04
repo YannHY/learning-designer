@@ -70,9 +70,9 @@ function e(string $value): string
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" referrerpolicy="no-referrer" />
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="stylesheet" href="css/interface.css?v=20260826-title-blue" />
+    <link rel="stylesheet" href="css/interface.css?v=20260904-content-rhythm" />
     <link rel="stylesheet" href="css/account-ui.css?v=20260903-pagefind-dark" />
-    <link rel="stylesheet" href="css/account-pages.css?v=20260826-title-blue" />
+    <link rel="stylesheet" href="css/account-pages.css?v=20260904-content-rhythm" />
     <style>
       .saved-shell {
         border: 0;
@@ -83,13 +83,14 @@ function e(string $value): string
         display: flex;
         align-items: center;
         justify-content: space-between;
-        gap: 16px;
+        gap: 24px;
         margin-bottom: var(--page-section-gap);
       }
 
       .saved-subtitle {
-        margin: 6px 0 0;
+        margin: 10px 0 0;
         color: var(--muted);
+        line-height: var(--content-leading);
       }
 
       .saved-flash {
@@ -116,7 +117,7 @@ function e(string $value): string
 
       .saved-empty {
         margin: 0;
-        padding: 24px;
+        padding: var(--card-padding);
         border: 1px dashed var(--line);
         border-radius: 18px;
         color: var(--muted);
@@ -127,29 +128,29 @@ function e(string $value): string
         display: flex;
         align-items: flex-start;
         justify-content: space-between;
-        gap: 18px;
-        padding: 18px;
+        gap: 28px;
+        padding: var(--card-padding);
         border: 1px solid var(--line);
         border-radius: 18px;
         background: var(--panel-2);
       }
 
       .saved-card-title {
-        margin: 0 0 6px;
+        margin: 0 0 10px;
       }
 
       .saved-card-meta {
         margin: 0;
         color: var(--muted);
         font-size: 14px;
-        line-height: 1.5;
+        line-height: 1.68;
       }
 
       .saved-status {
         display: inline-flex;
         align-items: center;
         gap: 6px;
-        margin-top: 10px;
+        margin-top: 14px;
         padding: 6px 9px;
         border: 1px solid var(--line);
         border-radius: 999px;
@@ -160,7 +161,7 @@ function e(string $value): string
 
       .saved-card-actions {
         display: inline-flex;
-        gap: 8px;
+        gap: 10px;
         flex-wrap: wrap;
         align-items: center;
       }

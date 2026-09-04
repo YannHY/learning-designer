@@ -19,7 +19,7 @@
     <link rel="stylesheet" href="css/account-ui.css?v=20260903-pagefind-dark" />
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="stylesheet" href="css/interface.css?v=20260830-compact-source-link" />
+    <link rel="stylesheet" href="css/interface.css?v=20260904-content-rhythm" />
   </head>
   <body class="designer-page">
     <a id="skip-link" class="skip-link" href="#board">Aller au contenu principal</a>
@@ -483,6 +483,21 @@
           <div id="import-models-list" class="import-models-list" role="list"></div>
         </section>
 
+        <section id="import-model-preview" class="import-model-preview hidden" aria-labelledby="import-model-preview-title">
+          <header class="import-model-preview-header">
+            <p id="import-model-preview-eyebrow" class="import-model-preview-eyebrow">Aperçu du scénario</p>
+            <h2 id="import-model-preview-title" class="modal-title"></h2>
+            <p id="import-model-preview-summary" class="import-model-preview-summary"></p>
+            <div id="import-model-preview-chips" class="import-model-preview-chips"></div>
+          </header>
+          <p id="import-model-preview-status" class="import-model-preview-status" role="status" aria-live="polite"></p>
+          <div id="import-model-preview-content" class="import-model-preview-content"></div>
+          <div class="modal-actions import-model-preview-actions">
+            <button id="import-model-preview-back-btn" class="btn btn-light" type="button"><span class="btn-label"><i class="fa-solid fa-arrow-left btn-icon-inline" aria-hidden="true"></i>Retour aux modèles</span></button>
+            <button id="import-model-preview-use-btn" class="btn btn-light import-model-use-action" type="button"><span class="btn-label"><i class="fa-solid fa-file-import btn-icon-inline" aria-hidden="true"></i>Importer</span></button>
+          </div>
+        </section>
+
         <div class="modal-actions">
           <button id="import-modal-cancel-btn" class="btn btn-light" type="button">Fermer</button>
         </div>
@@ -635,7 +650,7 @@
     <script src="js/competency-catalog.js?v=20260831-framework-i18n"></script>
     <script src="js/competency-greencomp-details.js?v=20260831-framework-i18n"></script>
     <script src="js/competency-digcomp-details.js?v=20260830-digcomp-statements"></script>
-    <script src="js/interface.js?v=20260831-language-typography"></script>
+    <script src="js/interface.js?v=20260904-model-translations-v3"></script>
     <script src="js/account-ui.js?v=20260827-compact-toolbar"></script>
     <script src="js/site-search.js?v=20260904-pagefind-path-v3"></script>
     <script>

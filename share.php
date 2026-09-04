@@ -134,15 +134,15 @@ function share_count_label(int $count, string $singular, ?string $plural = null)
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" referrerpolicy="no-referrer" />
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="stylesheet" href="css/interface.css?v=20260826-title-blue" />
+    <link rel="stylesheet" href="css/interface.css?v=20260904-content-rhythm" />
     <link rel="stylesheet" href="css/account-ui.css?v=20260903-pagefind-dark" />
-    <link rel="stylesheet" href="css/account-pages.css?v=20260826-title-blue" />
+    <link rel="stylesheet" href="css/account-pages.css?v=20260904-content-rhythm" />
     <style>
       .shared-header {
         display: flex;
         align-items: flex-end;
         justify-content: space-between;
-        gap: 18px;
+        gap: 26px;
         margin-bottom: var(--page-section-gap);
       }
 
@@ -153,9 +153,9 @@ function share_count_label(int $count, string $singular, ?string $plural = null)
 
       .shared-subtitle {
         max-width: 760px;
-        margin: 8px 0 0;
+        margin: 12px 0 0;
         color: var(--muted);
-        line-height: 1.6;
+        line-height: var(--content-leading);
       }
 
       .shared-grid {
@@ -168,8 +168,8 @@ function share_count_label(int $count, string $singular, ?string $plural = null)
         display: flex;
         min-height: 260px;
         flex-direction: column;
-        gap: 16px;
-        padding: 18px;
+        gap: 22px;
+        padding: var(--card-padding);
         border: 1px solid var(--line);
         border-radius: 8px;
         background: var(--panel-2);
@@ -177,19 +177,19 @@ function share_count_label(int $count, string $singular, ?string $plural = null)
 
       .shared-card-title {
         margin: 0;
-        line-height: 1.25;
+        line-height: 1.35;
       }
 
       .shared-card-copy {
         margin: 0;
         color: var(--muted);
-        line-height: 1.55;
+        line-height: 1.68;
       }
 
       .shared-meta {
         display: flex;
         flex-wrap: wrap;
-        gap: 6px;
+        gap: 9px;
         margin-top: auto;
       }
 
@@ -220,7 +220,7 @@ function share_count_label(int $count, string $singular, ?string $plural = null)
       .shared-actions {
         display: flex;
         flex-wrap: wrap;
-        gap: 8px;
+        gap: 10px;
         align-items: center;
       }
 
@@ -240,7 +240,7 @@ function share_count_label(int $count, string $singular, ?string $plural = null)
 
       .shared-empty {
         margin: 0;
-        padding: 24px;
+        padding: var(--card-padding);
         border: 1px dashed var(--line);
         border-radius: 8px;
         color: var(--muted);
@@ -252,7 +252,7 @@ function share_count_label(int $count, string $singular, ?string $plural = null)
         align-items: center;
         justify-content: center;
         gap: 12px;
-        margin-top: 24px;
+        margin-top: 32px;
       }
 
       .shared-pagination-status {

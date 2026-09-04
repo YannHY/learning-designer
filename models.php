@@ -49,6 +49,241 @@ const LD_MODEL_TYPE_LABELS = [
     'undefined' => ['fr' => 'Non défini', 'en' => 'Undefined'],
 ];
 
+/**
+ * Titres anglais des moments, dans le même ordre que les moments de chaque
+ * modèle. Les contenus français restent la source du modèle ; ce catalogue
+ * évite qu'un changement de langue laisse le plan des cartes en français.
+ */
+const LD_MODEL_MOMENT_TITLES_EN = [
+    'introduire-chapitre' => [
+        '1. Opening hook',
+        '2. What I think I know',
+        '3. Framing the problem',
+        '4. First structured input',
+        '5. Written summary and chapter outline',
+    ],
+    'reactiver-prerequis' => [
+        '1. Diagnostic quiz',
+        '2. Peer correction and discussion',
+        '3. Targeted review',
+    ],
+    'classe-inversee' => [
+        '1. Learning resource at home',
+        '2. Comprehension check',
+        '3. Group application task',
+        '4. Whole-class review and consolidation',
+    ],
+    'cours-dialogue' => [
+        '1. Opening question',
+        '2. Interactive input 1',
+        '3. Written reformulation',
+        '4. Interactive input 2',
+        '5. Completing the summary',
+    ],
+    'etude-documents' => [
+        '1. Contextualisation',
+        '2. Extracting information from the sources',
+        '3. Comparing findings',
+        '4. Written response',
+    ],
+    'modelage-pratique-autonomie' => [
+        '1. Modelling: I do',
+        '2. Guided practice: we do',
+        '3. Practice in pairs',
+        '4. Independent practice',
+    ],
+    'cours-magistral-sequence' => [
+        '1. First input block and check',
+        '2. Second input block and check',
+        '3. Third input block and check',
+        '4. Reviewing difficulties',
+    ],
+    'entrainement-differencie' => [
+        '1. Quick diagnostic',
+        '2. Three parallel workshops',
+        '3. Sharing methods',
+    ],
+    'resolution-problemes' => [
+        '1. Presenting the problem',
+        '2. Individual investigation',
+        '3. Group discussion',
+        '4. Two groups present their work',
+        '5. Consolidation',
+    ],
+    'revision-avant-evaluation' => [
+        '1. Chapter mind map',
+        '2. Team quiz challenge',
+        '3. Targeted remediation',
+    ],
+    'debat-argumente' => [
+        '1. Framing the controversy',
+        '2. Building the argument file',
+        '3. Assigning roles',
+        '4. Structured debate',
+        '5. Vote and metacognitive review',
+    ],
+    'expose-eleve' => [
+        '1. Preparation outside class',
+        '2. Presentations',
+        '3. Peer assessment',
+        '4. Reviewing the content',
+    ],
+    'jeu-de-role' => [
+        '1. Distributing roles and briefing packs',
+        '2. Preparation in delegations',
+        '3. Simulation',
+        '4. Debrief',
+    ],
+    'cercle-lecture' => [
+        '1. Rereading the source text',
+        '2. Structured round-table discussion',
+        '3. Reflective writing',
+    ],
+    'tache-complexe' => [
+        '1. Mission and success criteria',
+        '2. Allocating tasks and planning',
+        '3. Production',
+        '4. Cross-presentation',
+        '5. Self-assessment',
+    ],
+    'ecriture-guidee' => [
+        '1. Analysing an expert model',
+        '2. Planning and drafting',
+        '3. Criteria-based peer review',
+        '4. Rewriting',
+    ],
+    'production-mediatique' => [
+        '1. Analysing the target format',
+        '2. Storyboarding',
+        '3. Production',
+        '4. Publication and feedback',
+        '5. Technical and editorial review',
+    ],
+    'demarche-investigation' => [
+        '1. Trigger situation',
+        '2. Formulating hypotheses',
+        '3. Designing the protocol',
+        '4. Experimentation and measurements',
+        '5. Interpretation and conclusion',
+    ],
+    'recherche-documentaire' => [
+        '1. Framing the research question',
+        '2. Research and referenced collection',
+        '3. Cross-checking and assessing reliability',
+        '4. Referenced summary sheet',
+    ],
+    'evaluation-correction-active' => [
+        '1. Assessment',
+        '2. Analysing one’s own errors',
+        '3. Remediation workshops',
+        '4. Progress plan',
+    ],
+    'bilan-metacognitif' => [
+        '1. Reviewing the stated learning outcomes',
+        '2. Self-positioning',
+        '3. Reflective writing',
+        '4. Sharing effective strategies',
+    ],
+    'evaluation-par-les-pairs' => [
+        '1. Understanding the rubric',
+        '2. Peer assessment',
+        '3. Oral feedback to a classmate',
+        '4. Improving one’s production',
+    ],
+    'ia-generative-encadree' => [
+        '1. Framing authorised use',
+        '2. First production without AI',
+        '3. AI-assisted improvement and prompt log',
+        '4. Before-and-after comparison and justification',
+    ],
+    'esprit-critique-ia' => [
+        '1. What I think I know about AI',
+        '2. Testing its probabilistic nature',
+        '3. Hunting for fabricated sources',
+        '4. Building a verification protocol',
+        '5. Revisiting the initial hypotheses',
+    ],
+    'sequence-cinq-seances' => [
+        'Lesson 1. Launch',
+        'Lesson 2. Input',
+        'Lesson 3. Practice',
+        'Lesson 4. Production',
+        'Lesson 5. Assessment',
+    ],
+    'sortie-pedagogique' => [
+        '1. Before: preparation in class',
+        '2. During: observations on site',
+        '3. After: analysis and production',
+    ],
+    'remediation-post-evaluation' => [
+        '1. Diagnosing the recurring error',
+        '2. Explicit reteaching',
+        '3. Targeted practice',
+        '4. Exit check',
+    ],
+    'premiere-seance-annee' => [
+        '1. Introductions and framework for the year',
+        '2. Co-constructing the class agreement',
+        '3. Diagnostic assessment',
+        '4. Getting started',
+    ],
+];
+
+const LD_MODEL_PLACEHOLDERS_EN = [
+    '[CAPSULE / DOCUMENT]' => '[LEARNING RESOURCE / DOCUMENT]',
+    '[CHAPITRE]' => '[CHAPTER]',
+    '[CONTROVERSE]' => '[CONTROVERSY]',
+    '[CORPUS / SOURCES]' => '[SOURCE SET / SOURCES]',
+    '[DATE]' => '[DATE]',
+    '[DOCUMENT 1]' => '[DOCUMENT 1]',
+    '[DOCUMENT 2]' => '[DOCUMENT 2]',
+    '[DOCUMENT DÉCLENCHEUR]' => '[TRIGGER DOCUMENT]',
+    '[DURÉE EXPOSÉ]' => '[PRESENTATION LENGTH]',
+    '[EXEMPLE 1]' => '[EXAMPLE 1]',
+    '[EXEMPLE 2]' => '[EXAMPLE 2]',
+    '[EXEMPLE EXPERT]' => '[EXPERT MODEL]',
+    '[LIEU DE VISITE]' => '[VISIT LOCATION]',
+    '[MATIÈRE]' => '[SUBJECT]',
+    '[MÉTHODE / PROCÉDURE]' => '[METHOD / PROCEDURE]',
+    '[MISSION]' => '[MISSION]',
+    '[NIVEAU]' => '[LEVEL]',
+    '[NOMBRE]' => '[NUMBER]',
+    '[NOTION 1]' => '[CONCEPT 1]',
+    '[NOTION 2]' => '[CONCEPT 2]',
+    '[NOTION MAL ACQUISE]' => '[CONCEPT NOT YET MASTERED]',
+    '[NOTION VOISINE]' => '[RELATED CONCEPT]',
+    '[OUTIL DE PRODUCTION]' => '[PRODUCTION TOOL]',
+    '[OUTIL IA]' => '[AI TOOL]',
+    '[PHÉNOMÈNE ÉTUDIÉ]' => '[PHENOMENON STUDIED]',
+    '[PRÉREQUIS 1]' => '[PREREQUISITE 1]',
+    '[PRÉREQUIS 2]' => '[PREREQUISITE 2]',
+    '[PROBLÈME]' => '[PROBLEM]',
+    '[PRODUCTION ATTENDUE]' => '[EXPECTED OUTPUT]',
+    '[PRODUCTION DE RETOUR]' => '[FOLLOW-UP OUTPUT]',
+    '[PRODUCTION ÉVALUÉE]' => '[ASSESSED OUTPUT]',
+    '[PRODUCTION MÉDIATIQUE]' => '[MEDIA OUTPUT]',
+    '[PUBLIC VISÉ]' => '[TARGET AUDIENCE]',
+    '[QUESTION]' => '[QUESTION]',
+    '[QUESTION DE DISCUSSION]' => '[DISCUSSION QUESTION]',
+    '[QUESTION DE RECHERCHE]' => '[RESEARCH QUESTION]',
+    '[QUESTION DE VISITE]' => '[VISIT QUESTION]',
+    '[SÉQUENCE]' => '[UNIT]',
+    '[SITUATION SIMULÉE]' => '[SIMULATED SITUATION]',
+    '[SUJET]' => '[TOPIC]',
+    '[SUJET D’ÉCRITURE]' => '[WRITING PROMPT]',
+    '[SUJET VÉRIFIÉ]' => '[TOPIC TO VERIFY]',
+    '[SUJETS D’EXPOSÉ]' => '[PRESENTATION TOPICS]',
+    '[TÂCHE]' => '[TASK]',
+    '[TÂCHE D’APPLICATION]' => '[APPLICATION TASK]',
+    '[TEXTE]' => '[TEXT]',
+    '[TYPE D’ÉCRIT]' => '[TEXT TYPE]',
+    '[ÉLÉMENT 1]' => '[ELEMENT 1]',
+    '[ÉLÉMENT 2]' => '[ELEMENT 2]',
+    '[ÉLÉMENT 3]' => '[ELEMENT 3]',
+];
+
+$LD_MODEL_CONTENT_EN = require __DIR__ . '/lib/model-content-en.php';
+
 $LD_MODEL_FAMILIES = [
     'entrer' => [
         'fr' => 'Entrer dans un contenu',
@@ -111,7 +346,13 @@ $LD_MODEL_FAMILIES = [
 /**
  * Développe la notation compacte d'une activité en activité complète.
  */
-function ld_model_activity(array $spec, string $prefix): array
+function ld_model_localized_text(mixed $frenchValue, mixed $englishValue, string $lang): string
+{
+    $text = (string)($lang === 'en' && is_string($englishValue) ? $englishValue : $frenchValue);
+    return $lang === 'en' ? strtr($text, LD_MODEL_PLACEHOLDERS_EN) : $text;
+}
+
+function ld_model_activity(array $spec, string $prefix, array $translation = [], string $lang = 'fr'): array
 {
     $aias = $spec['aias'] ?? null;
     if (is_int($aias) && $aias >= 1 && $aias <= 5) {
@@ -139,9 +380,9 @@ function ld_model_activity(array $spec, string $prefix): array
         'locationMode' => (string)($spec['loc'] ?? 'onsite'),
         'evaluationMode' => (string)($spec['ev'] ?? 'none'),
         'aias' => $aiasState,
-        'description' => (string)($spec['desc'] ?? ''),
-        'instructions' => (string)($spec['inst'] ?? ''),
-        'notes' => (string)($spec['notes'] ?? ''),
+        'description' => ld_model_localized_text($spec['desc'] ?? '', $translation['description'] ?? null, $lang),
+        'instructions' => ld_model_localized_text($spec['inst'] ?? '', $translation['instructions'] ?? null, $lang),
+        'notes' => ld_model_localized_text($spec['notes'] ?? '', $translation['notes'] ?? null, $lang),
         'tools' => [],
     ];
 }
@@ -172,38 +413,51 @@ function ld_model_activity_count(array $model): int
 /**
  * Document complet, prêt à être chargé par le concepteur.
  */
-function ld_model_design(array $model): array
+function ld_model_design(array $model, string $lang = 'fr'): array
 {
+    global $LD_MODEL_CONTENT_EN;
+
+    $lang = $lang === 'en' ? 'en' : 'fr';
+    $translation = $lang === 'en'
+        ? ($LD_MODEL_CONTENT_EN[(string)$model['id']] ?? [])
+        : [];
     $minutes = ld_model_minutes($model);
     $dayHours = 7;
 
     $outcomes = [];
     foreach (($model['outcomes'] ?? []) as $index => $outcome) {
         [$category, $verb, $text] = $outcome;
+        $translatedOutcome = $translation['outcomes'][$index] ?? [];
         $outcomes[] = [
             'id' => 'model-' . $model['id'] . '-o' . ($index + 1),
             'category' => $category,
-            'categoryLabel' => LD_MODEL_BLOOM_LABELS[$category]['fr'] ?? '',
-            'verb' => $verb,
-            'text' => $text,
+            'categoryLabel' => LD_MODEL_BLOOM_LABELS[$category][$lang] ?? '',
+            'verb' => ld_model_localized_text($verb, $translatedOutcome['verb'] ?? null, $lang),
+            'text' => ld_model_localized_text($text, $translatedOutcome['text'] ?? null, $lang),
         ];
     }
 
     $sessions = [];
     foreach ($model['moments'] as $momentIndex => $moment) {
+        $translatedMoment = $translation['moments'][$momentIndex] ?? [];
         $activities = [];
         foreach ($moment['a'] as $activityIndex => $activity) {
             $activities[] = ld_model_activity(
                 $activity,
-                'model-' . $model['id'] . '-m' . ($momentIndex + 1) . '-a' . ($activityIndex + 1)
+                'model-' . $model['id'] . '-m' . ($momentIndex + 1) . '-a' . ($activityIndex + 1),
+                $translatedMoment['activities'][$activityIndex] ?? [],
+                $lang
             );
         }
+        $englishMomentTitles = LD_MODEL_MOMENT_TITLES_EN[(string)$model['id']] ?? [];
         $sessions[] = [
             'id' => 'model-' . $model['id'] . '-m' . ($momentIndex + 1),
-            'title' => (string)$moment['t'],
-            'objectives' => (string)($moment['o'] ?? ''),
-            'intentions' => (string)($moment['i'] ?? ''),
-            'notes' => (string)($moment['n'] ?? ''),
+            'title' => $lang === 'en'
+                ? (string)($englishMomentTitles[$momentIndex] ?? $moment['t'])
+                : (string)$moment['t'],
+            'objectives' => ld_model_localized_text($moment['o'] ?? '', $translatedMoment['objectives'] ?? null, $lang),
+            'intentions' => ld_model_localized_text($moment['i'] ?? '', $translatedMoment['intentions'] ?? null, $lang),
+            'notes' => ld_model_localized_text($moment['n'] ?? '', $translatedMoment['notes'] ?? null, $lang),
             'notesExpanded' => false,
             'activities' => $activities,
         ];
@@ -214,8 +468,8 @@ function ld_model_design(array $model): array
         'intentionsCollapsed' => false,
         'topPanelCollapsed' => false,
         'meta' => [
-            'name' => (string)$model['titleFr'],
-            'uiLanguage' => 'fr',
+            'name' => (string)$model[$lang === 'en' ? 'titleEn' : 'titleFr'],
+            'uiLanguage' => $lang,
             'dayHours' => $dayHours,
             'learningDays' => 0,
             'learningHours' => intdiv($minutes, 60),
@@ -225,9 +479,9 @@ function ld_model_design(array $model): array
             'sizeClass' => '',
             'designers' => '',
             'trainers' => '',
-            'description' => (string)($model['description'] ?? ''),
-            'command' => (string)($model['command'] ?? ''),
-            'personas' => (string)($model['personas'] ?? ''),
+            'description' => ld_model_localized_text($model['description'] ?? '', $translation['description'] ?? null, $lang),
+            'command' => ld_model_localized_text($model['command'] ?? '', $translation['command'] ?? null, $lang),
+            'personas' => ld_model_localized_text($model['personas'] ?? '', $translation['personas'] ?? null, $lang),
             'sliders' => $outcomes,
             'activeTab' => 'settings',
             'boardLayout' => 'columns',
@@ -235,9 +489,9 @@ function ld_model_design(array $model): array
         ],
         'sessions' => $sessions,
         'partitionLineConfig' => [
-            ['type' => 'locationMode', 'label' => 'Présentiel', 'value' => 'onsite', 'visible' => true],
-            ['type' => 'locationMode', 'label' => 'Distanciel', 'value' => 'online', 'visible' => true],
-            ['type' => 'locationMode', 'label' => 'Hybride', 'value' => 'hybrid', 'visible' => true],
+            ['type' => 'locationMode', 'label' => $lang === 'en' ? 'On-site' : 'Présentiel', 'value' => 'onsite', 'visible' => true],
+            ['type' => 'locationMode', 'label' => $lang === 'en' ? 'Online' : 'Distanciel', 'value' => 'online', 'visible' => true],
+            ['type' => 'locationMode', 'label' => $lang === 'en' ? 'Hybrid' : 'Hybride', 'value' => 'hybrid', 'visible' => true],
         ],
     ];
 }
@@ -248,7 +502,8 @@ function ld_model_design(array $model): array
 function ld_model_outline(array $model): array
 {
     $outline = [];
-    foreach ($model['moments'] as $moment) {
+    $englishTitles = LD_MODEL_MOMENT_TITLES_EN[(string)$model['id']] ?? [];
+    foreach ($model['moments'] as $momentIndex => $moment) {
         $activities = [];
         foreach ($moment['a'] as $activity) {
             $type = (string)($activity['t'] ?? 'undefined');
@@ -259,8 +514,12 @@ function ld_model_outline(array $model): array
                 'minutes' => max(1, (int)($activity['d'] ?? 5)),
             ];
         }
+        $titleFr = (string)$moment['t'];
         $outline[] = [
-            'title' => (string)$moment['t'],
+            // `title` is retained for older clients of the JSON endpoint.
+            'title' => $titleFr,
+            'titleFr' => $titleFr,
+            'titleEn' => (string)($englishTitles[$momentIndex] ?? $titleFr),
             'activities' => $activities,
         ];
     }
@@ -284,12 +543,21 @@ function ld_model_placeholders(array $model): array
     return $found;
 }
 
+function ld_model_placeholders_en(array $placeholders): array
+{
+    return array_map(
+        static fn (string $placeholder): string => LD_MODEL_PLACEHOLDERS_EN[$placeholder] ?? $placeholder,
+        $placeholders
+    );
+}
+
 /**
  * Fiche d'un modèle, sans le document complet (utilisée par la fenêtre d'import).
  */
 function ld_model_entry(array $model, array $families): array
 {
     $family = $families[$model['family']] ?? ['fr' => '', 'en' => '', 'icon' => 'fa-solid fa-shapes'];
+    $placeholdersFr = ld_model_placeholders($model);
     return [
         'id' => (string)$model['id'],
         'family' => (string)$model['family'],
@@ -306,7 +574,10 @@ function ld_model_entry(array $model, array $families): array
         'momentCount' => count($model['moments']),
         'activityCount' => ld_model_activity_count($model),
         'outcomeCount' => count($model['outcomes'] ?? []),
-        'placeholders' => ld_model_placeholders($model),
+        // `placeholders` is retained for older clients of the JSON endpoint.
+        'placeholders' => $placeholdersFr,
+        'placeholdersFr' => $placeholdersFr,
+        'placeholdersEn' => ld_model_placeholders_en($placeholdersFr),
         'outline' => ld_model_outline($model),
     ];
 }
@@ -469,7 +740,7 @@ $LD_SCENARIO_MODELS = [
         'titleFr' => 'Classe inversée',
         'titleEn' => 'Flipped classroom',
         'summaryFr' => 'Capsule travaillée à la maison, vérification de compréhension en classe, puis tâche d’application en groupes et mise en commun.',
-        'summaryEn' => 'Video studied at home, comprehension check in class, then group application task and pooling.',
+        'summaryEn' => 'Learning resource studied at home, comprehension check in class, then a group application task and whole-class review.',
         'keywords' => 'classe inversée, capsule, travail à la maison, hybride, application',
         'mode' => 'hybrid',
         'description' => 'Séance hybride sur [NOTION 1] : 20 min de travail asynchrone à la maison sur [CAPSULE / DOCUMENT], puis 55 min en classe consacrées à l’application et à la levée des obstacles.',
@@ -2209,6 +2480,7 @@ foreach ($LD_SCENARIO_MODELS as $ldModel) {
 
 $requestedFormat = strtolower(trim((string)($_GET['format'] ?? '')));
 $requestedModelId = trim((string)($_GET['model'] ?? ''));
+$requestedLanguage = strtolower(trim((string)($_GET['lang'] ?? ''))) === 'en' ? 'en' : 'fr';
 
 if ($requestedFormat === 'json') {
     header('Content-Type: application/json; charset=utf-8');
@@ -2216,13 +2488,14 @@ if ($requestedFormat === 'json') {
     $flags = JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES;
 
     if ($requestedModelId !== '') {
+        header('Cache-Control: no-store, no-cache, must-revalidate, max-age=0');
         if (!isset($LD_MODELS_BY_ID[$requestedModelId])) {
             http_response_code(404);
             echo json_encode(['error' => 'unknown_model'], $flags);
             exit;
         }
         $model = $LD_MODELS_BY_ID[$requestedModelId];
-        $design = ld_model_design($model);
+        $design = ld_model_design($model, $requestedLanguage);
         if (trim((string)($_GET['download'] ?? '')) === '1') {
             header('Content-Disposition: attachment; filename="modele-' . $requestedModelId . '.json"');
             echo json_encode($design, $flags | JSON_PRETTY_PRINT);
@@ -2248,7 +2521,7 @@ if ($requestedFormat === 'json') {
         ];
     }
     echo json_encode([
-        'version' => 1,
+        'version' => 3,
         'families' => $families,
         'models' => array_map(
             static fn (array $model): array => ld_model_entry($model, $LD_MODEL_FAMILIES),
@@ -2283,9 +2556,9 @@ current_user();
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" referrerpolicy="no-referrer">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="stylesheet" href="css/interface.css?v=20260826-title-blue">
+    <link rel="stylesheet" href="css/interface.css?v=20260904-content-rhythm">
     <link rel="stylesheet" href="css/account-ui.css?v=20260903-pagefind-dark">
-    <link rel="stylesheet" href="css/account-pages.css?v=20260826-title-blue">
+    <link rel="stylesheet" href="css/account-pages.css?v=20260904-content-rhythm">
 </head>
 <body class="models-page">
 <?php render_site_nav('models'); ?>
@@ -2306,7 +2579,7 @@ current_user();
         <ol>
             <li data-i18n-fr="Dans le concepteur, cliquez sur « Importer » : la fenêtre propose la bibliothèque de modèles ou un fichier de votre ordinateur." data-i18n-en="In the designer, click “Import”: the dialog offers the template library or a file from your computer.">Dans le concepteur, cliquez sur « Importer » : la fenêtre propose la bibliothèque de modèles ou un fichier de votre ordinateur.</li>
             <li data-i18n-fr="Choisissez un modèle : le scénario complet est chargé, avec ses moments, ses durées et ses consignes." data-i18n-en="Pick a template: the full scenario is loaded, with its moments, durations and instructions.">Choisissez un modèle : le scénario complet est chargé, avec ses moments, ses durées et ses consignes.</li>
-            <li data-i18n-fr="Remplacez chaque jalon entre crochets — [MATIÈRE], [CHAPITRE], [NOTION 1] — par le contenu de votre séance, puis ajustez les durées." data-i18n-en="Replace each bracketed placeholder — [MATIÈRE], [CHAPITRE], [NOTION 1] — with your own content, then adjust the durations.">Remplacez chaque jalon entre crochets — [MATIÈRE], [CHAPITRE], [NOTION 1] — par le contenu de votre séance, puis ajustez les durées.</li>
+            <li data-i18n-fr="Remplacez chaque jalon entre crochets — [MATIÈRE], [CHAPITRE], [NOTION 1] — par le contenu de votre séance, puis ajustez les durées." data-i18n-en="Replace each bracketed placeholder — [SUBJECT], [CHAPTER], [CONCEPT 1] — with your own content, then adjust the durations.">Remplacez chaque jalon entre crochets — [MATIÈRE], [CHAPITRE], [NOTION 1] — par le contenu de votre séance, puis ajustez les durées.</li>
             <li data-i18n-fr="Enregistrez, exportez ou partagez le scénario comme n’importe quel design." data-i18n-en="Save, export or share the scenario like any other design.">Enregistrez, exportez ou partagez le scénario comme n’importe quel design.</li>
         </ol>
     </section>
@@ -2323,7 +2596,8 @@ current_user();
                 <?php foreach ($modelsByFamily[$familyId] as $model): ?>
                     <?php
                     $entry = ld_model_entry($model, $LD_MODEL_FAMILIES);
-                    $placeholders = $entry['placeholders'];
+                    $placeholdersFr = $entry['placeholdersFr'];
+                    $placeholdersEn = $entry['placeholdersEn'];
                     ?>
                     <article class="model-card" id="modele-<?= h($entry['id']) ?>">
                         <h3>
@@ -2340,7 +2614,9 @@ current_user();
                         <ul class="model-outline">
                             <?php foreach ($entry['outline'] as $moment): ?>
                                 <li class="model-outline-moment">
-                                    <span class="model-outline-title"><?= h($moment['title']) ?></span>
+                                    <span class="model-outline-title"
+                                          data-i18n-fr="<?= h($moment['titleFr']) ?>"
+                                          data-i18n-en="<?= h($moment['titleEn']) ?>"><?= h($moment['titleFr']) ?></span>
                                     <span class="model-outline-acts">
                                         <?php foreach ($moment['activities'] as $activity): ?>
                                             <span class="model-act model-act-<?= h($activity['type']) ?>"
@@ -2353,15 +2629,28 @@ current_user();
                                 </li>
                             <?php endforeach; ?>
                         </ul>
-                        <?php if ($placeholders): ?>
+                        <?php if ($placeholdersFr): ?>
                             <p class="model-todo">
                                 <strong data-i18n-fr="À compléter :" data-i18n-en="To complete:">À compléter :</strong>
-                                <?= h(implode(' · ', $placeholders)) ?>
+                                <span data-i18n-fr="<?= h(implode(' · ', $placeholdersFr)) ?>"
+                                      data-i18n-en="<?= h(implode(' · ', $placeholdersEn)) ?>"><?= h(implode(' · ', $placeholdersFr)) ?></span>
                             </p>
                         <?php endif; ?>
                         <div class="model-card-actions">
-                            <a class="btn btn-primary" href="designer.html?model=<?= h(urlencode($entry['id'])) ?>" data-i18n-fr="Utiliser ce modèle" data-i18n-en="Use this template">Utiliser ce modèle</a>
-                            <a class="btn btn-light" href="models.php?format=json&amp;model=<?= h(urlencode($entry['id'])) ?>&amp;download=1" data-i18n-fr="Télécharger le JSON" data-i18n-en="Download the JSON">Télécharger le JSON</a>
+                            <button class="btn btn-light model-preview-btn" type="button" data-model-id="<?= h($entry['id']) ?>">
+                                <i class="fa-solid fa-eye btn-icon-inline" aria-hidden="true"></i>
+                                <span data-i18n-fr="Visualiser" data-i18n-en="Preview">Visualiser</span>
+                            </button>
+                            <a class="btn btn-light import-model-use-action" href="designer.html?model=<?= h(urlencode($entry['id'])) ?>">
+                                <i class="fa-solid fa-arrow-right btn-icon-inline" aria-hidden="true"></i>
+                                <span data-i18n-fr="Utiliser" data-i18n-en="Use">Utiliser</span>
+                            </a>
+                            <a class="btn btn-light model-download-action"
+                               data-model-id="<?= h($entry['id']) ?>"
+                               href="models.php?format=json&amp;model=<?= h(urlencode($entry['id'])) ?>&amp;download=1&amp;lang=fr">
+                                <i class="fa-solid fa-download btn-icon-inline" aria-hidden="true"></i>
+                                <span data-i18n-fr="Télécharger" data-i18n-en="Download">Télécharger</span>
+                            </a>
                         </div>
                     </article>
                 <?php endforeach; ?>
@@ -2369,6 +2658,26 @@ current_user();
         </section>
     <?php endforeach; ?>
 </main>
+
+<div id="model-library-preview-backdrop" class="modal-backdrop hidden" role="dialog" aria-modal="true" aria-hidden="true" aria-labelledby="model-library-preview-title">
+    <div class="modal model-library-preview-modal">
+        <header class="import-model-preview-header">
+            <p class="import-model-preview-eyebrow" data-i18n-fr="Aperçu du scénario" data-i18n-en="Scenario preview">Aperçu du scénario</p>
+            <h2 id="model-library-preview-title" class="modal-title"></h2>
+            <p id="model-library-preview-summary" class="import-model-preview-summary"></p>
+            <div id="model-library-preview-chips" class="import-model-preview-chips"></div>
+        </header>
+        <p id="model-library-preview-status" class="import-model-preview-status" role="status" aria-live="polite"></p>
+        <div id="model-library-preview-content" class="import-model-preview-content"></div>
+        <div class="modal-actions model-library-preview-actions">
+            <button id="model-library-preview-close" class="btn btn-light" type="button" data-i18n-fr="Fermer" data-i18n-en="Close">Fermer</button>
+            <a id="model-library-preview-use" class="btn btn-light import-model-use-action" href="designer.html">
+                <i class="fa-solid fa-arrow-right btn-icon-inline" aria-hidden="true"></i>
+                <span data-i18n-fr="Utiliser" data-i18n-en="Use">Utiliser</span>
+            </a>
+        </div>
+    </div>
+</div>
 <?php render_site_footer(); ?>
 <script>
 document.addEventListener('DOMContentLoaded', function () {
@@ -2389,6 +2698,10 @@ document.addEventListener('DOMContentLoaded', function () {
                 el.textContent = value;
             }
         });
+        document.querySelectorAll('.model-download-action[data-model-id]').forEach(function (link) {
+            link.href = 'models.php?format=json&model=' + encodeURIComponent(link.dataset.modelId)
+                + '&download=1&lang=' + (lang === 'en' ? 'en' : 'fr');
+        });
     }
 
     var lang = 'fr';
@@ -2405,6 +2718,222 @@ document.addEventListener('DOMContentLoaded', function () {
             applyModelsLanguage(langSelect.value);
         });
     }
+
+    var previewBackdrop = document.getElementById('model-library-preview-backdrop');
+    var previewTitle = document.getElementById('model-library-preview-title');
+    var previewSummary = document.getElementById('model-library-preview-summary');
+    var previewChips = document.getElementById('model-library-preview-chips');
+    var previewStatus = document.getElementById('model-library-preview-status');
+    var previewContent = document.getElementById('model-library-preview-content');
+    var previewClose = document.getElementById('model-library-preview-close');
+    var previewUse = document.getElementById('model-library-preview-use');
+    var previewCache = new Map();
+    var activePreviewId = '';
+    var previewTrigger = null;
+
+    function isEnglish() {
+        return document.documentElement.lang === 'en';
+    }
+
+    function previewLabel(fr, en) {
+        return isEnglish() ? en : fr;
+    }
+
+    function formatPreviewDuration(minutes) {
+        var total = Math.max(0, Number(minutes) || 0);
+        if (total < 60) return total + ' min';
+        var hours = Math.floor(total / 60);
+        var rest = total % 60;
+        return rest ? hours + ' h ' + String(rest).padStart(2, '0') : hours + ' h';
+    }
+
+    function addPreviewChip(label) {
+        var chip = document.createElement('span');
+        chip.className = 'import-model-chip';
+        chip.textContent = label;
+        previewChips.appendChild(chip);
+    }
+
+    function addPreviewText(parent, label, value, className) {
+        var text = String(value || '').trim();
+        if (!text) return;
+        var block = document.createElement('div');
+        block.className = 'import-model-preview-text' + (className ? ' ' + className : '');
+        var heading = document.createElement('strong');
+        heading.textContent = label;
+        var content = document.createElement('p');
+        content.textContent = text;
+        block.append(heading, content);
+        parent.appendChild(block);
+    }
+
+    function renderLibraryPreview(payload) {
+        var entry = payload.model || {};
+        var design = payload.design || {};
+        var sessions = Array.isArray(design.sessions) ? design.sessions : [];
+        var title = isEnglish() ? entry.titleEn : entry.titleFr;
+        var summary = isEnglish() ? entry.summaryEn : entry.summaryFr;
+        var family = isEnglish() ? entry.familyLabelEn : entry.familyLabelFr;
+
+        previewTitle.textContent = title || (design.meta && design.meta.name) || '';
+        previewSummary.textContent = summary || '';
+        previewChips.textContent = '';
+        addPreviewChip(family || '');
+        addPreviewChip(formatPreviewDuration(entry.minutes));
+        addPreviewChip(entry.momentCount + ' ' + previewLabel('moments', 'moments'));
+        addPreviewChip(entry.activityCount + ' ' + previewLabel('activités', 'activities'));
+        previewContent.textContent = '';
+
+        var typeLabels = {
+            undefined: previewLabel('Non défini', 'Undefined'),
+            read: previewLabel('Lire / Regarder / Écouter', 'Read / Watch / Listen'),
+            investigate: previewLabel('Investiguer', 'Investigate'),
+            practice: previewLabel('Pratiquer', 'Practise'),
+            produce: previewLabel('Produire', 'Produce'),
+            discuss: previewLabel('Discuter', 'Discuss'),
+            collaborate: previewLabel('Collaborer', 'Collaborate')
+        };
+        var allowedTypes = Object.keys(typeLabels);
+
+        sessions.forEach(function (session, sessionIndex) {
+            var moment = document.createElement('section');
+            moment.className = 'import-model-preview-moment';
+            var momentHeader = document.createElement('header');
+            momentHeader.className = 'import-model-preview-moment-header';
+            var number = document.createElement('span');
+            number.className = 'import-model-preview-moment-number';
+            number.textContent = String(sessionIndex + 1);
+            var momentTitle = document.createElement('h3');
+            var outlineMoment = Array.isArray(entry.outline) ? entry.outline[sessionIndex] : null;
+            momentTitle.textContent = isEnglish()
+                ? ((outlineMoment && outlineMoment.titleEn) || session.title || '')
+                : ((outlineMoment && (outlineMoment.titleFr || outlineMoment.title)) || session.title || '');
+            momentHeader.append(number, momentTitle);
+            moment.appendChild(momentHeader);
+            addPreviewText(moment, previewLabel('Objectifs du moment', 'Moment objectives'), session.objectives);
+
+            var activities = document.createElement('div');
+            activities.className = 'import-model-preview-activities';
+            (Array.isArray(session.activities) ? session.activities : []).forEach(function (activity, activityIndex) {
+                var type = allowedTypes.includes(activity.type) ? activity.type : 'undefined';
+                var activityCard = document.createElement('article');
+                activityCard.className = 'import-model-preview-activity type-' + type;
+                var activityHeader = document.createElement('header');
+                activityHeader.className = 'import-model-preview-activity-header';
+                var activityName = document.createElement('strong');
+                activityName.textContent = previewLabel('Activité ', 'Activity ') + String(activityIndex + 1);
+                var activityMeta = document.createElement('span');
+                activityMeta.className = 'import-model-preview-activity-meta';
+                var typeLabel = document.createElement('span');
+                typeLabel.className = 'import-model-preview-type';
+                typeLabel.textContent = typeLabels[type];
+                var duration = document.createElement('span');
+                duration.textContent = formatPreviewDuration(activity.duration);
+                activityMeta.append(typeLabel, duration);
+                activityHeader.append(activityName, activityMeta);
+                activityCard.appendChild(activityHeader);
+                addPreviewText(activityCard, previewLabel('Déroulement', 'Sequence'), activity.description);
+                addPreviewText(
+                    activityCard,
+                    previewLabel('Consigne aux élèves', 'Student instructions'),
+                    activity.instructions,
+                    'import-model-preview-instructions'
+                );
+                activities.appendChild(activityCard);
+            });
+            moment.appendChild(activities);
+            previewContent.appendChild(moment);
+        });
+    }
+
+    function loadLibraryPreview(modelId) {
+        var language = isEnglish() ? 'en' : 'fr';
+        var cacheKey = language + ':' + modelId;
+        if (previewCache.has(cacheKey)) return previewCache.get(cacheKey);
+        var request = fetch('models.php?format=json&model=' + encodeURIComponent(modelId) + '&lang=' + language + '&v=3', {
+            headers: { Accept: 'application/json' }
+        }).then(function (response) {
+            if (!response.ok) throw new Error('HTTP ' + response.status);
+            return response.json();
+        }).then(function (payload) {
+            if (!payload || !payload.model || !payload.design) throw new Error('Invalid model');
+            return payload;
+        }).catch(function (error) {
+            previewCache.delete(cacheKey);
+            throw error;
+        });
+        previewCache.set(cacheKey, request);
+        return request;
+    }
+
+    function openLibraryPreview(modelId, trigger) {
+        activePreviewId = String(modelId || '');
+        if (!activePreviewId) return;
+        var requestedId = activePreviewId;
+        previewTrigger = trigger;
+        previewTitle.textContent = trigger.closest('.model-card').querySelector('h3 span').textContent;
+        previewSummary.textContent = '';
+        previewChips.textContent = '';
+        previewContent.textContent = '';
+        previewStatus.textContent = previewLabel('Chargement de l’aperçu…', 'Loading preview…');
+        previewStatus.classList.remove('import-model-preview-status-error');
+        previewUse.href = 'designer.html?model=' + encodeURIComponent(activePreviewId);
+        previewBackdrop.classList.remove('hidden');
+        previewBackdrop.setAttribute('aria-hidden', 'false');
+        document.body.classList.add('model-library-preview-open');
+        previewClose.focus();
+
+        loadLibraryPreview(activePreviewId).then(function (payload) {
+            if (activePreviewId !== requestedId) return;
+            renderLibraryPreview(payload);
+            previewStatus.textContent = '';
+        }).catch(function () {
+            if (activePreviewId !== requestedId) return;
+            previewStatus.textContent = previewLabel(
+                'Impossible d’afficher l’aperçu de ce modèle.',
+                'This template preview could not be displayed.'
+            );
+            previewStatus.classList.add('import-model-preview-status-error');
+        });
+    }
+
+    function closeLibraryPreview() {
+        previewBackdrop.classList.add('hidden');
+        previewBackdrop.setAttribute('aria-hidden', 'true');
+        document.body.classList.remove('model-library-preview-open');
+        activePreviewId = '';
+        if (previewTrigger) previewTrigger.focus();
+        previewTrigger = null;
+    }
+
+    document.querySelectorAll('.model-preview-btn').forEach(function (button) {
+        button.addEventListener('click', function () {
+            openLibraryPreview(button.dataset.modelId, button);
+        });
+    });
+    previewClose.addEventListener('click', closeLibraryPreview);
+    previewBackdrop.addEventListener('click', function (event) {
+        if (event.target === previewBackdrop) closeLibraryPreview();
+    });
+    previewBackdrop.addEventListener('keydown', function (event) {
+        if (event.key === 'Escape') {
+            event.preventDefault();
+            closeLibraryPreview();
+            return;
+        }
+        if (event.key !== 'Tab') return;
+        var focusable = Array.from(previewBackdrop.querySelectorAll('button:not([disabled]), a[href]'));
+        if (!focusable.length) return;
+        var first = focusable[0];
+        var last = focusable[focusable.length - 1];
+        if (event.shiftKey && document.activeElement === first) {
+            event.preventDefault();
+            last.focus();
+        } else if (!event.shiftKey && document.activeElement === last) {
+            event.preventDefault();
+            first.focus();
+        }
+    });
 });
 </script>
 </body>

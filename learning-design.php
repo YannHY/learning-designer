@@ -16,19 +16,19 @@ app_start_session();
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" referrerpolicy="no-referrer">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="stylesheet" href="css/interface.css?v=20260826-title-blue">
+    <link rel="stylesheet" href="css/interface.css?v=20260904-content-rhythm">
     <link rel="stylesheet" href="css/account-ui.css?v=20260903-pagefind-dark">
-    <link rel="stylesheet" href="css/account-pages.css?v=20260826-title-blue">
+    <link rel="stylesheet" href="css/account-pages.css?v=20260904-content-rhythm">
     <style>
         body.learning-design-page {
             background: #fff;
         }
         .ld-shell {
             width: min(var(--content-shell-width, 1180px), calc(100vw - var(--content-shell-gutter, 36px)));
-            margin: 32px auto 64px;
+            margin: 40px auto 80px;
         }
         .ld-hero {
-            padding-bottom: 24px;
+            padding-bottom: 32px;
         }
         .ld-kicker {
             margin: 0 0 8px;
@@ -39,7 +39,7 @@ app_start_session();
             font-weight: 800;
         }
         .ld-title {
-            margin: 0 0 12px;
+            margin: 0 0 18px;
         }
         .ld-lead {
             margin: 0;
@@ -48,10 +48,10 @@ app_start_session();
             line-height: 1.72;
         }
         .ld-section h2 {
-            margin: 0 0 14px;
+            margin: 0 0 var(--page-heading-gap);
         }
         .ld-section p {
-            margin: 0 0 14px;
+            margin: 0 0 18px;
             color: var(--muted);
             font-size: 14px;
             line-height: 1.76;
@@ -110,22 +110,22 @@ app_start_session();
         .ld-step-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
-            gap: 14px;
-            margin: 18px 0 0;
+            gap: 22px;
+            margin: 26px 0 0;
         }
         .ld-type-card,
         .ld-step-card {
             border: 1px solid var(--line);
             border-radius: 8px;
             background: #fff;
-            padding: 17px 18px;
+            padding: var(--card-padding);
             box-shadow: 0 8px 22px rgba(15, 23, 42, 0.06);
         }
         .ld-card-head {
             display: flex;
             align-items: center;
-            gap: 10px;
-            margin-bottom: 8px;
+            gap: 12px;
+            margin-bottom: 12px;
         }
         .ld-icon {
             width: 30px;
@@ -155,14 +155,14 @@ app_start_session();
             margin: 0;
             color: var(--muted);
             font-size: 13px;
-            line-height: 1.55;
+            line-height: 1.68;
         }
         .ld-callout {
             display: flex;
             align-items: flex-start;
-            gap: 13px;
-            margin-top: 18px;
-            padding: 16px 18px;
+            gap: 16px;
+            margin-top: 26px;
+            padding: 22px 24px;
             border: 1px solid rgba(20, 91, 180, 0.20);
             border-radius: 8px;
             background: rgba(20, 91, 180, 0.06);

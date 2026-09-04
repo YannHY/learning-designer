@@ -73,18 +73,18 @@ $levels = [
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" referrerpolicy="no-referrer">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="stylesheet" href="css/interface.css?v=20260826-title-blue">
+    <link rel="stylesheet" href="css/interface.css?v=20260904-content-rhythm">
     <link rel="stylesheet" href="css/account-ui.css?v=20260903-pagefind-dark">
-    <link rel="stylesheet" href="css/account-pages.css?v=20260826-title-blue">
+    <link rel="stylesheet" href="css/account-pages.css?v=20260904-content-rhythm">
     <style>
         body.bloom-page { background: #fff; }
         .bloom-shell {
             width: min(var(--content-shell-width, 1180px), calc(100vw - var(--content-shell-gutter, 36px)));
-            margin: 32px auto 64px;
+            margin: 40px auto 80px;
         }
         .bloom-header {
             margin: 0 0 var(--page-section-gap);
-            padding-bottom: 16px;
+            padding-bottom: 24px;
         }
         .bloom-kicker {
             margin: 0 0 8px;
@@ -95,22 +95,22 @@ $levels = [
             font-weight: 800;
         }
         .bloom-title {
-            margin: 0 0 8px;
+            margin: 0 0 14px;
         }
         .bloom-subtitle {
             width: 100%;
             max-width: none;
             margin: 0;
             color: var(--muted);
-            line-height: 1.6;
+            line-height: var(--content-leading);
             font-size: 15px;
         }
         .bloom-poster-title {
-            margin: var(--page-section-gap) 0 8px;
+            margin: var(--page-section-gap) 0 14px;
             border-radius: 6px 6px 0 0;
             background: #12295a;
             color: #fff;
-            padding: 14px 18px;
+            padding: 18px 22px;
             text-align: center;
             text-transform: uppercase;
             letter-spacing: 0.08em;
@@ -120,18 +120,18 @@ $levels = [
         .bloom-grid {
             display: grid;
             grid-template-columns: repeat(6, minmax(150px, 1fr));
-            gap: 8px;
+            gap: 12px;
         }
         .bloom-level {
-            min-height: 720px;
+            min-height: 760px;
             border: 1px solid rgba(15, 23, 42, 0.10);
             border-radius: 7px;
             background: var(--bloom-bg);
-            padding: 18px 14px 20px;
+            padding: 24px 18px 28px;
             text-align: center;
             box-shadow: 0 8px 18px rgba(15, 23, 42, 0.08);
             display: grid;
-            grid-template-rows: 58px 92px 124px 1fr;
+            grid-template-rows: 66px 102px 140px 1fr;
             align-items: start;
         }
         .bloom-level-1 { --bloom-bg: #c7b7e6; --bloom-ink: #2d2452; }
@@ -164,7 +164,7 @@ $levels = [
         .bloom-description {
             margin: 0;
             color: var(--bloom-ink);
-            line-height: 1.36;
+            line-height: 1.48;
             font-size: 12px;
             font-weight: 700;
             align-self: start;
@@ -179,7 +179,7 @@ $levels = [
         }
         .bloom-verb {
             color: #111827;
-            padding: 3px 0;
+            padding: 5px 0;
             font-size: clamp(15px, 1.35vw, 20px);
             line-height: 1.28;
             font-weight: 650;

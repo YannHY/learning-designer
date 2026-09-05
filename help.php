@@ -34,7 +34,7 @@ Commence par me poser les questions nécessaires en français, sans me surcharge
 
 Questions indispensables :
 - sujet ou thème de la séance/séquence ;
-- niveau et public cible ;
+- système scolaire ou classification, puis niveau et public cible ;
 - durée totale ;
 - modalité : présentiel, distanciel ou hybride ;
 - taille du groupe ;
@@ -56,6 +56,8 @@ Si je donne seulement des objectifs d’enseignement, transforme-les en acquis d
 
 Si certaines informations manquent, fais des hypothèses raisonnables au lieu de bloquer, sauf si l’hypothèse serait risquée.
 
+Pour la Belgique, distingue les communautés française, flamande et germanophone. Pour le Royaume-Uni, distingue l’Angleterre, le pays de Galles, l’Écosse et l’Irlande du Nord. Considère les Écoles européennes comme un système transnational et ISCED 2011 comme une classification internationale. Si le choix est ambigu, demande la précision nécessaire. N’invente jamais un identifiant : consulte les catalogues du CLI.
+
 Cas particulier de la durée :
 - si la durée est donnée en jours, demande ou propose explicitement une durée par séance avant de générer le design ;
 - par défaut, pour le collège, interprète 1 jour comme 1 séance de 55 minutes, sauf indication contraire ;
@@ -63,7 +65,7 @@ Cas particulier de la durée :
 
 Avant d’exécuter les commandes de création complète, reformule brièvement :
 - le sujet ;
-- le public ;
+- le système scolaire ou la classification, le niveau et le public ;
 - la durée totale convertie en minutes ;
 - le nombre de moments prévu ;
 - les objectifs d’enseignement ;
@@ -81,18 +83,24 @@ Avant de créer toutes les activités, vérifie les commandes utiles :
 - ./.tools/bin/learning list types
 - ./.tools/bin/learning list bloom
 - ./.tools/bin/learning list competencies
+- ./.tools/bin/learning list school-systems
+- ./.tools/bin/learning list school-levels --system france
 
-Pour `add-activity`, utilise uniquement les valeurs contrôlées acceptées par le CLI.
+Pour `init` et `add-activity`, utilise uniquement les valeurs contrôlées acceptées par le CLI.
 
 Valeurs sûres :
+- `--school-system` : un identifiant renvoyé par `list school-systems`
+- `--school-level` : un identifiant renvoyé par `list school-levels --system IDENTIFIANT`
 - `--type` : `read`, `investigate`, `practice`, `produce`, `discuss`, `collaborate`
 - `--group` : `individual`, `subgroups`, `whole`
 - `--teaching` : `directed`, `guided`, `supported`, `independent`
 - `--evaluation` : `diagnostic`, `formative`, `summative`, `certificative`, `none`
 
+Pour `init`, transmets le système et le niveau lorsqu’ils sont connus, par exemple : `./.tools/bin/learning init design.json --school-system france --school-level quatrieme`.
+
 Pour `--pacing` et `--mode`, vérifie avec le CLI ou utilise les valeurs produites par les exemples qui fonctionnent. En présentiel synchrone, `--pacing synchronous` et `--mode presentiel` sont acceptables si le CLI les valide.
 
-Ne mets jamais de phrases longues dans les champs contrôlés comme `--group`, `--teaching`, `--evaluation`, `--type` ou `--pacing`.
+Ne mets jamais de phrases longues dans les champs contrôlés comme `--school-system`, `--school-level`, `--group`, `--teaching`, `--evaluation`, `--type` ou `--pacing`.
 
 Utilise `--description` pour décrire l’activité du point de vue pédagogique et `--instructions` pour les consignes directement adressées aux élèves. Place les critères, supports, rôle de l’enseignant, modalités de différenciation et autres détails dans `--notes`, `--objectives` ou `--intentions` selon leur portée.
 
@@ -141,6 +149,7 @@ Utilise les identifiants de compétences numériques acceptés par le CLI, par e
 À la fin, restitue-moi :
 - le chemin du fichier `design.json` ;
 - le résultat de la validation CLI ;
+- le système scolaire ou la classification et le niveau ;
 - le nombre de moments ;
 - le nombre d’activités ;
 - les objectifs d’enseignement pris en compte ;
@@ -245,7 +254,7 @@ Start by asking me the necessary questions in English without overwhelming me.
 
 Essential questions:
 - topic or subject of the lesson or sequence;
-- level and target learners;
+- school system or classification, then level and target learners;
 - total duration;
 - delivery mode: in person, online, or hybrid;
 - group size;
@@ -267,6 +276,8 @@ If I provide only teaching objectives, turn them into observable learning outcom
 
 If information is missing, make reasonable assumptions instead of blocking, unless an assumption would be risky.
 
+For Belgium, distinguish the French, Flemish, and German-speaking Communities. For the United Kingdom, distinguish England, Wales, Scotland, and Northern Ireland. Treat the European Schools as a transnational system and ISCED 2011 as an international classification. If the choice is ambiguous, ask for the necessary clarification. Never invent an identifier: consult the CLI catalogs.
+
 Duration rules:
 - if the duration is given in days, ask for or explicitly suggest a duration per session before generating the design;
 - by default, for lower secondary education, interpret one day as one 55-minute session unless stated otherwise;
@@ -274,7 +285,7 @@ Duration rules:
 
 Before running all creation commands, briefly restate:
 - the topic;
-- the audience;
+- the school system or classification, level, and audience;
 - the total duration converted to minutes;
 - the planned number of moments;
 - the teaching objectives;
@@ -292,18 +303,24 @@ Before creating all activities, inspect the useful commands:
 - ./.tools/bin/learning list types
 - ./.tools/bin/learning list bloom
 - ./.tools/bin/learning list competencies
+- ./.tools/bin/learning list school-systems
+- ./.tools/bin/learning list school-levels --system france
 
-For `add-activity`, use only controlled values accepted by the CLI.
+For `init` and `add-activity`, use only controlled values accepted by the CLI.
 
 Safe values:
+- `--school-system`: an id returned by `list school-systems`
+- `--school-level`: an id returned by `list school-levels --system SYSTEM_ID`
 - `--type`: `read`, `investigate`, `practice`, `produce`, `discuss`, `collaborate`
 - `--group`: `individual`, `subgroups`, `whole`
 - `--teaching`: `directed`, `guided`, `supported`, `independent`
 - `--evaluation`: `diagnostic`, `formative`, `summative`, `certificative`, `none`
 
+For `init`, pass the system and level whenever they are known, for example: `./.tools/bin/learning init design.json --school-system france --school-level quatrieme`.
+
 For `--pacing` and `--mode`, check the CLI or use values from working examples. For synchronous in-person teaching, `--pacing synchronous` and `--mode presentiel` are acceptable if the CLI validates them.
 
-Never put long sentences in controlled fields such as `--group`, `--teaching`, `--evaluation`, `--type`, or `--pacing`.
+Never put long sentences in controlled fields such as `--school-system`, `--school-level`, `--group`, `--teaching`, `--evaluation`, `--type`, or `--pacing`.
 
 Use `--description` for the pedagogical description of the activity and `--instructions` for directions addressed directly to students. Put criteria, resources, the teacher’s role, differentiation, and other details in `--notes`, `--objectives`, or `--intentions` according to their scope.
 
@@ -345,6 +362,7 @@ Use digital competency identifiers accepted by the CLI, for example:
 At the end, give me:
 - the path to `design.json`;
 - the CLI validation result;
+- the school system or classification and level;
 - the number of moments and activities;
 - the teaching objectives used;
 - the Bloom outcomes created;
@@ -424,7 +442,7 @@ PROMPT;
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" referrerpolicy="no-referrer">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="stylesheet" href="css/interface.css?v=20260905-feedback-tabs">
+    <link rel="stylesheet" href="css/interface.css?v=20260905-session-shadow-spacing-v1">
     <link rel="stylesheet" href="css/account-ui.css?v=20260903-pagefind-dark">
     <link rel="stylesheet" href="css/account-pages.css?v=20260904-content-rhythm">
 </head>
@@ -487,7 +505,7 @@ PROMPT;
 
                 <h3 id="creer-premier-design">Créer un premier design, étape par étape</h3>
                 <ol>
-                    <li><strong>Décrire le contexte.</strong> Renseignez le titre, la description, la commande institutionnelle, les objectifs d’enseignement, les concepteurs, les enseignants, la taille du groupe, la modalité et le temps d’apprentissage prévu. La durée peut être exprimée en jours, heures et minutes ; le nombre d’heures correspondant à une journée est configurable.</li>
+                    <li><strong>Décrire le contexte.</strong> Renseignez le titre, la description, la commande institutionnelle, les objectifs d’enseignement, les concepteurs, les enseignants, la taille du groupe, la modalité et le temps d’apprentissage prévu. Pour le niveau, choisissez d’abord un système ou une classification, puis la classe correspondante. Le catalogue couvre la France, la Suisse, les États-Unis, les trois communautés belges, les quatre systèmes du Royaume-Uni et le système transnational des Écoles européennes. ISCED 2011 est proposé séparément comme classification internationale de comparaison. La durée peut être exprimée en jours, heures et minutes ; le nombre d’heures correspondant à une journée est configurable.</li>
                     <li><strong>Formuler les acquis attendus.</strong> Indiquez ce que les apprenants devront être capables de faire à la fin. Reliez si nécessaire chaque acquis à un niveau de la taxonomie révisée de Bloom et choisissez un verbe d’action observable.</li>
                     <li><strong>Structurer le parcours en moments.</strong> Un moment correspond à une phase cohérente de la séance ou de la séquence : lancement, exploration, entraînement, mise en commun, production ou évaluation.</li>
                     <li><strong>Ajouter les activités.</strong> Pour chacune, précisez le type d’apprentissage, la durée, l’organisation du groupe, le mode d’enseignement, le rythme, le mode de formation, l’évaluation, les consignes et les ressources.</li>
@@ -503,7 +521,23 @@ PROMPT;
             <article class="help-section" id="moments-activites">
                 <p class="help-eyebrow"><i class="fa-solid fa-layer-group" aria-hidden="true"></i> Scénarisation</p>
                 <h2>Organiser les moments et les activités</h2>
-                <p>Chaque moment correspond à une phase cohérente de la séance ou de la séquence : lancement, exploration, mise en commun, entraînement, production, évaluation, etc. Un moment possède un titre, des objectifs, des choix pédagogiques et des notes. Les moments et les activités peuvent être réordonnés.</p>
+                <p>Chaque moment correspond à une phase cohérente de la séance ou de la séquence : lancement, exploration, mise en commun, entraînement, production, évaluation, etc. Un moment possède un titre, des objectifs, des choix pédagogiques et des notes. Les moments et les activités peuvent être réordonnés ou dupliqués.</p>
+                <h3 id="dupliquer-moment-activite">Dupliquer un moment ou une activité</h3>
+                <p>La duplication permet de reprendre rapidement une structure existante avant d’en adapter seulement les éléments qui changent.</p>
+                <div class="help-grid">
+                    <div class="help-card">
+                        <strong><span class="help-card-icon"><i class="fa-regular fa-copy" aria-hidden="true"></i></span>Dupliquer un moment</strong>
+                        <span>Dans les vues Liste et Colonnes, utilisez l’icône de copie placée en bas du moment, juste à côté de sa durée. Le moment complet — titre, objectifs, choix pédagogiques, notes et activités — est inséré juste après l’original. Son titre reçoit automatiquement la mention « copie ».</span>
+                    </div>
+                    <div class="help-card">
+                        <strong><span class="help-card-icon"><i class="fa-regular fa-copy" aria-hidden="true"></i></span>Dupliquer une activité</strong>
+                        <span>Utilisez l’icône de copie dans la barre d’outils de l’activité, juste avant la croix de suppression. Tous ses réglages et contenus — durée, modalités, AIAS, compétences, description, consignes et notes — sont repris dans une nouvelle activité placée juste après l’originale.</span>
+                    </div>
+                </div>
+                <div class="help-callout">
+                    <i class="fa-solid fa-circle-info" aria-hidden="true"></i>
+                    <p><strong>En vue Grille,</strong> les mêmes icônes sont disponibles dans la colonne d’actions. La copie apparaît brièvement en surbrillance afin de la repérer et peut être modifiée immédiatement.</p>
+                </div>
                 <h3>Paramètres disponibles pour une activité</h3>
                 <div class="help-table-wrap">
                     <table class="help-table">
@@ -690,6 +724,8 @@ PROMPT;
 ## Paramètres
 
 - Mode: Hybride
+- Système scolaire: France
+- Niveau: 4e
 - Taille du groupe: 24
 - Concepteur(s): Nom
 - Enseignant(s): Nom
@@ -756,7 +792,7 @@ Objectifs généraux de la formation.
                 <h3 id="markdown-modifications">Ce que vous pouvez modifier</h3>
                 <p>Vous pouvez modifier le titre, les paramètres, la description, la commande institutionnelle, les objectifs, les acquis d’apprentissage, les titres et contenus des moments, ainsi que les activités et tous leurs champs.</p>
                 <h3 id="markdown-libelles">Libellés à conserver</h3>
-                <p>Évitez de changer les libellés fixes <code>## Paramètres</code>, <code>## Séances</code>, <code>- Durée:</code>, <code>- Groupe:</code>, <code>- Enseignement:</code>, <code>- Rythme:</code>, <code>- Mode de formation:</code>, <code>- Évaluation:</code>, <code>- AIAS:</code>, <code>- Description:</code> et <code>- Consignes pour les élèves:</code>. S’ils changent trop, certaines informations risquent de ne plus être reconnues.</p>
+                <p>Évitez de changer les libellés fixes <code>## Paramètres</code>, <code>## Séances</code>, <code>- Système scolaire:</code>, <code>- Niveau:</code>, <code>- Durée:</code>, <code>- Groupe:</code>, <code>- Enseignement:</code>, <code>- Rythme:</code>, <code>- Mode de formation:</code>, <code>- Évaluation:</code>, <code>- AIAS:</code>, <code>- Description:</code> et <code>- Consignes pour les élèves:</code>. S’ils changent trop, certaines informations risquent de ne plus être reconnues.</p>
                 <h3 id="markdown-import">Procédure d’import</h3>
                 <ol>
                     <li>Ouvrez Learning Designer.</li>
@@ -890,10 +926,12 @@ learning login</pre>
                 <div class="help-details-grid">
                     <div>
                         <strong>1. Initialiser le fichier</strong>
-                        <p><code>init</code> crée le fichier JSON de départ avec le titre, la langue, la durée, la modalité et les informations générales.</p>
+                        <p><code>init</code> crée le fichier JSON de départ avec le titre, la langue, la durée, la modalité, le système ou la classification et le niveau. Consultez d’abord les catalogues du CLI : ils fournissent les identifiants exacts et empêchent d’associer un niveau au mauvais système.</p>
                         <div class="help-code-wrap">
                             <button class="help-copy-btn" type="button" aria-label="Copier la commande" title="Copier"><i class="fa-regular fa-copy" aria-hidden="true"></i></button>
-                            <pre class="help-code">learning init design.json --title "Atelier IA" --lang fr --duration 120 --mode hybride --group-size 24</pre>
+                            <pre class="help-code">learning list school-systems
+learning list school-levels --system france
+learning init design.json --title "Atelier IA" --lang fr --duration 120 --mode hybride --school-system france --school-level quatrieme --group-size 24</pre>
                         </div>
                     </div>
                     <div>
@@ -955,6 +993,8 @@ learning publish design.json</pre>
 learning list types
 learning list bloom
 learning list competencies
+learning list school-systems
+learning list school-levels --system france
 learning status
 learning upgrade</pre>
                 </div>
@@ -1035,7 +1075,7 @@ window.helpPromptTranslations = <?= json_encode([
     ],
 ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) ?>;
 </script>
-<script src="js/help-i18n.js?v=20260905-delivery-modes-v2"></script>
+<script src="js/help-i18n.js?v=20260905-school-systems-v4"></script>
 <script>
 var initialHelpLanguage = 'fr';
 try {

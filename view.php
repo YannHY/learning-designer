@@ -77,23 +77,125 @@ $LOCATION_MODES = [
     'other' => 'Autre',
 ];
 $DELIVERY_MODES = ['onsite' => 'Présentiel', 'online' => 'Distanciel', 'hybrid' => 'Hybride'];
+$SCHOOL_SYSTEMS = [
+    'france' => 'France',
+    'switzerland' => 'Suisse (HarmoS)',
+    'united_states' => 'États-Unis (K–12)',
+    'belgium_french' => 'Belgique — Fédération Wallonie-Bruxelles',
+    'belgium_flemish' => 'Belgique — Communauté flamande',
+    'belgium_german' => 'Belgique — Communauté germanophone',
+    'uk_england' => 'Royaume-Uni — Angleterre',
+    'uk_wales' => 'Royaume-Uni — Pays de Galles',
+    'uk_scotland' => 'Royaume-Uni — Écosse',
+    'uk_northern_ireland' => 'Royaume-Uni — Irlande du Nord',
+    'european_schools' => 'Système des Écoles européennes',
+    'isced_2011' => 'International — ISCED 2011 (CITE)',
+];
 $SCHOOL_LEVELS  = [
     'petite_section' => 'Petite section (PS)',
-    'moyenne_section' => 'Moyenne section (MS) / 1re',
-    'grande_section' => 'Grande section (GS) / 2e',
-    'cp' => 'CP / 3e',
-    'ce1' => 'CE1 / 4e',
-    'ce2' => 'CE2 / 5e',
-    'cm1' => 'CM1 / 6e',
-    'cm2' => 'CM2 / 7e',
-    'sixieme' => '6e / 8e',
-    'cinquieme' => '5e / 9e',
-    'quatrieme' => '4e / 10e',
-    'troisieme' => '3e / 11e',
-    'seconde' => 'Seconde / Secondaire II – 1re année',
-    'premiere' => 'Première / Secondaire II – 2e année',
-    'terminale' => 'Terminale / Secondaire II – 3e année',
+    'moyenne_section' => 'Moyenne section (MS)',
+    'grande_section' => 'Grande section (GS)',
+    'cp' => 'CP',
+    'ce1' => 'CE1',
+    'ce2' => 'CE2',
+    'cm1' => 'CM1',
+    'cm2' => 'CM2',
+    'sixieme' => '6e',
+    'cinquieme' => '5e',
+    'quatrieme' => '4e',
+    'troisieme' => '3e',
+    'seconde' => 'Seconde',
+    'premiere' => 'Première',
+    'terminale' => 'Terminale',
+    'ch_1p' => '1P — 1re année primaire',
+    'ch_2p' => '2P — 2e année primaire',
+    'ch_3p' => '3P — 3e année primaire',
+    'ch_4p' => '4P — 4e année primaire',
+    'ch_5p' => '5P — 5e année primaire',
+    'ch_6p' => '6P — 6e année primaire',
+    'ch_7p' => '7P — 7e année primaire',
+    'ch_8p' => '8P — 8e année primaire',
+    'ch_9s' => '9e — secondaire I',
+    'ch_10s' => '10e — secondaire I',
+    'ch_11s' => '11e — secondaire I',
+    'ch_sec2_1' => 'Secondaire II — 1re année',
+    'ch_sec2_2' => 'Secondaire II — 2e année',
+    'ch_sec2_3' => 'Secondaire II — 3e année',
+    'us_k' => 'Kindergarten (K)',
+    'us_grade_1' => 'Grade 1',
+    'us_grade_2' => 'Grade 2',
+    'us_grade_3' => 'Grade 3',
+    'us_grade_4' => 'Grade 4',
+    'us_grade_5' => 'Grade 5',
+    'us_grade_6' => 'Grade 6',
+    'us_grade_7' => 'Grade 7',
+    'us_grade_8' => 'Grade 8',
+    'us_grade_9' => 'Grade 9',
+    'us_grade_10' => 'Grade 10',
+    'us_grade_11' => 'Grade 11',
+    'us_grade_12' => 'Grade 12',
+    'uk_england_nursery' => 'Nursery',
+    'uk_england_reception' => 'Reception',
+    'uk_wales_nursery' => 'Nursery',
+    'uk_wales_reception' => 'Reception',
+    'uk_scotland_early_learning' => 'Petite enfance (Nursery)',
+    'uk_northern_ireland_preschool' => 'Préscolaire (Pre-school)',
+    'isced_0' => 'ISCED 0 — Éducation de la petite enfance',
+    'isced_1' => 'ISCED 1 — Enseignement primaire',
+    'isced_2' => 'ISCED 2 — Premier cycle du secondaire',
+    'isced_3' => 'ISCED 3 — Deuxième cycle du secondaire',
+    'isced_4' => 'ISCED 4 — Post-secondaire non supérieur',
+    'isced_5' => 'ISCED 5 — Enseignement supérieur de cycle court',
+    'isced_6' => 'ISCED 6 — Licence ou équivalent',
+    'isced_7' => 'ISCED 7 — Master ou équivalent',
+    'isced_8' => 'ISCED 8 — Doctorat ou équivalent',
 ];
+for ($year = 1; $year <= 13; $year++) {
+    $SCHOOL_LEVELS['uk_england_year_' . $year] = 'Year ' . $year;
+    $SCHOOL_LEVELS['uk_wales_year_' . $year] = 'Year ' . $year;
+}
+for ($year = 1; $year <= 7; $year++) {
+    $SCHOOL_LEVELS['uk_scotland_p' . $year] = 'P' . $year . ' — primaire';
+    $SCHOOL_LEVELS['uk_northern_ireland_p' . $year] = 'P' . $year . ' — primaire';
+}
+for ($year = 1; $year <= 6; $year++) {
+    $SCHOOL_LEVELS['uk_scotland_s' . $year] = 'S' . $year . ' — secondaire';
+}
+for ($year = 8; $year <= 14; $year++) {
+    $SCHOOL_LEVELS['uk_northern_ireland_year_' . $year] = 'Year ' . $year;
+}
+for ($year = 1; $year <= 3; $year++) {
+    $ordinal = $year === 1 ? '1re' : $year . 'e';
+    $SCHOOL_LEVELS['be_fr_m' . $year] = 'M' . $year . ' — ' . $ordinal . ' maternelle';
+    $SCHOOL_LEVELS['be_nl_k' . $year] = 'K' . $year . ' — ' . $year . 'e kleuterklas';
+    $SCHOOL_LEVELS['be_de_k' . $year] = 'K' . $year . ' — ' . $year . '. Kindergartenjahr';
+}
+for ($year = 1; $year <= 6; $year++) {
+    $ordinal = $year === 1 ? '1re' : $year . 'e';
+    $SCHOOL_LEVELS['be_fr_p' . $year] = 'P' . $year . ' — ' . $ordinal . ' primaire';
+    $SCHOOL_LEVELS['be_nl_l' . $year] = 'L' . $year . ' — ' . $year . 'e leerjaar lager onderwijs';
+    $SCHOOL_LEVELS['be_de_p' . $year] = 'P' . $year . ' — ' . $year . '. Primarschuljahr';
+}
+for ($year = 1; $year <= 7; $year++) {
+    $ordinal = $year === 1 ? '1re' : $year . 'e';
+    $SCHOOL_LEVELS['be_fr_s' . $year] = 'S' . $year . ' — ' . $ordinal . ' secondaire'
+        . ($year === 7 ? ' — selon la filière' : '');
+    $SCHOOL_LEVELS['be_nl_s' . $year] = 'S' . $year . ' — ' . $year . 'e leerjaar secundair onderwijs';
+    $SCHOOL_LEVELS['be_de_s' . $year] = 'S' . $year . ' — ' . $year . '. Sekundarschuljahr'
+        . ($year === 7 ? ' (professionnel)' : '');
+}
+for ($year = 1; $year <= 2; $year++) {
+    $SCHOOL_LEVELS['eu_school_n' . $year] = 'N' . $year . ' — cycle maternel';
+}
+for ($year = 1; $year <= 5; $year++) {
+    $SCHOOL_LEVELS['eu_school_p' . $year] = 'P' . $year . ' — cycle primaire';
+}
+for ($year = 1; $year <= 7; $year++) {
+    $cycle = $year <= 3
+        ? 'cycle d’observation'
+        : ($year <= 5 ? 'cycle de pré-orientation' : 'cycle du Baccalauréat européen');
+    $SCHOOL_LEVELS['eu_school_s' . $year] = 'S' . $year . ' — ' . $cycle;
+}
 $EVAL_MODES     = [
     'none'          => null,
     'diagnostic'    => 'Diagnostique',
@@ -676,7 +778,24 @@ $metaDesigners  = safeText($meta['designers'] ?? $meta['author'] ?? '');
 $metaTrainers   = safeText($meta['trainers'] ?? '');
 $metaDescription= safeText($meta['description'] ?? '');
 $metaDelivery   = safeText($meta['modeDelivery'] ?? '');
+$metaSchoolSystem= safeText($meta['schoolSystem'] ?? '');
 $metaSchoolLevel= safeText($meta['schoolLevel'] ?? '');
+if ($metaSchoolSystem === '' && $metaSchoolLevel !== '') {
+    $metaSchoolSystem = match (true) {
+        str_starts_with($metaSchoolLevel, 'ch_') => 'switzerland',
+        str_starts_with($metaSchoolLevel, 'us_') => 'united_states',
+        str_starts_with($metaSchoolLevel, 'be_fr_') => 'belgium_french',
+        str_starts_with($metaSchoolLevel, 'be_nl_') => 'belgium_flemish',
+        str_starts_with($metaSchoolLevel, 'be_de_') => 'belgium_german',
+        str_starts_with($metaSchoolLevel, 'uk_england_') => 'uk_england',
+        str_starts_with($metaSchoolLevel, 'uk_wales_') => 'uk_wales',
+        str_starts_with($metaSchoolLevel, 'uk_scotland_') => 'uk_scotland',
+        str_starts_with($metaSchoolLevel, 'uk_northern_ireland_') => 'uk_northern_ireland',
+        str_starts_with($metaSchoolLevel, 'eu_school_') => 'european_schools',
+        str_starts_with($metaSchoolLevel, 'isced_') => 'isced_2011',
+        default => 'france',
+    };
+}
 $metaClassSize  = safeText($meta['sizeClass'] ?? '');
 $metaLearningDays= (int)($meta['learningDays'] ?? 0);
 $metaLearningH  = (int)($meta['learningHours'] ?? 0);
@@ -1109,6 +1228,12 @@ $displayDesignedMinutes = $designedMinutes > 0 ? $designedMinutes : $totalMinute
   if ($displayDesignedMinutes > 0) $metaCards[] = ['Temps conçu', formatDuration($displayDesignedMinutes)];
   if ($learningMinutes > 0)        $metaCards[] = ['Temps d\'apprentissage', $learningTime];
   if ($metaDelivery !== '')  $metaCards[] = ['Mode', labelFor($DELIVERY_MODES, $metaDelivery, $metaDelivery)];
+  if ($metaSchoolSystem !== '') {
+      $metaCards[] = [
+          $metaSchoolSystem === 'isced_2011' ? 'Classification' : 'Système scolaire',
+          labelFor($SCHOOL_SYSTEMS, $metaSchoolSystem, $metaSchoolSystem),
+      ];
+  }
   if ($metaSchoolLevel !== '') $metaCards[] = ['Niveau', labelFor($SCHOOL_LEVELS, $metaSchoolLevel, $metaSchoolLevel)];
   if ($metaClassSize !== '') $metaCards[] = ['Taille du groupe', $metaClassSize];
   ?>

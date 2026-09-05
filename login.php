@@ -12,7 +12,7 @@ try {
     }
 
     if (current_user()) {
-        header('Location: designer.html');
+        header('Location: designer.php');
         exit;
     }
 } catch (Throwable $e) {
@@ -51,7 +51,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             ];
             $touch = $db->prepare("UPDATE users SET last_login_at = CURRENT_TIMESTAMP WHERE id = ?");
             $touch->execute([(int)$user['id']]);
-            header('Location: designer.html');
+            header('Location: designer.php');
             exit;
         }
     }

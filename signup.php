@@ -11,7 +11,7 @@ try {
     }
 
     if (current_user()) {
-        header('Location: designer.html');
+        header('Location: designer.php');
         exit;
     }
 } catch (Throwable $e) {

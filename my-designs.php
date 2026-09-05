@@ -286,7 +286,7 @@ function e(string $value): string
                 <span class="saved-status"><i class="<?= e($statusIcon) ?>" aria-hidden="true"></i><span data-site-i18n-en="<?= e($statusTextEn) ?>" data-site-i18n-fr="<?= e($statusTextFr) ?>"><?= e($statusTextFr) ?></span></span>
               </div>
               <div class="saved-card-actions">
-                <a class="btn btn-primary saved-action-btn" href="designer.html?remote_design_id=<?= (int)$item['id'] ?>"
+                <a class="btn btn-primary saved-action-btn" href="designer.php?remote_design_id=<?= (int)$item['id'] ?>"
                   aria-label="Ouvrir le design" title="Ouvrir le design"
                   data-site-i18n-attr="aria-label,title" data-site-i18n-en="Open design" data-site-i18n-fr="Ouvrir le design">
                   <i class="fa-regular fa-folder-open" aria-hidden="true"></i>

@@ -291,7 +291,7 @@
   }
 
   function ensureSiteNavUi() {
-    if ($("account-toolbar-cluster")) return;
+    if (document.querySelector(".account-toolbar-cluster")) return;
     const navActions = $("site-nav-actions");
     if (!navActions) return;
 

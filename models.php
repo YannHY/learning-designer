@@ -475,6 +475,7 @@ function ld_model_design(array $model, string $lang = 'fr'): array
             'learningHours' => intdiv($minutes, 60),
             'learningMinutes' => $minutes % 60,
             'modeDelivery' => (string)($model['mode'] ?? 'onsite'),
+            'schoolSystem' => '',
             'schoolLevel' => '',
             'sizeClass' => '',
             'designers' => '',
@@ -2643,7 +2644,7 @@ current_user();
                                 <i class="fa-solid fa-eye btn-icon-inline" aria-hidden="true"></i>
                                 <span data-i18n-fr="Visualiser" data-i18n-en="Preview">Visualiser</span>
                             </button>
-                            <a class="btn btn-light import-model-use-action" href="designer.html?model=<?= h(urlencode($entry['id'])) ?>">
+                            <a class="btn btn-light import-model-use-action" href="designer.php?model=<?= h(urlencode($entry['id'])) ?>">
                                 <i class="fa-solid fa-arrow-right btn-icon-inline" aria-hidden="true"></i>
                                 <span data-i18n-fr="Utiliser" data-i18n-en="Use">Utiliser</span>
                             </a>
@@ -2673,7 +2674,7 @@ current_user();
         <div id="model-library-preview-content" class="import-model-preview-content"></div>
         <div class="modal-actions model-library-preview-actions">
             <button id="model-library-preview-close" class="btn btn-light" type="button" data-i18n-fr="Fermer" data-i18n-en="Close">Fermer</button>
-            <a id="model-library-preview-use" class="btn btn-light import-model-use-action" href="designer.html">
+            <a id="model-library-preview-use" class="btn btn-light import-model-use-action" href="designer.php">
                 <i class="fa-solid fa-arrow-right btn-icon-inline" aria-hidden="true"></i>
                 <span data-i18n-fr="Utiliser" data-i18n-en="Use">Utiliser</span>
             </a>
@@ -2879,7 +2880,7 @@ document.addEventListener('DOMContentLoaded', function () {
         previewContent.textContent = '';
         previewStatus.textContent = previewLabel('Chargement de l’aperçu…', 'Loading preview…');
         previewStatus.classList.remove('import-model-preview-status-error');
-        previewUse.href = 'designer.html?model=' + encodeURIComponent(activePreviewId);
+        previewUse.href = 'designer.php?model=' + encodeURIComponent(activePreviewId);
         previewBackdrop.classList.remove('hidden');
         previewBackdrop.setAttribute('aria-hidden', 'false');
         document.body.classList.add('model-library-preview-open');

@@ -1048,7 +1048,7 @@ function app_competency_greencomp_detail_source(): string
  * Le script de navigation attend DOMContentLoaded pour lire le thème, ce qui
  * laissait apparaître un flash clair sur toutes les pages. À appeler dans le
  * <head>, avant les feuilles de style. Le pendant statique de cette fonction
- * se trouve dans le <head> de designer.html, qui n'est pas un fichier PHP.
+ * est également utilisé par designer.php.
  */
 function render_theme_boot_script(): void
 {
@@ -1067,10 +1067,10 @@ function render_theme_boot_script(): void
 function render_site_nav(string $active = ''): void
 {
     $user = current_user();
+    $isDesigner = $active === 'designer';
     $isAdmin = (string)($user['role'] ?? '') === 'admin';
     $username = trim((string)($user['username'] ?? $user['email'] ?? ''));
     $savesClass = $active === 'saves' ? ' nav-account-btn-active' : '';
-    $shareClass = $active === 'share' ? ' nav-account-btn-active' : '';
     $profileClass = $active === 'profile' ? ' nav-account-btn-active' : '';
     $adminClass = $active === 'admin' ? ' nav-account-btn-active' : '';
     $breadcrumbItems = site_breadcrumb_items($active);
@@ -1107,9 +1107,15 @@ function render_site_nav(string $active = ''): void
                 <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
             </button>
             <div class="account-toolbar-cluster">
-                <a class="nav-icon-btn<?= $shareClass ?>" href="share.php" title="Partages" aria-label="Partages" data-site-i18n-attr="title,aria-label" data-site-i18n-en="Shared designs" data-site-i18n-fr="Partages">
-                    <i class="fa-solid fa-share-nodes" aria-hidden="true"></i>
-                </a>
+                <?php if ($isDesigner): ?>
+                    <button id="nav-new-design-btn" class="nav-icon-btn" type="button" title="Nouveau design" aria-label="Nouveau design" data-site-i18n-attr="title,aria-label" data-site-i18n-en="New design" data-site-i18n-fr="Nouveau design">
+                        <i class="fa-solid fa-file-circle-plus" aria-hidden="true"></i>
+                    </button>
+                <?php else: ?>
+                    <a class="nav-icon-btn" href="designer.php" title="Nouveau design" aria-label="Nouveau design" data-site-i18n-attr="title,aria-label" data-site-i18n-en="New design" data-site-i18n-fr="Nouveau design">
+                        <i class="fa-solid fa-file-circle-plus" aria-hidden="true"></i>
+                    </a>
+                <?php endif; ?>
                 <a class="nav-account-btn nav-account-icon-btn<?= $savesClass ?>" href="my-designs.php" title="Designs" aria-label="Designs" data-site-i18n-attr="title,aria-label" data-site-i18n-en="Designs" data-site-i18n-fr="Designs">
                     <i class="fa-regular fa-folder-open" aria-hidden="true"></i>
                 </a>
@@ -1192,6 +1198,7 @@ function render_site_nav(string $active = ''): void
 
         var langSelect = document.getElementById('lang-select');
         var languageButton = document.querySelector('.nav-language-toggle');
+        var languageToggleManagedByPage = <?= $isDesigner ? 'true' : 'false' ?>;
         function syncLanguageSwitch(lang) {
             if (!languageButton) return;
             var isEnglish = lang === 'en';
@@ -1243,7 +1250,7 @@ function render_site_nav(string $active = ''): void
                 } catch (error) {
                 }
             });
-            if (languageButton) {
+            if (languageButton && !languageToggleManagedByPage) {
                 languageButton.addEventListener('click', function () {
                     changeLanguage(langSelect.value === 'en' ? 'fr' : 'en');
                 });
@@ -1306,6 +1313,7 @@ function site_breadcrumb_items(string $active = ''): array
     $key = $active !== '' ? $active : pathinfo($page, PATHINFO_FILENAME);
     $map = [
         'home' => [],
+        'designer' => [],
         'about' => [
             ['fr' => 'À propos', 'en' => 'About'],
         ],

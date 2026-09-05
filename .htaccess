@@ -1,5 +1,11 @@
 DirectoryIndex index.php
 
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteCond %{REQUEST_URI} ^(.*/)designer\.html$
+    RewriteRule ^designer\.html$ %1designer.php [R=302,L,NE]
+</IfModule>
+
 # La base SQLite vit dans la racine web : sans ces règles, elle est
 # téléchargeable (emails, empreintes de mots de passe, empreintes de jetons CLI).
 # Le correctif de fond reste de la déplacer hors racine via APP_DB_SQLITE_PATH.

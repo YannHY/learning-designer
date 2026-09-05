@@ -13,6 +13,7 @@ Le projet est inspiré de l'[UCL Learning Designer](https://www.ucl.ac.uk/learni
 - **Relire un scénario sous plusieurs angles** : la répartition du temps et des types d'apprentissage aide à repérer les déséquilibres, les enchaînements trop denses ou les modalités trop peu variées.
 - **Partager et réutiliser les productions** : un design peut être sauvegardé dans un compte, publié par lien, consulté en lecture seule et proposé dans le catalogue public sous licence Creative Commons.
 - **Travailler avec les outils déjà utilisés** : les imports et exports permettent de poursuivre le travail dans un tableur, un traitement de texte, une plateforme web ou un autre outil compatible.
+- **Choisir un référentiel scolaire cohérent** : le niveau dépend du système sélectionné. Le catalogue couvre la France, la Suisse, les États-Unis, les communautés belge française, flamande et germanophone, l’Angleterre, le pays de Galles, l’Écosse, l’Irlande du Nord et les Écoles européennes, ainsi que la classification internationale ISCED 2011.
 - **Concevoir avec une IA sans perdre la structure pédagogique** : une Skill réutilisable, une bibliothèque de prompts et le CLI `learning` accompagnent la création, la validation et la publication des scénarios.
 
 ## Documentation
@@ -60,13 +61,17 @@ learning status
 Quelques commandes utiles :
 
 ```bash
-learning init mon-scenario.json
+learning list school-systems
+learning list school-levels --system france
+learning init mon-scenario.json --school-system france --school-level quatrieme
 learning add-moment mon-scenario.json --title "Découvrir"
 learning validate mon-scenario.json
 learning handoff mon-scenario.json
 learning login
 learning publish mon-scenario.json
 ```
+
+Le CLI enregistre des identifiants stables dans `schoolSystem` et `schoolLevel`, accepte aussi les principaux libellés et alias français ou anglais, et refuse une association incohérente entre un système et un niveau.
 
 Les instructions d'installation et d'utilisation de la Skill sont détaillées dans la section [Créer avec l'IA](./help.php#cli) de l'aide.
 
@@ -108,7 +113,7 @@ Conservez les secrets dans un fichier local non versionné, par exemple `learnin
 
 ## Repères dans le dépôt
 
-- [designer.html](./designer.html) et [interface.js](./js/interface.js) : concepteur de scénarios ;
+- [designer.php](./designer.php) et [interface.js](./js/interface.js) : concepteur de scénarios ;
 - [models.php](./models.php) : bibliothèque et API JSON des modèles ;
 - [prompts.php](./prompts.php) : bibliothèque de prompts pédagogiques ;
 - [share.php](./share.php) et [view.php](./view.php) : catalogue public et consultation des designs publiés ;

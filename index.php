@@ -59,7 +59,7 @@ $homeOgImageUrl = rtrim(app_base_url(), '/') . '/assets/og-home.png';
                data-site-i18n-en="Design, analyse and share learning scenarios centred on what learners actually do, from the initial intention to the flow of each session."
                data-site-i18n-fr="Concevez, analysez et partagez des scénarios pédagogiques centrés sur l’activité des élèves, de l’intention initiale au déroulement de chaque séance.">Concevez, analysez et partagez des scénarios pédagogiques centrés sur l’activité des élèves, de l’intention initiale au déroulement de chaque séance.</p>
             <div class="home-hero-actions">
-                <a class="home-primary-action" href="designer.html">
+                <a class="home-primary-action" href="designer.php">
                     <span data-site-i18n-en="Open the design workspace" data-site-i18n-fr="Ouvrir l’interface de conception">Ouvrir l’interface de conception</span>
                     <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
                 </a>
@@ -290,7 +290,7 @@ $homeOgImageUrl = rtrim(app_base_url(), '/') . '/assets/og-home.png';
                 <h2 id="home-final-title"
                     data-site-i18n-en="Start designing"
                     data-site-i18n-fr="À vous de concevoir">À vous de concevoir</h2>
-                <a class="home-primary-action" href="designer.html">
+                <a class="home-primary-action" href="designer.php">
                     <span data-site-i18n-en="Create a design" data-site-i18n-fr="Créer un design">Créer un design</span>
                     <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
                 </a>

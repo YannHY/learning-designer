@@ -53,9 +53,9 @@ Veuillez fournir votre réponse dans le format suivant :
 1. Joignez le plan de cours modifié en indiquant clairement les changements que vous proposez.
 2. Fournissez une explication détaillée de vos changements, y compris la façon dont ils soutiennent la CUA, l’accessibilité et l’inclusivité.
 
-N’oubliez pas de tenir compte de la matière enseignée et du niveau scolaire lorsque vous faites vos recommandations. Veillez à ce que vos suggestions soient adaptées à l’âge et au contenu enseigné.
+N’oubliez pas de tenir compte de la matière enseignée, du système scolaire ou de la classification choisie et du niveau correspondant lorsque vous faites vos recommandations. Veillez à ce que vos suggestions soient adaptées à l’âge et au contenu enseigné.
 
-Le plan de cours porte sur *[SUBJECT_AREA]*, et le niveau scolaire est *[GRADE_LEVEL]*.
+Le plan de cours porte sur *[SUBJECT_AREA]*, le système scolaire ou la classification est *[SCHOOL_SYSTEM_OR_CLASSIFICATION]*, et le niveau correspondant est *[GRADE_LEVEL]*.
 
 Voici le plan de cours à analyser et à améliorer : *[PLAN DE LEÇON]*
 PROMPT;
@@ -229,9 +229,9 @@ Provide your response in the following format:
 1. Attach the revised lesson plan, clearly indicating your proposed changes.
 2. Provide a detailed explanation of your changes, including how they support UDL, accessibility, and inclusion.
 
-Remember to consider the subject being taught and the grade level when making your recommendations. Ensure that your suggestions are appropriate for the students’ age and the content being taught.
+Remember to consider the subject being taught, the selected school system or classification, and the corresponding level when making your recommendations. Ensure that your suggestions are appropriate for the students’ age and the content being taught.
 
-The lesson plan covers *[SUBJECT_AREA]*, and the grade level is *[GRADE_LEVEL]*.
+The lesson plan covers *[SUBJECT_AREA]*, the school system or classification is *[SCHOOL_SYSTEM_OR_CLASSIFICATION]*, and the corresponding level is *[GRADE_LEVEL]*.
 
 Here is the lesson plan to analyse and improve: *[LESSON PLAN]*
 PROMPT;
@@ -1210,6 +1210,8 @@ Ces libellés doivent être conservés exactement en français :
 - `> Choix pédagogiques:`
 - `> Notes:`
 - `- Mode:`
+- `- Système scolaire:`
+- `- Niveau:`
 - `- Taille du groupe:`
 - `- Concepteur(s):`
 - `- Enseignant(s):`
@@ -1229,6 +1231,23 @@ Ces libellés doivent être conservés exactement en français :
 ### Valeurs contrôlées
 
 Utilise exclusivement les valeurs françaises suivantes.
+
+Système scolaire ou classification :
+
+- `France`
+- `Suisse (HarmoS)`
+- `États-Unis (K–12)`
+- `Belgique — Fédération Wallonie-Bruxelles`
+- `Belgique — Communauté flamande`
+- `Belgique — Communauté germanophone`
+- `Royaume-Uni — Angleterre`
+- `Royaume-Uni — Pays de Galles`
+- `Royaume-Uni — Écosse`
+- `Royaume-Uni — Irlande du Nord`
+- `Système des Écoles européennes`
+- `International — ISCED 2011 (CITE)`
+
+Pour `Niveau`, utilise exclusivement un libellé appartenant au système ou à la classification choisi. Ne mélange jamais les nomenclatures. En cas d’ambiguïté sur la communauté belge ou la nation du Royaume-Uni, demande une précision.
 
 Types d’activités :
 
@@ -1307,6 +1326,8 @@ N’invente pas de synonymes et ne traduis jamais ces valeurs.
 ## Paramètres
 
 - Mode: Présentiel
+- Système scolaire: France
+- Niveau: 4e
 - Taille du groupe: 24
 - Concepteur(s): Nom du concepteur
 - Enseignant(s): Nom de l’enseignant
@@ -1462,6 +1483,8 @@ Keep the following labels exactly as written in French:
 - `> Choix pédagogiques:`
 - `> Notes:`
 - `- Mode:`
+- `- Système scolaire:`
+- `- Niveau:`
 - `- Taille du groupe:`
 - `- Concepteur(s):`
 - `- Enseignant(s):`
@@ -1481,6 +1504,23 @@ Keep the following labels exactly as written in French:
 ### Controlled values
 
 Use only these French values.
+
+School system or classification:
+
+- `France`
+- `Suisse (HarmoS)`
+- `États-Unis (K–12)`
+- `Belgique — Fédération Wallonie-Bruxelles`
+- `Belgique — Communauté flamande`
+- `Belgique — Communauté germanophone`
+- `Royaume-Uni — Angleterre`
+- `Royaume-Uni — Pays de Galles`
+- `Royaume-Uni — Écosse`
+- `Royaume-Uni — Irlande du Nord`
+- `Système des Écoles européennes`
+- `International — ISCED 2011 (CITE)`
+
+For `Niveau`, use only a label belonging to the selected system or classification. Never mix naming schemes. If the Belgian Community or UK nation is ambiguous, ask for clarification.
 
 Activity types:
 
@@ -1559,6 +1599,8 @@ Do not invent synonyms or translate these values.
 ## Paramètres
 
 - Mode: Présentiel
+- Système scolaire: France
+- Niveau: 4e
 - Taille du groupe: 24
 - Concepteur(s): Designer’s name
 - Enseignant(s): Teacher’s name

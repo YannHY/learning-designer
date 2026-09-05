@@ -21,7 +21,7 @@ from pathlib import Path
 from typing import Any
 
 
-VERSION = "0.4.0"
+VERSION = "0.5.0"
 DEFAULT_DAY_HOURS = 7
 AIAS_VERSION = "2.1"
 DEFAULT_SITE = "https://www.ralentirtravaux.com/flo/learning-designer"
@@ -163,6 +163,117 @@ BLOOM = {
     "créer": ("create", "Create", "Créer"),
 }
 
+SCHOOL_SYSTEMS = {
+    "france": ("France", "France", ("système français", "French system")),
+    "switzerland": ("Suisse (HarmoS)", "Switzerland (HarmoS)", ("système suisse", "Swiss system")),
+    "united_states": ("États-Unis (K–12)", "United States (K–12)", ("K-12", "US K-12", "American system")),
+    "belgium_french": ("Belgique — Fédération Wallonie-Bruxelles", "Belgium — French Community", ("Belgique francophone", "Communauté française de Belgique", "Fédération Wallonie-Bruxelles", "French Community of Belgium")),
+    "belgium_flemish": ("Belgique — Communauté flamande", "Belgium — Flemish Community", ("Belgique néerlandophone", "Communauté flamande", "Vlaamse Gemeenschap", "Flemish Community")),
+    "belgium_german": ("Belgique — Communauté germanophone", "Belgium — German-speaking Community", ("Belgique germanophone", "Communauté germanophone", "Deutschsprachige Gemeinschaft", "German-speaking Community")),
+    "uk_england": ("Royaume-Uni — Angleterre", "United Kingdom — England", ("Angleterre", "England", "English school system")),
+    "uk_wales": ("Royaume-Uni — Pays de Galles", "United Kingdom — Wales", ("Pays de Galles", "Wales", "Welsh school system")),
+    "uk_scotland": ("Royaume-Uni — Écosse", "United Kingdom — Scotland", ("Écosse", "Ecosse", "Scotland", "Scottish school system")),
+    "uk_northern_ireland": ("Royaume-Uni — Irlande du Nord", "United Kingdom — Northern Ireland", ("Irlande du Nord", "Northern Ireland", "Northern Irish school system")),
+    "european_schools": ("Système des Écoles européennes", "European Schools system", ("Écoles européennes", "Ecoles europeennes", "European Schools", "Schola Europaea")),
+    "isced_2011": ("International — ISCED 2011 (CITE)", "International — ISCED 2011", ("ISCED", "ISCED 2011", "CITE", "CITE 2011")),
+}
+
+SCHOOL_LEVELS: dict[str, dict[str, tuple[str, str, tuple[str, ...]]]] = {
+    system: {} for system in SCHOOL_SYSTEMS
+}
+
+
+def add_school_level(system: str, level_id: str, label_fr: str, label_en: str, *aliases: str) -> None:
+    SCHOOL_LEVELS[system][level_id] = (label_fr, label_en, aliases)
+
+
+for level_id, label_fr, aliases in (
+    ("petite_section", "Petite section (PS)", ("PS",)),
+    ("moyenne_section", "Moyenne section (MS)", ("MS", "Moyenne section (MS) / 1re")),
+    ("grande_section", "Grande section (GS)", ("GS", "Grande section (GS) / 2e")),
+    ("cp", "CP", ("CP / 3e",)),
+    ("ce1", "CE1", ("CE1 / 4e",)),
+    ("ce2", "CE2", ("CE2 / 5e",)),
+    ("cm1", "CM1", ("CM1 / 6e",)),
+    ("cm2", "CM2", ("CM2 / 7e",)),
+    ("sixieme", "6e", ("6e / 8e",)),
+    ("cinquieme", "5e", ("5e / 9e",)),
+    ("quatrieme", "4e", ("4e / 10e",)),
+    ("troisieme", "3e", ("3e / 11e",)),
+    ("seconde", "Seconde", ("Seconde / Secondaire II – 1re année",)),
+    ("premiere", "Première", ("Première / Secondaire II – 2e année",)),
+    ("terminale", "Terminale", ("Terminale / Secondaire II – 3e année",)),
+):
+    add_school_level("france", level_id, label_fr, label_fr, *aliases)
+
+for year in range(1, 9):
+    add_school_level("switzerland", f"ch_{year}p", f"{year}P — {year}re année primaire" if year == 1 else f"{year}P — {year}e année primaire", f"{year}P — Primary year {year}", f"{year}P")
+for year in range(9, 12):
+    add_school_level("switzerland", f"ch_{year}s", f"{year}e — secondaire I", f"Year {year} — lower secondary", f"{year}S", f"{year}e")
+for year in range(1, 4):
+    add_school_level("switzerland", f"ch_sec2_{year}", f"Secondaire II — {year}re année" if year == 1 else f"Secondaire II — {year}e année", f"Upper secondary — year {year}")
+
+add_school_level("united_states", "us_k", "Kindergarten (K)", "Kindergarten (K)", "K", "Kindergarten")
+for year in range(1, 13):
+    suffix = "st" if year == 1 else "nd" if year == 2 else "rd" if year == 3 else "th"
+    add_school_level("united_states", f"us_grade_{year}", f"Grade {year}", f"Grade {year}", f"{year}{suffix} grade")
+
+for year in range(1, 4):
+    ordinal = "1re" if year == 1 else f"{year}e"
+    add_school_level("belgium_french", f"be_fr_m{year}", f"M{year} — {ordinal} maternelle", f"M{year} — nursery year {year}", f"M{year}", f"{ordinal} maternelle")
+    add_school_level("belgium_flemish", f"be_nl_k{year}", f"K{year} — {year}e kleuterklas", f"K{year} — kindergarten year {year}", f"K{year}", f"{year}e kleuterklas")
+    add_school_level("belgium_german", f"be_de_k{year}", f"K{year} — {year}. Kindergartenjahr", f"K{year} — kindergarten year {year}", f"K{year}", f"{year}. Kindergartenjahr")
+for year in range(1, 7):
+    ordinal = "1re" if year == 1 else f"{year}e"
+    add_school_level("belgium_french", f"be_fr_p{year}", f"P{year} — {ordinal} primaire", f"P{year} — primary year {year}", f"P{year}", f"{ordinal} primaire")
+    add_school_level("belgium_flemish", f"be_nl_l{year}", f"L{year} — {year}e leerjaar lager onderwijs", f"L{year} — primary year {year}", f"L{year}", f"{year}e leerjaar lager onderwijs")
+    add_school_level("belgium_german", f"be_de_p{year}", f"P{year} — {year}. Primarschuljahr", f"P{year} — primary year {year}", f"P{year}", f"{year}. Primarschuljahr")
+for year in range(1, 8):
+    ordinal = "1re" if year == 1 else f"{year}e"
+    add_school_level("belgium_french", f"be_fr_s{year}", f"S{year} — {ordinal} secondaire" + (" — selon la filière" if year == 7 else ""), f"S{year} — secondary year {year}" + (" — depending on pathway" if year == 7 else ""), f"S{year}", f"{ordinal} secondaire")
+    add_school_level("belgium_flemish", f"be_nl_s{year}", f"S{year} — {year}e leerjaar secundair onderwijs", f"S{year} — secondary year {year}", f"S{year}", f"{year}e leerjaar secundair onderwijs")
+    add_school_level("belgium_german", f"be_de_s{year}", f"S{year} — {year}. Sekundarschuljahr" + (" (professionnel)" if year == 7 else ""), f"S{year} — secondary year {year}" + (" (vocational)" if year == 7 else ""), f"S{year}", f"{year}. Sekundarschuljahr")
+
+for system in ("uk_england", "uk_wales"):
+    add_school_level(system, f"{system}_nursery", "Nursery", "Nursery")
+    add_school_level(system, f"{system}_reception", "Reception", "Reception")
+    for year in range(1, 14):
+        add_school_level(system, f"{system}_year_{year}", f"Year {year}", f"Year {year}")
+
+add_school_level("uk_scotland", "uk_scotland_early_learning", "Petite enfance (Nursery)", "Early learning and childcare (Nursery)", "Nursery")
+for year in range(1, 8):
+    add_school_level("uk_scotland", f"uk_scotland_p{year}", f"P{year} — primaire", f"P{year} — primary", f"P{year}")
+for year in range(1, 7):
+    add_school_level("uk_scotland", f"uk_scotland_s{year}", f"S{year} — secondaire", f"S{year} — secondary", f"S{year}")
+
+add_school_level("uk_northern_ireland", "uk_northern_ireland_preschool", "Préscolaire (Pre-school)", "Pre-school")
+for year in range(1, 8):
+    add_school_level("uk_northern_ireland", f"uk_northern_ireland_p{year}", f"P{year} — primaire", f"P{year} — primary", f"P{year}")
+for year in range(8, 15):
+    add_school_level("uk_northern_ireland", f"uk_northern_ireland_year_{year}", f"Year {year}", f"Year {year}")
+
+for year in range(1, 3):
+    add_school_level("european_schools", f"eu_school_n{year}", f"N{year} — cycle maternel", f"N{year} — nursery cycle", f"N{year}")
+for year in range(1, 6):
+    add_school_level("european_schools", f"eu_school_p{year}", f"P{year} — cycle primaire", f"P{year} — primary cycle", f"P{year}")
+for year in range(1, 8):
+    cycle_fr = "cycle d’observation" if year <= 3 else "cycle de pré-orientation" if year <= 5 else "cycle du Baccalauréat européen"
+    cycle_en = "observation cycle" if year <= 3 else "pre-orientation cycle" if year <= 5 else "European Baccalaureate cycle"
+    add_school_level("european_schools", f"eu_school_s{year}", f"S{year} — {cycle_fr}", f"S{year} — {cycle_en}", f"S{year}")
+
+for level_id, label_fr, label_en in (
+    ("isced_0", "ISCED 0 — Éducation de la petite enfance", "ISCED 0 — Early childhood education"),
+    ("isced_1", "ISCED 1 — Enseignement primaire", "ISCED 1 — Primary education"),
+    ("isced_2", "ISCED 2 — Premier cycle du secondaire", "ISCED 2 — Lower secondary education"),
+    ("isced_3", "ISCED 3 — Deuxième cycle du secondaire", "ISCED 3 — Upper secondary education"),
+    ("isced_4", "ISCED 4 — Post-secondaire non supérieur", "ISCED 4 — Post-secondary non-tertiary education"),
+    ("isced_5", "ISCED 5 — Enseignement supérieur de cycle court", "ISCED 5 — Short-cycle tertiary education"),
+    ("isced_6", "ISCED 6 — Licence ou équivalent", "ISCED 6 — Bachelor’s or equivalent level"),
+    ("isced_7", "ISCED 7 — Master ou équivalent", "ISCED 7 — Master’s or equivalent level"),
+    ("isced_8", "ISCED 8 — Doctorat ou équivalent", "ISCED 8 — Doctoral or equivalent level"),
+):
+    add_school_level("isced_2011", level_id, label_fr, label_en, level_id.replace("isced_", "CITE "))
+
 
 def die(message: str, code: int = 1) -> None:
     print(f"learning: {message}", file=sys.stderr)
@@ -173,6 +284,62 @@ def slug(value: str) -> str:
     normalized = unicodedata.normalize("NFKD", value.strip().lower())
     ascii_value = normalized.encode("ascii", "ignore").decode("ascii")
     return re.sub(r"[^a-z0-9]+", "-", ascii_value).strip("-")
+
+
+def lookup_school_system(value: str | None) -> str:
+    token = slug(value or "")
+    if not token:
+        return ""
+    for system_id, (label_fr, label_en, aliases) in SCHOOL_SYSTEMS.items():
+        candidates = (system_id, label_fr, label_en, *aliases)
+        if token in {slug(candidate) for candidate in candidates}:
+            return system_id
+    return ""
+
+
+def lookup_school_level(value: str | None, system: str) -> str:
+    token = slug(value or "")
+    if not token or system not in SCHOOL_LEVELS:
+        return ""
+    for level_id, (label_fr, label_en, aliases) in SCHOOL_LEVELS[system].items():
+        candidates = (level_id, label_fr, label_en, *aliases)
+        if token in {slug(candidate) for candidate in candidates}:
+            return level_id
+    return ""
+
+
+def resolve_school_system(value: str) -> str:
+    system = lookup_school_system(value)
+    if not system:
+        die(f"invalid school system or classification: {value}. Run `learning list school-systems`.")
+    return system
+
+
+def resolve_school_level(value: str, system: str) -> str:
+    level = lookup_school_level(value, system)
+    if not level:
+        die(f"invalid school level for {system}: {value}. Run `learning list school-levels --system {system}`.")
+    return level
+
+
+def school_system_for_level(level: str) -> str:
+    matches = [system for system, levels in SCHOOL_LEVELS.items() if level in levels]
+    return matches[0] if len(matches) == 1 else ""
+
+
+def school_system_display(system: str, lang: str = "fr") -> str:
+    if system not in SCHOOL_SYSTEMS:
+        return system or "-"
+    label_fr, label_en, _aliases = SCHOOL_SYSTEMS[system]
+    return f"{system} ({label_en if lang == 'en' else label_fr})"
+
+
+def school_level_display(level: str, system: str, lang: str = "fr") -> str:
+    details = SCHOOL_LEVELS.get(system, {}).get(level)
+    if not details:
+        return level or "-"
+    label_fr, label_en, _aliases = details
+    return f"{level} ({label_en if lang == 'en' else label_fr})"
 
 
 def now_id(prefix: str) -> str:
@@ -300,6 +467,10 @@ def competency_id(reference: str) -> str:
 
 def new_document(args: argparse.Namespace) -> dict[str, Any]:
     days, hours, minutes = split_minutes(args.duration or 0, args.day_hours)
+    school_system = resolve_school_system(args.school_system) if args.school_system else ""
+    if args.school_level and not school_system:
+        die("--school-level requires --school-system")
+    school_level = resolve_school_level(args.school_level, school_system) if args.school_level else ""
     return {
         "allNotesExpanded": False,
         "intentionsCollapsed": False,
@@ -312,7 +483,8 @@ def new_document(args: argparse.Namespace) -> dict[str, Any]:
             "learningHours": hours,
             "learningMinutes": minutes,
             "modeDelivery": normalize(args.mode, LOCATION_ALIASES, "mode") if args.mode else "",
-            "schoolLevel": "",
+            "schoolSystem": school_system,
+            "schoolLevel": school_level,
             "sizeClass": args.group_size or "",
             "designers": args.designers or "",
             "trainers": args.trainers or "",
@@ -448,12 +620,19 @@ def learning_time(document: dict[str, Any]) -> str:
 
 def summarize_document(document: dict[str, Any]) -> str:
     meta = document.get("meta", {})
+    language = meta.get("uiLanguage", "fr")
+    raw_school_level = str(meta.get("schoolLevel") or "")
+    raw_school_system = str(meta.get("schoolSystem") or "")
+    school_system = lookup_school_system(raw_school_system) or school_system_for_level(raw_school_level)
+    school_level = lookup_school_level(raw_school_level, school_system) or raw_school_level
+    school_system_for_display = school_system or raw_school_system
     lines = [
         f"# {meta.get('name') or 'Learning design'}",
         "",
-        f"- Language: {meta.get('uiLanguage', 'fr')}",
+        f"- Language: {language}",
         f"- Delivery mode: {meta.get('modeDelivery') or '-'}",
-        f"- School level: {meta.get('schoolLevel') or '-'}",
+        f"- School system / classification: {school_system_display(school_system_for_display, language)}",
+        f"- School level: {school_level_display(school_level, school_system, language)}",
         f"- Group size: {meta.get('sizeClass') or '-'}",
         f"- Designers: {meta.get('designers') or '-'}",
         f"- Trainers: {meta.get('trainers') or '-'}",
@@ -558,8 +737,19 @@ def command_handoff(args: argparse.Namespace) -> None:
 def command_validate(args: argparse.Namespace) -> None:
     document = load_document(Path(args.file))
     warnings = []
-    if not document.get("meta", {}).get("name"):
+    meta = document.get("meta", {})
+    if not meta.get("name"):
         warnings.append("missing design title")
+    raw_school_system = str(meta.get("schoolSystem") or "")
+    raw_school_level = str(meta.get("schoolLevel") or "")
+    school_system = lookup_school_system(raw_school_system)
+    if raw_school_system and not school_system:
+        warnings.append(f"invalid school system or classification: {raw_school_system}")
+    if raw_school_level:
+        if school_system and not lookup_school_level(raw_school_level, school_system):
+            warnings.append(f"invalid school level for {school_system}: {raw_school_level}")
+        elif not raw_school_system and not school_system_for_level(raw_school_level):
+            warnings.append(f"school level has no recognised school system: {raw_school_level}")
     for s_index, session in enumerate(document.get("sessions", []), start=1):
         if not session.get("title"):
             warnings.append(f"moment {s_index}: missing title")
@@ -587,6 +777,15 @@ def command_list(args: argparse.Namespace) -> None:
                 seen.add(level_id)
     elif args.kind == "competencies":
         print("Use A1-A30, P1-P35, C1-C30, or full ids such as competency:acquerir:14.")
+    elif args.kind == "school-systems":
+        for system_id, (label_fr, label_en, _aliases) in SCHOOL_SYSTEMS.items():
+            print(f"{system_id:22} {label_fr} / {label_en}")
+    elif args.kind == "school-levels":
+        if not args.system:
+            die("--system is required with `learning list school-levels`")
+        system = resolve_school_system(args.system)
+        for level_id, (label_fr, label_en, _aliases) in SCHOOL_LEVELS[system].items():
+            print(f"{level_id:32} {label_fr} / {label_en}")
     else:
         die("unknown list kind")
 
@@ -689,6 +888,16 @@ def add_common_design_args(parser: argparse.ArgumentParser) -> None:
     parser.add_argument("--duration", "--duree", "--durée", type=int, default=0, help="Total learning duration in minutes")
     parser.add_argument("--day-hours", "--heures-jour", type=int, default=DEFAULT_DAY_HOURS)
     parser.add_argument("--mode", default="", help="onsite/online/hybrid or presentiel/distanciel/hybride")
+    parser.add_argument(
+        "--school-system", "--systeme-scolaire", "--système-scolaire",
+        default="",
+        help="School system/classification id or label; see `learning list school-systems`",
+    )
+    parser.add_argument(
+        "--school-level", "--niveau-scolaire", "--niveau",
+        default="",
+        help="Level id or label for --school-system; see `learning list school-levels --system ID`",
+    )
     parser.add_argument("--group-size", "--taille-groupe", default="")
     parser.add_argument("--designers", "--concepteurs", default="")
     parser.add_argument("--trainers", "--formateurs", default="")
@@ -782,7 +991,8 @@ def build_parser() -> argparse.ArgumentParser:
     validate.set_defaults(func=command_validate)
 
     list_cmd = sub.add_parser("list", aliases=["lister"], help="List accepted values")
-    list_cmd.add_argument("kind", choices=["types", "bloom", "competencies"])
+    list_cmd.add_argument("kind", choices=["types", "bloom", "competencies", "school-systems", "school-levels"])
+    list_cmd.add_argument("--system", "--school-system", "--système", default="")
     list_cmd.set_defaults(func=command_list)
 
     login = sub.add_parser("login", aliases=["connexion"], help="Save a CLI publishing token")

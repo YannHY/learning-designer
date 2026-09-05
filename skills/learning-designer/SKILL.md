@@ -1,9 +1,18 @@
 ---
 name: learning-designer
-description: Create, validate, and prepare publication for pedagogical Learning Designer designs using the `learning` CLI. Use when an educator asks to build a lesson, sequence, learning design, instructional scenario, Bloom outcomes, learning moments, digital competencies, or a publishable `design.json` for Learning Designer.
+description: Create, validate, and prepare publication for pedagogical Learning Designer designs using the `learning` CLI, and preserve the product's established interface direction when UI work is requested. Use for lessons, sequences, learning designs, instructional scenarios, Bloom outcomes, learning moments, digital competencies, publishable `design.json` files, or Learning Designer interface changes.
 ---
 
 # Learning Designer
+
+## Interface Visual Direction
+
+When changing the Learning Designer interface, keep controls crisp, restrained, and predominantly neutral.
+
+- Do not use blue-tinted translucent surfaces, diffuse blue shadows, colored glows, ambient halos, or pulsing rings.
+- Use white or neutral surfaces with thin, sharp borders. Add a restrained neutral shadow only when elevation is necessary for comprehension.
+- Reserve blue for meaningful accents such as icons, links, selected states, and solid accessible focus outlines—not atmospheric decoration.
+- Prefer flat, precise states over blurred or luminous effects in both light and dark themes.
 
 ## Goal
 
@@ -50,7 +59,7 @@ Ask concise questions in French unless the user asks for English. Do not overloa
 Essential questions:
 
 - subject or theme
-- level and target learners
+- school system or classification, then the corresponding level, and target learners
 - total duration
 - activity mode of delivery: classroom-based, location-based, online, blended, or other
 - group size
@@ -69,6 +78,14 @@ Distinguish teaching objectives from learning outcomes. If the user gives only t
 
 If information is missing, make reasonable assumptions instead of blocking, unless the assumption would be risky.
 
+School-system handling:
+
+- Treat Belgium as three distinct systems: French, Flemish, and German-speaking Communities.
+- Treat England, Wales, Scotland, and Northern Ireland as distinct systems.
+- Treat the European Schools as a transnational system and ISCED 2011 as an international classification, not as countries.
+- If the user names only “Belgium” or “United Kingdom”, ask which community or nation unless the context makes it unambiguous.
+- Never invent a level identifier. Use the CLI catalog commands below.
+
 Duration handling:
 
 - If duration is given in days, ask or explicitly propose a per-session duration before generating the full design.
@@ -78,7 +95,7 @@ Duration handling:
 Before running the complete creation commands, briefly restate:
 
 - subject
-- target learners
+- school system or classification, level, and target learners
 - total duration converted to minutes
 - planned number of moments
 - teaching objectives
@@ -98,12 +115,14 @@ $LEARNING outcome --help
 $LEARNING list types
 $LEARNING list bloom
 $LEARNING list competencies
+$LEARNING list school-systems
+$LEARNING list school-levels --system france
 ```
 
 Create the file:
 
 ```bash
-$LEARNING init design.json --title "TITLE" --lang fr --duration 90 --mode onsite --group-size 24 --description "DESCRIPTION" --objectives "TEACHING OBJECTIVES"
+$LEARNING init design.json --title "TITLE" --lang fr --duration 90 --mode onsite --school-system france --school-level quatrieme --group-size 24 --description "DESCRIPTION" --objectives "TEACHING OBJECTIVES"
 ```
 
 Add each moment:
@@ -120,6 +139,8 @@ $LEARNING add-activity design.json --moment 1 --type investigate --duration 15 -
 
 Use only CLI-controlled values for controlled fields. Safe values:
 
+- `school-system`: use an id returned by `list school-systems`
+- `school-level`: use an id returned by `list school-levels --system SYSTEM_ID`
 - `type`: `read`, `investigate`, `practice`, `produce`, `discuss`, `collaborate`
 - `group`: `whole`, `subgroups`, `individual`
 - `teaching`: `directed`, `guided`, `supported`, `independent`
@@ -132,7 +153,7 @@ For `pacing` and `mode`, verify accepted values with the CLI or use values that 
 - `pacing`: `sync`, `async`, or `synchronous` depending on CLI version
 - `mode`: `classroom-based`, `location-based`, `online`, `blended`, `other`, or their French equivalents, depending on CLI version
 
-Never put long natural-language text in controlled fields such as `--group`, `--teaching`, `--evaluation`, `--type`, or `--pacing`.
+Never put long natural-language text in controlled fields such as `--school-system`, `--school-level`, `--group`, `--teaching`, `--evaluation`, `--type`, or `--pacing`.
 
 Use `--description` for the pedagogical description of the activity and `--instructions` for directions addressed directly to students. Put criteria, supports, teacher role, differentiation details, and other pedagogical detail in `--notes`, `--objectives`, or `--intentions` according to their scope.
 
@@ -195,6 +216,7 @@ At the end, report:
 
 - where `design.json` is
 - CLI validation result
+- school system or classification and level
 - number of moments
 - number of activities
 - teaching objectives used

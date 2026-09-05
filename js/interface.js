@@ -105,23 +105,225 @@ const LOCATION_OPTIONS = [
   { value: "other", label: "Autre", short: "Autre", icon: ICONS.other }
 ];
 const LOCATION_VALUES = new Set(LOCATION_OPTIONS.map((option) => option.value));
-const SCHOOL_LEVEL_OPTIONS = [
-  { value: "petite_section", label: "Petite section (PS)", france: "PS", swiss: "" },
-  { value: "moyenne_section", label: "Moyenne section (MS) / 1re", france: "MS", swiss: "1re" },
-  { value: "grande_section", label: "Grande section (GS) / 2e", france: "GS", swiss: "2e" },
-  { value: "cp", label: "CP / 3e", france: "CP", swiss: "3e" },
-  { value: "ce1", label: "CE1 / 4e", france: "CE1", swiss: "4e" },
-  { value: "ce2", label: "CE2 / 5e", france: "CE2", swiss: "5e" },
-  { value: "cm1", label: "CM1 / 6e", france: "CM1", swiss: "6e" },
-  { value: "cm2", label: "CM2 / 7e", france: "CM2", swiss: "7e" },
-  { value: "sixieme", label: "6e / 8e", france: "6e", swiss: "8e" },
-  { value: "cinquieme", label: "5e / 9e", france: "5e", swiss: "9e" },
-  { value: "quatrieme", label: "4e / 10e", france: "4e", swiss: "10e" },
-  { value: "troisieme", label: "3e / 11e", france: "3e", swiss: "11e" },
-  { value: "seconde", label: "Seconde / Secondaire II – 1re année", france: "Seconde", swiss: "Secondaire II – 1re année" },
-  { value: "premiere", label: "Première / Secondaire II – 2e année", france: "Première", swiss: "Secondaire II – 2e année" },
-  { value: "terminale", label: "Terminale / Secondaire II – 3e année", france: "Terminale", swiss: "Secondaire II – 3e année" }
+const SCHOOL_SYSTEM_OPTIONS = [
+  { value: "france", labels: { fr: "France", en: "France" } },
+  { value: "switzerland", labels: { fr: "Suisse (HarmoS)", en: "Switzerland (HarmoS)" } },
+  { value: "united_states", labels: { fr: "États-Unis (K–12)", en: "United States (K–12)" } },
+  { value: "belgium_french", labels: { fr: "Belgique — Fédération Wallonie-Bruxelles", en: "Belgium — French Community" } },
+  { value: "belgium_flemish", labels: { fr: "Belgique — Communauté flamande", en: "Belgium — Flemish Community" } },
+  { value: "belgium_german", labels: { fr: "Belgique — Communauté germanophone", en: "Belgium — German-speaking Community" } },
+  { value: "uk_england", labels: { fr: "Royaume-Uni — Angleterre", en: "United Kingdom — England" } },
+  { value: "uk_wales", labels: { fr: "Royaume-Uni — Pays de Galles", en: "United Kingdom — Wales" } },
+  { value: "uk_scotland", labels: { fr: "Royaume-Uni — Écosse", en: "United Kingdom — Scotland" } },
+  { value: "uk_northern_ireland", labels: { fr: "Royaume-Uni — Irlande du Nord", en: "United Kingdom — Northern Ireland" } },
+  { value: "european_schools", labels: { fr: "Système des Écoles européennes", en: "European Schools system" } },
+  { value: "isced_2011", labels: { fr: "International — ISCED 2011 (CITE)", en: "International — ISCED 2011" } }
 ];
+
+const SCHOOL_LEVEL_OPTIONS = {
+  france: [
+    { value: "petite_section", labels: { fr: "Petite section (PS)", en: "Petite section (PS)" }, aliases: ["PS"] },
+    { value: "moyenne_section", labels: { fr: "Moyenne section (MS)", en: "Moyenne section (MS)" }, aliases: ["MS", "Moyenne section (MS) / 1re"] },
+    { value: "grande_section", labels: { fr: "Grande section (GS)", en: "Grande section (GS)" }, aliases: ["GS", "Grande section (GS) / 2e"] },
+    { value: "cp", labels: { fr: "CP", en: "CP" }, aliases: ["CP / 3e"] },
+    { value: "ce1", labels: { fr: "CE1", en: "CE1" }, aliases: ["CE1 / 4e"] },
+    { value: "ce2", labels: { fr: "CE2", en: "CE2" }, aliases: ["CE2 / 5e"] },
+    { value: "cm1", labels: { fr: "CM1", en: "CM1" }, aliases: ["CM1 / 6e"] },
+    { value: "cm2", labels: { fr: "CM2", en: "CM2" }, aliases: ["CM2 / 7e"] },
+    { value: "sixieme", labels: { fr: "6e", en: "6e" }, aliases: ["6e / 8e"] },
+    { value: "cinquieme", labels: { fr: "5e", en: "5e" }, aliases: ["5e / 9e"] },
+    { value: "quatrieme", labels: { fr: "4e", en: "4e" }, aliases: ["4e / 10e"] },
+    { value: "troisieme", labels: { fr: "3e", en: "3e" }, aliases: ["3e / 11e"] },
+    { value: "seconde", labels: { fr: "Seconde", en: "Seconde" }, aliases: ["Seconde / Secondaire II – 1re année"] },
+    { value: "premiere", labels: { fr: "Première", en: "Première" }, aliases: ["Première / Secondaire II – 2e année"] },
+    { value: "terminale", labels: { fr: "Terminale", en: "Terminale" }, aliases: ["Terminale / Secondaire II – 3e année"] }
+  ],
+  switzerland: [
+    { value: "ch_1p", labels: { fr: "1P — 1re année primaire", en: "1P — Primary year 1" }, aliases: ["1P", "1re"] },
+    { value: "ch_2p", labels: { fr: "2P — 2e année primaire", en: "2P — Primary year 2" }, aliases: ["2P", "2e"] },
+    { value: "ch_3p", labels: { fr: "3P — 3e année primaire", en: "3P — Primary year 3" }, aliases: ["3P"] },
+    { value: "ch_4p", labels: { fr: "4P — 4e année primaire", en: "4P — Primary year 4" }, aliases: ["4P"] },
+    { value: "ch_5p", labels: { fr: "5P — 5e année primaire", en: "5P — Primary year 5" }, aliases: ["5P"] },
+    { value: "ch_6p", labels: { fr: "6P — 6e année primaire", en: "6P — Primary year 6" }, aliases: ["6P"] },
+    { value: "ch_7p", labels: { fr: "7P — 7e année primaire", en: "7P — Primary year 7" }, aliases: ["7P"] },
+    { value: "ch_8p", labels: { fr: "8P — 8e année primaire", en: "8P — Primary year 8" }, aliases: ["8P", "8e"] },
+    { value: "ch_9s", labels: { fr: "9e — secondaire I", en: "Year 9 — lower secondary" }, aliases: ["9S", "9e"] },
+    { value: "ch_10s", labels: { fr: "10e — secondaire I", en: "Year 10 — lower secondary" }, aliases: ["10S", "10e"] },
+    { value: "ch_11s", labels: { fr: "11e — secondaire I", en: "Year 11 — lower secondary" }, aliases: ["11S", "11e"] },
+    { value: "ch_sec2_1", labels: { fr: "Secondaire II — 1re année", en: "Upper secondary — year 1" }, aliases: ["Secondaire II – 1re année"] },
+    { value: "ch_sec2_2", labels: { fr: "Secondaire II — 2e année", en: "Upper secondary — year 2" }, aliases: ["Secondaire II – 2e année"] },
+    { value: "ch_sec2_3", labels: { fr: "Secondaire II — 3e année", en: "Upper secondary — year 3" }, aliases: ["Secondaire II – 3e année"] }
+  ],
+  united_states: [
+    { value: "us_k", labels: { fr: "Kindergarten (K)", en: "Kindergarten (K)" }, aliases: ["K", "Kindergarten"] },
+    ...Array.from({ length: 12 }, (_, index) => {
+      const grade = index + 1;
+      return {
+        value: `us_grade_${grade}`,
+        labels: { fr: `Grade ${grade}`, en: `Grade ${grade}` },
+        aliases: [`${grade}${grade === 1 ? "st" : grade === 2 ? "nd" : grade === 3 ? "rd" : "th"} grade`]
+      };
+    })
+  ],
+  belgium_french: [
+    ...Array.from({ length: 3 }, (_, index) => {
+      const year = index + 1;
+      return {
+        value: `be_fr_m${year}`,
+        labels: { fr: `M${year} — ${year}${year === 1 ? "re" : "e"} maternelle`, en: `M${year} — nursery year ${year}` },
+        aliases: [`M${year}`, `${year}${year === 1 ? "re" : "e"} maternelle`]
+      };
+    }),
+    ...Array.from({ length: 6 }, (_, index) => {
+      const year = index + 1;
+      return {
+        value: `be_fr_p${year}`,
+        labels: { fr: `P${year} — ${year}${year === 1 ? "re" : "e"} primaire`, en: `P${year} — primary year ${year}` },
+        aliases: [`P${year}`, `${year}${year === 1 ? "re" : "e"} primaire`]
+      };
+    }),
+    ...Array.from({ length: 7 }, (_, index) => {
+      const year = index + 1;
+      const optional = year === 7 ? " — selon la filière" : "";
+      return {
+        value: `be_fr_s${year}`,
+        labels: { fr: `S${year} — ${year}${year === 1 ? "re" : "e"} secondaire${optional}`, en: `S${year} — secondary year ${year}${year === 7 ? " — depending on pathway" : ""}` },
+        aliases: [`S${year}`, `${year}${year === 1 ? "re" : "e"} secondaire`]
+      };
+    })
+  ],
+  belgium_flemish: [
+    ...Array.from({ length: 3 }, (_, index) => {
+      const year = index + 1;
+      return {
+        value: `be_nl_k${year}`,
+        labels: { fr: `K${year} — ${year}e kleuterklas`, en: `K${year} — kindergarten year ${year}` },
+        aliases: [`K${year}`, `${year}e kleuterklas`]
+      };
+    }),
+    ...Array.from({ length: 6 }, (_, index) => {
+      const year = index + 1;
+      return {
+        value: `be_nl_l${year}`,
+        labels: { fr: `L${year} — ${year}e leerjaar lager onderwijs`, en: `L${year} — primary year ${year}` },
+        aliases: [`L${year}`, `${year}e leerjaar lager onderwijs`]
+      };
+    }),
+    ...Array.from({ length: 7 }, (_, index) => {
+      const year = index + 1;
+      return {
+        value: `be_nl_s${year}`,
+        labels: { fr: `S${year} — ${year}e leerjaar secundair onderwijs`, en: `S${year} — secondary year ${year}` },
+        aliases: [`S${year}`, `${year}e leerjaar secundair onderwijs`]
+      };
+    })
+  ],
+  belgium_german: [
+    ...Array.from({ length: 3 }, (_, index) => {
+      const year = index + 1;
+      return {
+        value: `be_de_k${year}`,
+        labels: { fr: `K${year} — ${year}. Kindergartenjahr`, en: `K${year} — kindergarten year ${year}` },
+        aliases: [`K${year}`, `${year}. Kindergartenjahr`]
+      };
+    }),
+    ...Array.from({ length: 6 }, (_, index) => {
+      const year = index + 1;
+      return {
+        value: `be_de_p${year}`,
+        labels: { fr: `P${year} — ${year}. Primarschuljahr`, en: `P${year} — primary year ${year}` },
+        aliases: [`P${year}`, `${year}. Primarschuljahr`]
+      };
+    }),
+    ...Array.from({ length: 7 }, (_, index) => {
+      const year = index + 1;
+      return {
+        value: `be_de_s${year}`,
+        labels: { fr: `S${year} — ${year}. Sekundarschuljahr${year === 7 ? " (professionnel)" : ""}`, en: `S${year} — secondary year ${year}${year === 7 ? " (vocational)" : ""}` },
+        aliases: [`S${year}`, `${year}. Sekundarschuljahr`]
+      };
+    })
+  ],
+  uk_england: [
+    { value: "uk_england_nursery", labels: { fr: "Nursery", en: "Nursery" } },
+    { value: "uk_england_reception", labels: { fr: "Reception", en: "Reception" } },
+    ...Array.from({ length: 13 }, (_, index) => ({
+      value: `uk_england_year_${index + 1}`,
+      labels: { fr: `Year ${index + 1}`, en: `Year ${index + 1}` }
+    }))
+  ],
+  uk_wales: [
+    { value: "uk_wales_nursery", labels: { fr: "Nursery", en: "Nursery" } },
+    { value: "uk_wales_reception", labels: { fr: "Reception", en: "Reception" } },
+    ...Array.from({ length: 13 }, (_, index) => ({
+      value: `uk_wales_year_${index + 1}`,
+      labels: { fr: `Year ${index + 1}`, en: `Year ${index + 1}` }
+    }))
+  ],
+  uk_scotland: [
+    { value: "uk_scotland_early_learning", labels: { fr: "Petite enfance (Nursery)", en: "Early learning and childcare (Nursery)" }, aliases: ["Nursery"] },
+    ...Array.from({ length: 7 }, (_, index) => ({
+      value: `uk_scotland_p${index + 1}`,
+      labels: { fr: `P${index + 1} — primaire`, en: `P${index + 1} — primary` }
+    })),
+    ...Array.from({ length: 6 }, (_, index) => ({
+      value: `uk_scotland_s${index + 1}`,
+      labels: { fr: `S${index + 1} — secondaire`, en: `S${index + 1} — secondary` }
+    }))
+  ],
+  uk_northern_ireland: [
+    { value: "uk_northern_ireland_preschool", labels: { fr: "Préscolaire (Pre-school)", en: "Pre-school" } },
+    ...Array.from({ length: 7 }, (_, index) => ({
+      value: `uk_northern_ireland_p${index + 1}`,
+      labels: { fr: `P${index + 1} — primaire`, en: `P${index + 1} — primary` }
+    })),
+    ...Array.from({ length: 7 }, (_, index) => ({
+      value: `uk_northern_ireland_year_${index + 8}`,
+      labels: { fr: `Year ${index + 8}`, en: `Year ${index + 8}` }
+    }))
+  ],
+  european_schools: [
+    ...Array.from({ length: 2 }, (_, index) => ({
+      value: `eu_school_n${index + 1}`,
+      labels: { fr: `N${index + 1} — cycle maternel`, en: `N${index + 1} — nursery cycle` },
+      aliases: [`N${index + 1}`]
+    })),
+    ...Array.from({ length: 5 }, (_, index) => ({
+      value: `eu_school_p${index + 1}`,
+      labels: { fr: `P${index + 1} — cycle primaire`, en: `P${index + 1} — primary cycle` },
+      aliases: [`P${index + 1}`]
+    })),
+    ...Array.from({ length: 7 }, (_, index) => {
+      const year = index + 1;
+      const cycleFr = year <= 3
+        ? "cycle d’observation"
+        : year <= 5
+          ? "cycle de pré-orientation"
+          : "cycle du Baccalauréat européen";
+      const cycleEn = year <= 3
+        ? "observation cycle"
+        : year <= 5
+          ? "pre-orientation cycle"
+          : "European Baccalaureate cycle";
+      return {
+        value: `eu_school_s${year}`,
+        labels: { fr: `S${year} — ${cycleFr}`, en: `S${year} — ${cycleEn}` },
+        aliases: [`S${year}`]
+      };
+    })
+  ],
+  isced_2011: [
+    { value: "isced_0", labels: { fr: "ISCED 0 — Éducation de la petite enfance", en: "ISCED 0 — Early childhood education" }, aliases: ["CITE 0"] },
+    { value: "isced_1", labels: { fr: "ISCED 1 — Enseignement primaire", en: "ISCED 1 — Primary education" }, aliases: ["CITE 1"] },
+    { value: "isced_2", labels: { fr: "ISCED 2 — Premier cycle du secondaire", en: "ISCED 2 — Lower secondary education" }, aliases: ["CITE 2"] },
+    { value: "isced_3", labels: { fr: "ISCED 3 — Deuxième cycle du secondaire", en: "ISCED 3 — Upper secondary education" }, aliases: ["CITE 3"] },
+    { value: "isced_4", labels: { fr: "ISCED 4 — Post-secondaire non supérieur", en: "ISCED 4 — Post-secondary non-tertiary education" }, aliases: ["CITE 4"] },
+    { value: "isced_5", labels: { fr: "ISCED 5 — Enseignement supérieur de cycle court", en: "ISCED 5 — Short-cycle tertiary education" }, aliases: ["CITE 5"] },
+    { value: "isced_6", labels: { fr: "ISCED 6 — Licence ou équivalent", en: "ISCED 6 — Bachelor’s or equivalent level" }, aliases: ["CITE 6"] },
+    { value: "isced_7", labels: { fr: "ISCED 7 — Master ou équivalent", en: "ISCED 7 — Master’s or equivalent level" }, aliases: ["CITE 7"] },
+    { value: "isced_8", labels: { fr: "ISCED 8 — Doctorat ou équivalent", en: "ISCED 8 — Doctoral or equivalent level" }, aliases: ["CITE 8"] }
+  ]
+};
 const PARTITION_TYPE_OPTIONS = [
   { type: "locationMode",    labelKey: "partitionTypeLocation", options: LOCATION_OPTIONS },
   { type: "groupMode",       labelKey: "partitionTypeGroup",    options: GROUP_MODE_OPTIONS },
@@ -157,7 +359,7 @@ function normalizeCatalogSlug(value) {
 }
 
 // COMPETENCY_CATALOG_SOURCE est défini dans js/competency-catalog.js, chargé
-// juste avant ce script par designer.html.
+// juste avant ce script par designer.php.
 
 function toRomanNumeral(value) {
   const number = Number(value);
@@ -826,6 +1028,7 @@ const DEFAULT_META = {
   learningHours: 0,
   learningMinutes: 0,
   modeDelivery: "",
+  schoolSystem: "",
   schoolLevel: "",
   sizeClass: "",
   designers: "",
@@ -859,7 +1062,6 @@ const board = document.getElementById("board");
 const sessionTpl = document.getElementById("session-template");
 const activityTpl = document.getElementById("activity-template");
 
-const addSessionBtn = document.getElementById("add-session-btn");
 const boardLayoutToggle = document.getElementById("board-layout-toggle");
 const boardLayoutListBtn = document.getElementById("board-layout-list-btn");
 const boardLayoutColumnsBtn = document.getElementById("board-layout-columns-btn");
@@ -868,6 +1070,7 @@ const boardLayoutColumnsText = document.getElementById("board-layout-columns-tex
 const boardLayoutGridBtn  = document.getElementById("board-layout-grid-btn");
 const boardLayoutGridText = document.getElementById("board-layout-grid-text");
 const newDesignBtn = document.getElementById("new-design-btn");
+const navNewDesignBtn = document.getElementById("nav-new-design-btn");
 const importDesignBtn = document.getElementById("import-design-btn");
 const exportDesignBtn = document.getElementById("export-design-btn");
 const infoBtn = document.getElementById("info-btn");
@@ -876,6 +1079,9 @@ const importFileInput = document.getElementById("import-file-input");
 const importModalBackdrop = document.getElementById("import-modal-backdrop");
 const importModalCancelBtn = document.getElementById("import-modal-cancel-btn");
 const importFileBtn = document.getElementById("import-file-btn");
+const importDropZone = document.getElementById("import-drop-zone");
+const importDropTitle = document.getElementById("import-drop-title");
+const importDropHint = document.getElementById("import-drop-hint");
 const importModelsSearch = document.getElementById("import-models-search");
 const importModelsFamily = document.getElementById("import-models-family");
 const importModelsList = document.getElementById("import-models-list");
@@ -915,6 +1121,7 @@ const metaDesignedDaysInput = document.getElementById("meta-designed-days");
 const metaDesignedHoursInput = document.getElementById("meta-designed-hours");
 const metaDesignedMinutesInput = document.getElementById("meta-designed-minutes");
 const metaDeliverySelect = document.getElementById("meta-delivery");
+const metaSchoolSystemSelect = document.getElementById("meta-school-system");
 const metaLevelSelect = document.getElementById("meta-level");
 const metaDayHoursInput = document.getElementById("meta-day-hours");
 const metaSizeClassInput = document.getElementById("meta-size-class");
@@ -1019,6 +1226,8 @@ const I18N = {
     expandPanel: "Déplier le panneau",
     addMoment: "Ajouter un moment",
     addMomentCompact: "Ajouter",
+    createMoment: "Créer un moment",
+    momentAdded: "Moment créé.",
     expandNotes: "Déplier les notes",
     collapseNotes: "Replier les notes",
     hideIntentions: "Masquer les intentions",
@@ -1040,8 +1249,25 @@ const I18N = {
     metaDescriptionLabel: "Description",
     metaCommandLabel: "Commande institutionnelle",
     metaDeliveryLabel: "Mode",
+    metaSchoolSystemLabel: "Système / classification",
     metaLevelLabel: "Niveau",
-    metaLevelScaleLabel: "France / Suisse",
+    metaLevelChooseSystemFirst: "Choisissez d’abord un système ou une classification",
+    metaLevelPlaceholder: "Choisissez un niveau",
+    schoolSystemFrance: "France",
+    schoolSystemSwitzerland: "Suisse (HarmoS)",
+    schoolSystemUnitedStates: "États-Unis (K–12)",
+    schoolSystemBelgiumFrench: "Belgique — Fédération Wallonie-Bruxelles",
+    schoolSystemBelgiumFlemish: "Belgique — Communauté flamande",
+    schoolSystemBelgiumGerman: "Belgique — Communauté germanophone",
+    schoolSystemUnitedKingdomEngland: "Royaume-Uni — Angleterre",
+    schoolSystemUnitedKingdomWales: "Royaume-Uni — Pays de Galles",
+    schoolSystemUnitedKingdomScotland: "Royaume-Uni — Écosse",
+    schoolSystemUnitedKingdomNorthernIreland: "Royaume-Uni — Irlande du Nord",
+    schoolSystemEuropeanSchools: "Système des Écoles européennes",
+    schoolSystemIsced: "International — ISCED 2011 (CITE)",
+    schoolSystemsNationalGroup: "Systèmes nationaux",
+    schoolSystemsTransnationalGroup: "Systèmes transnationaux",
+    schoolSystemsInternationalGroup: "Classification internationale",
     metaSizeLabel: "Taille du groupe",
     metaDesignersLabel: "Concepteur(s)",
     metaTrainersLabel: "Enseignant(s)",
@@ -1071,6 +1297,9 @@ const I18N = {
     importModalDesc: "Partez d’un modèle prérempli, ou chargez un fichier exporté depuis cette application. Le design actuel sera remplacé.",
     importFromFileTitle: "Depuis mon ordinateur",
     importChooseFile: "Choisir un fichier…",
+    importDropTitle: "Glissez-déposez un fichier ici",
+    importDropActive: "Relâchez pour importer",
+    importDropHint: "ou choisissez-le sur votre ordinateur",
     importFileFormats: "LDJ, JSON, CSV, Excel, Markdown",
     importModelsTitle: "Bibliothèque de modèles",
     importModelsLink: "Voir la bibliothèque",
@@ -1137,8 +1366,13 @@ const I18N = {
     activityInstructionsLabel: "Consignes pour les élèves",
     activityNotesLabel: "Notes de l'activité",
     sessionNotesLabel: "Notes de la séance",
+    duplicateMoment: "Dupliquer le moment",
+    duplicateActivity: "Dupliquer l’activité",
     deleteSession: "Supprimer la séance",
     deleteActivity: "Supprimer l'activité",
+    momentDuplicated: "Moment dupliqué juste après l’original.",
+    activityDuplicated: "Activité dupliquée juste après l’originale.",
+    copySuffix: "copie",
     activityDeleted: "Activité supprimée.",
     activityAdded: "Activité ajoutée.",
     sessionDeleted: "Séance supprimée.",
@@ -1249,6 +1483,7 @@ const I18N = {
     eval_certificative: "Certificative",
     infoTitle: "À propos",
     footerHelp: "Aide",
+    footerSharedDesigns: "Designs partagés",
     infoP1: "Cette application web monopage s’inspire de l’UCL Learning Designer :",
     infoP2: "(UCL Knowledge Lab, UCL Institute of Education, 2013-2026).",
     infoP3: "Traitement local par défaut : les données restent dans votre navigateur, sauf si vous vous connectez et enregistrez explicitement une production sur votre compte.",
@@ -1293,7 +1528,7 @@ const I18N = {
     gridColInstructions: "Consignes pour les élèves",
     gridColNotes: "Notes",
     gridAddActivity: "+ Activité",
-    gridAddSession: "+ Ajouter une séance",
+    gridAddSession: "+ Créer un moment",
     gridSessionPrefix: "Séance"
   },
   en: {
@@ -1306,6 +1541,8 @@ const I18N = {
     expandPanel: "Expand panel",
     addMoment: "Add moment",
     addMomentCompact: "Add",
+    createMoment: "Create a moment",
+    momentAdded: "Moment created.",
     expandNotes: "Expand notes",
     collapseNotes: "Collapse notes",
     hideIntentions: "Hide intentions",
@@ -1327,8 +1564,25 @@ const I18N = {
     metaDescriptionLabel: "Description",
     metaCommandLabel: "Institutional brief",
     metaDeliveryLabel: "Mode",
+    metaSchoolSystemLabel: "System / classification",
     metaLevelLabel: "Level",
-    metaLevelScaleLabel: "France / Switzerland",
+    metaLevelChooseSystemFirst: "Choose a system or classification first",
+    metaLevelPlaceholder: "Choose a level",
+    schoolSystemFrance: "France",
+    schoolSystemSwitzerland: "Switzerland (HarmoS)",
+    schoolSystemUnitedStates: "United States (K–12)",
+    schoolSystemBelgiumFrench: "Belgium — French Community",
+    schoolSystemBelgiumFlemish: "Belgium — Flemish Community",
+    schoolSystemBelgiumGerman: "Belgium — German-speaking Community",
+    schoolSystemUnitedKingdomEngland: "United Kingdom — England",
+    schoolSystemUnitedKingdomWales: "United Kingdom — Wales",
+    schoolSystemUnitedKingdomScotland: "United Kingdom — Scotland",
+    schoolSystemUnitedKingdomNorthernIreland: "United Kingdom — Northern Ireland",
+    schoolSystemEuropeanSchools: "European Schools system",
+    schoolSystemIsced: "International — ISCED 2011",
+    schoolSystemsNationalGroup: "National systems",
+    schoolSystemsTransnationalGroup: "Transnational systems",
+    schoolSystemsInternationalGroup: "International classification",
     metaSizeLabel: "Group size",
     metaDesignersLabel: "Designer(s)",
     metaTrainersLabel: "Teacher(s)",
@@ -1358,6 +1612,9 @@ const I18N = {
     importModalDesc: "Start from a pre-filled template, or load a file exported from this application. The current design will be replaced.",
     importFromFileTitle: "From my computer",
     importChooseFile: "Choose a file…",
+    importDropTitle: "Drag and drop a file here",
+    importDropActive: "Drop to import",
+    importDropHint: "or choose it from your computer",
     importFileFormats: "LDJ, JSON, CSV, Excel, Markdown",
     importModelsTitle: "Template library",
     importModelsLink: "Browse the library",
@@ -1424,8 +1681,13 @@ const I18N = {
     activityInstructionsLabel: "Instructions for students",
     activityNotesLabel: "Activity notes",
     sessionNotesLabel: "Session notes",
+    duplicateMoment: "Duplicate moment",
+    duplicateActivity: "Duplicate activity",
     deleteSession: "Delete session",
     deleteActivity: "Delete activity",
+    momentDuplicated: "Moment duplicated just after the original.",
+    activityDuplicated: "Activity duplicated just after the original.",
+    copySuffix: "copy",
     activityDeleted: "Activity deleted.",
     activityAdded: "Activity added.",
     sessionDeleted: "Session deleted.",
@@ -1536,6 +1798,7 @@ const I18N = {
     eval_certificative: "Certifying",
     infoTitle: "About",
     footerHelp: "Help",
+    footerSharedDesigns: "Shared designs",
     infoP1: "This single-page web app is inspired by the UCL Learning Designer:",
     infoP2: "(UCL Knowledge Lab, UCL Institute of Education, 2013-2026).",
     infoP3: "Local processing by default: data stays in your browser unless you sign in and explicitly save a design to your account.",
@@ -1580,7 +1843,7 @@ const I18N = {
     gridColInstructions: "Instructions for students",
     gridColNotes: "Notes",
     gridAddActivity: "+ Activity",
-    gridAddSession: "+ Add a session",
+    gridAddSession: "+ Create a moment",
     gridSessionPrefix: "Session"
   }
 };
@@ -1592,6 +1855,53 @@ function currentLang() {
 function t(key) {
   const lang = currentLang();
   return I18N[lang][key] || I18N.fr[key] || key;
+}
+
+function localizedSchoolLabel(option) {
+  return option?.labels?.[currentLang()] || option?.labels?.fr || "";
+}
+
+function schoolLevelsFor(system) {
+  return SCHOOL_LEVEL_OPTIONS[system] || [];
+}
+
+function schoolLevelOption(level, system = "") {
+  if (system) {
+    return schoolLevelsFor(system).find((option) => option.value === level) || null;
+  }
+  for (const options of Object.values(SCHOOL_LEVEL_OPTIONS)) {
+    const option = options.find((candidate) => candidate.value === level);
+    if (option) return option;
+  }
+  return null;
+}
+
+function schoolSystemForLevel(level) {
+  return Object.keys(SCHOOL_LEVEL_OPTIONS).find((system) => schoolLevelOption(level, system)) || "";
+}
+
+function renderSchoolLevelOptions() {
+  if (!metaLevelSelect) return;
+  const system = state.meta.schoolSystem;
+  const levels = schoolLevelsFor(system);
+  metaLevelSelect.replaceChildren();
+
+  const placeholder = document.createElement("option");
+  placeholder.value = "";
+  placeholder.textContent = system ? t("metaLevelPlaceholder") : t("metaLevelChooseSystemFirst");
+  metaLevelSelect.appendChild(placeholder);
+
+  levels.forEach((level) => {
+    const option = document.createElement("option");
+    option.value = level.value;
+    option.textContent = localizedSchoolLabel(level);
+    metaLevelSelect.appendChild(option);
+  });
+
+  metaLevelSelect.disabled = !system;
+  metaLevelSelect.value = schoolLevelOption(state.meta.schoolLevel, system)
+    ? state.meta.schoolLevel
+    : "";
 }
 
 function setButtonLabel(button, iconClass, text) {
@@ -1714,8 +2024,7 @@ function ensureNoticeHost() {
   host = document.createElement("div");
   host.id = "app-notice-host";
   host.className = "app-notice-host";
-  host.setAttribute("aria-live", "polite");
-  host.setAttribute("aria-atomic", "true");
+  host.setAttribute("aria-hidden", "true");
   document.body.appendChild(host);
   return host;
 }
@@ -2015,6 +2324,10 @@ function applyLocalizedUI() {
   const partAddBtn = document.getElementById("partition-add-line-btn");
   if (partAddBtn) partAddBtn.textContent = t("partitionAdd");
   document.getElementById("new-design-modal-title").textContent = t("newDesignModalTitle");
+  if (navNewDesignBtn) {
+    navNewDesignBtn.setAttribute("aria-label", t("newDesignModalTitle"));
+    navNewDesignBtn.setAttribute("title", t("newDesignModalTitle"));
+  }
   newDesignModalMsg.textContent = t("newDesignModalMsg");
   newDesignCancelBtn.textContent = t("cancel");
   newDesignConfirmBtn.textContent = t("newDesignModalConfirm");
@@ -2026,8 +2339,25 @@ function applyLocalizedUI() {
   document.getElementById("label-meta-description").textContent = t("metaDescriptionLabel");
   document.getElementById("label-meta-command").textContent = t("metaCommandLabel");
   document.getElementById("label-meta-delivery").textContent = t("metaDeliveryLabel");
+  document.getElementById("label-meta-school-system").textContent = t("metaSchoolSystemLabel");
   document.getElementById("label-meta-level").textContent = t("metaLevelLabel");
-  document.getElementById("optgroup-meta-level").label = t("metaLevelScaleLabel");
+  document.getElementById("opt-meta-school-system-france").textContent = t("schoolSystemFrance");
+  document.getElementById("opt-meta-school-system-switzerland").textContent = t("schoolSystemSwitzerland");
+  document.getElementById("opt-meta-school-system-us").textContent = t("schoolSystemUnitedStates");
+  document.getElementById("opt-meta-school-system-belgium-french").textContent = t("schoolSystemBelgiumFrench");
+  document.getElementById("opt-meta-school-system-belgium-flemish").textContent = t("schoolSystemBelgiumFlemish");
+  document.getElementById("opt-meta-school-system-belgium-german").textContent = t("schoolSystemBelgiumGerman");
+  document.getElementById("opt-meta-school-system-uk-england").textContent = t("schoolSystemUnitedKingdomEngland");
+  document.getElementById("opt-meta-school-system-uk-wales").textContent = t("schoolSystemUnitedKingdomWales");
+  document.getElementById("opt-meta-school-system-uk-scotland").textContent = t("schoolSystemUnitedKingdomScotland");
+  document.getElementById("opt-meta-school-system-uk-northern-ireland").textContent = t("schoolSystemUnitedKingdomNorthernIreland");
+  document.getElementById("opt-meta-school-system-european-schools").textContent = t("schoolSystemEuropeanSchools");
+  document.getElementById("opt-meta-school-system-isced").textContent = t("schoolSystemIsced");
+  document.getElementById("optgroup-meta-school-systems-national").label = t("schoolSystemsNationalGroup");
+  document.getElementById("optgroup-meta-school-systems-transnational").label = t("schoolSystemsTransnationalGroup");
+  document.getElementById("optgroup-meta-school-systems-international").label = t("schoolSystemsInternationalGroup");
+  metaSchoolSystemSelect.value = state.meta.schoolSystem;
+  renderSchoolLevelOptions();
   document.getElementById("label-meta-size-class").textContent = t("metaSizeLabel");
   document.getElementById("label-meta-designers").textContent = t("metaDesignersLabel");
   document.getElementById("label-meta-trainers").textContent = t("metaTrainersLabel");
@@ -2067,7 +2397,6 @@ function applyLocalizedUI() {
   setButtonLabel(exportDesignBtn, "fa-solid fa-file-export", t("export"));
   setButtonLabel(saveBtn, "fa-regular fa-floppy-disk", t("save"));
   [
-    [addSessionBtn, t("addMoment")],
     [newDesignBtn, t("new")],
     [importDesignBtn, t("import")],
     [saveBtn, t("save")],
@@ -2083,8 +2412,10 @@ function applyLocalizedUI() {
   infoBtn.setAttribute("aria-haspopup", "dialog");
   const footerAboutBtn = document.getElementById("footer-about-btn");
   const footerHelpBtn = document.getElementById("footer-help-btn");
+  const footerSharedDesignsBtn = document.getElementById("footer-shared-designs-btn");
   if (footerAboutBtn) footerAboutBtn.textContent = t("infoTitle");
   if (footerHelpBtn) footerHelpBtn.textContent = t("footerHelp");
+  if (footerSharedDesignsBtn) footerSharedDesignsBtn.textContent = t("footerSharedDesigns");
   importDesignBtn.setAttribute("aria-haspopup", "dialog");
   const importModalTitle = document.getElementById("import-modal-title");
   if (importModalTitle) importModalTitle.textContent = t("importTitle");
@@ -2096,6 +2427,8 @@ function applyLocalizedUI() {
   if (importModelsSectionTitle) importModelsSectionTitle.textContent = t("importModelsTitle");
   const importFileFormats = document.getElementById("import-file-formats");
   if (importFileFormats) importFileFormats.textContent = t("importFileFormats");
+  if (importDropTitle) importDropTitle.textContent = t("importDropTitle");
+  if (importDropHint) importDropHint.textContent = t("importDropHint");
   const importModelsSearchLabel = document.getElementById("import-models-search-label");
   if (importModelsSearchLabel) importModelsSearchLabel.textContent = t("importModelsSearchLabel");
   const importModelsFamilyLabel = document.getElementById("import-models-family-label");
@@ -2187,13 +2520,15 @@ function applyLocalizedUI() {
 document.addEventListener("site-footer-ready", () => {
   const footerAboutBtn = document.getElementById("footer-about-btn");
   const footerHelpBtn = document.getElementById("footer-help-btn");
+  const footerSharedDesignsBtn = document.getElementById("footer-shared-designs-btn");
   if (footerAboutBtn) footerAboutBtn.textContent = t("infoTitle");
   if (footerHelpBtn) footerHelpBtn.textContent = t("footerHelp");
+  if (footerSharedDesignsBtn) footerSharedDesignsBtn.textContent = t("footerSharedDesigns");
 });
 
 function updateResponsiveButtonLabels() {
-  const compactToolbar = window.innerWidth <= 520;
-  setButtonLabel(addSessionBtn, "fa-solid fa-plus", compactToolbar ? t("addMomentCompact") : t("addMoment"));
+  // Les actions de la barre restent compactes sur mobile via CSS. La création
+  // d'un moment est désormais proposée directement à la fin du design.
 }
 
 function hydrateState(parsed, fallback = defaultState()) {
@@ -2280,7 +2615,17 @@ function hydrateState(parsed, fallback = defaultState()) {
   if (!["", "onsite", "online", "hybrid"].includes(hydrated.meta.modeDelivery)) {
     hydrated.meta.modeDelivery = "";
   }
-  hydrated.meta.schoolLevel = lookupValue(hydrated.meta.schoolLevel, CSV_LEVEL_LOOKUP, "");
+  const normalizedSchoolSystem = lookupValue(
+    hydrated.meta.schoolSystem,
+    CSV_SCHOOL_SYSTEM_LOOKUP,
+    ""
+  );
+  const normalizedSchoolLevel = lookupSchoolLevel(
+    hydrated.meta.schoolLevel,
+    normalizedSchoolSystem
+  );
+  hydrated.meta.schoolLevel = normalizedSchoolLevel;
+  hydrated.meta.schoolSystem = normalizedSchoolSystem || schoolSystemForLevel(normalizedSchoolLevel);
   if (hydrated.meta.activeTab === "timeline") hydrated.meta.activeTab = "settings";
   if (!["settings", "analysis", "chronology"].includes(hydrated.meta.activeTab)) {
     hydrated.meta.activeTab = "settings";
@@ -3196,6 +3541,79 @@ function normalizeAiasState(value) {
   return defaultAiasState();
 }
 
+function createActivity() {
+  return {
+    id: nextId(),
+    type: "undefined",
+    duration: 10,
+    groupMode: "whole",
+    teachingMode: "undefined",
+    syncMode: "sync",
+    locationMode: "onsite",
+    evaluationMode: "none",
+    aias: defaultAiasState(),
+    description: "",
+    instructions: "",
+    notes: "",
+    tools: []
+  };
+}
+
+function createSession() {
+  return {
+    id: nextId(),
+    title: "",
+    objectives: "",
+    intentions: "",
+    notes: "",
+    notesExpanded: false,
+    activities: []
+  };
+}
+
+function focusCreatedSession(sessionId) {
+  window.requestAnimationFrame(() => {
+    const sessionElement = Array.from(
+      board.querySelectorAll(".session-card, .grid-session-row")
+    ).find((element) => element.dataset.sessionId === sessionId);
+    if (!sessionElement) return;
+
+    const titleInput = sessionElement.querySelector(".session-title, .grid-session-title-input");
+    sessionElement.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "nearest" });
+    titleInput?.focus({ preventScroll: true });
+  });
+}
+
+function addSessionAndRender() {
+  const session = createSession();
+  state.sessions.push(session);
+  saveState();
+  render();
+  focusCreatedSession(session.id);
+  announce(t("momentAdded"));
+}
+
+function createAddSessionCard() {
+  const button = document.createElement("button");
+  button.type = "button";
+  button.className = "add-session-card";
+  button.setAttribute("aria-label", t("createMoment"));
+  button.title = t("createMoment");
+
+  const icon = document.createElement("span");
+  icon.className = "add-session-card-icon";
+  icon.setAttribute("aria-hidden", "true");
+  icon.textContent = "+";
+
+  const label = document.createElement("span");
+  label.className = "add-session-card-label";
+  label.textContent = t("createMoment");
+
+  button.append(icon, label);
+  button.addEventListener("click", addSessionAndRender);
+  return button;
+}
+
 function aiasLevelDefinition(level) {
   return AIAS_LEVELS.find((item) => item.level === Number(level)) || null;
 }
@@ -3521,16 +3939,26 @@ function renderLegend(container, data, showPct = true) {
 }
 
 const LEARNING_PIE_CODES = {
-  read: "Acq",
-  collaborate: "Col",
-  discuss: "Dis",
-  investigate: "Inq",
-  practice: "Pra",
-  produce: "Pro"
+  fr: {
+    read: "Acq",
+    collaborate: "Col",
+    discuss: "Dis",
+    investigate: "Inv",
+    practice: "Pra",
+    produce: "Pro"
+  },
+  en: {
+    read: "Acq",
+    collaborate: "Col",
+    discuss: "Dis",
+    investigate: "Inq",
+    practice: "Pra",
+    produce: "Pro"
+  }
 };
 
 function learningPieCode(segmentKey) {
-  return LEARNING_PIE_CODES[segmentKey] || "–";
+  return LEARNING_PIE_CODES[currentLang()]?.[segmentKey] || "–";
 }
 
 function hidePieTooltip(tooltipEl) {
@@ -4027,7 +4455,8 @@ function renderTopPanel() {
     metaLearningHoursInput.value = state.meta.learningHours;
     metaLearningMinutesInput.value = state.meta.learningMinutes;
     metaDeliverySelect.value = state.meta.modeDelivery;
-    metaLevelSelect.value = state.meta.schoolLevel;
+    metaSchoolSystemSelect.value = state.meta.schoolSystem;
+    renderSchoolLevelOptions();
     metaDayHoursInput.value = getDayHours();
     metaSizeClassInput.value = state.meta.sizeClass;
     metaDesignersInput.value = state.meta.designers;
@@ -4154,8 +4583,13 @@ function labelForDeliveryMode(mode) {
   return t("modeOnsite");
 }
 
-function labelForSchoolLevel(level) {
-  return SCHOOL_LEVEL_OPTIONS.find((option) => option.value === level)?.label || "-";
+function labelForSchoolSystem(system) {
+  const option = SCHOOL_SYSTEM_OPTIONS.find((candidate) => candidate.value === system);
+  return localizedSchoolLabel(option) || "-";
+}
+
+function labelForSchoolLevel(level, system = state.meta.schoolSystem) {
+  return localizedSchoolLabel(schoolLevelOption(level, system)) || "-";
 }
 
 function labelForEvaluationMode(mode) {
@@ -4323,6 +4757,7 @@ function buildMarkdownExport(scope = "full", sessionIds = null) {
   const designed = splitMinutesToPedagogicalTime(totalExportDesignedMinutes(sessionIds), getDayHours());
   const lines = [`# ${state.meta.name || "Design Learning"}`, "", "## Paramètres", ""];
   lines.push(`- Mode: ${labelForDeliveryMode(state.meta.modeDelivery)}`);
+  lines.push(`- Système scolaire: ${labelForSchoolSystem(state.meta.schoolSystem)}`);
   lines.push(`- Niveau: ${labelForSchoolLevel(state.meta.schoolLevel)}`);
   lines.push(`- Taille du groupe: ${state.meta.sizeClass || "-"}`);
   lines.push(`- Concepteur(s): ${state.meta.designers || "-"}`);
@@ -4487,6 +4922,7 @@ function buildHtmlExportDocument(scope = "full", sessionIds = null) {
   <section>
     <h2>Paramètres</h2>
     <p><strong>Mode:</strong> ${escapeHtml(labelForDeliveryMode(state.meta.modeDelivery))}</p>
+    <p><strong>Système scolaire:</strong> ${escapeHtml(labelForSchoolSystem(state.meta.schoolSystem))}</p>
     <p><strong>Niveau:</strong> ${escapeHtml(labelForSchoolLevel(state.meta.schoolLevel))}</p>
     <p><strong>Taille du groupe:</strong> ${escapeHtml(state.meta.sizeClass || "-")}</p>
     <p><strong>Concepteur(s):</strong> ${escapeHtml(state.meta.designers || "-")}</p>
@@ -4907,6 +5343,7 @@ function buildFullWordBody(sessionIds = null) {
   body.push(wordParagraph("Paramètres", "Heading1"));
   body.push(wordFieldTable([
     ["Mode", labelForDeliveryMode(state.meta.modeDelivery)],
+    ["Système scolaire", labelForSchoolSystem(state.meta.schoolSystem)],
     ["Niveau", labelForSchoolLevel(state.meta.schoolLevel)],
     ["Taille du groupe", state.meta.sizeClass || "-"],
     ["Concepteur(s)", state.meta.designers || "-"],
@@ -5137,6 +5574,7 @@ function buildSpreadsheetRows(scope = "full", sessionIds = null) {
           "",
           state.meta.name || "",
           labelForDeliveryMode(state.meta.modeDelivery),
+          labelForSchoolSystem(state.meta.schoolSystem),
           labelForSchoolLevel(state.meta.schoolLevel),
           state.meta.sizeClass || "",
           state.meta.designers || "",
@@ -5181,6 +5619,7 @@ function buildSpreadsheetRows(scope = "full", sessionIds = null) {
             .join(";"),
           state.meta.name || "",
           labelForDeliveryMode(state.meta.modeDelivery),
+          labelForSchoolSystem(state.meta.schoolSystem),
           labelForSchoolLevel(state.meta.schoolLevel),
           state.meta.sizeClass || "",
           state.meta.designers || "",
@@ -5221,6 +5660,7 @@ const SPREADSHEET_COLUMNS = [
   { key: "activity_competencies", label: "Compétences", width: 22 },
   { key: "design_title", label: "Titre du design", width: 22 },
   { key: "design_mode", label: "Mode du design", width: 16 },
+  { key: "design_school_system", label: "Système scolaire", width: 22 },
   { key: "design_level", label: "Niveau", width: 30 },
   { key: "design_group_size", label: "Taille du groupe", width: 16 },
   { key: "design_designers", label: "Concepteur(s)", width: 18 },
@@ -5454,15 +5894,55 @@ const CSV_LOCATION_LOOKUP = buildLookup([
   ["other", I18N.fr.activityModeOther, I18N.en.activityModeOther]
 ]);
 
-const CSV_LEVEL_LOOKUP = buildLookup(
-  SCHOOL_LEVEL_OPTIONS.map((option) => [
+const SCHOOL_SYSTEM_ALIASES = {
+  france: ["système français", "French system"],
+  switzerland: ["système suisse", "Swiss system"],
+  united_states: ["K-12", "US K-12", "American system"],
+  belgium_french: ["Belgique francophone", "Communauté française de Belgique", "Fédération Wallonie-Bruxelles", "French Community of Belgium"],
+  belgium_flemish: ["Belgique néerlandophone", "Communauté flamande", "Vlaamse Gemeenschap", "Flemish Community"],
+  belgium_german: ["Belgique germanophone", "Communauté germanophone", "Deutschsprachige Gemeinschaft", "German-speaking Community"],
+  uk_england: ["Angleterre", "England", "English school system"],
+  uk_wales: ["Pays de Galles", "Wales", "Welsh school system"],
+  uk_scotland: ["Écosse", "Ecosse", "Scotland", "Scottish school system"],
+  uk_northern_ireland: ["Irlande du Nord", "Northern Ireland", "Northern Irish school system"],
+  european_schools: ["Écoles européennes", "Ecoles europeennes", "European Schools", "Schola Europaea"],
+  isced_2011: ["ISCED", "ISCED 2011", "CITE", "CITE 2011"]
+};
+
+const CSV_SCHOOL_SYSTEM_LOOKUP = buildLookup(
+  SCHOOL_SYSTEM_OPTIONS.map((option) => [
     option.value,
-    option.label,
-    option.label.replaceAll(" / ", "/"),
-    option.france,
-    option.swiss
+    option.labels.fr,
+    option.labels.en,
+    ...(SCHOOL_SYSTEM_ALIASES[option.value] || [])
   ])
 );
+
+const CSV_LEVEL_LOOKUPS = Object.fromEntries(
+  Object.entries(SCHOOL_LEVEL_OPTIONS).map(([system, options]) => [
+    system,
+    buildLookup(options.map((option) => [
+      option.value,
+      option.labels.fr,
+      option.labels.en,
+      ...(option.aliases || [])
+    ]))
+  ])
+);
+
+const CSV_LEVEL_LOOKUP = buildLookup(
+  Object.values(SCHOOL_LEVEL_OPTIONS).flat().map((option) => [
+    option.value,
+    option.labels.fr,
+    option.labels.en,
+    ...(option.aliases || [])
+  ])
+);
+
+function lookupSchoolLevel(raw, system = "") {
+  const lookup = CSV_LEVEL_LOOKUPS[system] || CSV_LEVEL_LOOKUP;
+  return lookupValue(raw, lookup, "");
+}
 
 const CSV_EVAL_LOOKUP = buildLookup([
   ["none", I18N.fr.eval_none, I18N.en.eval_none, "aucune evaluation", "none"],
@@ -5641,7 +6121,15 @@ function buildStateFromCsv(csvText) {
       const dayHours = Math.max(1, parseCsvInteger(read("design_day_hours"), DEFAULT_DAY_HOURS));
       imported.meta.name = read("design_title");
       imported.meta.modeDelivery = lookupValue(read("design_mode"), CSV_LOCATION_LOOKUP, "onsite");
-      imported.meta.schoolLevel = lookupValue(read("design_level"), CSV_LEVEL_LOOKUP, "");
+      imported.meta.schoolSystem = lookupValue(
+        read("design_school_system"),
+        CSV_SCHOOL_SYSTEM_LOOKUP,
+        ""
+      );
+      imported.meta.schoolLevel = lookupSchoolLevel(
+        read("design_level"),
+        imported.meta.schoolSystem
+      );
       imported.meta.sizeClass = read("design_group_size").trim();
       imported.meta.designers = read("design_designers");
       imported.meta.trainers = read("design_trainers");
@@ -5835,8 +6323,11 @@ function buildStateFromMarkdown(markdownText) {
       const field = parseMarkdownFieldLine(line);
       if (field) {
         if (field.key === "mode") imported.meta.modeDelivery = lookupValue(field.value, CSV_LOCATION_LOOKUP, "");
+        if (["systeme scolaire", "school system"].includes(field.key)) {
+          imported.meta.schoolSystem = lookupValue(field.value, CSV_SCHOOL_SYSTEM_LOOKUP, "");
+        }
         if (["niveau", "level"].includes(field.key)) {
-          imported.meta.schoolLevel = lookupValue(field.value, CSV_LEVEL_LOOKUP, "");
+          imported.meta.schoolLevel = lookupSchoolLevel(field.value, imported.meta.schoolSystem);
         }
         if (field.key === "taille du groupe") imported.meta.sizeClass = field.value;
         if (field.key === "concepteur(s)") imported.meta.designers = field.value;
@@ -6159,7 +6650,7 @@ function openImportPicker(format = "") {
     : normalized === "xlsx" ? ".xlsx,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
     : normalized === "ldj" ? ".ldj,.json,application/json,text/json,text/plain"
     : normalized === "markdown" || normalized === "md" ? ".md,.markdown,text/markdown,text/plain"
-    : "";
+    : ".json,.ldj,.csv,.xlsx,.md,.markdown,application/json,text/csv,text/markdown";
   importFileInput.value = "";
   importFileInput.click();
 }
@@ -6325,7 +6816,7 @@ function buildModelCard(entry) {
 
   const useButton = document.createElement("button");
   useButton.type = "button";
-  useButton.className = "btn btn-light import-model-action import-model-use-action";
+  useButton.className = "btn btn-light import-model-action";
   useButton.dataset.modelAction = "apply";
   useButton.innerHTML = `<span class="btn-label"><i class="fa-solid fa-file-import btn-icon-inline" aria-hidden="true"></i>${escapeHtml(t("importModelUseButton"))}</span>`;
 
@@ -6445,9 +6936,11 @@ function renderModelPreview(payload) {
     number.textContent = String(sessionIndex + 1);
     const title = document.createElement("h3");
     const outlineMoment = entry.outline?.[sessionIndex];
-    title.textContent = currentLang() === "en"
+    const previewMomentTitle = currentLang() === "en"
       ? (outlineMoment?.titleEn || session.title)
       : (outlineMoment?.titleFr || outlineMoment?.title || session.title);
+    title.textContent = String(previewMomentTitle || "")
+      .replace(/^\s*\d+\s*[.)·:–—-]\s*/, "");
     momentHeader.append(number, title);
     moment.appendChild(momentHeader);
     addModelPreviewText(moment, t("importModelPreviewObjectives"), session.objectives, "import-model-preview-objectives");
@@ -6562,6 +7055,7 @@ function openImportModal() {
 }
 
 function closeImportModal() {
+  setImportDropActive(false);
   closeModelPreview({ restoreFocus: false });
   closeModal(importModalBackdrop);
 }
@@ -6962,6 +7456,114 @@ function clearDragIndicators() {
   clearActivityDropIndicators();
 }
 
+function cloneSerializableValue(value) {
+  if (typeof window.structuredClone === "function") {
+    return window.structuredClone(value);
+  }
+  return JSON.parse(JSON.stringify(value));
+}
+
+function copiedSessionTitle(title) {
+  const sourceTitle = toPlainTextareaValue(title).trim();
+  if (!sourceTitle) return "";
+
+  const baseTitle = sourceTitle.replace(/\s+\((?:copie|copy)(?:\s+\d+)?\)$/i, "");
+  const suffix = t("copySuffix");
+  const usedTitles = new Set(
+    state.sessions.map((session) => toPlainTextareaValue(session.title).trim().toLocaleLowerCase())
+  );
+  let copyNumber = 1;
+  let candidate = `${baseTitle} (${suffix})`;
+  while (usedTitles.has(candidate.toLocaleLowerCase())) {
+    copyNumber += 1;
+    candidate = `${baseTitle} (${suffix} ${copyNumber})`;
+  }
+  return candidate;
+}
+
+function cloneActivity(activity) {
+  const copy = cloneSerializableValue(activity);
+  copy.id = nextId();
+  normalizeActivity(copy);
+  return copy;
+}
+
+function cloneSession(session) {
+  const copy = cloneSerializableValue(session);
+  copy.id = nextId();
+  copy.title = copiedSessionTitle(session.title);
+  copy.notesExpanded = false;
+  copy.activities = Array.isArray(session.activities)
+    ? session.activities.map(cloneActivity)
+    : [];
+  return copy;
+}
+
+function duplicateActivity(sessionId, activityId) {
+  const session = state.sessions.find((item) => item.id === sessionId);
+  if (!session) return null;
+  const activityIndex = session.activities.findIndex((activity) => activity.id === activityId);
+  if (activityIndex < 0) return null;
+  const copy = cloneActivity(session.activities[activityIndex]);
+  session.activities.splice(activityIndex + 1, 0, copy);
+  return copy;
+}
+
+function duplicateSession(sessionId) {
+  const sessionIndex = state.sessions.findIndex((session) => session.id === sessionId);
+  if (sessionIndex < 0) return null;
+  const copy = cloneSession(state.sessions[sessionIndex]);
+  state.sessions.splice(sessionIndex + 1, 0, copy);
+  return copy;
+}
+
+function focusDuplicatedItem(kind, itemId) {
+  window.requestAnimationFrame(() => {
+    const candidates = kind === "session"
+      ? board.querySelectorAll(".session-card, .grid-session-row")
+      : board.querySelectorAll(".activity-card, .grid-activity-row");
+    const target = Array.from(candidates).find((element) => (
+      kind === "session"
+        ? element.dataset.sessionId === itemId
+        : element.dataset.activityId === itemId || element.dataset.actId === itemId
+    ));
+    if (!target) return;
+
+    target.classList.add("is-duplicated");
+    const gridButton = target.querySelector(
+      kind === "session" ? ".grid-duplicate-session-btn" : ".grid-duplicate-activity-btn"
+    );
+    const focusTarget = gridButton || target;
+    if (focusTarget === target && !target.hasAttribute("tabindex")) target.tabIndex = -1;
+    focusTarget.focus({ preventScroll: true });
+    const reduceMotion = window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches;
+    target.scrollIntoView({
+      behavior: reduceMotion ? "auto" : "smooth",
+      block: "nearest",
+      inline: "nearest"
+    });
+    window.setTimeout(() => target.classList.remove("is-duplicated"), 1400);
+  });
+}
+
+function duplicateActivityAndRender(sessionId, activityId) {
+  const copy = duplicateActivity(sessionId, activityId);
+  if (!copy) return;
+  saveState();
+  render();
+  focusDuplicatedItem("activity", copy.id);
+  showNotice(t("activityDuplicated"), "success");
+}
+
+function duplicateSessionAndRender(sessionId) {
+  const copy = duplicateSession(sessionId);
+  if (!copy) return;
+  saveState();
+  render();
+  focusDuplicatedItem("session", copy.id);
+  showNotice(t("momentDuplicated"), "success");
+}
+
 function moveSession(sourceId, targetId, position) {
   if (sourceId === targetId) return;
   const sourceIndex = state.sessions.findIndex((session) => session.id === sourceId);
@@ -7120,9 +7722,18 @@ function buildGridSessionRow(session, sIdx) {
   totalSpan.className = "grid-session-total";
   totalSpan.textContent = `— ${totalDur} min`;
 
+  const duplicateButton = document.createElement("button");
+  duplicateButton.type = "button";
+  duplicateButton.className = "icon-btn duplicate-session-btn grid-duplicate-session-btn";
+  duplicateButton.title = t("duplicateMoment");
+  duplicateButton.setAttribute("aria-label", `${t("duplicateMoment")} ${sIdx + 1}`);
+  duplicateButton.innerHTML = '<i class="fa-regular fa-copy" aria-hidden="true"></i>';
+  duplicateButton.addEventListener("click", () => duplicateSessionAndRender(session.id));
+
   td.appendChild(lbl);
   td.appendChild(titleInput);
   td.appendChild(totalSpan);
+  td.appendChild(duplicateButton);
   tr.appendChild(td);
   return tr;
 }
@@ -7278,7 +7889,7 @@ function buildGridActivityRow(session, act, aIdx) {
   instructionsTd.appendChild(instructionsInput);
   tr.appendChild(instructionsTd);
 
-  // Col 12 — Actions ↑ ↓ ✕
+  // Col 12 — Actions ↑ ↓ dupliquer ✕
   const actTd = mkTd();
   const btns = document.createElement("div");
   btns.className = "grid-action-btns";
@@ -7289,6 +7900,7 @@ function buildGridActivityRow(session, act, aIdx) {
     b.className = "grid-action-btn" + (extraClass ? " " + extraClass : "");
     b.textContent = label;
     b.title = title;
+    b.setAttribute("aria-label", title);
     b.addEventListener("click", handler);
     return b;
   };
@@ -7305,6 +7917,16 @@ function buildGridActivityRow(session, act, aIdx) {
       [session.activities[aIdx + 1], session.activities[aIdx]];
     saveState(); renderGridView(); renderTopPanel(); renderPartitionView();
   }));
+  const sessionIndex = state.sessions.indexOf(session);
+  const duplicateActivityLabel = [
+    `${t("duplicateActivity")} ${aIdx + 1}`,
+    sessionIndex >= 0 ? `${t("gridSessionPrefix")} ${sessionIndex + 1}` : ""
+  ].filter(Boolean).join(" · ");
+  const duplicateButton = mkBtn("", duplicateActivityLabel, () => {
+    duplicateActivityAndRender(session.id, act.id);
+  }, "grid-duplicate-activity-btn");
+  duplicateButton.innerHTML = '<i class="fa-regular fa-copy" aria-hidden="true"></i>';
+  btns.appendChild(duplicateButton);
   btns.appendChild(mkBtn("✕", t("deleteActivity") || "Supprimer", () => {
     session.activities.splice(aIdx, 1);
     saveState(); renderGridView(); renderTopPanel(); renderPartitionView();
@@ -7367,13 +7989,7 @@ function renderGridView() {
     addActBtn.type = "button";
     addActBtn.textContent = t("gridAddActivity");
     addActBtn.addEventListener("click", () => {
-      session.activities.push({
-        id: nextId(), type: "undefined", duration: 10,
-        groupMode: "whole", teachingMode: "undefined",
-        syncMode: "sync", locationMode: "onsite",
-        evaluationMode: "none", aias: defaultAiasState(),
-        description: "", instructions: "", notes: "", tools: []
-      });
+      session.activities.push(createActivity());
       saveState(); renderGridView(); renderTopPanel(); renderPartitionView();
     });
     addActTd.appendChild(addActBtn);
@@ -7390,13 +8006,8 @@ function renderGridView() {
   addSessBtn.className = "grid-add-session-btn";
   addSessBtn.type = "button";
   addSessBtn.textContent = t("gridAddSession");
-  addSessBtn.addEventListener("click", () => {
-    state.sessions.push({
-      id: nextId(), title: "", objectives: "", intentions: "", notes: "",
-      notesExpanded: false, activities: []
-    });
-    saveState(); renderGridView(); renderTopPanel(); renderPartitionView();
-  });
+  addSessBtn.setAttribute("aria-label", t("createMoment"));
+  addSessBtn.addEventListener("click", addSessionAndRender);
   addSessTd.appendChild(addSessBtn);
   addSessRow.appendChild(addSessTd);
   tbody.appendChild(addSessRow);
@@ -7455,6 +8066,7 @@ function render() {
     const totalDuration = frag.querySelector(".total-duration");
     const sessionNotes = frag.querySelector(".session-notes");
     const sessionNotesInput = frag.querySelector(".session-notes-input");
+    const duplicateSessionBtn = frag.querySelector(".duplicate-session-btn");
     const deleteSessionBtn = frag.querySelector(".delete-session-btn");
 
     card.dataset.sessionId = session.id;
@@ -7488,6 +8100,8 @@ function render() {
       session.intentions = e.target.value;
       saveState();
     });
+    duplicateSessionBtn.title = t("duplicateMoment");
+    duplicateSessionBtn.setAttribute("aria-label", `${t("duplicateMoment")} ${sessionIndex + 1}`);
     deleteSessionBtn.title = t("deleteSession");
     deleteSessionBtn.setAttribute("aria-label", deleteSessionBtn.title);
     card.addEventListener("dragstart", (event) => {
@@ -7591,6 +8205,7 @@ function render() {
       const instructions = activityFrag.querySelector(".activity-instructions");
       const descriptionLabel = activityFrag.querySelector(".activity-description-label");
       const instructionsLabel = activityFrag.querySelector(".activity-instructions-label");
+      const duplicateActivityBtn = activityFrag.querySelector(".duplicate-activity-btn");
       const deleteActivityBtn = activityFrag.querySelector(".delete-activity-btn");
       const selectToolsBtn = activityFrag.querySelector(".select-tools-btn");
 
@@ -7632,6 +8247,11 @@ function render() {
       instructions.setAttribute("aria-label", `${t("activityInstructionsLabel")} ${activityIndex + 1}`);
       if (descriptionLabel) descriptionLabel.textContent = t("activityDescriptionLabel");
       if (instructionsLabel) instructionsLabel.textContent = t("activityInstructionsLabel");
+      duplicateActivityBtn.title = t("duplicateActivity");
+      duplicateActivityBtn.setAttribute(
+        "aria-label",
+        `${t("duplicateActivity")} ${activityIndex + 1}`
+      );
       deleteActivityBtn.title = t("deleteActivity");
       deleteActivityBtn.setAttribute("aria-label", deleteActivityBtn.title);
       activityAiasBtn.addEventListener("click", () => openAiasModal(activityAiasBtn, activity));
@@ -7763,6 +8383,10 @@ function render() {
         saveState();
       });
 
+      duplicateActivityBtn.addEventListener("click", () => {
+        duplicateActivityAndRender(session.id, activity.id);
+      });
+
       deleteActivityBtn.addEventListener("click", () => {
         session.activities = session.activities.filter((a) => a.id !== activity.id);
         saveState();
@@ -7787,24 +8411,14 @@ function render() {
     setSessionNotesButtonLabel(toggleSessionNotesBtn, session.notesExpanded);
     toggleSessionNotesBtn.setAttribute("aria-expanded", String(Boolean(session.notesExpanded)));
     addActivityBtn.addEventListener("click", () => {
-      session.activities.push({
-        id: nextId(),
-        type: "undefined",
-        duration: 10,
-        groupMode: "whole",
-        teachingMode: "undefined",
-        syncMode: "sync",
-        locationMode: "onsite",
-        evaluationMode: "none",
-        aias: defaultAiasState(),
-        description: "",
-        instructions: "",
-        notes: "",
-        tools: []
-      });
+      session.activities.push(createActivity());
       saveState();
       render();
       announce(t("activityAdded"));
+    });
+
+    duplicateSessionBtn.addEventListener("click", () => {
+      duplicateSessionAndRender(session.id);
     });
 
     deleteSessionBtn.addEventListener("click", () => {
@@ -7841,6 +8455,8 @@ function render() {
 
     board.appendChild(frag);
   });
+
+  board.appendChild(createAddSessionCard());
 
   ensureMarkdownToolbars(board);
   ensureMarkdownPreviews(board);
@@ -7928,6 +8544,12 @@ function bindTopPanelEvents() {
     state.meta.modeDelivery = event.target.value;
     saveState();
   });
+  metaSchoolSystemSelect.addEventListener("change", (event) => {
+    state.meta.schoolSystem = event.target.value;
+    state.meta.schoolLevel = "";
+    renderSchoolLevelOptions();
+    saveState();
+  });
   metaLevelSelect.addEventListener("change", (event) => {
     state.meta.schoolLevel = event.target.value;
     saveState();
@@ -8005,20 +8627,6 @@ function bindTopPanelEvents() {
   }
 }
 
-addSessionBtn.addEventListener("click", () => {
-  state.sessions.push({
-    id: nextId(),
-    title: "",
-    objectives: "",
-    intentions: "",
-    notes: "",
-    notesExpanded: false,
-    activities: []
-  });
-  saveState();
-  render();
-});
-
 document.getElementById("toggle-intentions-btn")?.addEventListener("click", () => {
   state.intentionsCollapsed = !state.intentionsCollapsed;
   saveState();
@@ -8055,9 +8663,12 @@ boardLayoutGridBtn.addEventListener("click", () => {
   });
 })();
 
-newDesignBtn.addEventListener("click", () => {
+function openNewDesignModal() {
   openModal(newDesignModalBackdrop, "#new-design-cancel-btn");
-});
+}
+
+newDesignBtn.addEventListener("click", openNewDesignModal);
+navNewDesignBtn?.addEventListener("click", openNewDesignModal);
 newDesignCancelBtn.addEventListener("click", () => closeModal(newDesignModalBackdrop));
 newDesignConfirmBtn.addEventListener("click", () => {
   closeModal(newDesignModalBackdrop);
@@ -8261,6 +8872,61 @@ importFileBtn?.addEventListener("click", () => {
   openImportPicker();
 });
 
+let importDropDepth = 0;
+
+function isFileDrag(event) {
+  const dataTransfer = event.dataTransfer;
+  return Boolean(dataTransfer?.files?.length)
+    || Array.from(dataTransfer?.types || []).includes("Files");
+}
+
+function setImportDropActive(active) {
+  if (!importDropZone) return;
+  importDropZone.classList.toggle("is-dragover", active);
+  if (importDropTitle) {
+    importDropTitle.textContent = t(active ? "importDropActive" : "importDropTitle");
+  }
+  if (!active) importDropDepth = 0;
+}
+
+importDropZone?.addEventListener("dragenter", (event) => {
+  if (!isFileDrag(event)) return;
+  event.preventDefault();
+  importDropDepth += 1;
+  setImportDropActive(true);
+});
+
+importDropZone?.addEventListener("dragover", (event) => {
+  if (!isFileDrag(event)) return;
+  event.preventDefault();
+  event.dataTransfer.dropEffect = "copy";
+});
+
+importDropZone?.addEventListener("dragleave", (event) => {
+  if (!isFileDrag(event)) return;
+  event.preventDefault();
+  importDropDepth = Math.max(0, importDropDepth - 1);
+  if (importDropDepth === 0) setImportDropActive(false);
+});
+
+importDropZone?.addEventListener("drop", async (event) => {
+  if (!isFileDrag(event)) return;
+  event.preventDefault();
+  setImportDropActive(false);
+  const file = event.dataTransfer?.files?.[0];
+  if (file) await importScenarioFile(file);
+});
+
+importModalBackdrop?.addEventListener("dragover", (event) => {
+  if (isFileDrag(event)) event.preventDefault();
+});
+
+importModalBackdrop?.addEventListener("drop", (event) => {
+  if (!isFileDrag(event)) return;
+  event.preventDefault();
+  setImportDropActive(false);
+});
+
 importModalBackdrop?.addEventListener("click", (event) => {
   if (event.target === importModalBackdrop) closeImportModal();
 });
@@ -8324,22 +8990,19 @@ function loadXlsxLibrary() {
   return xlsxLibraryPromise;
 }
 
-importFileInput.addEventListener("change", async (e) => {
-  const file = e.target.files?.[0];
-  if (!file) return;
+async function importScenarioFile(file, forcedFormat = "") {
   const MAX_IMPORT_SIZE = 5 * 1024 * 1024; // 5 MB
   if (file.size > MAX_IMPORT_SIZE) {
     alert(t("importInvalid"));
-    importFileInput.value = "";
-    return;
+    return false;
   }
-  const forcedFormat = String(importFileInput.dataset.format || "").toLowerCase();
+  const normalizedForcedFormat = String(forcedFormat || "").toLowerCase();
   const filename = String(file.name || "").toLowerCase();
   const selectedFormat =
-    forcedFormat === "xlsx" || filename.endsWith(".xlsx") ? "xlsx"
-    : forcedFormat === "csv" || filename.endsWith(".csv") ? "csv"
-    : forcedFormat === "markdown" || forcedFormat === "md" || filename.endsWith(".md") || filename.endsWith(".markdown") ? "markdown"
-    : forcedFormat === "ldj" || filename.endsWith(".ldj") ? "ldj"
+    normalizedForcedFormat === "xlsx" || filename.endsWith(".xlsx") ? "xlsx"
+    : normalizedForcedFormat === "csv" || filename.endsWith(".csv") ? "csv"
+    : normalizedForcedFormat === "markdown" || normalizedForcedFormat === "md" || filename.endsWith(".md") || filename.endsWith(".markdown") ? "markdown"
+    : normalizedForcedFormat === "ldj" || filename.endsWith(".ldj") ? "ldj"
     : "json";
   try {
     let hydrated = null;
@@ -8372,8 +9035,19 @@ importFileInput.addEventListener("change", async (e) => {
     render();
     if (activeModalBackdrop === importModalBackdrop) closeImportModal();
     announce(t("import"));
+    return true;
   } catch {
     alert(t("importInvalid"));
+    return false;
+  }
+}
+
+importFileInput.addEventListener("change", async (event) => {
+  const file = event.target.files?.[0];
+  if (!file) return;
+  const forcedFormat = String(importFileInput.dataset.format || "").toLowerCase();
+  try {
+    await importScenarioFile(file, forcedFormat);
   } finally {
     importFileInput.value = "";
     importFileInput.accept = ".json,.ldj,.csv,.xlsx,.md,.markdown,application/json,text/csv,text/markdown";

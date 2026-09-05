@@ -83,6 +83,7 @@ Avant de créer toutes les activités, vérifie les commandes utiles :
 - ./.tools/bin/learning list types
 - ./.tools/bin/learning list bloom
 - ./.tools/bin/learning list competencies
+- ./.tools/bin/learning list activity-options
 - ./.tools/bin/learning list school-systems
 - ./.tools/bin/learning list school-levels --system france
 
@@ -94,11 +95,16 @@ Valeurs sûres :
 - `--type` : `read`, `investigate`, `practice`, `produce`, `discuss`, `collaborate`
 - `--group` : `individual`, `subgroups`, `whole`
 - `--teaching` : `directed`, `guided`, `supported`, `independent`
+- `--pacing` : `sync`, `async`
+- `--mode` : `onsite`, `location-based`, `online`, `blended`, `other`
 - `--evaluation` : `diagnostic`, `formative`, `summative`, `certificative`, `none`
+- `--aias` : `1`, `2`, `3`, `4`, `5` ou `not-applicable`
+
+Pour chaque activité, détermine et transmets explicitement `--group`, `--teaching`, `--pacing`, `--mode`, `--evaluation` et `--aias`. Ne t’appuie pas sur des valeurs par défaut. Choisis-les comme un ensemble cohérent à partir de l’objectif, de l’autonomie des élèves, des interactions nécessaires, des contraintes de formation et des traces d’apprentissage attendues. AIAS 1 signifie sans IA ; AIAS 2 réserve l’IA à l’exploration, la recherche ou la planification ; AIAS 3 en fait une collaboratrice dont l’élève évalue et transforme les productions ; AIAS 4 l’intègre pleinement sous la direction critique de l’élève ; AIAS 5 correspond à l’exploration et à la co-conception de nouveaux usages. Utilise `not-applicable` seulement si le cadre AIAS ne s’applique réellement pas, et ne laisse jamais AIAS indécis dans un design généré.
 
 Pour `init`, transmets le système et le niveau lorsqu’ils sont connus, par exemple : `./.tools/bin/learning init design.json --school-system france --school-level quatrieme`.
 
-Pour `--pacing` et `--mode`, vérifie avec le CLI ou utilise les valeurs produites par les exemples qui fonctionnent. En présentiel synchrone, `--pacing synchronous` et `--mode presentiel` sont acceptables si le CLI les valide.
+Utilise les valeurs canoniques ci-dessus pour `--pacing` et `--mode` ; le CLI accepte également leurs principaux équivalents français ou anglais.
 
 Ne mets jamais de phrases longues dans les champs contrôlés comme `--school-system`, `--school-level`, `--group`, `--teaching`, `--evaluation`, `--type` ou `--pacing`.
 
@@ -109,7 +115,7 @@ Commandes à utiliser obligatoirement autant que possible :
 - ./.tools/bin/learning add-moment
 - ./.tools/bin/learning add-activity
 - ./.tools/bin/learning outcome
-- ./.tools/bin/learning validate design.json
+- ./.tools/bin/learning validate design.json --strict-pedagogy
 - ./.tools/bin/learning prompt design.json
 
 Procédure recommandée :
@@ -118,7 +124,7 @@ Procédure recommandée :
 3. Ajoute un premier moment et une première activité complète pour tester les valeurs CLI.
 4. Si la commande passe, ajoute le reste des moments et activités.
 5. Si une commande échoue, explique pourquoi, corrige la valeur fautive, puis recommence.
-6. Valide systématiquement avec `validate`.
+6. Valide systématiquement avec `validate --strict-pedagogy`.
 7. Exécute `prompt design.json`.
 
 Le design doit inclure :
@@ -303,6 +309,7 @@ Before creating all activities, inspect the useful commands:
 - ./.tools/bin/learning list types
 - ./.tools/bin/learning list bloom
 - ./.tools/bin/learning list competencies
+- ./.tools/bin/learning list activity-options
 - ./.tools/bin/learning list school-systems
 - ./.tools/bin/learning list school-levels --system france
 
@@ -314,11 +321,16 @@ Safe values:
 - `--type`: `read`, `investigate`, `practice`, `produce`, `discuss`, `collaborate`
 - `--group`: `individual`, `subgroups`, `whole`
 - `--teaching`: `directed`, `guided`, `supported`, `independent`
+- `--pacing`: `sync`, `async`
+- `--mode`: `onsite`, `location-based`, `online`, `blended`, `other`
 - `--evaluation`: `diagnostic`, `formative`, `summative`, `certificative`, `none`
+- `--aias`: `1`, `2`, `3`, `4`, `5`, or `not-applicable`
+
+For every activity, explicitly determine and pass `--group`, `--teaching`, `--pacing`, `--mode`, `--evaluation`, and `--aias`. Do not rely on defaults. Choose them as a coherent set based on the objective, learner autonomy, required interactions, delivery constraints, and expected evidence of learning. AIAS 1 means no AI; AIAS 2 limits AI to exploration, research, or planning; AIAS 3 makes AI a collaborator whose output the learner evaluates and transforms; AIAS 4 fully integrates AI under the learner's critical direction; AIAS 5 covers exploring and co-designing new AI uses. Use `not-applicable` only when the AIAS framework genuinely does not apply, and never leave AIAS undecided in a generated design.
 
 For `init`, pass the system and level whenever they are known, for example: `./.tools/bin/learning init design.json --school-system france --school-level quatrieme`.
 
-For `--pacing` and `--mode`, check the CLI or use values from working examples. For synchronous in-person teaching, `--pacing synchronous` and `--mode presentiel` are acceptable if the CLI validates them.
+Use the canonical values above for `--pacing` and `--mode`; the CLI also accepts their main French and English equivalents.
 
 Never put long sentences in controlled fields such as `--school-system`, `--school-level`, `--group`, `--teaching`, `--evaluation`, `--type`, or `--pacing`.
 
@@ -329,7 +341,7 @@ Use these commands whenever possible:
 - ./.tools/bin/learning add-moment
 - ./.tools/bin/learning add-activity
 - ./.tools/bin/learning outcome
-- ./.tools/bin/learning validate design.json
+- ./.tools/bin/learning validate design.json --strict-pedagogy
 - ./.tools/bin/learning prompt design.json
 
 Recommended process:
@@ -338,7 +350,7 @@ Recommended process:
 3. Add one moment and one complete activity to test the CLI values.
 4. If the command succeeds, add the remaining moments and activities.
 5. If a command fails, explain why, correct the invalid value, and try again.
-6. Always run `validate`.
+6. Always run `validate --strict-pedagogy`.
 7. Run `prompt design.json`.
 
 The design must include:

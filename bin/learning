@@ -21,7 +21,7 @@ from pathlib import Path
 from typing import Any
 
 
-VERSION = "0.5.0"
+VERSION = "0.6.0"
 DEFAULT_DAY_HOURS = 7
 AIAS_VERSION = "2.1"
 DEFAULT_SITE = "https://www.ralentirtravaux.com/flo/learning-designer"
@@ -144,6 +144,21 @@ EVAL_ALIASES = {
     "sommative": "summative",
     "certificative": "certificative",
     "certification": "certificative",
+}
+
+AIAS_DESCRIPTIONS = {
+    1: "No AI: the learner completes the task without AI.",
+    2: "AI planning: AI supports exploration, research, or planning; production remains autonomous.",
+    3: "AI collaboration: the learner evaluates, modifies, and integrates AI outputs.",
+    4: "Full AI: AI is fully integrated and directed critically by the learner.",
+    5: "AI exploration: the learner explores and co-designs creative uses of AI.",
+}
+AIAS_STATUS_ALIASES = {
+    "not-applicable": "not_applicable",
+    "non-pertinent": "not_applicable",
+    "na": "not_applicable",
+    "undecided": "undecided",
+    "a-definir": "undecided",
 }
 
 BLOOM = {
@@ -425,6 +440,16 @@ def normalize(value: str | None, aliases: dict[str, str], field: str) -> str:
     return ""
 
 
+def normalize_aias(value: str) -> dict[str, Any]:
+    token = slug(value)
+    if token in {"1", "2", "3", "4", "5"}:
+        return {"version": AIAS_VERSION, "status": "specified", "level": int(token)}
+    if token in AIAS_STATUS_ALIASES:
+        return {"version": AIAS_VERSION, "status": AIAS_STATUS_ALIASES[token], "level": None}
+    die("invalid AIAS: " + value + ". Expected 1, 2, 3, 4, 5, not-applicable, or undecided")
+    return {"version": AIAS_VERSION, "status": "undecided", "level": None}
+
+
 def split_minutes(total: int, day_hours: int = DEFAULT_DAY_HOURS) -> tuple[int, int, int]:
     total = max(0, int(total))
     day_minutes = max(1, int(day_hours)) * 60
@@ -572,11 +597,7 @@ def command_add_activity(args: argparse.Namespace) -> None:
             "syncMode": normalize(args.pacing, SYNC_ALIASES, "pacing"),
             "locationMode": normalize(args.mode, ACTIVITY_LOCATION_ALIASES, "mode"),
             "evaluationMode": normalize(args.evaluation, EVAL_ALIASES, "evaluation"),
-            "aias": {
-                "version": AIAS_VERSION,
-                "status": "specified" if args.aias is not None else "undecided",
-                "level": args.aias,
-            },
+            "aias": normalize_aias(args.aias),
             "description": description,
             "instructions": args.instructions or "",
             "notes": args.notes or "",
@@ -692,8 +713,11 @@ def build_codex_prompt(document: dict[str, Any], args: argparse.Namespace) -> st
             f"You are Codex. Create or improve a Learning Designer pedagogical design in {target}.",
             "",
             "Use the Learning Designer structure: moments, learning activity type, duration, group mode,",
-            "teaching mode, pacing, delivery mode, assessment mode, Bloom learning outcomes,",
+            "teaching mode, pacing, delivery mode, assessment mode, AIAS, Bloom learning outcomes,",
             "and digital competencies. Keep the design importable as Learning Designer JSON.",
+            "For every activity, make a deliberate and coherent pedagogical choice for group, teaching,",
+            "pacing, delivery, assessment, and AIAS. Do not leave AIAS undecided. Base these choices on",
+            "the objective, learner autonomy, required interactions, constraints, and evidence of learning.",
             "",
             "Return:",
             "1. A short pedagogical rationale.",
@@ -754,10 +778,34 @@ def command_validate(args: argparse.Namespace) -> None:
         if not session.get("title"):
             warnings.append(f"moment {s_index}: missing title")
         for a_index, activity in enumerate(session.get("activities", []), start=1):
+            prefix = f"moment {s_index}, activity {a_index}"
             if activity.get("type") not in LEARNING_TYPES:
-                warnings.append(f"moment {s_index}, activity {a_index}: invalid learning type")
+                warnings.append(f"{prefix}: invalid learning type")
             if int(activity.get("duration") or 0) <= 0:
-                warnings.append(f"moment {s_index}, activity {a_index}: invalid duration")
+                warnings.append(f"{prefix}: invalid duration")
+            if activity.get("groupMode") not in GROUP_MODES:
+                warnings.append(f"{prefix}: invalid or missing group mode")
+            if activity.get("teachingMode") not in set(TEACHING_ALIASES.values()):
+                warnings.append(f"{prefix}: invalid or missing teaching mode")
+            if activity.get("syncMode") not in set(SYNC_ALIASES.values()):
+                warnings.append(f"{prefix}: invalid or missing pacing")
+            if activity.get("locationMode") not in set(ACTIVITY_LOCATION_ALIASES.values()):
+                warnings.append(f"{prefix}: invalid or missing delivery mode")
+            if activity.get("evaluationMode") not in set(EVAL_ALIASES.values()):
+                warnings.append(f"{prefix}: invalid or missing evaluation mode")
+            aias = activity.get("aias") if isinstance(activity.get("aias"), dict) else {}
+            aias_status = aias.get("status")
+            aias_level = aias.get("level")
+            if aias_status not in {"specified", "not_applicable", "undecided"}:
+                warnings.append(f"{prefix}: invalid or missing AIAS choice")
+            elif aias_status == "specified" and aias_level not in AIAS_DESCRIPTIONS:
+                warnings.append(f"{prefix}: invalid AIAS level")
+            elif aias_status != "specified" and aias_level is not None:
+                warnings.append(f"{prefix}: AIAS level must be empty for status {aias_status}")
+            if args.strict_pedagogy and activity.get("teachingMode") == "undefined":
+                warnings.append(f"{prefix}: teaching mode is still undecided")
+            if args.strict_pedagogy and aias_status == "undecided":
+                warnings.append(f"{prefix}: AIAS is still undecided")
     if warnings:
         for warning in warnings:
             print(f"warning: {warning}")
@@ -777,6 +825,17 @@ def command_list(args: argparse.Namespace) -> None:
                 seen.add(level_id)
     elif args.kind == "competencies":
         print("Use A1-A30, P1-P35, C1-C30, or full ids such as competency:acquerir:14.")
+    elif args.kind == "activity-options":
+        print("group: whole, subgroups, individual")
+        print("teaching: directed, guided, supported, independent")
+        print("pacing: sync, async")
+        print("mode: onsite, location-based, online, blended, other")
+        print("evaluation: none, diagnostic, formative, summative, certificative")
+        print("AIAS:")
+        for level, description in AIAS_DESCRIPTIONS.items():
+            print(f"  {level}: {description}")
+        print("  not-applicable: the AIAS framework genuinely does not apply to the activity")
+        print("  undecided: temporarily leave the choice open")
     elif args.kind == "school-systems":
         for system_id, (label_fr, label_en, _aliases) in SCHOOL_SYSTEMS.items():
             print(f"{system_id:22} {label_fr} / {label_en}")
@@ -933,21 +992,33 @@ def build_parser() -> argparse.ArgumentParser:
     activity.add_argument("--moment", help="Moment index, id, or title. Defaults to the last moment.")
     activity.add_argument("--type", required=True, help="read/investigate/practice/produce/discuss/collaborate")
     activity.add_argument("--duration", "--duree", "--durée", type=int, required=True)
-    activity.add_argument("--group", "--groupe", default="whole")
+    activity.add_argument(
+        "--group", "--groupe", required=True,
+        help="whole/subgroups/individual; choose explicitly for this activity",
+    )
     activity.add_argument(
         "--teaching", "--enseignement", "--teacher", "--enseignant",
         dest="teaching",
-        default="undefined",
+        required=True,
         help="directed/guided/supported/independent (or French equivalents)",
     )
-    activity.add_argument("--pacing", "--rythme", default="sync")
+    activity.add_argument(
+        "--pacing", "--rythme", required=True,
+        help="sync/async (or French equivalents); choose explicitly for this activity",
+    )
     activity.add_argument(
         "--mode",
-        default="onsite",
+        required=True,
         help="classroom-based/location-based/online/blended/other (or French equivalents)",
     )
-    activity.add_argument("--evaluation", "--évaluation", "--assessment", default="none")
-    activity.add_argument("--aias", "--aias-level", type=int, choices=range(1, 6), help="AIAS level from 1 to 5")
+    activity.add_argument(
+        "--evaluation", "--évaluation", "--assessment", required=True,
+        help="none/diagnostic/formative/summative/certificative",
+    )
+    activity.add_argument(
+        "--aias", "--aias-level", required=True,
+        help="1-5, not-applicable, or undecided; choose explicitly for this activity",
+    )
     activity.add_argument("--description", default="")
     activity.add_argument("--instructions", "--consignes", default="")
     activity.add_argument("--notes", default="")
@@ -988,10 +1059,17 @@ def build_parser() -> argparse.ArgumentParser:
 
     validate = sub.add_parser("validate", aliases=["verifier", "vérifier"], help="Validate a design file")
     validate.add_argument("file")
+    validate.add_argument(
+        "--strict-pedagogy", action="store_true",
+        help="also reject undecided teaching and AIAS choices",
+    )
     validate.set_defaults(func=command_validate)
 
     list_cmd = sub.add_parser("list", aliases=["lister"], help="List accepted values")
-    list_cmd.add_argument("kind", choices=["types", "bloom", "competencies", "school-systems", "school-levels"])
+    list_cmd.add_argument(
+        "kind",
+        choices=["types", "bloom", "competencies", "activity-options", "school-systems", "school-levels"],
+    )
     list_cmd.add_argument("--system", "--school-system", "--système", default="")
     list_cmd.set_defaults(func=command_list)
 

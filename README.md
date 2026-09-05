@@ -64,15 +64,16 @@ Quelques commandes utiles :
 ```bash
 learning list school-systems
 learning list school-levels --system france
+learning list activity-options
 learning init mon-scenario.json --school-system france --school-level quatrieme
 learning add-moment mon-scenario.json --title "Découvrir"
-learning validate mon-scenario.json
+learning validate mon-scenario.json --strict-pedagogy
 learning handoff mon-scenario.json
 learning login
 learning publish mon-scenario.json
 ```
 
-Le CLI enregistre des identifiants stables dans `schoolSystem` et `schoolLevel`, accepte aussi les principaux libellés et alias français ou anglais, et refuse une association incohérente entre un système et un niveau.
+Le CLI enregistre des identifiants stables dans `schoolSystem` et `schoolLevel`, accepte aussi les principaux libellés et alias français ou anglais, et refuse une association incohérente entre un système et un niveau. Pour chaque activité créée, il exige un choix explicite de groupe, d’enseignement, de rythme, de mode de formation, d’évaluation et de niveau AIAS.
 
 Les instructions d'installation et d'utilisation de la Skill sont détaillées dans la section [Créer avec l'IA](./help.php#cli) de l'aide.
 

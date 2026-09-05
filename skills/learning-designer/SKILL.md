@@ -11,27 +11,31 @@ Help an educator create a complete, structured, importable Learning Designer `de
 
 ## CLI Setup
 
-Select the CLI by capability, not merely by whether a `learning` command exists. The selected CLI must support the school-system catalog and the two `init` options used by this skill.
+Select the CLI by capability, not merely by whether a `learning` command exists. The selected CLI must support the school-system catalog, the two `init` options, and explicit pedagogical choices for every activity.
 
 First, when working inside a Learning Designer repository that contains `./bin/learning`, probe that repository CLI:
 
 ```bash
 ./bin/learning --version
 ./bin/learning list school-systems
+./bin/learning list activity-options
 ./bin/learning init --help
+./bin/learning add-activity --help
 ```
 
-Use it as `LEARNING=./bin/learning` when the catalog command succeeds and the `init` help includes both `--school-system` and `--school-level`. Prefer this repository CLI over a global installation because it matches the current project.
+Use it as `LEARNING=./bin/learning` when both catalog commands succeed, the `init` help includes `--school-system` and `--school-level`, and the activity help includes `--group`, `--teaching`, `--pacing`, `--mode`, `--evaluation`, and `--aias`. Prefer this repository CLI over a global installation because it matches the current project.
 
 When no compatible repository CLI is available, probe the global command in the same way:
 
 ```bash
 learning --version
 learning list school-systems
+learning list activity-options
 learning init --help
+learning add-activity --help
 ```
 
-Use it as `LEARNING=learning` only when the catalog command succeeds and both school options appear in the `init` help. A successful `learning --help` alone is not sufficient.
+Use it as `LEARNING=learning` only when the same school and activity capability checks pass. A successful `learning --help` alone is not sufficient.
 
 If a global CLI exists but fails this capability check, do not use it and do not fall back to a reduced design format that omits `schoolSystem` or `schoolLevel`. Use a compatible local copy instead. You may tell the user that `learning upgrade` updates their global installation, but do not modify the global CLI without explicit permission.
 
@@ -43,7 +47,9 @@ curl -fsSL https://raw.githubusercontent.com/YannHY/learning-designer/main/bin/l
 chmod +x .tools/bin/learning
 ./.tools/bin/learning --version
 ./.tools/bin/learning list school-systems
+./.tools/bin/learning list activity-options
 ./.tools/bin/learning init --help
+./.tools/bin/learning add-activity --help
 ```
 
 If `raw.githubusercontent.com` is blocked, use the environment’s web fetch/browser capability to retrieve:
@@ -119,6 +125,7 @@ $LEARNING outcome --help
 $LEARNING list types
 $LEARNING list bloom
 $LEARNING list competencies
+$LEARNING list activity-options
 $LEARNING list school-systems
 $LEARNING list school-levels --system france
 ```
@@ -141,6 +148,21 @@ Add each activity:
 $LEARNING add-activity design.json --moment 1 --type investigate --duration 15 --group subgroups --teaching guided --pacing sync --mode onsite --evaluation formative --aias 3 --competencies A1,P6 --description "ACTIVITY DESCRIPTION" --instructions "INSTRUCTIONS FOR STUDENTS"
 ```
 
+## Make Pedagogical Choices for Every Activity
+
+For every activity, explicitly determine and pass all six pedagogical parameters: `group`, `teaching`, `pacing`, `mode`, `evaluation`, and `aias`. Never rely on CLI defaults. Treat the six values as one coherent pedagogical configuration rather than independent metadata.
+
+Base the choices on the activity objective, learner autonomy, required interactions, delivery constraints, accessibility and differentiation needs, expected evidence of learning, and the intended role of AI:
+
+- `group`: use `whole` for shared instruction or synthesis, `subgroups` for interaction or co-production, and `individual` for personal appropriation, practice, or individual evidence
+- `teaching`: use `directed` for explicit teaching, demonstration, or tight safety constraints; `guided` for scaffolded inquiry; `supported` for learner-led work with available teacher help; and `independent` only when learners can genuinely proceed autonomously
+- `pacing`: use `sync` when shared interaction, immediate feedback, or coordination matters; use `async` when learners need flexible, self-paced work
+- `mode`: align the activity with its real setting; use `onsite` for the classroom, `location-based` for another physical site, `online` for remote work, `blended` for a genuine combination, and `other` only when none fits
+- `evaluation`: use `diagnostic` before learning to establish prerequisites, `formative` during learning when evidence informs feedback or regulation, `summative` at the end of a learning phase, `certificative` only for formally validated high-stakes evidence, and `none` only when no evidence is collected or judged
+- `aias`: choose a level for every activity using AIAS 2.1: `1` means no AI; `2` allows AI for exploration, research, or planning while production remains autonomous; `3` makes AI a collaborator whose outputs the learner evaluates, modifies, and integrates; `4` fully integrates AI under the learner's critical direction and disciplinary expertise; `5` has the learner explore and co-design creative uses of AI. Use `not-applicable` only when the AIAS framework genuinely does not apply. Do not use `undecided` in a generated design.
+
+Do not vary values merely to create visual diversity. Reuse a value when the pedagogical situation is unchanged and vary it when the learning progression justifies the change. Record a concise rationale in the activity `--notes` when the assessment, AIAS level, or configuration is not self-evident, and summarize the progression-level rationale in the moment `--intentions`.
+
 Use only CLI-controlled values for controlled fields. Safe values:
 
 - `school-system`: use an id returned by `list school-systems`
@@ -148,14 +170,11 @@ Use only CLI-controlled values for controlled fields. Safe values:
 - `type`: `read`, `investigate`, `practice`, `produce`, `discuss`, `collaborate`
 - `group`: `whole`, `subgroups`, `individual`
 - `teaching`: `directed`, `guided`, `supported`, `independent`
+- `pacing`: `sync`, `async`
+- `mode`: `onsite`, `location-based`, `online`, `blended`, `other`
 - `evaluation`: `none`, `diagnostic`, `formative`, `summative`, `certificative`
-- `aias`: optional AIAS level from `1` to `5`; omit it when the role of AI is still undecided
+- `aias`: `1`, `2`, `3`, `4`, `5`, or `not-applicable`; never use `undecided` in a generated design
 - `competencies`: short codes such as `A1`, `P6`, `C14`, comma-separated
-
-For `pacing` and `mode`, verify accepted values with the CLI or use values that the CLI accepts in the current environment. Common accepted values include:
-
-- `pacing`: `sync`, `async`, or `synchronous` depending on CLI version
-- `mode`: `classroom-based`, `location-based`, `online`, `blended`, `other`, or their French equivalents, depending on CLI version
 
 Never put long natural-language text in controlled fields such as `--school-system`, `--school-level`, `--group`, `--teaching`, `--evaluation`, `--type`, or `--pacing`.
 
@@ -183,7 +202,7 @@ Recommended workflow:
 3. Add one moment and one complete activity to test the accepted CLI values.
 4. If the command succeeds, add the remaining moments and activities.
 5. If a command fails, explain why, correct the value, and retry.
-6. Validate with `validate`.
+6. Validate with `validate --strict-pedagogy`.
 7. Run `prompt design.json`.
 
 The design should include:
@@ -193,6 +212,7 @@ The design should include:
 - varied activities
 - realistic durations
 - appropriate group modes
+- an explicit, coherent teaching mode, pacing, delivery mode, evaluation mode, and AIAS choice for every activity
 - diagnostic, formative, or summative assessment modes where relevant
 - Bloom outcomes connected to the activities
 - digital competencies where relevant
@@ -205,7 +225,7 @@ If the user asks to integrate digital work, propose pedagogically useful uses su
 Always validate:
 
 ```bash
-$LEARNING validate design.json
+$LEARNING validate design.json --strict-pedagogy
 ```
 
 If validation fails, fix the design with CLI commands and validate again. Avoid manual JSON edits unless the CLI is genuinely impossible to use.
@@ -227,6 +247,7 @@ At the end, report:
 - Bloom outcomes created
 - digital competencies used
 - duration distribution
+- distribution of group, teaching, pacing, delivery, evaluation, and AIAS choices
 - assumptions made
 - main commands executed
 

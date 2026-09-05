@@ -1437,7 +1437,10 @@ html body:not(.home-page) h3.analysis-section-title {
 /* Styled confirmations use the same surfaces and controls as the editor. */
 .account-confirm-dialog {
   width: min(560px, calc(100vw - 32px));
+  height: fit-content;
   max-height: calc(100dvh - 32px);
+  display: flex;
+  flex-direction: column;
   margin: auto;
   padding: 28px;
   gap: 18px;
@@ -1466,6 +1469,7 @@ html body:not(.home-page) h3.analysis-section-title {
 
 .account-confirm-dialog .modal-actions {
   margin-top: 6px;
+  align-items: center;
   gap: 10px;
   flex-wrap: wrap;
 }

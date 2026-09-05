@@ -11,21 +11,39 @@ Help an educator create a complete, structured, importable Learning Designer `de
 
 ## CLI Setup
 
-First check whether `learning` is available:
+Select the CLI by capability, not merely by whether a `learning` command exists. The selected CLI must support the school-system catalog and the two `init` options used by this skill.
+
+First, when working inside a Learning Designer repository that contains `./bin/learning`, probe that repository CLI:
 
 ```bash
-learning --help
+./bin/learning --version
+./bin/learning list school-systems
+./bin/learning init --help
 ```
 
-If it is available, use `learning`.
+Use it as `LEARNING=./bin/learning` when the catalog command succeeds and the `init` help includes both `--school-system` and `--school-level`. Prefer this repository CLI over a global installation because it matches the current project.
 
-If it is not available or the environment is sandboxed, install a local copy:
+When no compatible repository CLI is available, probe the global command in the same way:
+
+```bash
+learning --version
+learning list school-systems
+learning init --help
+```
+
+Use it as `LEARNING=learning` only when the catalog command succeeds and both school options appear in the `init` help. A successful `learning --help` alone is not sufficient.
+
+If a global CLI exists but fails this capability check, do not use it and do not fall back to a reduced design format that omits `schoolSystem` or `schoolLevel`. Use a compatible local copy instead. You may tell the user that `learning upgrade` updates their global installation, but do not modify the global CLI without explicit permission.
+
+If `.tools/bin/learning` already exists, apply the same capability check to it. Use it when compatible. Otherwise, download a current local copy:
 
 ```bash
 mkdir -p .tools/bin
 curl -fsSL https://raw.githubusercontent.com/YannHY/learning-designer/main/bin/learning -o .tools/bin/learning
 chmod +x .tools/bin/learning
-./.tools/bin/learning --help
+./.tools/bin/learning --version
+./.tools/bin/learning list school-systems
+./.tools/bin/learning init --help
 ```
 
 If `raw.githubusercontent.com` is blocked, use the environment’s web fetch/browser capability to retrieve:
@@ -36,12 +54,7 @@ https://github.com/YannHY/learning-designer/blob/main/bin/learning
 
 Write the retrieved file to `.tools/bin/learning`, make it executable, and use `./.tools/bin/learning` for all later commands.
 
-Once `.tools/bin/learning` has been created, do not depend on the network again.
-
-Set a variable mentally:
-
-- If global CLI works: `LEARNING=learning`
-- If sandbox CLI is used: `LEARNING=./.tools/bin/learning`
+Once a compatible `.tools/bin/learning` has been created, do not depend on the network again. If none of the candidates passes the capability check and a current local copy cannot be obtained, stop with an actionable explanation rather than generating an incomplete design.
 
 ## Ask Before Creating
 

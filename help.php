@@ -470,7 +470,6 @@ PROMPT;
 <?php render_site_nav('help'); ?>
 <main class="help-shell" id="main-content">
     <header class="help-hero">
-        <p class="help-kicker">Documentation</p>
         <h1 class="help-title">Concevoir, analyser et partager un design</h1>
         <p class="help-lead">Ce guide explique comment concevoir, importer, exporter et publier un design, avec ou sans IA.</p>
         <div class="help-quick-links" aria-label="Accès rapides">
@@ -497,7 +496,6 @@ PROMPT;
 
         <div class="help-content">
             <article class="help-section" id="premiers-pas">
-                <p class="help-eyebrow"><i class="fa-solid fa-rocket" aria-hidden="true"></i> Prise en main</p>
                 <h2>Comprendre le learning design</h2>
                 <p>Le <em>learning design</em> consiste à organiser les activités que les apprenants vont faire pour atteindre les acquis visés.</p>
 
@@ -539,7 +537,6 @@ PROMPT;
             </article>
 
             <article class="help-section" id="moments-activites">
-                <p class="help-eyebrow"><i class="fa-solid fa-layer-group" aria-hidden="true"></i> Scénarisation</p>
                 <h2>Organiser les moments et les activités</h2>
                 <p>Chaque moment correspond à une phase cohérente de la séance ou de la séquence : lancement, exploration, mise en commun, entraînement, production, évaluation, etc. Un moment possède un titre, des objectifs, des choix pédagogiques et des notes. Les moments et les activités peuvent être réordonnés ou dupliqués.</p>
                 <h3 id="dupliquer-moment-activite">Dupliquer un moment ou une activité</h3>
@@ -603,7 +600,6 @@ PROMPT;
             </article>
 
             <article class="help-section" id="types-apprentissage">
-                <p class="help-eyebrow"><i class="fa-solid fa-shapes" aria-hidden="true"></i> Cadre pédagogique</p>
                 <h2>Les six types d’apprentissage</h2>
                 <p>Le Learning Designer s’appuie sur les six types d’apprentissage associés au <a href="cadre-conversationnel.php">Cadre conversationnel de Diana Laurillard</a>. Une séquence n’a pas besoin de les utiliser à parts égales, mais leur combinaison aide à varier l’expérience de l’apprenant.</p>
                 <div class="help-types">
@@ -618,7 +614,6 @@ PROMPT;
             </article>
 
             <article class="help-section" id="acquis-competences">
-                <p class="help-eyebrow"><i class="fa-solid fa-graduation-cap" aria-hidden="true"></i> Résultats attendus</p>
                 <h2>Formuler les acquis et suivre les compétences</h2>
                 <p>Formulez des résultats observables avec Bloom et reliez les activités aux compétences numériques.</p>
                 <h3 id="taxonomie-bloom">Taxonomie révisée de Bloom</h3>
@@ -648,7 +643,6 @@ PROMPT;
             </article>
 
             <article class="help-section" id="vues-analyses">
-                <p class="help-eyebrow"><i class="fa-solid fa-chart-column" aria-hidden="true"></i> Lecture du scénario</p>
                 <h2>Afficher et analyser le scénario</h2>
                 <p>Utilisez les vues d’analyse et de chronologie pour repérer les équilibres, les écarts de durée et les données manquantes.</p>
                 <h3>Analyser l’expérience d’apprentissage</h3>
@@ -669,7 +663,6 @@ PROMPT;
             </article>
 
             <article class="help-section" id="sauvegarde-partage">
-                <p class="help-eyebrow"><i class="fa-solid fa-cloud-arrow-up" aria-hidden="true"></i> Compte et publication</p>
                 <h2>Sauvegarder, publier et réutiliser</h2>
                 <p>Comprenez ce qui reste local, ce qui est enregistré et les options de publication ou de réutilisation.</p>
                 <h3 id="sauvegarde-sans-compte">Sans compte</h3>
@@ -698,7 +691,6 @@ PROMPT;
             </article>
 
             <article class="help-section" id="import-export">
-                <p class="help-eyebrow"><i class="fa-solid fa-arrow-right-arrow-left" aria-hidden="true"></i> Formats d’échange</p>
                 <h2>Importer et exporter dans plusieurs formats</h2>
                 <p>Choisissez le bon format pour relire, partager, modifier ou réimporter votre design.</p>
                 <h3 id="formats-export">Formats d’export</h3>
@@ -733,7 +725,6 @@ PROMPT;
             </article>
 
             <article class="help-section" id="markdown">
-                <p class="help-eyebrow"><i class="fa-brands fa-markdown" aria-hidden="true"></i> Format éditable</p>
                 <h2>Importer un design en Markdown</h2>
                 <p>Le plus sûr est de partir d’un fichier Markdown exporté depuis Learning Designer, puis de le modifier sans changer sa structure. Le fichier doit contenir les sections <code>## Paramètres</code> et <code>## Séances</code>, qui permettent à l’application de reconnaître le document.</p>
                 <h3 id="markdown-structure">Structure attendue</h3>
@@ -948,7 +939,6 @@ learning upgrade</pre>
                 </div>
             </article>
             <article class="help-section" id="enrichir-design-ia">
-                <p class="help-eyebrow"><i class="fa-solid fa-wand-magic-sparkles" aria-hidden="true"></i> Réflexion pédagogique</p>
                 <h2>Interroger et enrichir son design avec l’IA</h2>
                 <p>Utilisez l’IA pour questionner un scénario, prioriser des améliorations et produire les ressources nécessaires.</p>
                 <h3 id="analyser-design-ia">Analyser son design</h3>

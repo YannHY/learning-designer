@@ -19,7 +19,7 @@
   /* Six learning types, normalised in OKLCH: equal perceived weight, with
      lightness allowed to follow each hue's own gamut so yellow stays yellow
      instead of turning to mustard. CIE L* spread is 11 (was 24).
-     Mirrored in js/interface.js (LEARNING_TYPES) and view.php, which is
+     Mirrored in js/editor/config.js (LEARNING_TYPES) and view.php, which is
      self-contained and cannot read these tokens. */
   --read: #5bddd3;
   --investigate: #f19492;
@@ -1432,6 +1432,58 @@ html body:not(.home-page) h3.analysis-section-title {
   padding: 20px;
   display: grid;
   gap: 10px;
+}
+
+/* Styled confirmations use the same surfaces and controls as the editor. */
+.account-confirm-dialog {
+  width: min(560px, calc(100vw - 32px));
+  max-height: calc(100dvh - 32px);
+  margin: auto;
+  padding: 28px;
+  gap: 18px;
+  color: var(--text);
+  overflow-y: auto;
+}
+
+.account-confirm-dialog:not([open]) {
+  display: none;
+}
+
+.account-confirm-dialog::backdrop {
+  background: rgba(0, 0, 0, 0.38);
+}
+
+[data-theme="dark"] .account-confirm-dialog::backdrop {
+  background: rgba(0, 0, 0, 0.65);
+}
+
+.account-confirm-message {
+  margin: 0;
+  color: var(--text-body);
+  font-size: 15px;
+  line-height: 1.6;
+}
+
+.account-confirm-dialog .modal-actions {
+  margin-top: 6px;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+@media (max-width: 600px) {
+  .account-confirm-dialog {
+    padding: 22px;
+  }
+
+  .account-confirm-dialog .modal-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .account-confirm-dialog .btn {
+    width: 100%;
+    white-space: normal;
+  }
 }
 
 #export-modal-backdrop {

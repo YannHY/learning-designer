@@ -27,44 +27,19 @@ if (!is_string($payload)) {
 }
 
 $designId = isset($input['design_id']) ? (int)$input['design_id'] : 0;
-if ($designId > 0) {
-    $check = $db->prepare("SELECT id, share_token FROM learning_designs WHERE id = ? AND owner_user_id = ? LIMIT 1");
-    $check->execute([$designId, (int)$user['id']]);
-    $existing = $check->fetch();
-    if ($existing) {
-        $token = (string)($existing['share_token'] ?? '');
-        if ($token === '') {
-            $token = bin2hex(random_bytes(24));
-        }
-        $stmt = $db->prepare("UPDATE learning_designs SET title = ?, document_json = ?, share_token = ?, is_published = 1, updated_at = CURRENT_TIMESTAMP WHERE id = ? AND owner_user_id = ?");
-        $stmt->execute([$title, $payload, $token, $designId, (int)$user['id']]);
-    } else {
-        $designId = 0;
-    }
+// Explicit CLI updates use a fresh revision when the caller did not supply
+// one. The compare-and-swap still rejects another write during this request.
+$expectedRevision = filter_var($input['expected_revision'] ?? null, FILTER_VALIDATE_INT, ['options' => ['min_range' => 1]]);
+if ($designId > 0 && !array_key_exists('expected_revision', $input)) {
+    $read = $db->prepare("SELECT revision FROM learning_designs WHERE id = ? AND owner_user_id = ?");
+    $read->execute([$designId, (int)$user['id']]);
+    $expectedRevision = $read->fetchColumn();
 }
-
-if ($designId === 0) {
-    $token = bin2hex(random_bytes(24));
-    $stmt = $db->prepare("INSERT INTO learning_designs (owner_user_id, title, document_json, share_token, is_published) VALUES (?, ?, ?, ?, 1)");
-    $stmt->execute([(int)$user['id'], $title, $payload, $token]);
-    $designId = (int)$db->lastInsertId();
+$result = app_save_design_document($db, (int)$user['id'], $designId,
+    $expectedRevision === false ? null : (int)$expectedRevision, $title, $payload, true);
+if ($result['success']) {
+    $result['share_url'] = app_base_url() . '/view.php?token=' . urlencode((string)$result['share_token']);
 }
-
-$read = $db->prepare("SELECT id, title, share_token, updated_at FROM learning_designs WHERE id = ? AND owner_user_id = ? LIMIT 1");
-$read->execute([$designId, (int)$user['id']]);
-$design = $read->fetch();
-if (!$design) {
-    app_json_response(['success' => false, 'error' => 'Publication introuvable.'], 500);
-}
-
-$shareUrl = app_base_url() . '/view.php?token=' . urlencode((string)$design['share_token']);
-
-app_json_response([
-    'success' => true,
-    'design' => [
-        'id' => (int)$design['id'],
-        'title' => (string)$design['title'],
-        'updatedAt' => (string)$design['updated_at'],
-    ],
-    'share_url' => $shareUrl,
-]);
+$status = $result['status'];
+unset($result['status'], $result['share_token']);
+app_json_response($result, $status);

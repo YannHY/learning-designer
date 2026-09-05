@@ -16,7 +16,7 @@ app_start_session();
     <link rel="stylesheet" href="css/account-ui.css?v=20260903-pagefind-dark" />
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="stylesheet" href="css/interface.css?v=20260905-title-tooltips-v4" />
+    <link rel="stylesheet" href="css/interface.css?v=20260905-draft-dialog-v1" />
   </head>
   <body class="designer-page">
     <a id="skip-link" class="skip-link" href="#board">Aller au contenu principal</a>
@@ -592,11 +592,17 @@ app_start_session();
         </div>
       </div>
     </div>
-    <!-- Doit précéder interface.js, qui lit les catalogues FR et EN au chargement. -->
+    <!-- Les sources précèdent les modules ; interface.js les assemble avant account-ui.js. -->
     <script src="js/competency-catalog.js?v=20260831-framework-i18n"></script>
     <script src="js/competency-greencomp-details.js?v=20260831-framework-i18n"></script>
     <script src="js/competency-digcomp-details.js?v=20260830-digcomp-statements"></script>
-    <script src="js/interface.js?v=20260905-title-tooltips-v2"></script>
-    <script src="js/account-ui.js?v=20260905-php-nav-v1"></script>
+    <script src="js/editor/config.js?v=20260905-modules-v1"></script>
+    <script src="js/editor/competencies.js?v=20260905-modules-v1"></script>
+    <script src="js/editor/exports.js?v=20260905-modules-v1"></script>
+    <script src="js/editor/imports.js?v=20260905-modules-v1"></script>
+    <script src="js/editor/analysis.js?v=20260905-modules-v1"></script>
+    <script src="js/editor/fields.js?v=20260905-modules-v1"></script>
+    <script src="js/interface.js?v=20260905-modules-v1"></script>
+    <script src="js/account-ui.js?v=20260905-revisions-v1"></script>
   </body>
 </html>

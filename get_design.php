@@ -9,7 +9,7 @@ if ($designId <= 0) {
     app_json_response(['success' => false, 'error' => 'Identifiant invalide.'], 422);
 }
 
-$stmt = $db->prepare("SELECT id, title, document_json, updated_at FROM learning_designs WHERE id = ? AND owner_user_id = ? LIMIT 1");
+$stmt = $db->prepare("SELECT id, title, document_json, updated_at, revision FROM learning_designs WHERE id = ? AND owner_user_id = ? LIMIT 1");
 $stmt->execute([$designId, (int)$user['id']]);
 $row = $stmt->fetch();
 if (!$row) {
@@ -27,6 +27,7 @@ app_json_response([
         'id' => (int)$row['id'],
         'title' => (string)$row['title'],
         'updatedAt' => (string)$row['updated_at'],
+        'revision' => (int)$row['revision'],
         'document' => $document,
     ],
 ]);

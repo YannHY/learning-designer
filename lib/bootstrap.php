@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-const APP_SCHEMA_VERSION = 4;
+const APP_SCHEMA_VERSION = 5;
 const EMAIL_VERIFICATION_TTL_SECONDS = 86400;
 const EMAIL_VERIFICATION_RESEND_DELAY_SECONDS = 60;
 const PASSWORD_RESET_TTL_SECONDS = 3600;
@@ -53,7 +53,6 @@ function app_file_config(): array
     $parent2 = dirname($parent1);
     $parent3 = dirname($parent2);
     $candidates = [
-        $projectRoot . '/app-config.php',
         $projectRoot . '/learning-design-secret.php',
         $projectRoot . '/config.local.php',
         $parent1 . '/learning-design-secret.php',
@@ -62,6 +61,8 @@ function app_file_config(): array
         $parent1 . '/config.local.php',
         $parent2 . '/config.local.php',
         $parent3 . '/config.local.php',
+        // Local configuration takes precedence over the distributed defaults.
+        $projectRoot . '/app-config.php',
     ];
 
     foreach ($candidates as $path) {
@@ -227,8 +228,12 @@ function ensure_app_schema(PDO $db): void
         return;
     }
 
-    ensure_app_tables($db);
-    ensure_app_migrations($db);
+    // A v4 upgrade only adds revisions; do not replay historical data backfills.
+    if ($currentVersion === false || $currentVersion === null || (int)$currentVersion < 4) {
+        ensure_app_tables($db);
+        ensure_app_migrations($db);
+    }
+    ensure_design_revision_column($db);
     ensure_app_schema_meta_table($db);
 
     $stmt = $db->prepare("SELECT schema_version FROM app_schema_meta WHERE id = 1");
@@ -246,6 +251,26 @@ function ensure_app_schema(PDO $db): void
     } else {
         $db->prepare("UPDATE app_schema_meta SET schema_version = ? WHERE id = 1")
             ->execute([APP_SCHEMA_VERSION]);
+    }
+}
+
+function ensure_design_revision_column(PDO $db): void
+{
+    $isSqlite = $db->getAttribute(PDO::ATTR_DRIVER_NAME) === 'sqlite';
+    $exists = static function () use ($db, $isSqlite): bool {
+        if ($isSqlite) {
+            return in_array('revision', array_column($db->query("PRAGMA table_info(learning_designs)")->fetchAll(), 'name'), true);
+        }
+        return (int)$db->query("SELECT COUNT(*) FROM information_schema.COLUMNS
+            WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'learning_designs' AND COLUMN_NAME = 'revision'")->fetchColumn() > 0;
+    };
+    if ($exists()) return;
+    try {
+        $db->exec('ALTER TABLE learning_designs ADD COLUMN revision '
+            . ($isSqlite ? 'INTEGER' : 'BIGINT UNSIGNED') . ' NOT NULL DEFAULT 1');
+    } catch (PDOException $error) {
+        // Another request may have completed this migration concurrently.
+        if (!$exists()) throw $error;
     }
 }
 
@@ -291,6 +316,7 @@ function ensure_app_tables(PDO $db): void
             owner_user_id INTEGER NOT NULL,
             title TEXT NOT NULL DEFAULT '',
             document_json TEXT NOT NULL,
+            revision INTEGER NOT NULL DEFAULT 1,
             share_token TEXT NULL,
             license_code TEXT NULL,
             is_published INTEGER NOT NULL DEFAULT 0,
@@ -357,6 +383,7 @@ function ensure_app_tables(PDO $db): void
         owner_user_id INT UNSIGNED NOT NULL,
         title VARCHAR(255) NOT NULL DEFAULT '',
         document_json LONGTEXT NOT NULL,
+        revision BIGINT UNSIGNED NOT NULL DEFAULT 1,
         share_token VARCHAR(64) NULL UNIQUE,
         license_code VARCHAR(24) NULL,
         is_published TINYINT(1) NOT NULL DEFAULT 0,
@@ -644,7 +671,25 @@ function current_user(): ?array
     if (!isset($_SESSION['user']) || !is_array($_SESSION['user'])) {
         return null;
     }
-    return $_SESSION['user'];
+    $userId = (int)($_SESSION['user']['id'] ?? 0);
+    if ($userId <= 0) {
+        unset($_SESSION['user']);
+        return null;
+    }
+    $stmt = app_db()->prepare("SELECT id, username, email, role, status FROM users WHERE id = ? LIMIT 1");
+    $stmt->execute([$userId]);
+    $user = $stmt->fetch();
+    if (!$user || $user['status'] !== 'active') {
+        unset($_SESSION['user']);
+        return null;
+    }
+    // Session data is a cache of identity, never the authority for permissions.
+    return $_SESSION['user'] = [
+        'id' => (int)$user['id'],
+        'username' => (string)$user['username'],
+        'email' => (string)$user['email'],
+        'role' => (string)$user['role'],
+    ];
 }
 
 function require_login_json(): array
@@ -1514,4 +1559,63 @@ function app_design_title_from_document(array $document): string
 function render_site_footer(): void
 {
     require __DIR__ . '/../partials/site-footer.php';
+}
+
+/**
+ * Compare and write in one SQL statement. The transaction keeps the returned
+ * revision tied to this exact write, even if another writer is waiting.
+ */
+function app_save_design_document(PDO $db, int $ownerId, int $designId, ?int $expectedRevision, string $title, string $payload, bool $publish = false): array
+{
+    $db->beginTransaction();
+    try {
+        if ($designId > 0) {
+            $changed = false;
+            if ($expectedRevision !== null && $expectedRevision > 0) {
+                $update = $db->prepare("UPDATE learning_designs
+                    SET title = ?, document_json = ?, revision = revision + 1, updated_at = CURRENT_TIMESTAMP
+                    WHERE id = ? AND owner_user_id = ? AND revision = ?");
+                $update->execute([$title, $payload, $designId, $ownerId, $expectedRevision]);
+                $changed = $update->rowCount() === 1;
+            }
+            if (!$changed) {
+                $read = $db->prepare("SELECT id, updated_at, revision FROM learning_designs WHERE id = ? AND owner_user_id = ?");
+                $read->execute([$designId, $ownerId]);
+                $current = $read->fetch();
+                $db->rollBack();
+                if (!$current) {
+                    return ['status' => 404, 'success' => false, 'error' => 'Production introuvable.'];
+                }
+                return [
+                    'status' => 409, 'success' => false, 'conflict' => true,
+                    'error' => 'La version distante doit être vérifiée avant de sauvegarder. Votre brouillon est conservé.',
+                    'design' => ['id' => $designId, 'updatedAt' => (string)$current['updated_at'], 'revision' => (int)$current['revision']],
+                ];
+            }
+        } else {
+            $db->prepare("INSERT INTO learning_designs (owner_user_id, title, document_json) VALUES (?, ?, ?)")
+                ->execute([$ownerId, $title, $payload]);
+            $designId = (int)$db->lastInsertId();
+        }
+        if ($publish) {
+            $db->prepare("UPDATE learning_designs SET share_token = COALESCE(NULLIF(share_token, ''), ?), is_published = 1
+                WHERE id = ? AND owner_user_id = ?")
+                ->execute([bin2hex(random_bytes(24)), $designId, $ownerId]);
+        }
+        $read = $db->prepare("SELECT id, title, updated_at, revision, share_token FROM learning_designs WHERE id = ? AND owner_user_id = ?");
+        $read->execute([$designId, $ownerId]);
+        $saved = $read->fetch();
+        $db->commit();
+        return [
+            'status' => 200, 'success' => true,
+            'design' => [
+                'id' => (int)$saved['id'], 'title' => (string)$saved['title'],
+                'updatedAt' => (string)$saved['updated_at'], 'revision' => (int)$saved['revision'],
+            ],
+            'share_token' => $saved['share_token'],
+        ];
+    } catch (Throwable $error) {
+        if ($db->inTransaction()) $db->rollBack();
+        throw $error;
+    }
 }

@@ -134,6 +134,36 @@ Conservez les secrets dans un fichier local non versionné, par exemple `learnin
 - [bin/learning](./bin/learning) : CLI de création, de validation et de publication ;
 - [lib/bootstrap.php](./lib/bootstrap.php) : configuration, base de données et fonctions PHP communes.
 
+### Organisation du JavaScript du concepteur
+
+`js/interface.js` conserve l'état courant, la sauvegarde locale, les cartes et les interactions de l'éditeur. Il assemble les modules de `js/editor/` en leur transmettant leurs dépendances :
+
+- `config.js` : options pédagogiques, traductions FR/EN et normalisation des libellés ;
+- `competencies.js` : référentiels, recherche et présentation des compétences ;
+- `exports.js` : exports Markdown, HTML, Word et Excel ;
+- `imports.js` : lecture des fichiers CSV, Markdown et anciens LDJ ;
+- `analysis.js` : répartitions du temps, graphiques et alertes ;
+- `fields.js` : champs extensibles, aperçu Markdown et raccourcis clavier.
+
+Ces scripts classiques partagent uniquement l'espace de noms `window.LearningDesignerModules`. Les modules qui consultent le document reçoivent une fonction `getState` pour toujours lire le document courant après un import ou un changement de design. L'API `window.learningDesignerApp` utilisée par le compte reste inchangée.
+
+L'ordre de chargement est explicite dans `designer.php` : sources des compétences, configuration, autres modules, `interface.js`, puis `account-ui.js`. Aucune compilation n'est nécessaire. Pour déployer ce découpage, transférez **tout le dossier `js/editor/`**, `js/interface.js` et `designer.php` ensemble ; les nouveaux modules sont nécessaires au fonctionnement du concepteur.
+
 ## Crédits et licence
 
 Développé par Yann Houry sur la base du travail de François Jourde et inspiré de l'UCL Learning Designer. Le projet est distribué sous licence [CC BY-SA](./LICENSE).
+
+## Vérifications de développement
+
+Les tests utilisent des données isolées ; ils ne modifient pas la base du site :
+
+```bash
+node --test tests/*.test.cjs
+php tests/server-state.test.php
+```
+
+Le dossier `tests/` reste versionné mais n’est pas nécessaire sur le serveur web.
+
+Les sauvegardes web utilisent une révision entière pour détecter les écritures concurrentes. La colonne `learning_designs.revision` est ajoutée automatiquement lors du passage au schéma 5, sans modifier le contenu des designs. Déployez les fichiers PHP et JavaScript correspondants ensemble. Un ancien onglet sans révision sera bloqué comme un conflit et pourra conserver son brouillon dans une copie.
+
+La configuration suit cet ordre de priorité : variables d’environnement, paramètres du serveur, fichiers locaux ou secrets, puis valeurs par défaut de `app-config.php`.

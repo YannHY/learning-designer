@@ -9,7 +9,9 @@
   let requestedRemoteDesignHandled = false;
   let startupRemoteDesignSynced = false;
   let autoSaveTimer = null;
-  let lastLoadTime = 0;
+  let lastSaved = null;
+  let saveInFlight = null;
+  let remoteLoadInFlight = null;
   let autoSaveHideTimer = null;
 
   function tr(fr, en) {
@@ -20,20 +22,9 @@
     return document.getElementById(id);
   }
 
-  function currentDesignTitle() {
-    const state = app()?.getState?.() ?? {};
-    const title = String(state?.meta?.name ?? "").trim();
-    return title || tr("Production sans titre", "Untitled design");
-  }
-
   function currentDesignId() {
     const state = app()?.getState?.() ?? {};
     return Number(state?.meta?.remoteDesignId || 0);
-  }
-
-  function currentDesignUpdatedAt() {
-    const state = app()?.getState?.() ?? {};
-    return String(state?.meta?.remoteUpdatedAt || "");
   }
 
   function hasMeaningfulDesignContent(state) {
@@ -134,7 +125,9 @@
     clearTimeout(autoSaveHideTimer);
     button.removeAttribute("data-save-status");
     button.removeAttribute("aria-busy");
-    setSaveButtonText(tr("Enregistrer", "Save"));
+    setSaveButtonText(hasSaveConflict()
+      ? tr("Enregistrer une copie", "Save a copy")
+      : tr("Enregistrer", "Save"));
   }
 
   function syncSaveUi() {
@@ -144,7 +137,7 @@
     if (authState.user) {
       button.hidden = false;
       if (!button.dataset.saveStatus) {
-        setSaveButtonText(tr("Enregistrer", "Save"));
+        resetSaveButtonState();
       }
       return;
     }
@@ -190,104 +183,207 @@
     }, kind === "error" ? 4000 : 2500);
   }
 
+  let activeConfirmation = null;
+
+  function confirmAccountAction({ title, message, confirmLabel, cancelLabel }) {
+    // A second click must not create another dialog or repeat the action.
+    if (activeConfirmation) return Promise.resolve(false);
+    return new Promise((resolve) => {
+      const previousFocus = document.activeElement;
+      const dialog = document.createElement("dialog");
+      dialog.className = "modal account-confirm-dialog";
+      dialog.setAttribute("aria-labelledby", "account-confirm-title");
+      dialog.setAttribute("aria-describedby", "account-confirm-message");
+      dialog.innerHTML = `
+        <h2 id="account-confirm-title" class="modal-title"></h2>
+        <p id="account-confirm-message" class="account-confirm-message"></p>
+        <div class="modal-actions">
+          <button class="btn btn-light" type="button" data-confirm-cancel autofocus></button>
+          <button class="btn btn-primary" type="button" data-confirm-accept></button>
+        </div>`;
+      dialog.querySelector("h2").textContent = title;
+      dialog.querySelector("p").textContent = message;
+      const cancel = dialog.querySelector("[data-confirm-cancel]");
+      const accept = dialog.querySelector("[data-confirm-accept]");
+      cancel.textContent = cancelLabel;
+      accept.textContent = confirmLabel;
+      activeConfirmation = dialog;
+      cancel.addEventListener("click", () => dialog.close("cancel"));
+      accept.addEventListener("click", () => dialog.close("confirm"));
+      dialog.addEventListener("cancel", (event) => {
+        event.preventDefault();
+        dialog.close("cancel");
+      });
+      dialog.addEventListener("keydown", (event) => {
+        // Keep the editor's shortcuts and other modal handlers out of this dialog.
+        event.stopPropagation();
+        if (event.key === "Escape") {
+          event.preventDefault();
+          dialog.close("cancel");
+        } else if (event.key === "Tab") {
+          if (event.shiftKey && document.activeElement === cancel) {
+            event.preventDefault();
+            accept.focus();
+          } else if (!event.shiftKey && document.activeElement === accept) {
+            event.preventDefault();
+            cancel.focus();
+          }
+        }
+      });
+      dialog.addEventListener("close", () => {
+        const confirmed = dialog.returnValue === "confirm";
+        dialog.remove();
+        activeConfirmation = null;
+        if (previousFocus?.isConnected) previousFocus.focus();
+        resolve(confirmed);
+      }, { once: true });
+      document.body.appendChild(dialog);
+      dialog.showModal();
+      cancel.focus();
+    });
+  }
+
+  function hasSaveConflict(state = app()?.getState?.()) {
+    const id = Number(state?.meta?.remoteDesignId || 0);
+    return id > 0 && Number(state?.meta?.remoteSaveConflict) === id;
+  }
+
+  function contentSignature(state) {
+    const meta = { ...state.meta };
+    delete meta.remoteDesignId;
+    delete meta.remoteUpdatedAt;
+    delete meta.remoteRevision;
+    delete meta.remoteSaveConflict;
+    delete meta.remoteDirty;
+    return JSON.stringify({ ...state, meta });
+  }
+
+  function isSaved(state) {
+    return lastSaved?.generation === app()?.getDocumentGeneration?.()
+      && lastSaved?.id === Number(state.meta?.remoteDesignId || 0)
+      && lastSaved?.signature === contentSignature(state);
+  }
+
+  function showSaveConflict() {
+    resetSaveButtonState();
+    const message = tr(
+      "Conflit de sauvegarde : la version distante a changé. La sauvegarde automatique est suspendue et votre brouillon local est conservé. Cliquez sur « Enregistrer une copie » pour le sauvegarder séparément.",
+      "Save conflict: the remote version has changed. Auto-save is paused and your local draft is preserved. Click “Save a copy” to save it separately."
+    );
+    app()?.showNotice?.(message, "error");
+    app()?.announce?.(message);
+  }
+
   function scheduleAutoSave() {
-    if (!authState.user) return;
     clearTimeout(autoSaveTimer);
+    autoSaveTimer = null;
+    if (!authState.user || saveInFlight || remoteLoadInFlight) return;
+    const state = app()?.getState?.();
+    if (!state || hasSaveConflict(state) || isSaved(state)) return;
+    if (Number(state.meta?.remoteDesignId || 0) <= 0 && !hasMeaningfulDesignContent(state)) return;
     autoSaveTimer = setTimeout(() => {
-      if (!authState.user) return;
-      if (Date.now() - lastLoadTime < 3000) return;
-      autoSaveRemote();
+      autoSaveTimer = null;
+      void autoSaveRemote();
     }, 45000);
   }
 
-  async function autoSaveRemote() {
+  // All save entry points share one request at a time and acknowledge only
+  // the snapshot actually sent, so edits made during the request stay dirty.
+  async function persistRemoteDesign(automatic = false) {
+    while (remoteLoadInFlight || saveInFlight) await (remoteLoadInFlight || saveInFlight);
+    if (!authState.user) return null;
     const state = app()?.getState?.();
-    if (!state) return;
-    if (currentDesignId() <= 0 && !hasMeaningfulDesignContent(state)) return;
-    setAutoSaveStatus("saving", tr("Sauvegarde…", "Saving…"));
-    try {
-      const data = await fetchJson("save_design.php", {
-        method: "POST",
-        body: JSON.stringify({
-          design_id: currentDesignId(),
-          expected_updated_at: currentDesignUpdatedAt(),
-          title: currentDesignTitle(),
-          document: state
-        })
-      });
-      app()?.updateMeta?.({
-        remoteDesignId: data.design.id,
-        remoteUpdatedAt: data.design.updatedAt
-      });
-      setRemoteDesignUrl(data.design.id);
-      setAutoSaveStatus("success", tr("Enregistré ✓", "Saved ✓"));
-    } catch (error) {
-      if (error?.status === 409) {
-        const updatedAt = error?.data?.design?.updatedAt;
-        if (updatedAt) app()?.updateMeta?.({ remoteUpdatedAt: updatedAt });
-        setAutoSaveStatus("error", tr("Conflit", "Conflict"));
-        app()?.showNotice?.(
-          tr(
-            "Conflit de sauvegarde : ce design a été modifié dans une autre fenêtre. La prochaine sauvegarde résoudra le conflit.",
-            "Save conflict: this design was changed in another window. The next save will resolve the conflict."
-          ),
-          "error"
-        );
-        return;
-      }
-      setAutoSaveStatus("error", tr("Échec", "Failed"));
-      app()?.showNotice?.(tr("Échec de la sauvegarde automatique.", "Auto-save failed."), "error");
+    if (!state) return null;
+    let designId = Number(state.meta?.remoteDesignId || 0);
+    let expectedRevision = Number(state.meta?.remoteRevision) || null;
+    if (hasSaveConflict(state)) {
+      if (automatic) return null;
+      const decisionGeneration = app()?.getDocumentGeneration?.();
+      if (!await confirmAccountAction({
+        title: tr("Enregistrer une copie", "Save a copy"),
+        message: tr(
+          "Votre brouillon sera enregistré comme un nouveau design. La version distante sera conservée.",
+          "Your draft will be saved as a new design. The remote version will be preserved."
+        ),
+        cancelLabel: tr("Revenir au brouillon", "Back to draft"),
+        confirmLabel: tr("Enregistrer une copie", "Save a copy")
+      })) return null;
+      if (decisionGeneration !== app()?.getDocumentGeneration?.()
+        || contentSignature(state) !== contentSignature(app().getState())) return null;
+      designId = 0;
+      expectedRevision = null;
+    } else if (isSaved(state)) {
+      return lastSaved.data;
     }
+    if (automatic && designId <= 0 && !hasMeaningfulDesignContent(state)) return null;
+
+    clearTimeout(autoSaveTimer);
+    autoSaveTimer = null;
+    const generation = app()?.getDocumentGeneration?.();
+    const sourceId = Number(state.meta?.remoteDesignId || 0);
+    const userId = authState.user.id;
+    const signature = contentSignature(state);
+    const stillCurrent = () => generation === app()?.getDocumentGeneration?.()
+      && userId === authState.user?.id && sourceId === currentDesignId();
+    const document = JSON.parse(signature);
+    const title = String(state.meta?.name || "").trim() || tr("Production sans titre", "Untitled design");
+    setAutoSaveStatus("saving", tr("Sauvegarde…", "Saving…"));
+    saveInFlight = (async () => {
+      try {
+        const data = await fetchJson("save_design.php", {
+          method: "POST",
+          body: JSON.stringify({ design_id: designId, expected_revision: expectedRevision, title, document })
+        });
+        if (!stillCurrent()) return null;
+        lastSaved = { generation, id: data.design.id, signature, data };
+        app()?.updateMeta?.({
+          remoteDesignId: data.design.id,
+          remoteUpdatedAt: data.design.updatedAt,
+          remoteRevision: data.design.revision,
+          remoteSaveConflict: null,
+          remoteDirty: contentSignature(app().getState()) !== signature
+        }, { markDirty: false });
+        setRemoteDesignUrl(data.design.id);
+        setAutoSaveStatus("success", tr("Enregistré ✓", "Saved ✓"));
+        return data;
+      } catch (error) {
+        if (!stillCurrent()) return null;
+        if (error?.status === 409) {
+          // Keep the revision that belongs to the local snapshot. Adopting
+          // the server revision here would allow the next save to overwrite it.
+          app()?.updateMeta?.({ remoteSaveConflict: sourceId }, { markDirty: false });
+          showSaveConflict();
+        } else {
+          setAutoSaveStatus("error", tr("Échec", "Failed"));
+          app()?.showNotice?.(error.message || tr("Sauvegarde distante impossible.", "Remote save failed."), "error");
+        }
+        return null;
+      }
+    })();
+    let result;
+    try {
+      result = await saveInFlight;
+    } finally {
+      saveInFlight = null;
+      if (result || !stillCurrent()) scheduleAutoSave();
+    }
+    return result;
+  }
+
+  async function autoSaveRemote() {
+    return persistRemoteDesign(true);
   }
 
   async function saveRemoteDesign() {
-    if (!authState.user) {
-      return null;
-    }
-
-    const state = app()?.getState?.();
-    if (!state) return null;
-
-    try {
-      const data = await fetchJson("save_design.php", {
-        method: "POST",
-        body: JSON.stringify({
-          design_id: currentDesignId(),
-          expected_updated_at: currentDesignUpdatedAt(),
-          title: currentDesignTitle(),
-          document: state
-        })
-      });
-
-      app()?.updateMeta?.({
-        remoteDesignId: data.design.id,
-        remoteUpdatedAt: data.design.updatedAt
-      });
-      setRemoteDesignUrl(data.design.id);
-      const message = tr(
-        "Production sauvegardée sur votre compte. Ouvrez Designs pour la retrouver.",
-        "Design saved to your account. Open Designs to find it again."
-      );
-      app()?.showNotice?.(message, "success");
-      app()?.announce?.(message);
-      return data;
-    } catch (error) {
-      if (error?.status === 409) {
-        const updatedAt = error?.data?.design?.updatedAt;
-        if (updatedAt) app()?.updateMeta?.({ remoteUpdatedAt: updatedAt });
-        const message = tr(
-          "Conflit de sauvegarde : ce design a été modifié dans une autre fenêtre.",
-          "Save conflict: this design was changed in another window."
-        );
-        app()?.showNotice?.(message, "error");
-        app()?.announce?.(message);
-        return null;
-      }
-      const message = error.message || tr("Sauvegarde distante impossible.", "Remote save failed.");
-      app()?.showNotice?.(message, "error");
-      app()?.announce?.(message);
-      return null;
-    }
+    const data = await persistRemoteDesign();
+    if (!data) return null;
+    const message = tr(
+      "Production sauvegardée sur votre compte. Ouvrez Designs pour la retrouver.",
+      "Design saved to your account. Open Designs to find it again."
+    );
+    app()?.showNotice?.(message, "success");
+    app()?.announce?.(message);
+    return data;
   }
 
   function ensureSiteNavUi() {
@@ -393,29 +489,107 @@
     await syncRemoteDesignFromServer(designId, true);
   }
 
+  function hasLocalDraft(state) {
+    // Old drafts have no marker: preserve them rather than assume they synced.
+    return state?.meta?.remoteDirty !== false
+      && (Number(state?.meta?.remoteDesignId || 0) > 0 || hasMeaningfulDesignContent(state));
+  }
+
   async function syncRemoteDesignFromServer(designId, showLoadedMessage = false) {
     if (!Number.isFinite(designId) || designId <= 0) return false;
+    while (remoteLoadInFlight || saveInFlight) await (remoteLoadInFlight || saveInFlight);
+    const generation = app()?.getDocumentGeneration?.();
+    const userId = authState.user?.id;
+    clearTimeout(autoSaveTimer);
+    autoSaveTimer = null;
+    let canResumeAutoSave = false;
+    remoteLoadInFlight = (async () => {
+      try {
+        const data = await fetchJson(`get_design.php?design_id=${encodeURIComponent(String(designId))}`);
+        // Re-read after the request: typing during a slow load also creates a draft.
+        if (generation !== app()?.getDocumentGeneration?.() || userId !== authState.user?.id) return false;
+        const local = app()?.getState?.();
+        const localId = Number(local?.meta?.remoteDesignId || 0);
+        if (hasLocalDraft(local) || hasSaveConflict(local)) {
+          const sameDesign = localId === designId;
+          const sameRevision = Number.isSafeInteger(local.meta.remoteRevision)
+            && local.meta.remoteRevision > 0 && local.meta.remoteRevision === data.design.revision;
+          if (sameDesign && sameRevision && !hasSaveConflict(local)) {
+            app()?.updateMeta?.({ remoteDirty: true }, { markDirty: false });
+            setRemoteDesignUrl(designId);
+            const message = tr(
+              "Votre brouillon local a été restauré. La sauvegarde automatique va reprendre.",
+              "Your local draft has been restored. Auto-save will resume."
+            );
+            app()?.showNotice?.(message, "success");
+            app()?.announce?.(message);
+            canResumeAutoSave = true;
+            return true;
+          }
+          const loadRemote = await confirmAccountAction({
+            title: tr("Brouillon non sauvegardé", "Unsaved draft"),
+            message: sameDesign ? tr(
+              "La version de votre brouillon ne correspond pas à la version distante. Charger la version distante remplacera vos modifications locales. Vous pouvez conserver votre brouillon pour l’enregistrer comme une copie.",
+              "Your draft’s version does not match the remote version. Loading the remote version will replace your local changes. You can keep your draft and save it as a copy."
+            ) : tr(
+              "Vous avez des modifications qui ne sont pas encore sauvegardées sur votre compte. Ouvrir l’autre design remplacera ce brouillon. Conservez-le pour sauvegarder votre travail d’abord.",
+              "You have changes that have not yet been saved to your account. Opening the other design will replace this draft. Keep it to save your work first."
+            ),
+            cancelLabel: tr("Conserver mon brouillon", "Keep my draft"),
+            confirmLabel: sameDesign
+              ? tr("Charger la version distante", "Load remote version")
+              : tr("Ouvrir l’autre design", "Open other design")
+          });
+          if (generation !== app()?.getDocumentGeneration?.()
+            || contentSignature(local) !== contentSignature(app().getState())) return false;
+          if (!loadRemote) {
+            if (localId > 0) setRemoteDesignUrl(localId);
+            else clearRemoteDesignUrl();
+            if (sameDesign) {
+              app()?.updateMeta?.({ remoteSaveConflict: localId, remoteDirty: true }, { markDirty: false });
+              showSaveConflict();
+            } else {
+              canResumeAutoSave = true;
+            }
+            return false;
+          }
+        }
+        app()?.loadDocument?.(data.design.document, {
+          remoteDesignId: data.design.id,
+          remoteUpdatedAt: data.design.updatedAt,
+          remoteRevision: data.design.revision,
+          remoteSaveConflict: null,
+          remoteDirty: false
+        });
+        lastSaved = {
+          generation: app()?.getDocumentGeneration?.(),
+          id: data.design.id,
+          signature: contentSignature(app().getState()),
+          data
+        };
+        canResumeAutoSave = true;
+        setRemoteDesignUrl(data.design.id);
+        if (showLoadedMessage) {
+          const message = tr("Production chargée.", "Design loaded.");
+          app()?.showNotice?.(message, "success");
+          app()?.announce?.(message);
+        }
+        return true;
+      } catch (error) {
+        if (generation === app()?.getDocumentGeneration?.()) {
+          app()?.showNotice?.(tr(
+            "La version distante n’a pas pu être chargée. Votre travail local est conservé.",
+            "The remote version could not be loaded. Your local work is preserved."
+          ), "warning");
+        }
+        return false;
+      }
+    })();
     try {
-      const data = await fetchJson(`get_design.php?design_id=${encodeURIComponent(String(designId))}`);
-      app()?.loadDocument?.(data.design.document, {
-        remoteDesignId: data.design.id,
-        remoteUpdatedAt: data.design.updatedAt
-      });
-      setRemoteDesignUrl(data.design.id);
-      lastLoadTime = Date.now();
-      if (showLoadedMessage) {
-        const message = tr("Production chargée.", "Design loaded.");
-        app()?.showNotice?.(message, "success");
-        app()?.announce?.(message);
-      }
-      return true;
-    } catch (error) {
-      if (showLoadedMessage) {
-        const message = error.message || tr("Chargement impossible.", "Load failed.");
-        app()?.showNotice?.(message, "error");
-        app()?.announce?.(message);
-      }
-      return false;
+      return await remoteLoadInFlight;
+    } finally {
+      remoteLoadInFlight = null;
+      if (canResumeAutoSave || generation !== app()?.getDocumentGeneration?.()) scheduleAutoSave();
     }
   }
 
@@ -610,24 +784,8 @@
   }
 
   async function doPublish() {
-    const state = app()?.getState?.();
-    if (!state) return;
-
-    let saved = null;
-    try {
-      saved = await fetchJson("save_design.php", {
-        method: "POST",
-        body: JSON.stringify({
-          design_id: currentDesignId(),
-          expected_updated_at: currentDesignUpdatedAt(),
-          title: currentDesignTitle(),
-          document: state
-        })
-      });
-      app()?.updateMeta?.({ remoteDesignId: saved.design.id, remoteUpdatedAt: saved.design.updatedAt });
-      setRemoteDesignUrl(saved.design.id);
-    } catch (err) {
-      app()?.showNotice?.(err.message || tr("Sauvegarde impossible.", "Save failed."), "error");
+    const saved = await persistRemoteDesign();
+    if (!saved) {
       closePublishModal();
       return;
     }

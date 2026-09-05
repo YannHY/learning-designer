@@ -1,18 +1,9 @@
 ---
 name: learning-designer
-description: Create, validate, and prepare publication for pedagogical Learning Designer designs using the `learning` CLI, and preserve the product's established interface direction when UI work is requested. Use for lessons, sequences, learning designs, instructional scenarios, Bloom outcomes, learning moments, digital competencies, publishable `design.json` files, or Learning Designer interface changes.
+description: Create, validate, and prepare publication for pedagogical Learning Designer designs using the `learning` CLI. Use for lessons, sequences, learning designs, instructional scenarios, Bloom outcomes, learning moments, digital competencies, or publishable `design.json` files. Do not use for development of the Learning Designer website itself.
 ---
 
 # Learning Designer
-
-## Interface Visual Direction
-
-When changing the Learning Designer interface, keep controls crisp, restrained, and predominantly neutral.
-
-- Do not use blue-tinted translucent surfaces, diffuse blue shadows, colored glows, ambient halos, or pulsing rings.
-- Use white or neutral surfaces with thin, sharp borders. Add a restrained neutral shadow only when elevation is necessary for comprehension.
-- Reserve blue for meaningful accents such as icons, links, selected states, and solid accessible focus outlines—not atmospheric decoration.
-- Prefer flat, precise states over blurred or luminous effects in both light and dark themes.
 
 ## Goal
 

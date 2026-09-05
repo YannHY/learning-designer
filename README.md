@@ -21,6 +21,7 @@ Le projet est inspiré de l'[UCL Learning Designer](https://www.ucl.ac.uk/learni
 - [Aide complète](./help.php) : prise en main, conception, sauvegarde, partage et import/export
 - [Créer avec une IA, la Skill et le CLI](./help.php#cli) : trois manières d'utiliser un agent pour produire un scénario structuré
 - [Skill Learning Designer](./skills/learning-designer/SKILL.md) : méthode réutilisable par un agent compatible
+- [Skill de développement du site](./skills/learning-designer-site/SKILL.md) : conventions techniques et direction visuelle pour maintenir l’application
 - [Modèles de scénarios](./models.php) : bibliothèque de scénarios génériques préremplis
 - [Bibliothèque de prompts](./prompts.php) : prompts prêts à copier pour analyser, adapter ou prolonger un scénario
 - [Comprendre le learning design](./learning-design.php) : principes et cadre pédagogique
@@ -118,6 +119,7 @@ Conservez les secrets dans un fichier local non versionné, par exemple `learnin
 - [prompts.php](./prompts.php) : bibliothèque de prompts pédagogiques ;
 - [share.php](./share.php) et [view.php](./view.php) : catalogue public et consultation des designs publiés ;
 - [skills/learning-designer](./skills/learning-designer) : Skill et configuration de l'agent ;
+- [skills/learning-designer-site](./skills/learning-designer-site) : Skill de développement et de maintenance du site ;
 - [bin/learning](./bin/learning) : CLI de création, de validation et de publication ;
 - [lib/bootstrap.php](./lib/bootstrap.php) : configuration, base de données et fonctions PHP communes.
 

@@ -10,7 +10,7 @@ $db->prepare("UPDATE app_feedback SET visitor_hash = '' WHERE visitor_hash <> ''
 $message = '';
 $error = '';
 $activeAdminTab = (string)($_GET['tab'] ?? $_POST['admin_tab'] ?? 'accounts');
-if (!in_array($activeAdminTab, ['accounts', 'feedback'], true)) {
+if (!in_array($activeAdminTab, ['accounts', 'feedback', 'statistics'], true)) {
     $activeAdminTab = 'accounts';
 }
 
@@ -72,6 +72,41 @@ GROUP BY u.id, u.username, u.email, u.role, u.status, u.email_verified_at, u.cre
 ORDER BY u.created_at DESC");
 $users = $usersStmt->fetchAll();
 
+$statisticsSince = gmdate('Y-m-d H:i:s', time() - 2592000);
+$designStatisticsStmt = $db->prepare("SELECT
+    COUNT(*) AS total,
+    SUM(CASE WHEN is_published = 1 AND share_token IS NOT NULL AND share_token <> '' THEN 1 ELSE 0 END) AS shared,
+    SUM(CASE WHEN is_published = 1 AND is_listed = 1 AND share_token IS NOT NULL AND share_token <> '' THEN 1 ELSE 0 END) AS listed,
+    SUM(CASE WHEN created_at >= ? THEN 1 ELSE 0 END) AS recent
+FROM learning_designs");
+$designStatisticsStmt->execute([$statisticsSince]);
+$designStatistics = $designStatisticsStmt->fetch() ?: [];
+
+$statistics = [
+    'users' => count($users),
+    'active_users' => 0,
+    'verified_users' => 0,
+    'creators' => 0,
+    'recent_users' => 0,
+    'designs' => (int)($designStatistics['total'] ?? 0),
+    'shared_designs' => (int)($designStatistics['shared'] ?? 0),
+    'listed_designs' => (int)($designStatistics['listed'] ?? 0),
+    'recent_designs' => (int)($designStatistics['recent'] ?? 0),
+];
+foreach ($users as $user) {
+    $statistics['active_users'] += (string)$user['status'] === 'active' ? 1 : 0;
+    $statistics['verified_users'] += !empty($user['email_verified_at']) ? 1 : 0;
+    $statistics['creators'] += (int)$user['design_count'] > 0 ? 1 : 0;
+    $statistics['recent_users'] += (string)$user['created_at'] >= $statisticsSince ? 1 : 0;
+}
+
+$topCreators = array_values(array_filter($users, static fn(array $user): bool => (int)$user['design_count'] > 0));
+usort($topCreators, static function (array $left, array $right): int {
+    $byDesignCount = (int)$right['design_count'] <=> (int)$left['design_count'];
+    return $byDesignCount !== 0 ? $byDesignCount : strcmp((string)$left['username'], (string)$right['username']);
+});
+$topCreators = array_slice($topCreators, 0, 5);
+
 $feedbackCounts = ['positive' => 0, 'neutral' => 0, 'negative' => 0];
 $feedbackCountStmt = $db->query("SELECT rating, COUNT(*) AS total FROM app_feedback GROUP BY rating");
 foreach ($feedbackCountStmt->fetchAll() as $row) {
@@ -100,6 +135,11 @@ function feedback_display_page_path(string $pagePath): string
     }
     return $pagePath === '' ? '/' : $pagePath;
 }
+
+function admin_stat_percentage(int $value, int $total): int
+{
+    return $total > 0 ? (int)round(($value / $total) * 100) : 0;
+}
 ?>
 <!doctype html>
 <html lang="fr">
@@ -114,7 +154,7 @@ function feedback_display_page_path(string $pagePath): string
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="stylesheet" href="css/interface.css?v=20260905-feedback-tabs">
     <link rel="stylesheet" href="css/account-ui.css?v=20260903-pagefind-dark">
-    <link rel="stylesheet" href="css/account-pages.css?v=20260905-feedback-tabs">
+    <link rel="stylesheet" href="css/account-pages.css?v=20260905-admin-statistics-flat-v3">
 </head>
 <body class="admin-page">
 <?php render_site_nav('admin'); ?>
@@ -137,6 +177,10 @@ function feedback_display_page_path(string $pagePath): string
                 Feedback
                 <span><?= $feedbackTotal ?></span>
             </button>
+            <button id="admin-tab-statistics" class="admin-tab<?= $activeAdminTab === 'statistics' ? ' is-active' : '' ?>" type="button" role="tab" aria-selected="<?= $activeAdminTab === 'statistics' ? 'true' : 'false' ?>" aria-controls="admin-panel-statistics" data-admin-tab="statistics">
+                <i class="fa-solid fa-chart-column" aria-hidden="true"></i>
+                Statistiques
+            </button>
         </div>
 
         <?php if ($message !== ''): ?>
@@ -145,6 +189,126 @@ function feedback_display_page_path(string $pagePath): string
         <?php if ($error !== ''): ?>
             <p class="account-message error"><?= htmlspecialchars($error, ENT_QUOTES, 'UTF-8') ?></p>
         <?php endif; ?>
+
+        <div id="admin-panel-statistics" class="admin-tab-panel" role="tabpanel" aria-labelledby="admin-tab-statistics"<?= $activeAdminTab === 'statistics' ? '' : ' hidden' ?>>
+        <section class="admin-statistics-panel">
+            <div class="admin-section-head">
+                <div>
+                    <h2>Activité de la plateforme</h2>
+                    <p>Indicateurs calculés en temps réel à partir des comptes et des designs enregistrés.</p>
+                </div>
+                <span class="admin-statistics-period"><i class="fa-regular fa-clock" aria-hidden="true"></i> 30 derniers jours</span>
+            </div>
+
+            <div class="admin-statistics-cards" aria-label="Indicateurs principaux">
+                <article class="admin-stat-card admin-stat-card-users">
+                    <div class="admin-stat-card-head">
+                        <span>Utilisateurs</span>
+                        <i class="fa-solid fa-users" aria-hidden="true"></i>
+                    </div>
+                    <strong><?= $statistics['users'] ?></strong>
+                    <p><b>+<?= $statistics['recent_users'] ?></b> sur les 30 derniers jours</p>
+                </article>
+                <article class="admin-stat-card admin-stat-card-designs">
+                    <div class="admin-stat-card-head">
+                        <span>Designs créés</span>
+                        <i class="fa-solid fa-layer-group" aria-hidden="true"></i>
+                    </div>
+                    <strong><?= $statistics['designs'] ?></strong>
+                    <p><b>+<?= $statistics['recent_designs'] ?></b> sur les 30 derniers jours</p>
+                </article>
+                <article class="admin-stat-card admin-stat-card-shared">
+                    <div class="admin-stat-card-head">
+                        <span>Designs partagés</span>
+                        <i class="fa-solid fa-share-nodes" aria-hidden="true"></i>
+                    </div>
+                    <strong><?= $statistics['shared_designs'] ?></strong>
+                    <p><b><?= admin_stat_percentage($statistics['shared_designs'], $statistics['designs']) ?> %</b> des designs ont un lien actif</p>
+                </article>
+                <article class="admin-stat-card admin-stat-card-listed">
+                    <div class="admin-stat-card-head">
+                        <span>Dans le catalogue</span>
+                        <i class="fa-regular fa-compass" aria-hidden="true"></i>
+                    </div>
+                    <strong><?= $statistics['listed_designs'] ?></strong>
+                    <p><b><?= admin_stat_percentage($statistics['listed_designs'], $statistics['shared_designs']) ?> %</b> des designs partagés</p>
+                </article>
+            </div>
+
+            <div class="admin-statistics-details">
+                <section class="admin-statistics-block" aria-labelledby="admin-stat-users-title">
+                    <h3 id="admin-stat-users-title">Adoption</h3>
+                    <div class="admin-stat-progress-list">
+                        <?php
+                        $adoptionRows = [
+                            ['label' => 'Comptes actifs', 'value' => $statistics['active_users'], 'total' => $statistics['users']],
+                            ['label' => 'Emails vérifiés', 'value' => $statistics['verified_users'], 'total' => $statistics['users']],
+                            ['label' => 'Utilisateurs ayant créé un design', 'value' => $statistics['creators'], 'total' => $statistics['users']],
+                        ];
+                        ?>
+                        <?php foreach ($adoptionRows as $row): ?>
+                            <?php $percentage = admin_stat_percentage($row['value'], $row['total']); ?>
+                            <div class="admin-stat-progress-row">
+                                <div><span><?= h($row['label']) ?></span><strong><?= $row['value'] ?> <small>/ <?= $row['total'] ?></small></strong></div>
+                                <div class="admin-stat-progress" role="progressbar" aria-label="<?= h($row['label']) ?>" aria-valuenow="<?= $percentage ?>" aria-valuemin="0" aria-valuemax="100">
+                                    <span style="width: <?= $percentage ?>%"></span>
+                                </div>
+                                <small><?= $percentage ?> %</small>
+                            </div>
+                        <?php endforeach; ?>
+                    </div>
+                </section>
+
+                <section class="admin-statistics-block" aria-labelledby="admin-stat-sharing-title">
+                    <h3 id="admin-stat-sharing-title">Diffusion des designs</h3>
+                    <div class="admin-stat-progress-list">
+                        <?php
+                        $sharingRows = [
+                            ['label' => 'Enregistrés', 'value' => $statistics['designs']],
+                            ['label' => 'Partagés par lien', 'value' => $statistics['shared_designs']],
+                            ['label' => 'Visibles dans le catalogue', 'value' => $statistics['listed_designs']],
+                        ];
+                        ?>
+                        <?php foreach ($sharingRows as $row): ?>
+                            <?php $percentage = admin_stat_percentage($row['value'], $statistics['designs']); ?>
+                            <div class="admin-stat-progress-row">
+                                <div><span><?= h($row['label']) ?></span><strong><?= $row['value'] ?></strong></div>
+                                <div class="admin-stat-progress" role="progressbar" aria-label="<?= h($row['label']) ?>" aria-valuenow="<?= $percentage ?>" aria-valuemin="0" aria-valuemax="100">
+                                    <span style="width: <?= $percentage ?>%"></span>
+                                </div>
+                                <small><?= $percentage ?> %</small>
+                            </div>
+                        <?php endforeach; ?>
+                    </div>
+                </section>
+            </div>
+
+            <section class="admin-statistics-ranking" aria-labelledby="admin-stat-ranking-title">
+                <div class="admin-statistics-ranking-head">
+                    <div>
+                        <h3 id="admin-stat-ranking-title">Créateurs les plus actifs</h3>
+                        <p><?= $statistics['creators'] ?> utilisateur<?= $statistics['creators'] !== 1 ? 's ont' : ' a' ?> créé au moins un design.</p>
+                    </div>
+                    <?php if ($statistics['creators'] > 0): ?>
+                        <span><?= number_format($statistics['designs'] / $statistics['creators'], 1, ',', ' ') ?> design<?= ($statistics['designs'] / $statistics['creators']) >= 2 ? 's' : '' ?> par créateur</span>
+                    <?php endif; ?>
+                </div>
+                <?php if ($topCreators === []): ?>
+                    <p class="admin-statistics-empty">Aucun design n’a encore été créé.</p>
+                <?php else: ?>
+                    <ol class="admin-statistics-top-list">
+                        <?php foreach ($topCreators as $index => $creator): ?>
+                            <li>
+                                <span class="admin-statistics-rank"><?= $index + 1 ?></span>
+                                <span class="admin-statistics-creator"><strong><?= h((string)$creator['username']) ?></strong><small><?= h((string)$creator['email']) ?></small></span>
+                                <strong class="admin-statistics-design-count"><?= (int)$creator['design_count'] ?> <small>design<?= (int)$creator['design_count'] !== 1 ? 's' : '' ?></small></strong>
+                            </li>
+                        <?php endforeach; ?>
+                    </ol>
+                <?php endif; ?>
+            </section>
+        </section>
+        </div>
 
         <div id="admin-panel-feedback" class="admin-tab-panel" role="tabpanel" aria-labelledby="admin-tab-feedback"<?= $activeAdminTab === 'feedback' ? '' : ' hidden' ?>>
         <section class="panel admin-feedback-panel">
@@ -318,9 +482,11 @@ function feedback_display_page_path(string $pagePath): string
 <script>
 document.addEventListener('DOMContentLoaded', function () {
     var tabs = Array.from(document.querySelectorAll('[data-admin-tab]'));
+    var tabList = document.querySelector('.admin-tabs');
     var panels = {
         accounts: document.getElementById('admin-panel-accounts'),
-        feedback: document.getElementById('admin-panel-feedback')
+        feedback: document.getElementById('admin-panel-feedback'),
+        statistics: document.getElementById('admin-panel-statistics')
     };
 
     function activateTab(name, updateUrl) {
@@ -334,6 +500,16 @@ document.addEventListener('DOMContentLoaded', function () {
         Object.keys(panels).forEach(function (key) {
             panels[key].hidden = key !== name;
         });
+        var activeTab = tabs.find(function (tab) {
+            return tab.dataset.adminTab === name;
+        });
+        if (activeTab && tabList && tabList.scrollWidth > tabList.clientWidth) {
+            var activeBounds = activeTab.getBoundingClientRect();
+            var listBounds = tabList.getBoundingClientRect();
+            var left = tabList.scrollLeft + activeBounds.left - listBounds.left
+                - (tabList.clientWidth - activeBounds.width) / 2;
+            tabList.scrollTo({ left: Math.max(0, left), behavior: updateUrl ? 'smooth' : 'auto' });
+        }
         if (updateUrl && window.history && window.history.replaceState) {
             var url = new URL(window.location.href);
             url.searchParams.set('tab', name);

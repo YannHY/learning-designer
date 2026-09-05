@@ -16,7 +16,7 @@ app_start_session();
     <link rel="stylesheet" href="css/account-ui.css?v=20260903-pagefind-dark" />
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="stylesheet" href="css/interface.css?v=20260905-school-systems-v1" />
+    <link rel="stylesheet" href="css/interface.css?v=20260905-analysis-responsive-v1" />
   </head>
   <body class="designer-page">
     <a id="skip-link" class="skip-link" href="#board">Aller au contenu principal</a>
@@ -157,20 +157,13 @@ app_start_session();
               <div id="outcomes-list" class="outcomes-list"></div>
             </div>
           </div>
-          <div class="analysis-wrap">
-            <div id="top-pie-wrap" class="pie-with-labels">
-              <div id="top-pie" class="top-pie" aria-label="Répartition des types d'apprentissage"></div>
-              <div id="top-pie-labels" class="pie-outer-labels" aria-hidden="true"></div>
-              <div id="top-pie-tooltip" class="pie-tooltip hidden" role="tooltip" aria-hidden="true"></div>
-            </div>
-            <div id="top-legend" class="top-legend"></div>
-          </div>
         </div>
         <div id="analysis-view" class="analysis-view hidden" role="tabpanel" aria-labelledby="top-tab-analysis">
           <h2 id="analysis-title" class="analysis-title">Expérience d’apprentissage</h2>
           <div id="analysis-alerts" class="analysis-alerts hidden" role="status" aria-live="polite" aria-atomic="false"></div>
           <div class="analysis-main-grid">
             <div class="analysis-block analysis-learning-block">
+              <h3 id="analysis-learning-title" class="analysis-chart-title">Type d’apprentissage</h3>
               <div id="analysis-learning-pie-wrap" class="pie-with-labels pie-large">
                 <div id="analysis-learning-pie" class="analysis-big-pie"></div>
                 <div id="analysis-learning-labels" class="pie-outer-labels" aria-hidden="true"></div>
@@ -179,26 +172,36 @@ app_start_session();
               <div id="analysis-learning-legend" class="analysis-legend"></div>
             </div>
             <div class="analysis-block">
+              <h3 id="analysis-delivery-title" class="analysis-chart-title">Mode de formation</h3>
               <div id="analysis-delivery-pie" class="analysis-small-pie"></div>
               <div id="analysis-delivery-legend" class="analysis-legend"></div>
             </div>
             <div class="analysis-block">
+              <h3 id="analysis-teacher-title" class="analysis-chart-title">Enseignement</h3>
               <div id="analysis-teacher-pie" class="analysis-small-pie"></div>
               <div id="analysis-teacher-legend" class="analysis-legend"></div>
             </div>
             <div class="analysis-block">
+              <h3 id="analysis-sync-title" class="analysis-chart-title">Rythme</h3>
               <div id="analysis-sync-pie" class="analysis-small-pie"></div>
               <div id="analysis-sync-legend" class="analysis-legend"></div>
             </div>
             <div class="analysis-block">
+              <h3 id="analysis-eval-title" class="analysis-chart-title">Évaluation</h3>
               <div id="analysis-eval-pie" class="analysis-small-pie"></div>
               <div id="analysis-eval-legend" class="analysis-legend"></div>
             </div>
           </div>
           <div class="analysis-group-section">
+            <h3 id="analysis-group-title" class="analysis-chart-title">Groupe</h3>
             <div id="analysis-group-bar" class="analysis-group-bar"></div>
             <div id="analysis-group-legend" class="analysis-legend"></div>
           </div>
+          <section class="analysis-aias-section" aria-labelledby="analysis-aias-title">
+            <h3 id="analysis-aias-title" class="analysis-section-title">AIAS · Répartition pondérée par la durée</h3>
+            <div id="analysis-aias-bar" class="analysis-aias-bar"></div>
+            <div id="analysis-aias-legend" class="analysis-legend"></div>
+          </section>
         </div>
         <div id="chronology-view" class="analysis-view hidden" role="tabpanel" aria-labelledby="top-tab-chronology">
           <h2 id="chronology-title" class="analysis-title">Chronologie des activités</h2>
@@ -593,7 +596,7 @@ app_start_session();
     <script src="js/competency-catalog.js?v=20260831-framework-i18n"></script>
     <script src="js/competency-greencomp-details.js?v=20260831-framework-i18n"></script>
     <script src="js/competency-digcomp-details.js?v=20260830-digcomp-statements"></script>
-    <script src="js/interface.js?v=20260905-school-systems-v4"></script>
+    <script src="js/interface.js?v=20260905-analysis-titles-v2"></script>
     <script src="js/account-ui.js?v=20260905-php-nav-v1"></script>
   </body>
 </html>

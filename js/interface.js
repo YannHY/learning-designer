@@ -1140,12 +1140,8 @@ const bloomModalBackdrop = document.getElementById("bloom-modal-backdrop");
 const bloomCategoryList = document.getElementById("bloom-category-list");
 const bloomAddBtn = document.getElementById("bloom-add-btn");
 const bloomCancelBtn = document.getElementById("bloom-cancel-btn");
-const topPieWrap = document.getElementById("top-pie-wrap");
-const topPie = document.getElementById("top-pie");
-const topPieLabels = document.getElementById("top-pie-labels");
-const topPieTooltip = document.getElementById("top-pie-tooltip");
-const topLegend = document.getElementById("top-legend");
 const analysisAlerts = document.getElementById("analysis-alerts");
+let analysisAlertTimers = [];
 const analysisLearningPieWrap = document.getElementById("analysis-learning-pie-wrap");
 const analysisLearningPie = document.getElementById("analysis-learning-pie");
 const analysisLearningLabels = document.getElementById("analysis-learning-labels");
@@ -1161,6 +1157,8 @@ const analysisEvalPie = document.getElementById("analysis-eval-pie");
 const analysisEvalLegend = document.getElementById("analysis-eval-legend");
 const analysisGroupBar = document.getElementById("analysis-group-bar");
 const analysisGroupLegend = document.getElementById("analysis-group-legend");
+const analysisAiasBar = document.getElementById("analysis-aias-bar");
+const analysisAiasLegend = document.getElementById("analysis-aias-legend");
 const infoModalBackdrop = document.getElementById("info-modal-backdrop");
 const infoModalCloseBtn = document.getElementById("info-modal-close-btn");
 const exportScopeLabel = document.getElementById("export-scope-label");
@@ -1242,6 +1240,7 @@ const I18N = {
     info: "Information",
     toolbarRegion: "Actions du design",
     analysisTitle: "Expérience d’apprentissage",
+    analysisAiasTitle: "AIAS · Répartition pondérée par la durée",
     metaNameLabel: "Titre",
     metaLearningLabel: "Temps d'apprentissage",
     metaDesignedLabel: "Temps conçu",
@@ -1557,6 +1556,7 @@ const I18N = {
     info: "About",
     toolbarRegion: "Design actions",
     analysisTitle: "Learning Experience",
+    analysisAiasTitle: "AIAS · Distribution weighted by duration",
     metaNameLabel: "Title",
     metaLearningLabel: "Learning time",
     metaDesignedLabel: "Designed time",
@@ -2332,6 +2332,13 @@ function applyLocalizedUI() {
   newDesignCancelBtn.textContent = t("cancel");
   newDesignConfirmBtn.textContent = t("newDesignModalConfirm");
   document.getElementById("analysis-title").textContent = t("analysisTitle");
+  document.getElementById("analysis-learning-title").textContent = t("groupTitleType");
+  document.getElementById("analysis-delivery-title").textContent = t("groupTitleMode");
+  document.getElementById("analysis-teacher-title").textContent = t("groupTitleTeaching");
+  document.getElementById("analysis-sync-title").textContent = t("groupTitlePacing");
+  document.getElementById("analysis-eval-title").textContent = t("groupTitleEvaluation");
+  document.getElementById("analysis-group-title").textContent = t("groupTitleGroup");
+  document.getElementById("analysis-aias-title").textContent = t("analysisAiasTitle");
   document.getElementById("label-meta-name").textContent = t("metaNameLabel");
   document.getElementById("label-meta-learning").textContent = t("metaLearningLabel");
   document.getElementById("label-meta-designed").textContent = t("metaDesignedLabel");
@@ -3603,7 +3610,9 @@ function createAddSessionCard() {
   const icon = document.createElement("span");
   icon.className = "add-session-card-icon";
   icon.setAttribute("aria-hidden", "true");
-  icon.textContent = "+";
+  const plusIcon = document.createElement("i");
+  plusIcon.className = "fa-solid fa-plus";
+  icon.appendChild(plusIcon);
 
   const label = document.createElement("span");
   label.className = "add-session-card-label";
@@ -3858,7 +3867,8 @@ function buildAnalysisMetrics() {
     byTeaching: {},
     bySync: {},
     byEvaluation: {},
-    byGroup: {}
+    byGroup: {},
+    byAias: {}
   };
   let overall = 0;
   state.sessions.forEach((session) => {
@@ -3874,6 +3884,11 @@ function buildAnalysisMetrics() {
       metrics.bySync[activity.syncMode] = (metrics.bySync[activity.syncMode] || 0) + duration;
       metrics.byEvaluation[evaluationKey] = (metrics.byEvaluation[evaluationKey] || 0) + duration;
       metrics.byGroup[activity.groupMode] = (metrics.byGroup[activity.groupMode] || 0) + duration;
+      const normalizedAias = normalizeAiasState(activity.aias);
+      const aiasKey = normalizedAias.status === "specified"
+        ? `level_${normalizedAias.level}`
+        : normalizedAias.status;
+      metrics.byAias[aiasKey] = (metrics.byAias[aiasKey] || 0) + duration;
       overall += duration;
     });
   });
@@ -4155,20 +4170,20 @@ function renderPieOuterLabels(wrapEl, pieEl, labelsEl, tooltipEl, data, codeForS
   }, { signal });
 }
 
-function renderGroupBar(data) {
-  analysisGroupBar.setAttribute("role", "img");
+function renderSegmentedBar(element, data) {
+  element.setAttribute("role", "img");
   if (data.sum <= 0) {
-    analysisGroupBar.classList.add("is-empty");
-    analysisGroupBar.style.background = "";
-    analysisGroupBar.setAttribute("aria-label", t("noData"));
+    element.classList.add("is-empty");
+    element.style.background = "";
+    element.setAttribute("aria-label", t("noData"));
     return;
   }
-  analysisGroupBar.classList.remove("is-empty");
+  element.classList.remove("is-empty");
   const parts = data.segments
     .filter((segment) => segment.pct > 0)
     .map((segment) => `${segment.color} ${segment.start}% ${segment.end}%`);
-  analysisGroupBar.style.background = `linear-gradient(90deg, ${parts.join(", ")})`;
-  analysisGroupBar.setAttribute("aria-label", chartSummary(data));
+  element.style.background = `linear-gradient(90deg, ${parts.join(", ")})`;
+  element.setAttribute("aria-label", chartSummary(data));
 }
 
 function totalDeclaredLearningMinutes() {
@@ -4227,16 +4242,30 @@ function getAnalysisAlerts(metrics) {
 
 function renderAnalysisAlerts(metrics) {
   const alerts = getAnalysisAlerts(metrics);
+  analysisAlertTimers.forEach((timer) => window.clearTimeout(timer));
+  analysisAlertTimers = [];
   analysisAlerts.innerHTML = "";
   analysisAlerts.classList.toggle("hidden", alerts.length === 0);
   if (!alerts.length) return;
 
-  alerts.forEach((alert) => {
+  alerts.forEach((alert, index) => {
     const item = document.createElement("p");
     item.className = `analysis-alert ${alert.level}`;
     item.textContent = alert.message;
     item.dataset.alertId = alert.id;
     analysisAlerts.appendChild(item);
+
+    const dismissTimer = window.setTimeout(() => {
+      if (item.parentElement !== analysisAlerts) return;
+      item.classList.add("is-dismissing");
+      const removeTimer = window.setTimeout(() => {
+        if (item.parentElement !== analysisAlerts) return;
+        item.remove();
+        analysisAlerts.classList.toggle("hidden", analysisAlerts.childElementCount === 0);
+      }, 260);
+      analysisAlertTimers.push(removeTimer);
+    }, 6000 + (index * 700));
+    analysisAlertTimers.push(dismissTimer);
   });
 }
 
@@ -4305,8 +4334,22 @@ function renderAnalysisPanel() {
     { key: "individual", label: t("group_individual"), color: "#a8c8b1" }
   ];
   const groupData = buildSegments(groupDefs, metrics.byGroup);
-  renderGroupBar(groupData);
+  renderSegmentedBar(analysisGroupBar, groupData);
   renderLegend(analysisGroupLegend, groupData);
+
+  const aiasColors = ["#64deff", "#c1ffd2", "#cfdeff", "#fffecb", "#ffc1ee"];
+  const aiasDefs = [
+    ...AIAS_LEVELS.map((definition) => ({
+      key: `level_${definition.level}`,
+      label: `${t("aiasLevelPrefix")} ${definition.level} · ${t(definition.labelKey)}`,
+      color: aiasColors[definition.level - 1]
+    })),
+    { key: "undecided", label: t("aiasUndecided"), color: "#94a3b8" },
+    { key: "not_applicable", label: t("aiasNotApplicable"), color: "#e2e8f0" }
+  ];
+  const aiasData = buildSegments(aiasDefs, metrics.byAias);
+  renderSegmentedBar(analysisAiasBar, aiasData);
+  renderLegend(analysisAiasLegend, aiasData);
 }
 
 function renderPartitionView() {
@@ -4489,37 +4532,6 @@ function renderTopPanel() {
     metaDesignedHoursInput.value = designed.hours;
     metaDesignedMinutesInput.value = designed.minutes;
 
-    const totals = {};
-    LEARNING_TYPES.forEach((type) => {
-      totals[type.id] = 0;
-    });
-    state.sessions.forEach((session) => {
-      session.activities.forEach((activity) => {
-        const duration = Number(activity.duration || 0);
-        totals[activity.type] = (totals[activity.type] || 0) + duration;
-      });
-    });
-
-    const topDefs = LEARNING_TYPES.map((type) => ({
-      key: type.id,
-      label: type.label,
-      color: type.color
-    }));
-    const topData = buildSegments(topDefs, totals);
-    renderConic(topPie, topData);
-    renderPieOuterLabels(
-      topPieWrap,
-      topPie,
-      topPieLabels,
-      topPieTooltip,
-      topData,
-      (segment) => learningPieCode(segment.key)
-    );
-
-    topLegend.innerHTML = LEARNING_TYPES.map((type) => {
-      const pct = topData.sum > 0 ? Math.round((totals[type.id] / topData.sum) * 100) : 0;
-      return `<span class="legend-item">${legendDot(type.id, type.color)}${type.label} ${pct}%</span>`;
-    }).join("");
   }
 
   if (panelExpanded && analysisActive) renderAnalysisPanel();

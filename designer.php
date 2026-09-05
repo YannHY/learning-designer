@@ -16,7 +16,7 @@ app_start_session();
     <link rel="stylesheet" href="css/account-ui.css?v=20260903-pagefind-dark" />
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="stylesheet" href="css/interface.css?v=20260905-analysis-responsive-v1" />
+    <link rel="stylesheet" href="css/interface.css?v=20260905-title-tooltips-v4" />
   </head>
   <body class="designer-page">
     <a id="skip-link" class="skip-link" href="#board">Aller au contenu principal</a>
@@ -43,11 +43,11 @@ app_start_session();
         <div id="timeline-view" class="panel-grid" role="tabpanel" aria-labelledby="top-tab-settings">
           <div class="panel-column panel-column-left">
             <div class="form-row">
-              <label id="label-meta-name" for="meta-name">Titre</label>
+              <label id="label-meta-name" for="meta-name" data-tooltip-i18n="metaNameTooltip">Titre</label>
               <input id="meta-name" class="panel-input" type="text" />
             </div>
             <div class="form-row">
-              <label id="label-meta-learning">Temps d'apprentissage</label>
+              <label id="label-meta-learning" data-tooltip-i18n="metaLearningTooltip">Temps d'apprentissage</label>
               <div class="time-inline">
                 <input id="meta-learning-days" class="panel-input" type="number" min="0" />
                 <span id="unit-learning-days" class="time-unit">jours</span>
@@ -58,7 +58,7 @@ app_start_session();
               </div>
             </div>
             <div class="form-row">
-              <label id="label-meta-designed">Temps conçu</label>
+              <label id="label-meta-designed" data-tooltip-i18n="metaDesignedTooltip">Temps conçu</label>
               <div class="time-inline">
                 <input id="meta-designed-days" class="panel-input" type="number" readonly />
                 <span id="unit-designed-days" class="time-unit">jours</span>
@@ -69,21 +69,21 @@ app_start_session();
               </div>
             </div>
             <div class="form-row">
-              <label id="label-meta-day-hours" for="meta-day-hours">1 jour =</label>
+              <label id="label-meta-day-hours" for="meta-day-hours" data-tooltip-i18n="metaDayTooltip">1 jour =</label>
               <div class="time-inline">
                 <input id="meta-day-hours" class="panel-input" type="number" min="1" />
                 <span id="unit-day-hours" class="time-unit">heures</span>
               </div>
             </div>
             <div class="form-row">
-              <label id="label-meta-description" for="meta-description">Description</label>
+              <label id="label-meta-description" for="meta-description" data-tooltip-i18n="metaDescriptionTooltip">Description</label>
               <div class="expandable-field">
                 <textarea id="meta-description" class="panel-textarea"></textarea>
                 <button class="expand-btn" type="button" aria-label="Plein écran">⤢</button>
               </div>
             </div>
             <div class="form-row">
-              <label id="label-meta-command" for="meta-command">Commande institutionnelle</label>
+              <label id="label-meta-command" for="meta-command" data-tooltip-i18n="metaCommandTooltip">Commande institutionnelle</label>
               <div class="expandable-field">
                 <textarea id="meta-command" class="panel-textarea" placeholder="Collez ici la commande institutionnelle déjà définie..."></textarea>
                 <button class="expand-btn" type="button" aria-label="Plein écran">⤢</button>
@@ -92,7 +92,7 @@ app_start_session();
           </div>
           <div class="panel-column panel-column-right">
             <div class="form-row">
-              <label id="label-meta-delivery" for="meta-delivery">Mode</label>
+              <label id="label-meta-delivery" for="meta-delivery" data-tooltip-i18n="metaDeliveryTooltip">Mode</label>
               <select id="meta-delivery" class="panel-select">
                 <option id="opt-meta-delivery-empty" value=""></option>
                 <option id="opt-meta-delivery-onsite" value="onsite">Présentiel</option>
@@ -101,7 +101,7 @@ app_start_session();
               </select>
             </div>
             <div class="form-row">
-              <label id="label-meta-school-system" for="meta-school-system">Système / classification</label>
+              <label id="label-meta-school-system" for="meta-school-system" data-tooltip-i18n="metaSchoolSystemTooltip">Système / classification</label>
               <select id="meta-school-system" class="panel-select">
                 <option id="opt-meta-school-system-empty" value=""></option>
                 <optgroup id="optgroup-meta-school-systems-national" label="Systèmes nationaux">
@@ -125,25 +125,25 @@ app_start_session();
               </select>
             </div>
             <div class="form-row">
-              <label id="label-meta-level" for="meta-level">Niveau</label>
+              <label id="label-meta-level" for="meta-level" data-tooltip-i18n="metaLevelTooltip">Niveau</label>
               <select id="meta-level" class="panel-select" disabled>
                 <option value="">Choisissez d’abord un système ou une classification</option>
               </select>
             </div>
             <div class="form-row">
-              <label id="label-meta-size-class" for="meta-size-class">Taille du groupe</label>
+              <label id="label-meta-size-class" for="meta-size-class" data-tooltip-i18n="metaSizeTooltip">Taille du groupe</label>
               <input id="meta-size-class" class="panel-input" type="number" min="1" />
             </div>
             <div class="form-row">
-              <label id="label-meta-designers" for="meta-designers">Concepteur(s)</label>
+              <label id="label-meta-designers" for="meta-designers" data-tooltip-i18n="metaDesignersTooltip">Concepteur(s)</label>
               <input id="meta-designers" class="panel-input" type="text" />
             </div>
             <div class="form-row">
-              <label id="label-meta-trainers" for="meta-trainers">Enseignant(s)</label>
+              <label id="label-meta-trainers" for="meta-trainers" data-tooltip-i18n="metaTrainersTooltip">Enseignant(s)</label>
               <input id="meta-trainers" class="panel-input" type="text" />
             </div>
             <div class="form-row">
-              <label id="label-meta-personas" for="meta-personas">Objectifs</label>
+              <label id="label-meta-personas" for="meta-personas" data-tooltip-i18n="metaPersonasTooltip">Objectifs</label>
               <div class="expandable-field">
                 <textarea id="meta-personas" class="panel-textarea" placeholder="Décrivez les objectifs de la formation..."></textarea>
                 <button class="expand-btn" type="button" aria-label="Plein écran">⤢</button>
@@ -152,18 +152,18 @@ app_start_session();
             <div class="form-row outcomes-row">
               <div class="outcomes-header">
                 <button id="add-outcome-btn" type="button" class="outcomes-add-btn" aria-label="Ajouter un acquis d'apprentissage"><i class="fa-solid fa-plus" aria-hidden="true"></i></button>
-                <label id="label-meta-outcomes">Acquis d'apprentissage</label>
+                <label id="label-meta-outcomes" data-tooltip-i18n="outcomesTooltip">Acquis d'apprentissage</label>
               </div>
               <div id="outcomes-list" class="outcomes-list"></div>
             </div>
           </div>
         </div>
         <div id="analysis-view" class="analysis-view hidden" role="tabpanel" aria-labelledby="top-tab-analysis">
-          <h2 id="analysis-title" class="analysis-title">Expérience d’apprentissage</h2>
+          <h2 id="analysis-title" class="analysis-title" data-tooltip-i18n="analysisTooltip">Expérience d’apprentissage</h2>
           <div id="analysis-alerts" class="analysis-alerts hidden" role="status" aria-live="polite" aria-atomic="false"></div>
           <div class="analysis-main-grid">
             <div class="analysis-block analysis-learning-block">
-              <h3 id="analysis-learning-title" class="analysis-chart-title">Type d’apprentissage</h3>
+              <h3 id="analysis-learning-title" class="analysis-chart-title" data-tooltip-i18n="analysisLearningTooltip">Type d’apprentissage</h3>
               <div id="analysis-learning-pie-wrap" class="pie-with-labels pie-large">
                 <div id="analysis-learning-pie" class="analysis-big-pie"></div>
                 <div id="analysis-learning-labels" class="pie-outer-labels" aria-hidden="true"></div>
@@ -172,39 +172,39 @@ app_start_session();
               <div id="analysis-learning-legend" class="analysis-legend"></div>
             </div>
             <div class="analysis-block">
-              <h3 id="analysis-delivery-title" class="analysis-chart-title">Mode de formation</h3>
+              <h3 id="analysis-delivery-title" class="analysis-chart-title" data-tooltip-i18n="analysisDeliveryTooltip">Mode de formation</h3>
               <div id="analysis-delivery-pie" class="analysis-small-pie"></div>
               <div id="analysis-delivery-legend" class="analysis-legend"></div>
             </div>
             <div class="analysis-block">
-              <h3 id="analysis-teacher-title" class="analysis-chart-title">Enseignement</h3>
+              <h3 id="analysis-teacher-title" class="analysis-chart-title" data-tooltip-i18n="analysisTeachingTooltip">Enseignement</h3>
               <div id="analysis-teacher-pie" class="analysis-small-pie"></div>
               <div id="analysis-teacher-legend" class="analysis-legend"></div>
             </div>
             <div class="analysis-block">
-              <h3 id="analysis-sync-title" class="analysis-chart-title">Rythme</h3>
+              <h3 id="analysis-sync-title" class="analysis-chart-title" data-tooltip-i18n="analysisPacingTooltip">Rythme</h3>
               <div id="analysis-sync-pie" class="analysis-small-pie"></div>
               <div id="analysis-sync-legend" class="analysis-legend"></div>
             </div>
             <div class="analysis-block">
-              <h3 id="analysis-eval-title" class="analysis-chart-title">Évaluation</h3>
+              <h3 id="analysis-eval-title" class="analysis-chart-title" data-tooltip-i18n="analysisEvaluationTooltip">Évaluation</h3>
               <div id="analysis-eval-pie" class="analysis-small-pie"></div>
               <div id="analysis-eval-legend" class="analysis-legend"></div>
             </div>
           </div>
           <div class="analysis-group-section">
-            <h3 id="analysis-group-title" class="analysis-chart-title">Groupe</h3>
+            <h3 id="analysis-group-title" class="analysis-chart-title" data-tooltip-i18n="analysisGroupTooltip">Groupe</h3>
             <div id="analysis-group-bar" class="analysis-group-bar"></div>
             <div id="analysis-group-legend" class="analysis-legend"></div>
           </div>
           <section class="analysis-aias-section" aria-labelledby="analysis-aias-title">
-            <h3 id="analysis-aias-title" class="analysis-section-title">AIAS · Répartition pondérée par la durée</h3>
+            <h3 id="analysis-aias-title" class="analysis-section-title" data-tooltip-i18n="analysisAiasTooltip">AIAS · Répartition pondérée par la durée</h3>
             <div id="analysis-aias-bar" class="analysis-aias-bar"></div>
             <div id="analysis-aias-legend" class="analysis-legend"></div>
           </section>
         </div>
         <div id="chronology-view" class="analysis-view hidden" role="tabpanel" aria-labelledby="top-tab-chronology">
-          <h2 id="chronology-title" class="analysis-title">Chronologie des activités</h2>
+          <h2 id="chronology-title" class="analysis-title" data-tooltip-i18n="chronologyTooltip">Chronologie des activités</h2>
           <div id="chronology-container">
             <!-- Partition sessions will be rendered here -->
           </div>
@@ -596,7 +596,7 @@ app_start_session();
     <script src="js/competency-catalog.js?v=20260831-framework-i18n"></script>
     <script src="js/competency-greencomp-details.js?v=20260831-framework-i18n"></script>
     <script src="js/competency-digcomp-details.js?v=20260830-digcomp-statements"></script>
-    <script src="js/interface.js?v=20260905-analysis-titles-v2"></script>
+    <script src="js/interface.js?v=20260905-title-tooltips-v2"></script>
     <script src="js/account-ui.js?v=20260905-php-nav-v1"></script>
   </body>
 </html>

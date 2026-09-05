@@ -16,7 +16,7 @@ require_once __DIR__ . '/lib/bootstrap.php';
  *   tm    enseignement : directed | guided | supported | independent
  *   tp    ancien raccourci conservé : absent devient independent, present devient undefined
  *   sync  rythme    : sync (défaut) | async
- *   loc   modalité  : onsite (défaut) | online | hybrid
+ *   loc   mode de formation : onsite (en classe, défaut) | location_based | online | hybrid | other
  *   ev    évaluation: none (défaut) | diagnostic | formative | summative | certificative
  *   aias  niveau 1-5, 'na' (non applicable) ou absent (à décider)
  *   desc  description destinée à l'enseignant
@@ -489,9 +489,11 @@ function ld_model_design(array $model, string $lang = 'fr'): array
         ],
         'sessions' => $sessions,
         'partitionLineConfig' => [
-            ['type' => 'locationMode', 'label' => $lang === 'en' ? 'On-site' : 'Présentiel', 'value' => 'onsite', 'visible' => true],
-            ['type' => 'locationMode', 'label' => $lang === 'en' ? 'Online' : 'Distanciel', 'value' => 'online', 'visible' => true],
-            ['type' => 'locationMode', 'label' => $lang === 'en' ? 'Hybrid' : 'Hybride', 'value' => 'hybrid', 'visible' => true],
+            ['type' => 'locationMode', 'label' => $lang === 'en' ? 'Classroom-based' : 'En classe', 'value' => 'onsite', 'visible' => true],
+            ['type' => 'locationMode', 'label' => $lang === 'en' ? 'Location-based' : 'Sur site', 'value' => 'location_based', 'visible' => true],
+            ['type' => 'locationMode', 'label' => $lang === 'en' ? 'Online' : 'En ligne', 'value' => 'online', 'visible' => true],
+            ['type' => 'locationMode', 'label' => $lang === 'en' ? 'Blended' : 'Hybride', 'value' => 'hybrid', 'visible' => true],
+            ['type' => 'locationMode', 'label' => $lang === 'en' ? 'Other' : 'Autre', 'value' => 'other', 'visible' => true],
         ],
     ];
 }

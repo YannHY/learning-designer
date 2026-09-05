@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-const APP_SCHEMA_VERSION = 3;
+const APP_SCHEMA_VERSION = 4;
 const EMAIL_VERIFICATION_TTL_SECONDS = 86400;
 const EMAIL_VERIFICATION_RESEND_DELAY_SECONDS = 60;
 const PASSWORD_RESET_TTL_SECONDS = 3600;
@@ -316,6 +316,19 @@ function ensure_app_tables(PDO $db): void
         )");
 
         $db->exec("CREATE INDEX IF NOT EXISTS idx_learning_cli_tokens_user ON learning_cli_tokens(user_id)");
+
+        $db->exec("CREATE TABLE IF NOT EXISTS app_feedback (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            rating TEXT NOT NULL CHECK (rating IN ('positive','neutral','negative')),
+            comment TEXT NULL,
+            page_path TEXT NOT NULL DEFAULT '',
+            locale TEXT NOT NULL DEFAULT 'fr',
+            visitor_hash TEXT NOT NULL,
+            created_at_epoch INTEGER NOT NULL,
+            created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+        )");
+        $db->exec("CREATE INDEX IF NOT EXISTS idx_app_feedback_created ON app_feedback(created_at_epoch DESC)");
+        $db->exec("CREATE INDEX IF NOT EXISTS idx_app_feedback_visitor ON app_feedback(visitor_hash, created_at_epoch DESC)");
         return;
     }
 
@@ -374,6 +387,19 @@ function ensure_app_tables(PDO $db): void
         CONSTRAINT fk_learning_cli_tokens_user
             FOREIGN KEY (user_id) REFERENCES users(id)
             ON DELETE CASCADE
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+
+    $db->exec("CREATE TABLE IF NOT EXISTS app_feedback (
+        id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+        rating VARCHAR(16) NOT NULL,
+        comment TEXT NULL,
+        page_path VARCHAR(500) NOT NULL DEFAULT '',
+        locale VARCHAR(8) NOT NULL DEFAULT 'fr',
+        visitor_hash CHAR(64) NOT NULL,
+        created_at_epoch BIGINT UNSIGNED NOT NULL,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        INDEX idx_app_feedback_created (created_at_epoch),
+        INDEX idx_app_feedback_visitor (visitor_hash, created_at_epoch)
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
 }
 

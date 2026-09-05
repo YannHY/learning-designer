@@ -16,7 +16,7 @@ app_start_session();
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" referrerpolicy="no-referrer">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="stylesheet" href="css/interface.css?v=20260904-content-rhythm">
+    <link rel="stylesheet" href="css/interface.css?v=20260905-feedback-tabs">
     <link rel="stylesheet" href="css/account-ui.css?v=20260903-pagefind-dark">
     <link rel="stylesheet" href="css/account-pages.css?v=20260904-content-rhythm">
 </head>
@@ -25,7 +25,7 @@ app_start_session();
 <main class="legal-shell">
     <article class="legal-card">
         <h1>Politique de confidentialité</h1>
-        <p class="legal-updated"><strong>Dernière mise à jour&nbsp;: <time datetime="2026-08-27">27 août 2026</time></strong></p>
+        <p class="legal-updated"><strong>Dernière mise à jour&nbsp;: <time datetime="2026-09-05">5 septembre 2026</time></strong></p>
 
         <p class="legal-lead">Cette politique explique quelles données sont traitées lors de l’utilisation de Learning Designer, pour quelles finalités, pendant combien de temps et quels sont vos droits.</p>
 
@@ -59,11 +59,15 @@ app_start_session();
         <h3>Jetons de ligne de commande</h3>
         <p>Si vous créez un jeton pour le CLI <code>learning</code>, le serveur conserve son nom, son empreinte cryptographique, un préfixe permettant de l’identifier, sa date de création, sa dernière date d’utilisation et, le cas échéant, sa date de révocation. Le jeton complet n’est affiché qu’au moment de sa création.</p>
 
+        <h3>Retours sur l’application</h3>
+        <p>Le bouton d’avis permet d’enregistrer une appréciation, un commentaire facultatif, la page consultée, la langue de l’interface et la date de l’envoi. Le retour n’est pas rattaché au compte de l’utilisateur. Il sert exclusivement à comprendre la satisfaction générale et à améliorer Learning Designer.</p>
+        <p>Pour limiter les envois automatisés, l’application produit une empreinte technique pseudonyme à partir de l’adresse IP et du type de navigateur. L’adresse IP et le type de navigateur ne sont pas conservés dans la base de retours. L’empreinte change chaque jour et est effacée des retours après 24 heures.</p>
+
         <h3>Préférences et brouillon dans le navigateur</h3>
         <p>Learning Designer utilise le stockage local du navigateur pour mémoriser la langue, le thème clair ou sombre, certains réglages d’affichage et le design en cours d’édition. Le brouillon est séparé entre l’espace invité et le compte connecté. Ces informations restent normalement sur l’appareil jusqu’à leur remplacement ou leur suppression depuis les réglages du navigateur.</p>
 
         <h2>Cookies et traceurs</h2>
-        <p>Un cookie de session est utilisé pour maintenir la connexion, protéger l’accès au compte et sécuriser les requêtes. Il est configuré pour ne pas être accessible au JavaScript, n’est envoyé que sur une connexion sécurisée lorsque HTTPS est actif, et expire à la fermeture du navigateur. Il est strictement nécessaire au service.</p>
+        <p>Un cookie de session est utilisé pour maintenir la connexion, protéger l’accès au compte, sécuriser les requêtes et délivrer le jeton temporaire du formulaire d’avis. Il est configuré pour ne pas être accessible au JavaScript, n’est envoyé que sur une connexion sécurisée lorsque HTTPS est actif, et expire à la fermeture du navigateur. Il est strictement nécessaire au service.</p>
         <p>Les éléments enregistrés dans le stockage local servent aux préférences d’interface, à la sauvegarde locale demandée par l’utilisateur et au fonctionnement de l’éditeur. Ils ne sont pas utilisés pour établir un profil publicitaire.</p>
         <p><strong>Learning Designer n’intègre, à la date de cette politique, aucun outil de mesure d’audience, réseau publicitaire ou traceur de profilage.</strong></p>
 
@@ -78,7 +82,7 @@ app_start_session();
         <p>Lorsque vous ouvrez un lien ajouté à un design ou suivez un lien vers un autre site, la politique de confidentialité de ce service externe s’applique.</p>
 
         <h2>Destinataires</h2>
-        <p>Les données des comptes et des designs sont accessibles à Yann Houry et, lorsque cela est nécessaire à l’administration technique, aux administrateurs autorisés de Learning Designer. OVHcloud peut les traiter pour assurer l’hébergement. Les prestataires externes cités ci-dessus ne reçoivent que les informations techniques nécessaires lorsque leurs ressources sont appelées.</p>
+        <p>Les données des comptes et des designs sont accessibles à Yann Houry et, lorsque cela est nécessaire à l’administration technique, aux administrateurs autorisés de Learning Designer. Les appréciations et commentaires transmis par le formulaire d’avis sont également consultables par ces administrateurs. OVHcloud peut traiter ces données pour assurer l’hébergement. Les prestataires externes cités ci-dessus ne reçoivent que les informations techniques nécessaires lorsque leurs ressources sont appelées.</p>
         <p>Les données des comptes et des designs privés ne sont ni vendues, ni louées, ni utilisées à des fins publicitaires.</p>
 
         <h2>Durées de conservation</h2>
@@ -88,6 +92,7 @@ app_start_session();
             <li><strong>Lien de réinitialisation du mot de passe&nbsp;:</strong> validité d’une heure. Son empreinte est supprimée lors de son utilisation et peut sinon rester associée au compte jusqu’à son remplacement ou la suppression du compte.</li>
             <li><strong>Jeton CLI&nbsp;:</strong> jusqu’à sa révocation ou la suppression du compte. Les informations relatives à un jeton révoqué peuvent rester associées au compte à des fins de sécurité jusqu’à la suppression de celui-ci.</li>
             <li><strong>Design public&nbsp;:</strong> jusqu’à sa dépublication, son retrait du catalogue ou la suppression du design ou du compte.</li>
+            <li><strong>Retours sur l’application&nbsp;:</strong> 24 mois au maximum. L’empreinte technique utilisée contre les envois abusifs est effacée après 24 heures.</li>
             <li><strong>Stockage local&nbsp;:</strong> jusqu’à son remplacement ou sa suppression dans le navigateur.</li>
             <li><strong>Journaux techniques&nbsp;:</strong> selon les durées nécessaires à la sécurité et au diagnostic, ainsi que les durées appliquées par l’hébergeur.</li>
         </ul>
@@ -98,7 +103,7 @@ app_start_session();
 
         <h2>Vos droits</h2>
         <p>Selon le traitement concerné et la réglementation applicable, vous pouvez demander l’accès à vos données, leur rectification ou leur effacement, la limitation de leur traitement, leur portabilité, ou vous opposer à certains traitements. Vous pouvez modifier les informations du compte, supprimer vos designs, révoquer vos jetons et supprimer votre compte depuis l’espace personnel.</p>
-        <p>Pour toute autre demande, utilisez la <a href="https://www.ralentirtravaux.com/contact/contact.php" rel="noopener noreferrer">page de contact</a>. Une vérification raisonnable de l’identité du demandeur peut être nécessaire. Vous pouvez également adresser une réclamation à la <a href="https://www.cnil.fr/" rel="noopener noreferrer">Commission nationale de l’informatique et des libertés (CNIL)</a>.</p>
+        <p>Un retour anonyme n’étant pas rattaché à un compte, son identification pour répondre à une demande d’accès ou d’effacement peut être impossible sans indications précises sur sa date, sa page et son contenu. Pour toute demande, utilisez la <a href="https://www.ralentirtravaux.com/contact/contact.php" rel="noopener noreferrer">page de contact</a>. Une vérification raisonnable de l’identité du demandeur peut être nécessaire. Vous pouvez également adresser une réclamation à la <a href="https://www.cnil.fr/" rel="noopener noreferrer">Commission nationale de l’informatique et des libertés (CNIL)</a>.</p>
 
         <h2>Mise à jour</h2>
         <p>Cette politique peut évoluer avec les fonctionnalités de Learning Designer, les services utilisés ou la réglementation. La date de sa dernière mise à jour est indiquée en haut de la page.</p>

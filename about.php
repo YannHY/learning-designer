@@ -16,7 +16,7 @@ app_start_session();
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" referrerpolicy="no-referrer">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="stylesheet" href="css/interface.css?v=20260904-content-rhythm">
+    <link rel="stylesheet" href="css/interface.css?v=20260905-about-version">
     <link rel="stylesheet" href="css/account-ui.css?v=20260903-pagefind-dark">
     <link rel="stylesheet" href="css/account-pages.css?v=20260904-content-rhythm">
 </head>
@@ -25,6 +25,7 @@ app_start_session();
 <main class="about-shell with-nav">
     <div class="about-card">
         <h1 id="about-title" class="about-title">À propos</h1>
+        <p class="about-version">Version 0.9</p>
         <p id="about-intro" class="about-intro">Learning Designer est un outil de scénarisation pédagogique. <a href="help.php">Consultez la page d’aide</a> pour découvrir ses fonctionnalités et apprendre à l’utiliser.</p>
 
         <hr class="about-divider">

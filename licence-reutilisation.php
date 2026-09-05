@@ -16,7 +16,7 @@ app_start_session();
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" referrerpolicy="no-referrer">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="stylesheet" href="css/interface.css?v=20260904-content-rhythm">
+    <link rel="stylesheet" href="css/interface.css?v=20260905-feedback-tabs">
     <link rel="stylesheet" href="css/account-ui.css?v=20260903-pagefind-dark">
     <link rel="stylesheet" href="css/account-pages.css?v=20260904-content-rhythm">
 </head>
@@ -25,7 +25,7 @@ app_start_session();
 <main class="legal-shell">
     <article class="legal-card">
         <h1>Licence et réutilisation</h1>
-        <p class="legal-updated"><strong>Dernière mise à jour&nbsp;: <time datetime="2026-08-26">26 août 2026</time></strong></p>
+        <p class="legal-updated"><strong>Dernière mise à jour&nbsp;: <time datetime="2026-09-05">5 septembre 2026</time></strong></p>
 
         <p class="legal-lead">Cette page distingue les contenus propres à Learning Designer, son code source, les créations publiées par les utilisateurs et les éléments appartenant à des tiers.</p>
 
@@ -57,6 +57,10 @@ app_start_session();
         <h2>Contenus et droits de tiers</h2>
         <p>Les licences présentées sur cette page ne s’appliquent pas automatiquement aux œuvres, citations, photographies, illustrations, vidéos, marques, logiciels ou ressources externes appartenant à des tiers. Leurs crédits, licences et conditions propres doivent être respectés.</p>
         <p>Learning Designer est inspiré de l’<a href="https://www.ucl.ac.uk/learning-designer/" rel="noopener noreferrer">UCL Learning Designer</a> et s’appuie sur le <a href="https://github.com/jourde/learning-designer-revised" rel="noopener noreferrer">travail de François Jourde</a>. Ces références n’emportent aucun transfert des marques ou droits détenus par leurs titulaires respectifs.</p>
+
+        <h2>Commentaires transmis avec un avis</h2>
+        <p>Les commentaires facultatifs envoyés au moyen du formulaire d’avis ne sont pas publiés et ne sont pas placés sous la licence Creative Commons du site. Leur auteur autorise uniquement leur lecture, leur analyse et leur utilisation interne par les administrateurs de Learning Designer afin de corriger, évaluer et améliorer le service.</p>
+        <p>L’auteur du commentaire doit disposer des droits nécessaires sur son contenu et s’abstenir d’y inclure des informations personnelles ou confidentielles. Les règles détaillées figurent dans les <a href="mentions-legales.php">mentions légales</a> et la <a href="politique-confidentialite.php">politique de confidentialité</a>.</p>
 
         <h2>Questions et demandes</h2>
         <p>Pour demander une autorisation particulière ou signaler un contenu dont les droits vous appartiennent, utilisez la <a href="https://www.ralentirtravaux.com/contact/contact.php" rel="noopener noreferrer">page de contact de Ralentir Travaux</a>.</p>

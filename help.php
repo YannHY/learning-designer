@@ -424,7 +424,7 @@ PROMPT;
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" referrerpolicy="no-referrer">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="stylesheet" href="css/interface.css?v=20260904-content-rhythm">
+    <link rel="stylesheet" href="css/interface.css?v=20260905-feedback-tabs">
     <link rel="stylesheet" href="css/account-ui.css?v=20260903-pagefind-dark">
     <link rel="stylesheet" href="css/account-pages.css?v=20260904-content-rhythm">
 </head>
@@ -490,7 +490,7 @@ PROMPT;
                     <li><strong>Décrire le contexte.</strong> Renseignez le titre, la description, la commande institutionnelle, les objectifs d’enseignement, les concepteurs, les enseignants, la taille du groupe, la modalité et le temps d’apprentissage prévu. La durée peut être exprimée en jours, heures et minutes ; le nombre d’heures correspondant à une journée est configurable.</li>
                     <li><strong>Formuler les acquis attendus.</strong> Indiquez ce que les apprenants devront être capables de faire à la fin. Reliez si nécessaire chaque acquis à un niveau de la taxonomie révisée de Bloom et choisissez un verbe d’action observable.</li>
                     <li><strong>Structurer le parcours en moments.</strong> Un moment correspond à une phase cohérente de la séance ou de la séquence : lancement, exploration, entraînement, mise en commun, production ou évaluation.</li>
-                    <li><strong>Ajouter les activités.</strong> Pour chacune, précisez le type d’apprentissage, la durée, l’organisation du groupe, le mode d’enseignement, le rythme, la modalité, l’évaluation, les consignes et les ressources.</li>
+                    <li><strong>Ajouter les activités.</strong> Pour chacune, précisez le type d’apprentissage, la durée, l’organisation du groupe, le mode d’enseignement, le rythme, le mode de formation, l’évaluation, les consignes et les ressources.</li>
                     <li><strong>Visualiser puis ajuster.</strong> Comparez le temps d’apprentissage prévu avec la somme des activités et observez les graphiques de répartition. Ces indicateurs éclairent votre décision ; ils ne remplacent pas votre jugement pédagogique.</li>
                 </ol>
                 <div class="help-callout">
@@ -514,7 +514,7 @@ PROMPT;
                             <tr><td>Groupe</td><td>Individuel, sous-groupes, groupe entier</td><td>Précise l’organisation sociale de l’activité.</td></tr>
                             <tr><td>Enseignement</td><td>Dirigé, guidé, accompagné ou en autonomie</td><td>Précise qui détermine la méthode, le déroulement et le rythme de l’activité.</td></tr>
                             <tr><td>Rythme</td><td>Synchrone ou asynchrone</td><td>Permet de distinguer les activités simultanées des activités réalisées au rythme de chacun.</td></tr>
-                            <tr><td>Modalité</td><td>Présentiel, distanciel ou hybride</td><td>Décrit le lieu et le mode de participation.</td></tr>
+                            <tr><td>Mode de formation</td><td>En classe, sur site, en ligne, hybride ou autre</td><td>Décrit le lieu et le mode de participation.</td></tr>
                             <tr><td>Évaluation</td><td>Aucune, diagnostique, formative, sommative, certificative</td><td>Rend explicite la fonction évaluative de l’activité.</td></tr>
                             <tr><td>AIAS</td><td>À définir, non pertinent ou niveaux 1 à 5</td><td>Décrit le rôle de l’IA dans la tâche, indépendamment de sa fonction évaluative.</td></tr>
                             <tr><td>Description de l’activité</td><td>Texte libre</td><td>Décrit l’intention pédagogique, le déroulement et l’organisation de l’activité du point de vue de l’enseignant.</td></tr>
@@ -635,6 +635,12 @@ PROMPT;
                     <i class="fa-solid fa-share-nodes" aria-hidden="true"></i>
                     <p><strong>Partager ne signifie pas forcément envoyer du Markdown.</strong> Vous pouvez transmettre un lien de publication, partager un fichier Word ou Excel, fournir une page HTML, ou échanger le fichier JSON natif selon le besoin du destinataire.</p>
                 </div>
+                <h3 id="donner-avis">Donner son avis sur l’application</h3>
+                <p>Le bouton rond placé dans l’angle inférieur droit ouvre un formulaire très court. Choisissez l’une des trois icônes colorées — satisfait, mitigé ou insatisfait — puis ajoutez, si vous le souhaitez, un commentaire expliquant votre choix.</p>
+                <div class="help-callout">
+                    <i class="fa-regular fa-comment-dots" aria-hidden="true"></i>
+                    <p>Le retour est anonyme et n’est pas rattaché à votre compte. La page consultée et la langue de l’interface sont enregistrées pour aider à comprendre le contexte. N’indiquez aucune donnée personnelle ou confidentielle dans le commentaire.</p>
+                </div>
             </article>
 
             <article class="help-section" id="import-export">
@@ -718,7 +724,7 @@ Objectifs généraux de la formation.
 - Groupe: Sous-groupes
 - Enseignement: Enseignement guidé
 - Rythme: Synchrone
-- Modalité: Présentiel
+- Mode de formation: En classe
 - Évaluation: Formative
 - AIAS: AIAS 3 · Collaboration avec l’IA
 - Description: Consultez [cet exemple](https://example.com), puis comparez les propositions.
@@ -741,7 +747,7 @@ Objectifs généraux de la formation.
                             <tr><td>Groupe</td><td><code>Groupe entier</code>, <code>Sous-groupes</code>, <code>Individuel</code></td></tr>
                             <tr><td>Enseignement</td><td><code>Enseignement dirigé</code>, <code>Enseignement guidé</code>, <code>Enseignement accompagné</code>, <code>Enseignement en autonomie</code></td></tr>
                             <tr><td>Rythme</td><td><code>Synchrone</code>, <code>Asynchrone</code></td></tr>
-                            <tr><td>Modalité</td><td><code>Présentiel</code>, <code>Distanciel</code>, <code>Hybride</code></td></tr>
+                            <tr><td>Mode de formation</td><td><code>En classe</code>, <code>Sur site</code>, <code>En ligne</code>, <code>Hybride</code>, <code>Autre</code></td></tr>
                             <tr><td>Évaluation</td><td><code>Aucune</code>, <code>Diagnostique</code>, <code>Formative</code>, <code>Sommative</code>, <code>Certificative</code></td></tr>
                             <tr><td>AIAS</td><td><code>À définir</code>, <code>Non pertinent</code>, <code>AIAS 1</code> à <code>AIAS 5</code></td></tr>
                         </tbody>
@@ -750,7 +756,7 @@ Objectifs généraux de la formation.
                 <h3 id="markdown-modifications">Ce que vous pouvez modifier</h3>
                 <p>Vous pouvez modifier le titre, les paramètres, la description, la commande institutionnelle, les objectifs, les acquis d’apprentissage, les titres et contenus des moments, ainsi que les activités et tous leurs champs.</p>
                 <h3 id="markdown-libelles">Libellés à conserver</h3>
-                <p>Évitez de changer les libellés fixes <code>## Paramètres</code>, <code>## Séances</code>, <code>- Durée:</code>, <code>- Groupe:</code>, <code>- Enseignement:</code>, <code>- Rythme:</code>, <code>- Modalité:</code>, <code>- Évaluation:</code>, <code>- AIAS:</code>, <code>- Description:</code> et <code>- Consignes pour les élèves:</code>. S’ils changent trop, certaines informations risquent de ne plus être reconnues.</p>
+                <p>Évitez de changer les libellés fixes <code>## Paramètres</code>, <code>## Séances</code>, <code>- Durée:</code>, <code>- Groupe:</code>, <code>- Enseignement:</code>, <code>- Rythme:</code>, <code>- Mode de formation:</code>, <code>- Évaluation:</code>, <code>- AIAS:</code>, <code>- Description:</code> et <code>- Consignes pour les élèves:</code>. S’ils changent trop, certaines informations risquent de ne plus être reconnues.</p>
                 <h3 id="markdown-import">Procédure d’import</h3>
                 <ol>
                     <li>Ouvrez Learning Designer.</li>
@@ -1029,7 +1035,7 @@ window.helpPromptTranslations = <?= json_encode([
     ],
 ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) ?>;
 </script>
-<script src="js/help-i18n.js?v=20260830-digcomp-statements"></script>
+<script src="js/help-i18n.js?v=20260905-delivery-modes-v2"></script>
 <script>
 var initialHelpLanguage = 'fr';
 try {

@@ -101,6 +101,7 @@ La configuration peut être fournie par variables d'environnement ou à partir d
 - `APP_DB_DSN`, `APP_DB_USER` et `APP_DB_PASS` pour utiliser MySQL ou une autre base PDO ;
 - `APP_DB_SQLITE_PATH` pour choisir l'emplacement de la base SQLite ;
 - `APP_BASE_URL` pour définir l'URL publique de l'application ;
+- `APP_FEEDBACK_HASH_KEY` pour fournir une clé secrète dédiée à l’empreinte antispam des retours utilisateurs ;
 - `APP_MAIL_FROM` et `APP_MAIL_FROM_NAME` pour l'expéditeur des emails de vérification et de réinitialisation du mot de passe. L'envoi utilise la fonction `mail()` de PHP, qui doit être activée sur l'hébergement.
 
 Conservez les secrets dans un fichier local non versionné, par exemple `learning-design-secret.php`, ou dans des variables d'environnement.

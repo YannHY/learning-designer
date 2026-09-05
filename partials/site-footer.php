@@ -24,3 +24,4 @@
         <span class="site-footer-copy site-footer-license">2026 — <a href="licence-reutilisation.php"><abbr title="Creative Commons Attribution - Partage dans les mêmes conditions" data-site-i18n-attr="title" data-site-i18n-en="Creative Commons Attribution-ShareAlike" data-site-i18n-fr="Creative Commons Attribution - Partage dans les mêmes conditions">CC BY-SA</abbr></a></span>
     </div>
 </footer>
+<script src="js/feedback.js?v=20260905-feedback-v2"></script>

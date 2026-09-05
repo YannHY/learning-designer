@@ -69,7 +69,13 @@ $TEACHING_MODES = [
 // Compatibilité avec les scénarios publiés avant l'introduction des quatre modes.
 $TRAINER_MODES  = ['present' => 'Enseignant présent', 'absent' => 'Enseignant absent'];
 $SYNC_MODES     = ['sync' => 'Synchrone', 'async' => 'Asynchrone'];
-$LOCATION_MODES = ['onsite' => 'Présentiel', 'online' => 'Distanciel', 'hybrid' => 'Hybride'];
+$LOCATION_MODES = [
+    'onsite' => 'En classe',
+    'location_based' => 'Sur site',
+    'online' => 'En ligne',
+    'hybrid' => 'Hybride',
+    'other' => 'Autre',
+];
 $DELIVERY_MODES = ['onsite' => 'Présentiel', 'online' => 'Distanciel', 'hybrid' => 'Hybride'];
 $SCHOOL_LEVELS  = [
     'petite_section' => 'Petite section (PS)',
@@ -723,7 +729,7 @@ $displayDesignedMinutes = $designedMinutes > 0 ? $designedMinutes : $totalMinute
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="icon" href="assets/favicon.svg?v=20260804" type="image/svg+xml" sizes="any">
   <title><?= esc($title) ?> — Learning Designer</title>
-  <link rel="stylesheet" href="css/interface.css?v=20260904-content-rhythm">
+  <link rel="stylesheet" href="css/interface.css?v=20260905-feedback-tabs">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" referrerpolicy="no-referrer">
   <style>
     :root {
@@ -1413,5 +1419,6 @@ $displayDesignedMinutes = $designedMinutes > 0 ? $designedMinutes : $totalMinute
   }, { passive: true, capture: true });
 })();
 </script>
+<script src="js/feedback.js?v=20260905-feedback-v2"></script>
 </body>
 </html>

@@ -121,6 +121,18 @@ LOCATION_ALIASES = {
     "blended": "hybrid",
 }
 
+ACTIVITY_LOCATION_ALIASES = {
+    **LOCATION_ALIASES,
+    "en-classe": "onsite",
+    "classroom-based": "onsite",
+    "sur-site": "location_based",
+    "location-based": "location_based",
+    "entierement-en-ligne": "online",
+    "wholly-online": "online",
+    "other": "other",
+    "autre": "other",
+}
+
 EVAL_ALIASES = {
     "none": "none",
     "aucune": "none",
@@ -313,9 +325,11 @@ def new_document(args: argparse.Namespace) -> dict[str, Any]:
         },
         "sessions": [],
         "partitionLineConfig": [
-            {"type": "locationMode", "label": "Présentiel", "value": "onsite", "visible": True},
-            {"type": "locationMode", "label": "Distanciel", "value": "online", "visible": True},
+            {"type": "locationMode", "label": "En classe", "value": "onsite", "visible": True},
+            {"type": "locationMode", "label": "Sur site", "value": "location_based", "visible": True},
+            {"type": "locationMode", "label": "En ligne", "value": "online", "visible": True},
             {"type": "locationMode", "label": "Hybride", "value": "hybrid", "visible": True},
+            {"type": "locationMode", "label": "Autre", "value": "other", "visible": True},
         ],
     }
 
@@ -384,7 +398,7 @@ def command_add_activity(args: argparse.Namespace) -> None:
             "groupMode": normalize(args.group, GROUP_ALIASES, "group"),
             "teachingMode": normalize(args.teaching, TEACHING_ALIASES, "teaching"),
             "syncMode": normalize(args.pacing, SYNC_ALIASES, "pacing"),
-            "locationMode": normalize(args.mode, LOCATION_ALIASES, "mode"),
+            "locationMode": normalize(args.mode, ACTIVITY_LOCATION_ALIASES, "mode"),
             "evaluationMode": normalize(args.evaluation, EVAL_ALIASES, "evaluation"),
             "aias": {
                 "version": AIAS_VERSION,
@@ -718,7 +732,11 @@ def build_parser() -> argparse.ArgumentParser:
         help="directed/guided/supported/independent (or French equivalents)",
     )
     activity.add_argument("--pacing", "--rythme", default="sync")
-    activity.add_argument("--mode", default="onsite")
+    activity.add_argument(
+        "--mode",
+        default="onsite",
+        help="classroom-based/location-based/online/blended/other (or French equivalents)",
+    )
     activity.add_argument("--evaluation", "--évaluation", "--assessment", default="none")
     activity.add_argument("--aias", "--aias-level", type=int, choices=range(1, 6), help="AIAS level from 1 to 5")
     activity.add_argument("--description", default="")

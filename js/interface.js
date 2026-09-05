@@ -33,8 +33,10 @@ const ICONS = {
   sync: fontAwesomeIcon("fa-regular fa-clock"),
   async: fontAwesomeIcon("fa-regular fa-calendar-days"),
   onsite: fontAwesomeIcon("fa-solid fa-school"),
+  location_based: fontAwesomeIcon("fa-solid fa-location-dot"),
   online: fontAwesomeIcon("fa-solid fa-desktop"),
   hybrid: fontAwesomeIcon("fa-solid fa-shuffle"),
+  other: fontAwesomeIcon("fa-solid fa-ellipsis"),
   none: fontAwesomeIcon("fa-regular fa-circle"),
   diagnostic: fontAwesomeIcon("fa-solid fa-magnifying-glass"),
   formative: fontAwesomeIcon("fa-solid fa-pen-to-square"),
@@ -96,10 +98,13 @@ const SYNC_OPTIONS = [
   { value: "async", label: "Asynchrone", short: "Async", icon: ICONS.async }
 ];
 const LOCATION_OPTIONS = [
-  { value: "onsite", label: "Présentiel", short: "Prés.", icon: ICONS.onsite },
-  { value: "online", label: "Distanciel", short: "Dist.", icon: ICONS.online },
-  { value: "hybrid", label: "Hybride", short: "Hybrid.", icon: ICONS.hybrid }
+  { value: "onsite", label: "En classe", short: "Classe", icon: ICONS.onsite },
+  { value: "location_based", label: "Sur site", short: "Site", icon: ICONS.location_based },
+  { value: "online", label: "En ligne", short: "En ligne", icon: ICONS.online },
+  { value: "hybrid", label: "Hybride", short: "Hybride", icon: ICONS.hybrid },
+  { value: "other", label: "Autre", short: "Autre", icon: ICONS.other }
 ];
+const LOCATION_VALUES = new Set(LOCATION_OPTIONS.map((option) => option.value));
 const SCHOOL_LEVEL_OPTIONS = [
   { value: "petite_section", label: "Petite section (PS)", france: "PS", swiss: "" },
   { value: "moyenne_section", label: "Moyenne section (MS) / 1re", france: "MS", swiss: "1re" },
@@ -834,9 +839,11 @@ const DEFAULT_META = {
 };
 
 const defaultPartitionLineConfig = () => [
-  { type: "locationMode", label: "Présentiel", value: "onsite", visible: true },
-  { type: "locationMode", label: "Distanciel", value: "online", visible: true },
-  { type: "locationMode", label: "Hybride", value: "hybrid", visible: true }
+  { type: "locationMode", label: "En classe", value: "onsite", visible: true },
+  { type: "locationMode", label: "Sur site", value: "location_based", visible: true },
+  { type: "locationMode", label: "En ligne", value: "online", visible: true },
+  { type: "locationMode", label: "Hybride", value: "hybrid", visible: true },
+  { type: "locationMode", label: "Autre", value: "other", visible: true }
 ];
 
 const defaultState = () => ({
@@ -1055,6 +1062,11 @@ const I18N = {
     modeOnsite: "Présentiel",
     modeOnline: "Distanciel",
     modeHybrid: "Hybride",
+    activityModeClassroom: "En classe",
+    activityModeLocation: "Sur site",
+    activityModeOnline: "En ligne",
+    activityModeBlended: "Hybride",
+    activityModeOther: "Autre",
     importTitle: "Importer un scénario",
     importModalDesc: "Partez d’un modèle prérempli, ou chargez un fichier exporté depuis cette application. Le design actuel sera remplacé.",
     importFromFileTitle: "Depuis mon ordinateur",
@@ -1142,7 +1154,7 @@ const I18N = {
     groupTitleGroup: "Groupe",
     groupTitleTeaching: "Enseignement",
     groupTitlePacing: "Rythme",
-    groupTitleMode: "Modalité",
+    groupTitleMode: "Mode de formation",
     groupTitleEvaluation: "Évaluation",
     aiasFieldLabel: "Place de l’IA dans la tâche · AIAS 2.1",
     aiasUndecided: "À définir",
@@ -1205,7 +1217,7 @@ const I18N = {
     an03: "Le graphe social peut être incorrect, car un ou plusieurs types d’apprentissage n’ont pas de taille de groupe définie.",
     an04: "Le graphique « Enseignement » peut être incorrect, car une ou plusieurs activités n’ont pas ce paramètre défini.",
     an05: "Le graphique « Rythme » peut être incorrect, car une ou plusieurs activités n’ont pas ce paramètre défini.",
-    an06: "Le graphique « Modalité » peut être incorrect, car une ou plusieurs activités n’ont pas ce paramètre défini.",
+    an06: "Le graphique « Mode de formation » peut être incorrect, car une ou plusieurs activités n’ont pas ce paramètre défini.",
     an07: "Le temps conçu dépasse le temps d’apprentissage déclaré.",
     an08: "Le temps d’apprentissage n’est pas défini, mais des activités ont une durée.",
     an09: "Aucun type d’apprentissage défini : précisez le type de chaque activité pour obtenir une analyse pertinente.",
@@ -1262,7 +1274,7 @@ const I18N = {
     partitionShowHide: "Afficher/masquer",
     partitionDeleteLine: "Supprimer cette ligne",
     partitionShowPrefix: "Afficher",
-    partitionTypeLocation: "Localisation",
+    partitionTypeLocation: "Mode de formation",
     partitionTypeGroup: "Mode groupe",
     partitionTypeSync: "Synchronicité",
     partitionTypeTeaching: "Enseignement",
@@ -1337,6 +1349,11 @@ const I18N = {
     modeOnsite: "Onsite",
     modeOnline: "Online",
     modeHybrid: "Hybrid",
+    activityModeClassroom: "Classroom-based",
+    activityModeLocation: "Location-based",
+    activityModeOnline: "Online",
+    activityModeBlended: "Blended",
+    activityModeOther: "Other",
     importTitle: "Import a scenario",
     importModalDesc: "Start from a pre-filled template, or load a file exported from this application. The current design will be replaced.",
     importFromFileTitle: "From my computer",
@@ -1424,7 +1441,7 @@ const I18N = {
     groupTitleGroup: "Group",
     groupTitleTeaching: "Teaching",
     groupTitlePacing: "Pacing",
-    groupTitleMode: "Mode",
+    groupTitleMode: "Mode of delivery",
     groupTitleEvaluation: "Assessment",
     aiasFieldLabel: "Role of AI in the task · AIAS 2.1",
     aiasUndecided: "To be defined",
@@ -1544,7 +1561,7 @@ const I18N = {
     partitionShowHide: "Show/hide",
     partitionDeleteLine: "Delete this line",
     partitionShowPrefix: "Show",
-    partitionTypeLocation: "Location",
+    partitionTypeLocation: "Mode of delivery",
     partitionTypeGroup: "Group mode",
     partitionTypeSync: "Synchronicity",
     partitionTypeTeaching: "Teaching",
@@ -1939,10 +1956,18 @@ function refreshLocalizedCatalogs() {
   });
 
   LOCATION_OPTIONS.forEach((option) => {
-    if (option.value === "onsite") option.label = t("modeOnsite");
-    if (option.value === "online") option.label = t("modeOnline");
-    if (option.value === "hybrid") option.label = t("modeHybrid");
+    if (option.value === "onsite") option.label = t("activityModeClassroom");
+    if (option.value === "location_based") option.label = t("activityModeLocation");
+    if (option.value === "online") option.label = t("activityModeOnline");
+    if (option.value === "hybrid") option.label = t("activityModeBlended");
+    if (option.value === "other") option.label = t("activityModeOther");
     option.short = shortLabel(option.label);
+  });
+
+  state.partitionLineConfig.forEach((line) => {
+    if (line.type !== "locationMode") return;
+    const option = LOCATION_OPTIONS.find((candidate) => candidate.value === line.value);
+    if (option) line.label = option.label;
   });
 
   EVAL_OPTIONS.forEach((option) => {
@@ -3089,7 +3114,10 @@ function normalizeActivity(activity) {
   }
   if (activity.locationMode === "presentiel") activity.locationMode = "onsite";
   if (activity.locationMode === "distanciel") activity.locationMode = "online";
-  if (!["online", "onsite", "hybrid"].includes(activity.locationMode)) {
+  if (activity.locationMode === "classroom") activity.locationMode = "onsite";
+  if (activity.locationMode === "location-based") activity.locationMode = "location_based";
+  if (activity.locationMode === "blended") activity.locationMode = "hybrid";
+  if (!LOCATION_VALUES.has(activity.locationMode)) {
     activity.locationMode = "onsite";
   }
   if (
@@ -3102,7 +3130,7 @@ function normalizeActivity(activity) {
 }
 
 function normalizePartitionLineConfig(lines) {
-  return lines.map((line) => {
+  const normalizedLines = lines.map((line) => {
     if (!line || typeof line !== "object") return line;
     if (line.type !== "teacherPresence") return { ...line };
     const value = line.value === "absent" ? "independent" : "undefined";
@@ -3113,6 +3141,18 @@ function normalizePartitionLineConfig(lines) {
       label: labelForTeachingMode(value)
     };
   });
+
+  const legacyLocationLines = normalizedLines.filter((line) => line?.type === "locationMode");
+  const legacyValues = new Set(legacyLocationLines.map((line) => line.value));
+  const isLegacyDefault = normalizedLines.length === 3
+    && legacyLocationLines.length === 3
+    && ["onsite", "online", "hybrid"].every((value) => legacyValues.has(value));
+  if (!isLegacyDefault) return normalizedLines;
+
+  return defaultPartitionLineConfig().map((line) => ({
+    ...line,
+    visible: legacyLocationLines.find((legacyLine) => legacyLine.value === line.value)?.visible ?? true
+  }));
 }
 
 function defaultAiasState() {
@@ -3732,7 +3772,7 @@ function getAnalysisAlerts(metrics) {
     (activity) => !["sync", "async"].includes(activity.syncMode)
   );
   const hasInvalidLocationMode = activities.some(
-    (activity) => !["onsite", "online", "hybrid"].includes(activity.locationMode)
+    (activity) => !LOCATION_VALUES.has(activity.locationMode)
   );
 
   const alerts = [];
@@ -3794,9 +3834,11 @@ function renderAnalysisPanel() {
   );
 
   const deliveryDefs = [
-    { key: "onsite", label: t("modeOnsite"), color: "#37658b" },
-    { key: "online", label: t("modeOnline"), color: "#bcc7d7" },
-    { key: "hybrid", label: t("modeHybrid"), color: "#4e84c8" }
+    { key: "onsite", label: t("activityModeClassroom"), color: "#37658b" },
+    { key: "location_based", label: t("activityModeLocation"), color: "#5b88a6" },
+    { key: "online", label: t("activityModeOnline"), color: "#bcc7d7" },
+    { key: "hybrid", label: t("activityModeBlended"), color: "#4e84c8" },
+    { key: "other", label: t("activityModeOther"), color: "#94a3b8" }
   ];
   const deliveryData = buildSegments(deliveryDefs, metrics.byLocation);
   renderConic(analysisDeliveryPie, deliveryData);
@@ -4102,6 +4144,11 @@ function labelForSyncMode(mode) {
 
 function labelForLocationMode(mode) {
   if (!mode) return "-";
+  return LOCATION_OPTIONS.find((option) => option.value === mode)?.label || mode;
+}
+
+function labelForDeliveryMode(mode) {
+  if (!mode) return "-";
   if (mode === "online") return t("modeOnline");
   if (mode === "hybrid") return t("modeHybrid");
   return t("modeOnsite");
@@ -4275,7 +4322,7 @@ function buildMarkdownExport(scope = "full", sessionIds = null) {
   if (normalizeExportScope(scope) === "students") return buildStudentMarkdownExport(sessionIds);
   const designed = splitMinutesToPedagogicalTime(totalExportDesignedMinutes(sessionIds), getDayHours());
   const lines = [`# ${state.meta.name || "Design Learning"}`, "", "## Paramètres", ""];
-  lines.push(`- Mode: ${labelForLocationMode(state.meta.modeDelivery)}`);
+  lines.push(`- Mode: ${labelForDeliveryMode(state.meta.modeDelivery)}`);
   lines.push(`- Niveau: ${labelForSchoolLevel(state.meta.schoolLevel)}`);
   lines.push(`- Taille du groupe: ${state.meta.sizeClass || "-"}`);
   lines.push(`- Concepteur(s): ${state.meta.designers || "-"}`);
@@ -4339,7 +4386,7 @@ function buildMarkdownExport(scope = "full", sessionIds = null) {
       lines.push(`- Groupe: ${labelForGroupMode(activity.groupMode)}`);
       lines.push(`- Enseignement: ${labelForTeachingMode(activity.teachingMode)}`);
       lines.push(`- Rythme: ${labelForSyncMode(activity.syncMode)}`);
-      lines.push(`- Modalité: ${labelForLocationMode(activity.locationMode)}`);
+      lines.push(`- Mode de formation: ${labelForLocationMode(activity.locationMode)}`);
       lines.push(`- Évaluation: ${labelForEvaluationMode(activity.evaluationMode)}`);
       lines.push(`- AIAS: ${aiasSummary(activity.aias)}`);
       lines.push(`- Description: ${activity.description || "-"}`);
@@ -4414,7 +4461,7 @@ function buildHtmlExportDocument(scope = "full", sessionIds = null) {
             <p><strong>Groupe:</strong> ${escapeHtml(labelForGroupMode(activity.groupMode))}</p>
             <p><strong>Enseignement:</strong> ${escapeHtml(labelForTeachingMode(activity.teachingMode))}</p>
             <p><strong>Rythme:</strong> ${escapeHtml(labelForSyncMode(activity.syncMode))}</p>
-            <p><strong>Modalité:</strong> ${escapeHtml(labelForLocationMode(activity.locationMode))}</p>
+            <p><strong>Mode de formation:</strong> ${escapeHtml(labelForLocationMode(activity.locationMode))}</p>
             <p><strong>Évaluation:</strong> ${escapeHtml(labelForEvaluationMode(activity.evaluationMode))}</p>
             <p><strong>AIAS:</strong> ${escapeHtml(aiasSummary(activity.aias))}</p>
             <p><strong>Description:</strong> ${escapeHtmlWithBreaks(activity.description || "")}</p>
@@ -4439,7 +4486,7 @@ function buildHtmlExportDocument(scope = "full", sessionIds = null) {
   const metadata = `
   <section>
     <h2>Paramètres</h2>
-    <p><strong>Mode:</strong> ${escapeHtml(labelForLocationMode(state.meta.modeDelivery))}</p>
+    <p><strong>Mode:</strong> ${escapeHtml(labelForDeliveryMode(state.meta.modeDelivery))}</p>
     <p><strong>Niveau:</strong> ${escapeHtml(labelForSchoolLevel(state.meta.schoolLevel))}</p>
     <p><strong>Taille du groupe:</strong> ${escapeHtml(state.meta.sizeClass || "-")}</p>
     <p><strong>Concepteur(s):</strong> ${escapeHtml(state.meta.designers || "-")}</p>
@@ -4859,7 +4906,7 @@ function buildFullWordBody(sessionIds = null) {
   body.push(wordParagraph(state.meta.name || "Design Learning", "Title"));
   body.push(wordParagraph("Paramètres", "Heading1"));
   body.push(wordFieldTable([
-    ["Mode", labelForLocationMode(state.meta.modeDelivery)],
+    ["Mode", labelForDeliveryMode(state.meta.modeDelivery)],
     ["Niveau", labelForSchoolLevel(state.meta.schoolLevel)],
     ["Taille du groupe", state.meta.sizeClass || "-"],
     ["Concepteur(s)", state.meta.designers || "-"],
@@ -4927,7 +4974,7 @@ function buildFullWordBody(sessionIds = null) {
         ["Groupe", labelForGroupMode(activity.groupMode)],
         ["Enseignement", labelForTeachingMode(activity.teachingMode)],
         ["Rythme", labelForSyncMode(activity.syncMode)],
-        ["Modalité", labelForLocationMode(activity.locationMode)],
+        ["Mode de formation", labelForLocationMode(activity.locationMode)],
         ["Évaluation", labelForEvaluationMode(activity.evaluationMode)],
         ["AIAS", aiasSummary(activity.aias)],
         ["Description", activity.description || "-"],
@@ -5089,7 +5136,7 @@ function buildSpreadsheetRows(scope = "full", sessionIds = null) {
           "",
           "",
           state.meta.name || "",
-          labelForLocationMode(state.meta.modeDelivery),
+          labelForDeliveryMode(state.meta.modeDelivery),
           labelForSchoolLevel(state.meta.schoolLevel),
           state.meta.sizeClass || "",
           state.meta.designers || "",
@@ -5133,7 +5180,7 @@ function buildSpreadsheetRows(scope = "full", sessionIds = null) {
             })
             .join(";"),
           state.meta.name || "",
-          labelForLocationMode(state.meta.modeDelivery),
+          labelForDeliveryMode(state.meta.modeDelivery),
           labelForSchoolLevel(state.meta.schoolLevel),
           state.meta.sizeClass || "",
           state.meta.designers || "",
@@ -5165,7 +5212,7 @@ const SPREADSHEET_COLUMNS = [
   { key: "group_size", label: "Organisation du groupe", width: 18 },
   { key: "teaching_mode", label: "Enseignement", width: 24 },
   { key: "pacing", label: "Rythme", width: 14 },
-  { key: "delivery_mode", label: "Modalité", width: 14 },
+  { key: "delivery_mode", label: "Mode de formation", width: 22 },
   { key: "assessment", label: "Évaluation", width: 18 },
   { key: "aias", label: "AIAS", width: 28 },
   { key: "activity_description", label: "Description de l'activité", width: 34 },
@@ -5400,9 +5447,11 @@ const CSV_SYNC_LOOKUP = buildLookup([
 ]);
 
 const CSV_LOCATION_LOOKUP = buildLookup([
-  ["onsite", I18N.fr.modeOnsite, I18N.en.modeOnsite, "presentiel", "face to face", "classroom", "classroom-based"],
-  ["online", I18N.fr.modeOnline, I18N.en.modeOnline, "distanciel", "distance"],
-  ["hybrid", I18N.fr.modeHybrid, I18N.en.modeHybrid, "hybride", "blended"]
+  ["onsite", I18N.fr.activityModeClassroom, I18N.en.activityModeClassroom, "presentiel", "face to face", "classroom"],
+  ["location_based", I18N.fr.activityModeLocation, I18N.en.activityModeLocation, "location based"],
+  ["online", I18N.fr.activityModeOnline, I18N.en.activityModeOnline, "online", "distanciel", "distance"],
+  ["hybrid", I18N.fr.activityModeBlended, I18N.en.activityModeBlended, "hybrid"],
+  ["other", I18N.fr.activityModeOther, I18N.en.activityModeOther]
 ]);
 
 const CSV_LEVEL_LOOKUP = buildLookup(
@@ -5904,7 +5953,9 @@ function buildStateFromMarkdown(markdownText) {
             currentActivity.teachingMode = lookupValue(field.value, CSV_TEACHING_LOOKUP, "undefined");
           }
           if (field.key === "rythme") currentActivity.syncMode = lookupValue(field.value, CSV_SYNC_LOOKUP, "sync");
-          if (field.key === "modalite") currentActivity.locationMode = lookupValue(field.value, CSV_LOCATION_LOOKUP, "onsite");
+          if (["modalite", "mode de formation", "mode of delivery"].includes(field.key)) {
+            currentActivity.locationMode = lookupValue(field.value, CSV_LOCATION_LOOKUP, "onsite");
+          }
           if (field.key === "evaluation") currentActivity.evaluationMode = lookupValue(field.value, CSV_EVAL_LOOKUP, "none");
           if (field.key === "aias") currentActivity.aias = parseAiasValue(field.value);
           if (field.key === "description") {

@@ -1219,7 +1219,7 @@ Ces libellés doivent être conservés exactement en français :
 - `- Groupe:`
 - `- Enseignement:`
 - `- Rythme:`
-- `- Modalité:`
+- `- Mode de formation:`
 - `- Évaluation:`
 - `- AIAS:`
 - `- Description:`
@@ -1240,11 +1240,13 @@ Types d’activités :
 - `Discuter`
 - `Collaborer`
 
-Mode et modalité :
+Mode de formation :
 
-- `Présentiel`
-- `Distanciel`
+- `En classe`
+- `Sur site`
+- `En ligne`
 - `Hybride`
+- `Autre`
 
 Organisation du groupe :
 
@@ -1341,7 +1343,7 @@ Objectifs généraux dans la langue demandée.
 - Groupe: Individuel
 - Enseignement: Enseignement dirigé
 - Rythme: Synchrone
-- Modalité: Présentiel
+- Mode de formation: En classe
 - Évaluation: Aucune évaluation
 - AIAS: Non pertinent
 - Description: Description dans la langue demandée.
@@ -1352,7 +1354,7 @@ Objectifs généraux dans la langue demandée.
 - Groupe: Sous-groupes
 - Enseignement: Enseignement guidé
 - Rythme: Synchrone
-- Modalité: Présentiel
+- Mode de formation: En classe
 - Évaluation: Formative
 - AIAS: Non pertinent
 - Description: Description dans la langue demandée.
@@ -1363,7 +1365,7 @@ Objectifs généraux dans la langue demandée.
 - Groupe: Individuel
 - Enseignement: Enseignement en autonomie
 - Rythme: Synchrone
-- Modalité: Présentiel
+- Mode de formation: En classe
 - Évaluation: Formative
 - AIAS: Non pertinent
 - Description: Description dans la langue demandée.
@@ -1469,7 +1471,7 @@ Keep the following labels exactly as written in French:
 - `- Groupe:`
 - `- Enseignement:`
 - `- Rythme:`
-- `- Modalité:`
+- `- Mode de formation:`
 - `- Évaluation:`
 - `- AIAS:`
 - `- Description:`
@@ -1490,11 +1492,13 @@ Activity types:
 - `Discuter`
 - `Collaborer`
 
-Delivery mode and location:
+Mode of delivery:
 
-- `Présentiel`
-- `Distanciel`
+- `En classe`
+- `Sur site`
+- `En ligne`
 - `Hybride`
+- `Autre`
 
 Group organisation:
 
@@ -1591,7 +1595,7 @@ General objectives in the requested language.
 - Groupe: Individuel
 - Enseignement: Enseignement dirigé
 - Rythme: Synchrone
-- Modalité: Présentiel
+- Mode de formation: En classe
 - Évaluation: Aucune évaluation
 - AIAS: Non pertinent
 - Description: Activity description in the requested language.
@@ -1602,7 +1606,7 @@ General objectives in the requested language.
 - Groupe: Sous-groupes
 - Enseignement: Enseignement guidé
 - Rythme: Synchrone
-- Modalité: Présentiel
+- Mode de formation: En classe
 - Évaluation: Formative
 - AIAS: Non pertinent
 - Description: Activity description in the requested language.
@@ -1613,7 +1617,7 @@ General objectives in the requested language.
 - Groupe: Individuel
 - Enseignement: Enseignement en autonomie
 - Rythme: Synchrone
-- Modalité: Présentiel
+- Mode de formation: En classe
 - Évaluation: Formative
 - AIAS: Non pertinent
 - Description: Description of the expected production in the requested language.

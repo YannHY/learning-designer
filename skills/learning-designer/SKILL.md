@@ -52,7 +52,7 @@ Essential questions:
 - subject or theme
 - level and target learners
 - total duration
-- delivery mode: onsite, online, or hybrid
+- activity mode of delivery: classroom-based, location-based, online, blended, or other
 - group size
 - teaching objectives: what the teacher wants to work on, transmit, or train
 - expected learning outcomes: what learners should be able to do
@@ -130,7 +130,7 @@ Use only CLI-controlled values for controlled fields. Safe values:
 For `pacing` and `mode`, verify accepted values with the CLI or use values that the CLI accepts in the current environment. Common accepted values include:
 
 - `pacing`: `sync`, `async`, or `synchronous` depending on CLI version
-- `mode`: `onsite`, `online`, `hybrid`, or French aliases such as `presentiel`, depending on CLI version
+- `mode`: `classroom-based`, `location-based`, `online`, `blended`, `other`, or their French equivalents, depending on CLI version
 
 Never put long natural-language text in controlled fields such as `--group`, `--teaching`, `--evaluation`, `--type`, or `--pacing`.
 

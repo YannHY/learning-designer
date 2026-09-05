@@ -10,6 +10,9 @@ has_tty() {
 }
 
 say() {
+  if [ "${LEARNING_INSTALL_QUIET:-0}" = "1" ]; then
+    return
+  fi
   if has_tty; then
     printf '%s\n' "$*" > "$TTY"
   else
@@ -92,6 +95,11 @@ choose_install_dir() {
   if [ -z "$default_dir" ]; then
     echo "install.sh: no suitable install directory found in PATH" >&2
     exit 1
+  fi
+
+  if [ "${LEARNING_INSTALL_NONINTERACTIVE:-0}" = "1" ]; then
+    printf '%s\n' "$default_dir"
+    return
   fi
 
   if ! has_tty; then

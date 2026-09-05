@@ -52,6 +52,16 @@ Learning Designer propose trois niveaux d'intégration, selon le besoin :
 
 La Skill ne se contente donc pas de générer du texte libre : elle guide l'agent vers le format attendu par l'application et impose une validation avant publication.
 
+### Installer la Skill pour Claude Code ou Codex
+
+Depuis la racine de votre projet, une seule commande installe ou actualise la Skill pour Claude Code et Codex ainsi que le CLI, puis vérifie leur compatibilité :
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/YannHY/learning-designer/main/install-skill.sh | sh
+```
+
+Utilisez ensuite `/learning-design` dans Claude Code ou `$learning-designer` dans Codex.
+
 ### Installer le CLI
 
 ```bash

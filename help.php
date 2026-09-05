@@ -9,7 +9,18 @@ $aiPrompt = <<<'PROMPT'
 Tu dois créer un design pédagogique Learning Designer en utilisant le CLI `learning`.
 
 Important :
-Tu es peut-être dans un sandbox isolé. Si `learning` n’est pas disponible, installe une copie locale du CLI dans ton environnement :
+Tu es peut-être dans un sandbox isolé. Sélectionne le CLI selon ses capacités, pas seulement selon l’existence d’une commande.
+
+Teste dans cet ordre :
+1. `./bin/learning` si tu travailles dans le dépôt Learning Designer ;
+2. la commande globale `learning` ;
+3. `./.tools/bin/learning` si cette copie locale existe déjà.
+
+Le CLI retenu doit prendre en charge `list school-systems`, `list activity-options`, les options `--school-system` et `--school-level` de `init`, les choix pédagogiques explicites de `add-activity` et `validate --strict-pedagogy`.
+
+Si la commande globale existe mais n’est pas compatible, indique-moi simplement qu’elle doit être mise à jour et demande-moi l’autorisation de lancer `learning upgrade`. Après mon accord explicite, effectue la mise à jour et recommence les vérifications.
+
+Si aucune copie compatible n’est disponible, installe une copie locale dans ton environnement :
 
 mkdir -p .tools/bin
 curl -fsSL https://raw.githubusercontent.com/YannHY/learning-designer/main/bin/learning -o .tools/bin/learning
@@ -19,9 +30,9 @@ chmod +x .tools/bin/learning
 Si raw.githubusercontent.com est bloqué, utilise web_fetch ou une autre méthode disponible pour récupérer :
 https://github.com/YannHY/learning-designer/blob/main/bin/learning
 
-Puis écris le fichier dans `.tools/bin/learning`, rends-le exécutable, et utilise toujours :
+Puis écris le fichier dans `.tools/bin/learning`, rends-le exécutable et vérifie ses capacités.
 
-./.tools/bin/learning
+Mémorise la commande compatible retenue sous la variable `LEARNING` : `./bin/learning`, `learning` ou `./.tools/bin/learning`. Utilise ensuite `$LEARNING` dans toutes les commandes ci-dessous. Ne suppose pas qu’une variable shell définie dans une commande précédente persistera : si nécessaire, remplace `$LEARNING` par la commande retenue.
 
 Une fois `.tools/bin/learning` créé, ne dépends plus du réseau.
 
@@ -75,17 +86,17 @@ Avant d’exécuter les commandes de création complète, reformule brièvement 
 Ensuite utilise le CLI, pas une écriture manuelle du JSON.
 
 Avant de créer toutes les activités, vérifie les commandes utiles :
-- ./.tools/bin/learning --help
-- ./.tools/bin/learning init --help
-- ./.tools/bin/learning add-moment --help
-- ./.tools/bin/learning add-activity --help
-- ./.tools/bin/learning outcome --help
-- ./.tools/bin/learning list types
-- ./.tools/bin/learning list bloom
-- ./.tools/bin/learning list competencies
-- ./.tools/bin/learning list activity-options
-- ./.tools/bin/learning list school-systems
-- ./.tools/bin/learning list school-levels --system france
+- $LEARNING --help
+- $LEARNING init --help
+- $LEARNING add-moment --help
+- $LEARNING add-activity --help
+- $LEARNING outcome --help
+- $LEARNING list types
+- $LEARNING list bloom
+- $LEARNING list competencies
+- $LEARNING list activity-options
+- $LEARNING list school-systems
+- $LEARNING list school-levels --system IDENTIFIANT
 
 Pour `init` et `add-activity`, utilise uniquement les valeurs contrôlées acceptées par le CLI.
 
@@ -102,7 +113,7 @@ Valeurs sûres :
 
 Pour chaque activité, détermine et transmets explicitement `--group`, `--teaching`, `--pacing`, `--mode`, `--evaluation` et `--aias`. Ne t’appuie pas sur des valeurs par défaut. Choisis-les comme un ensemble cohérent à partir de l’objectif, de l’autonomie des élèves, des interactions nécessaires, des contraintes de formation et des traces d’apprentissage attendues. AIAS 1 signifie sans IA ; AIAS 2 réserve l’IA à l’exploration, la recherche ou la planification ; AIAS 3 en fait une collaboratrice dont l’élève évalue et transforme les productions ; AIAS 4 l’intègre pleinement sous la direction critique de l’élève ; AIAS 5 correspond à l’exploration et à la co-conception de nouveaux usages. Utilise `not-applicable` seulement si le cadre AIAS ne s’applique réellement pas, et ne laisse jamais AIAS indécis dans un design généré.
 
-Pour `init`, transmets le système et le niveau lorsqu’ils sont connus, par exemple : `./.tools/bin/learning init design.json --school-system france --school-level quatrieme`.
+Pour `init`, transmets le système et le niveau lorsqu’ils sont connus, par exemple : `$LEARNING init design.json --school-system france --school-level quatrieme`.
 
 Utilise les valeurs canoniques ci-dessus pour `--pacing` et `--mode` ; le CLI accepte également leurs principaux équivalents français ou anglais.
 
@@ -111,12 +122,12 @@ Ne mets jamais de phrases longues dans les champs contrôlés comme `--school-sy
 Utilise `--description` pour décrire l’activité du point de vue pédagogique et `--instructions` pour les consignes directement adressées aux élèves. Place les critères, supports, rôle de l’enseignant, modalités de différenciation et autres détails dans `--notes`, `--objectives` ou `--intentions` selon leur portée.
 
 Commandes à utiliser obligatoirement autant que possible :
-- ./.tools/bin/learning init
-- ./.tools/bin/learning add-moment
-- ./.tools/bin/learning add-activity
-- ./.tools/bin/learning outcome
-- ./.tools/bin/learning validate design.json --strict-pedagogy
-- ./.tools/bin/learning prompt design.json
+- $LEARNING init
+- $LEARNING add-moment
+- $LEARNING add-activity
+- $LEARNING outcome
+- $LEARNING validate design.json --strict-pedagogy
+- $LEARNING prompt design.json
 
 Procédure recommandée :
 1. Crée `design.json` avec `init`.
@@ -186,13 +197,6 @@ Règles importantes :
 - Ne publie jamais sans autorisation explicite.
 PROMPT;
 
-$skillPrompt = <<<'PROMPT'
-Lis et applique cette skill :
-https://github.com/YannHY/learning-designer/blob/main/skills/learning-designer/SKILL.md
-
-Ta mission : m’aider à créer un fichier design.json Learning Designer avec le CLI learning, le valider, puis me donner les commandes exactes pour le publier.
-PROMPT;
-
 $designReviewPrompt = <<<'PROMPT'
 Tu es expert en learning design, en conception universelle de l’apprentissage (CUA/UDL) ainsi qu’en différenciation pédagogique.
 
@@ -235,7 +239,18 @@ $aiPromptEn = <<<'PROMPT'
 You must create a Learning Designer teaching design using the `learning` CLI.
 
 Important:
-You may be working in an isolated sandbox. If `learning` is not available, install a local copy of the CLI in your environment:
+You may be working in an isolated sandbox. Select the CLI by capability, not merely by whether a command exists.
+
+Test these candidates in order:
+1. `./bin/learning` when working in the Learning Designer repository;
+2. the global `learning` command;
+3. `./.tools/bin/learning` when that local copy already exists.
+
+The selected CLI must support `list school-systems`, `list activity-options`, the `init` options `--school-system` and `--school-level`, explicit pedagogical choices in `add-activity`, and `validate --strict-pedagogy`.
+
+If the global command exists but is incompatible, simply tell me that it must be updated and ask for permission to run `learning upgrade`. After my explicit approval, perform the update and repeat the checks.
+
+If no compatible copy is available, install a local copy in your environment:
 
 mkdir -p .tools/bin
 curl -fsSL https://raw.githubusercontent.com/YannHY/learning-designer/main/bin/learning -o .tools/bin/learning
@@ -245,9 +260,9 @@ chmod +x .tools/bin/learning
 If raw.githubusercontent.com is blocked, use web_fetch or another available method to retrieve:
 https://github.com/YannHY/learning-designer/blob/main/bin/learning
 
-Then write the file to `.tools/bin/learning`, make it executable, and always use:
+Then write the file to `.tools/bin/learning`, make it executable, and check its capabilities.
 
-./.tools/bin/learning
+Remember the selected compatible command as `LEARNING`: `./bin/learning`, `learning`, or `./.tools/bin/learning`. Use `$LEARNING` in all commands below. Do not assume that a shell variable set in an earlier command will persist: replace `$LEARNING` with the selected command when necessary.
 
 Once `.tools/bin/learning` has been created, do not rely on the network again.
 
@@ -301,17 +316,17 @@ Before running all creation commands, briefly restate:
 Then use the CLI rather than writing the JSON manually.
 
 Before creating all activities, inspect the useful commands:
-- ./.tools/bin/learning --help
-- ./.tools/bin/learning init --help
-- ./.tools/bin/learning add-moment --help
-- ./.tools/bin/learning add-activity --help
-- ./.tools/bin/learning outcome --help
-- ./.tools/bin/learning list types
-- ./.tools/bin/learning list bloom
-- ./.tools/bin/learning list competencies
-- ./.tools/bin/learning list activity-options
-- ./.tools/bin/learning list school-systems
-- ./.tools/bin/learning list school-levels --system france
+- $LEARNING --help
+- $LEARNING init --help
+- $LEARNING add-moment --help
+- $LEARNING add-activity --help
+- $LEARNING outcome --help
+- $LEARNING list types
+- $LEARNING list bloom
+- $LEARNING list competencies
+- $LEARNING list activity-options
+- $LEARNING list school-systems
+- $LEARNING list school-levels --system SYSTEM_ID
 
 For `init` and `add-activity`, use only controlled values accepted by the CLI.
 
@@ -328,7 +343,7 @@ Safe values:
 
 For every activity, explicitly determine and pass `--group`, `--teaching`, `--pacing`, `--mode`, `--evaluation`, and `--aias`. Do not rely on defaults. Choose them as a coherent set based on the objective, learner autonomy, required interactions, delivery constraints, and expected evidence of learning. AIAS 1 means no AI; AIAS 2 limits AI to exploration, research, or planning; AIAS 3 makes AI a collaborator whose output the learner evaluates and transforms; AIAS 4 fully integrates AI under the learner's critical direction; AIAS 5 covers exploring and co-designing new AI uses. Use `not-applicable` only when the AIAS framework genuinely does not apply, and never leave AIAS undecided in a generated design.
 
-For `init`, pass the system and level whenever they are known, for example: `./.tools/bin/learning init design.json --school-system france --school-level quatrieme`.
+For `init`, pass the system and level whenever they are known, for example: `$LEARNING init design.json --school-system france --school-level quatrieme`.
 
 Use the canonical values above for `--pacing` and `--mode`; the CLI also accepts their main French and English equivalents.
 
@@ -337,12 +352,12 @@ Never put long sentences in controlled fields such as `--school-system`, `--scho
 Use `--description` for the pedagogical description of the activity and `--instructions` for directions addressed directly to students. Put criteria, resources, the teacher’s role, differentiation, and other details in `--notes`, `--objectives`, or `--intentions` according to their scope.
 
 Use these commands whenever possible:
-- ./.tools/bin/learning init
-- ./.tools/bin/learning add-moment
-- ./.tools/bin/learning add-activity
-- ./.tools/bin/learning outcome
-- ./.tools/bin/learning validate design.json --strict-pedagogy
-- ./.tools/bin/learning prompt design.json
+- $LEARNING init
+- $LEARNING add-moment
+- $LEARNING add-activity
+- $LEARNING outcome
+- $LEARNING validate design.json --strict-pedagogy
+- $LEARNING prompt design.json
 
 Recommended process:
 1. Create `design.json` with `init`.
@@ -395,13 +410,6 @@ Important rules:
 - If a command fails, explain why, correct it, and try again.
 - Once `.tools/bin/learning` has been created, do not rely on the network.
 - Never publish without explicit permission.
-PROMPT;
-
-$skillPromptEn = <<<'PROMPT'
-Read and apply this skill:
-https://github.com/YannHY/learning-designer/blob/main/skills/learning-designer/SKILL.md
-
-Your mission: help me create a Learning Designer design.json file with the learning CLI, validate it, and give me the exact commands required to publish it.
 PROMPT;
 
 $designReviewPromptEn = <<<'PROMPT'
@@ -822,116 +830,44 @@ Objectifs généraux de la formation.
                 <h3 id="ia-guide">Guide</h3>
                 <div class="help-grid">
                     <div class="help-card">
-                        <strong>1. L’IA publie pour vous</strong>
-                        <span>Copiez le prompt proposé plus bas dans Claude Code ou Codex. L’IA crée le fichier <code>design.json</code>, puis peut publier le design si vous lui donnez explicitement l’autorisation et un jeton CLI créé dans votre profil.</span>
-                        <span>Dans ce cas, vous n’avez pas besoin d’installer le CLI dans votre terminal.</span>
+                        <strong>1. L’IA crée et publie</strong>
+                        <span>Copiez le prompt ci-dessous, répondez aux questions et validez les propositions de l’IA.</span>
+                        <span>Pour publier, donnez-lui explicitement l’autorisation et un jeton CLI créé dans votre profil. Vous n’avez rien à installer vous-même.</span>
                     </div>
                     <div class="help-card">
                         <strong>2. Vous publiez vous-même</strong>
-                        <span>Copiez le prompt pour que l’IA crée le fichier <code>design.json</code>, puis téléchargez ce fichier sur votre ordinateur. Pour publier vous-même, vous devez installer le CLI, créer un jeton dans votre profil, lancer <code>learning login</code>, puis <code>learning publish</code>.</span>
-                        <span>Les commandes d’installation et de publication sont expliquées dans l’onglet CLI détaillé.</span>
+                        <span>L’IA vous remet le fichier <code>design.json</code>. Installez ensuite le CLI sur votre ordinateur, connectez-le avec <code>learning login</code>, puis publiez avec <code>learning publish</code>.</span>
+                        <span>Le jeton reste alors sur votre ordinateur.</span>
                     </div>
                 </div>
 
                 <h4>Prompt à donner à Claude Code ou Codex</h4>
-                <p>Copiez ce prompt dans Claude ou Codex. Il demande à l’IA d’utiliser le CLI, de poser les bonnes questions pédagogiques, puis de produire un fichier validé.</p>
+                <p>Ce prompt suffit pour un usage ponctuel. L’IA sélectionne un CLI compatible et utilise une copie locale si son environnement est isolé.</p>
                 <div class="help-prompt-wrap">
                     <button class="help-copy-btn" type="button" aria-label="Copier le prompt" title="Copier"><i class="fa-regular fa-copy" aria-hidden="true"></i></button>
                     <textarea class="help-prompt" data-help-prompt="ai" readonly><?= h($aiPrompt) ?></textarea>
                 </div>
 
-                <h4>À la fin</h4>
-                <p>Demandez simplement à l’IA de publier le design qu’elle vient de créer. Pour cela, donnez-lui explicitement l’autorisation de publier et un jeton CLI créé dans votre profil.</p>
-                <p>Si vous préférez publier vous-même depuis votre ordinateur, ouvrez l’onglet CLI détaillé.</p>
+                <h3 id="skill-claude">Utiliser la skill</h3>
+                <p>La skill est adaptée à un usage régulier dans Claude Code ou Codex. Elle pose les questions pédagogiques, crée le fichier <code>design.json</code> avec le CLI et le valide.</p>
 
-                <h3 id="skill-claude">Créer une skill Claude</h3>
-                <p>Une skill permet de donner à Claude Code une méthode réutilisable. Pour Learning Designer, elle lui explique comment créer un design avec le CLI, le valider, puis préparer la publication.</p>
-
-                <h4>Installer la skill publiée</h4>
-                <p>C’est la méthode la plus simple : elle crée le bon dossier Claude Code et télécharge le fichier <code>SKILL.md</code> déjà prêt.</p>
+                <h4>Installer ou actualiser</h4>
+                <p>Depuis la racine de votre projet, cette commande installe ou actualise la skill pour Claude Code et Codex ainsi que le CLI, puis vérifie leur compatibilité.</p>
                 <div class="help-code-wrap">
                     <button class="help-copy-btn" type="button" aria-label="Copier la commande" title="Copier"><i class="fa-regular fa-copy" aria-hidden="true"></i></button>
-                    <pre class="help-code">mkdir -p .claude/skills/learning-design
-curl -fsSL https://raw.githubusercontent.com/YannHY/learning-designer/main/skills/learning-designer/SKILL.md -o .claude/skills/learning-design/SKILL.md</pre>
+                    <pre class="help-code">curl -fsSL https://raw.githubusercontent.com/YannHY/learning-designer/main/install-skill.sh | sh</pre>
                 </div>
-                <p>Relancez Claude Code si la commande slash n’apparaît pas tout de suite, puis lancez la skill avec :</p>
-                <div class="help-code-wrap">
-                    <button class="help-copy-btn" type="button" aria-label="Copier la commande" title="Copier"><i class="fa-regular fa-copy" aria-hidden="true"></i></button>
-                    <pre class="help-code">/learning-design</pre>
-                </div>
+                <p>Relancez l’outil si nécessaire. Dans Claude Code, utilisez <code>/learning-design</code>. Dans Codex, utilisez <code>$learning-designer</code>.</p>
 
-                <h4>Créer la skill manuellement</h4>
-                <div class="help-grid three">
-                    <div class="help-card">
-                        <strong>1. Créer le dossier</strong>
-                        <span>Dans votre projet, créez <code>.claude/skills/learning-design</code>.</span>
-                    </div>
-                    <div class="help-card">
-                        <strong>2. Ajouter SKILL.md</strong>
-                        <span>Le fichier doit s’appeler <code>SKILL.md</code>, au singulier.</span>
-                    </div>
-                    <div class="help-card">
-                        <strong>3. Lancer la skill</strong>
-                        <span>Dans Claude Code, tapez <code>/learning-design</code>.</span>
-                    </div>
-                </div>
-                <p>Depuis la racine de votre projet :</p>
-                <div class="help-code-wrap">
-                    <button class="help-copy-btn" type="button" aria-label="Copier la commande" title="Copier"><i class="fa-regular fa-copy" aria-hidden="true"></i></button>
-                    <pre class="help-code">mkdir -p .claude/skills/learning-design
-code .claude/skills/learning-design/SKILL.md</pre>
-                </div>
-                <p>Dans <code>SKILL.md</code>, commencez par ce modèle, puis ajoutez les consignes complètes de votre méthode.</p>
-                <div class="help-code-wrap">
-                    <button class="help-copy-btn" type="button" aria-label="Copier le modèle" title="Copier"><i class="fa-regular fa-copy" aria-hidden="true"></i></button>
-                    <pre class="help-code">---
-description: Crée un fichier design.json Learning Designer avec le CLI learning, pose les questions pédagogiques utiles, valide le fichier et prépare les commandes de publication.
----
+                <h3 id="cli-detaille">Utiliser le CLI</h3>
+                <p>Le CLI permet de créer, valider et publier un design directement depuis votre terminal.</p>
 
-# Learning Designer
-
-Collez ici les consignes complètes que Claude doit suivre.</pre>
-                </div>
-                <div class="help-callout">
-                    <i class="fa-solid fa-circle-info" aria-hidden="true"></i>
-                    <p>Le chemin attendu par Claude Code est <code>.claude/skills/learning-design/SKILL.md</code>. Le dossier <code>skills</code> et le nom <code>SKILL.md</code> sont importants.</p>
-                </div>
-
-                <h4>Usage ponctuel sans installation</h4>
-                <p>Si vous ne voulez pas installer de skill locale, copiez simplement ce prompt dans Claude ou Codex. L’IA ira lire la méthode publiée.</p>
-                <div class="help-prompt-wrap">
-                    <button class="help-copy-btn" type="button" aria-label="Copier le prompt" title="Copier"><i class="fa-regular fa-copy" aria-hidden="true"></i></button>
-                    <textarea class="help-prompt help-prompt-compact" data-help-prompt="skill" readonly><?= h($skillPrompt) ?></textarea>
-                </div>
-
-                <h3 id="cli-detaille">CLI détaillé</h3>
-                <p>La commande <code>learning</code> sert à créer, compléter, valider et publier un fichier <code>design.json</code> Learning Designer depuis le terminal. Cette page est utile si vous voulez publier manuellement ou comprendre ce que l’IA exécute dans son environnement.</p>
-
-                <h4>Installer</h4>
-                <p>L’installation locale est nécessaire seulement si vous voulez utiliser le CLI depuis votre ordinateur, par exemple pour publier vous-même. Si l’IA crée le design dans son sandbox, elle peut installer sa propre copie temporaire.</p>
-                <div class="help-details-grid">
-                    <div>
-                        <strong>1. Lancer l’installateur</strong>
-                        <p>Le script vérifie les prérequis, propose un dossier déjà disponible dans le <code>PATH</code>, puis installe la commande <code>learning</code>. Il peut vous demander de confirmer l’emplacement ou d’utiliser <code>sudo</code> selon votre système.</p>
-                    </div>
-                    <div>
-                        <strong>2. Vérifier la commande</strong>
-                        <p><code>learning status</code> confirme la version installée et indique si un jeton de publication est déjà configuré.</p>
-                    </div>
-                    <div>
-                        <strong>3. Créer un jeton</strong>
-                        <p>Connectez-vous au site, ouvrez votre profil, puis créez un jeton dans la section <strong>Publication depuis le CLI</strong>. Copiez-le tout de suite : il ne sera affiché qu’une seule fois.</p>
-                    </div>
-                    <div>
-                        <strong>4. Connecter le CLI</strong>
-                        <p><code>learning login</code> enregistre le jeton sur votre ordinateur pour les publications suivantes. Vous pouvez ensuite publier avec <code>learning publish</code>.</p>
-                    </div>
-                </div>
+                <h4>Installer ou actualiser</h4>
+                <p>Utilisez cet installateur si vous souhaitez travailler vous-même avec la commande <code>learning</code>. Il installe la dernière version ou remplace la version existante.</p>
                 <div class="help-code-wrap">
                     <button class="help-copy-btn" type="button" aria-label="Copier la commande" title="Copier"><i class="fa-regular fa-copy" aria-hidden="true"></i></button>
                     <pre class="help-code">curl -fsSL https://raw.githubusercontent.com/YannHY/learning-designer/main/install.sh | sh
-learning status
-learning login</pre>
+learning status</pre>
                 </div>
 
                 <h4>Créer un design</h4>
@@ -975,7 +911,7 @@ learning init design.json --title "Atelier IA" --lang fr --duration 120 --mode h
                         <p><code>validate</code> vérifie le fichier. <code>prompt</code> produit un prompt de relais utile pour demander à Claude Code ou Codex de continuer le travail.</p>
                         <div class="help-code-wrap">
                             <button class="help-copy-btn" type="button" aria-label="Copier la commande" title="Copier"><i class="fa-regular fa-copy" aria-hidden="true"></i></button>
-                            <pre class="help-code">learning validate design.json
+                            <pre class="help-code">learning validate design.json --strict-pedagogy
 learning prompt design.json</pre>
                         </div>
                     </div>
@@ -1082,12 +1018,11 @@ learning upgrade</pre>
 window.helpPromptTranslations = <?= json_encode([
     'en' => [
         'ai' => $aiPromptEn,
-        'skill' => $skillPromptEn,
         'review' => $designReviewPromptEn,
     ],
 ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) ?>;
 </script>
-<script src="js/help-i18n.js?v=20260905-school-systems-v4"></script>
+<script src="js/help-i18n.js?v=20260905-claude-installer-v1"></script>
 <script>
 var initialHelpLanguage = 'fr';
 try {

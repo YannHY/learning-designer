@@ -37,7 +37,9 @@ learning add-activity --help
 
 Use it as `LEARNING=learning` only when the same school and activity capability checks pass. A successful `learning --help` alone is not sufficient.
 
-If a global CLI exists but fails this capability check, do not use it and do not fall back to a reduced design format that omits `schoolSystem` or `schoolLevel`. Use a compatible local copy instead. You may tell the user that `learning upgrade` updates their global installation, but do not modify the global CLI without explicit permission.
+If a global CLI exists but fails this capability check, do not use it and do not fall back to a reduced design format that omits `schoolSystem` or `schoolLevel`. Tell the user only that Learning Designer CLI must also be updated for compatibility, then ask for permission to run `learning upgrade`. Do not expose the detailed capability-check output unless the update fails or the user asks for it. After explicit permission, run the upgrade and repeat the capability check. If it succeeds, use `LEARNING=learning` and simply confirm that the skill and CLI are ready.
+
+Do not modify the global CLI without explicit permission. If the user declines the upgrade, or if it cannot be completed, use a compatible local copy instead.
 
 If `.tools/bin/learning` already exists, apply the same capability check to it. Use it when compatible. Otherwise, download a current local copy:
 
